@@ -1,0 +1,11 @@
+pytest
+playwright
+pytest-playwright
+requests
+allure-pytest
+pytest-html
+pytest-xdist
+ruff
+black
+isort
+pre-commit
