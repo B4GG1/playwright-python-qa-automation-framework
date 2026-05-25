@@ -1,5 +1,6 @@
 from playwright.sync_api import Page, expect
 
+
 def test_sauce_demo_smoke(page : Page):
     # Arrange
     url = "https://www.saucedemo.com/"
