@@ -3,5 +3,5 @@
   <component name="Black">
     <option name="sdkName" value="WSL (Ubuntu-24.04): (/usr/bin/python3) (2)" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="WSL (Ubuntu-24.04): (/usr/bin/python3) (2)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="WSL (Ubuntu-24.04): (/home/barto/projects/playwright-python-qa-automation-framework/.venv/bin/python3)" project-jdk-type="Python SDK" />
 </project>
