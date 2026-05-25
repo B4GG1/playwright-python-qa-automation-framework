@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/playwright-python-qa-automation-framework.iml" filepath="$PROJECT_DIR$/.idea/playwright-python-qa-automation-framework.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/playwright-python-qa-automation-framework@1.iml" filepath="$PROJECT_DIR$/.idea/playwright-python-qa-automation-framework@1.iml" />
     </modules>
   </component>
 </project>

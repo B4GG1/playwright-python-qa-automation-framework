@@ -27,6 +27,28 @@ The repository is being developed with a strong emphasis on:
 
 The long-term goal of the project is to evolve into a production-style automation framework demonstrating both practical QA automation skills and software engineering best practices.
 
+### System Under Test (SUT)
+
+The framework is built and validated against the following application:
+
+- **Application:** Sauce Demo  
+- **URL:** https://www.saucedemo.com/  
+
+### Rationale
+
+Sauce Demo is used as the primary System Under Test (SUT) because it is a stable, publicly available web application designed specifically for UI automation practice and testing education purposes.
+It provides a realistic e-commerce user flow, including authentication and basic shopping cart functionality, which makes it suitable for demonstrating end-to-end test automation scenarios.
+Key reasons for choosing this SUT:
+
+- Stable and reliable test environment with minimal UI changes  
+- Covers essential e-commerce workflows (login, product browsing, cart operations)  
+- Ideal for UI automation practice with Playwright and Selenium  
+- Does not require external setup, accounts, or backend configuration  
+- Enables repeatable and deterministic test execution  
+- Suitable for both beginner and advanced automation scenarios  
+
+This SUT serves as the foundational application for validating framework stability, test design patterns, and future scalability of the automation architecture.
+
 ## Technology Stack
 
 ### Core Technologies
@@ -314,4 +336,3 @@ The long-term objective is to evolve this repository into a scalable, production
 - modern tooling and CI/CD practices,
 - cross-tool automation expertise (Playwright + Selenium),
 - readiness for enterprise-level QA environments.
-
