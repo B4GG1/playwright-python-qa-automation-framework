@@ -1,5 +1,17 @@
 # Playwright Python QA Automation Framework
 
+## Table of Contents
+
+- [Project Overview](#project-overview)
+- [Technology Stack](#technology-stack)
+- [Framework Architecture](#framework-architecture)
+- [Features](#features)
+- [Getting Started](#getting-started)
+- [Project Structure](#project-structure)
+- [Quality Tooling](#quality-tooling)
+- [Roadmap](#roadmap)
+
+
 ## Project Overview
 This repository contains a scalable QA Automation Framework built primarily with Playwright, Pytest, and Python.
 The project serves as both a practical automation engineering playground and a portfolio-oriented framework designed to showcase modern test automation practices, framework architecture, tooling integration, and quality engineering workflows.
