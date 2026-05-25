@@ -4,10 +4,9 @@
 
 - [Project Overview](#project-overview)
 - [Technology Stack](#technology-stack)
-- [Framework Architecture](#framework-architecture)
+- [Framework and Project Structure](#framework-and-project-structure)
 - [Features](#features)
 - [Getting Started](#getting-started)
-- [Project Structure](#project-structure)
 - [Quality Tooling](#quality-tooling)
 - [Roadmap](#roadmap)
 
@@ -136,6 +135,10 @@ playwright-python-qa-automation-framework/
 
 ## Getting Started
 
+### Dependency Management
+Project dependencies are managed using requirements.txt and isolated Python virtual environments (.venv).
+All packages should be installed inside the project virtual environment.
+
 ### Prerequisites
 
 Before setting up the framework, ensure the following tools are installed:
@@ -146,43 +149,34 @@ Before setting up the framework, ensure the following tools are installed:
 * PyCharm Professional / Community Edition
 * Playwright-supported browser dependencies
 
----
 
-### Clone Repository
+### 1. Clone Repository
 
 ```bash
 git clone git@github.com:B4GG1/playwright-python-qa-automation-framework.git
 cd playwright-python-qa-automation-framework
 ```
 
----
-
-### Create Virtual Environment
+### 2. Create Virtual Environment
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 ```
 
----
-
-### Install Project Dependencies
+### 3. Install Project Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
----
-
-### Install Playwright Browsers
+### 4. Install Playwright Browsers
 
 ```bash
 playwright install chromium
 ```
 
----
-
-### Run Tests
+### 5. Run Tests
 
 Execute all tests:
 
@@ -196,9 +190,7 @@ Run smoke tests only:
 pytest -k smoke -v
 ```
 
----
-
-### Run Quality Checks
+### 6. Run Quality Checks
 
 ```bash
 ruff check .
@@ -206,10 +198,6 @@ black --check .
 isort .
 pre-commit run --all-files
 ```
-
-## Dependency Management
-Project dependencies are managed using requirements.txt and isolated Python virtual environments (.venv).
-All packages should be installed inside the project virtual environment.
 
 ## Quality Tooling
 
