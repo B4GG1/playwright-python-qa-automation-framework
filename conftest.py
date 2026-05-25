@@ -22,10 +22,7 @@ def pytest_runtest_makereport(item, call):
     timestamp = datetime.utcnow().strftime("%Y-%m-%d_%H-%M-%S")
     test_name = item.name.replace("/", "_").replace("::", "_")
 
-    file_path = os.path.join(
-        reports_dir,
-        f"{test_name}_{timestamp}.png"
-    )
+    file_path = os.path.join(reports_dir, f"{test_name}_{timestamp}.png")
 
     try:
         page.screenshot(path=file_path, full_page=True)
