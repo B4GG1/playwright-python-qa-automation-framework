@@ -4,6 +4,7 @@
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/.venv" />
     </content>
+    <orderEntry type="jdk" jdkName="Unknown \\wsl.localhost\Ubuntu-24.04\home\barto\projects\playwright-python-qa-automation-framework\.venv" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>
