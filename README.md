@@ -124,7 +124,7 @@ Each document is separated by domain to improve readability, maintainability, an
 - [Technology Stack](docs/technology-stack.md)  
   Overview of core technologies, tooling, CI/CD, and future integrations.
 
-- [Framework and Project Structure](docs/project-structure.md)  
+- [Framework and Project Structure](docs/framework-and-project-structure.md)  
   Explanation of folder architecture, design decisions, and scalability approach.
 
 - [CI/CD Pipeline](docs/ci-cd-pipeline.md)  
