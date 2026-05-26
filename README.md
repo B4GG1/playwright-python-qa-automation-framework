@@ -69,6 +69,10 @@ This SUT serves as the foundational application for validating framework stabili
 * isort (imports)
 * pre-commit hooks
 
+### CI/CD & Automation
+
+* GitHub Actions (automated CI pipeline execution)
+
 ### Reporting & Debugging
 
 * pytest-html
@@ -81,7 +85,6 @@ This SUT serves as the foundational application for validating framework stabili
 * Page Object Model (POM) architecture
 * API testing layer expansion
 * Advanced Allure reporting
-* GitHub Actions CI/CD pipelines
 * Docker-based execution environments
 * Parallel test execution improvements
 * Environment configuration management
@@ -138,6 +141,7 @@ playwright-python-qa-automation-framework/
 - Automated quality gates using pre-commit hooks
 - Linux-based development workflow using WSL2
 - GitHub-based portfolio repository structure
+- CI/CD pipelines with GitHub Actions
 
 ### Planned Features
 
@@ -149,7 +153,6 @@ playwright-python-qa-automation-framework/
 - Parallel test execution optimization
 - Environment-based configuration management
 - Test data management utilities
-- CI/CD pipelines with GitHub Actions
 - Dockerized test execution
 - Cross-browser execution support
 - Jenkins pipeline integration
@@ -283,6 +286,15 @@ pre-commit install
 
 ---
 
+### Code Quality & Development Tooling
+
+The framework uses automated quality tooling to enforce consistent code standards, improve maintainability, and support scalable development workflows.
+
+* Ruff (linting)
+* Black (code formatting)
+* isort (import standardization)
+* pre-commit hooks (automated local validation)
+* 
 ### Quality Goals
 
 * Consistent code formatting
