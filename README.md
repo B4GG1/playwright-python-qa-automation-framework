@@ -3,13 +3,8 @@
 ## Table of Contents
 
 - [Project Overview](#project-overview)
-- [Technology Stack](#technology-stack)
-- [Framework and Project Structure](#framework-and-project-structure)
-- [Features](#features)
 - [Getting Started](#getting-started)
-- [Quality Tooling](#quality-tooling)
-- [Roadmap](#roadmap)
-
+- [Documentation](#documentation)
 
 ## Project Overview
 This repository contains a scalable QA Automation Framework built primarily with Playwright, Pytest, and Python.
@@ -48,115 +43,6 @@ Key reasons for choosing this SUT:
 - Suitable for both beginner and advanced automation scenarios  
 
 This SUT serves as the foundational application for validating framework stability, test design patterns, and future scalability of the automation architecture.
-
-## Technology Stack
-
-### Core Technologies
-
-* Python 3.12
-* Pytest
-* Playwright
-* Requests
-* pytest-playwright
-* WSL2 (Ubuntu Linux)
-* Git
-* GitHub
-
-### Code Quality & Development Tooling
-
-* Ruff (linting)
-* Black (formatting)
-* isort (imports)
-* pre-commit hooks
-
-### CI/CD & Automation
-
-* GitHub Actions (automated CI pipeline execution)
-
-### Reporting & Debugging
-
-* pytest-html
-* allure-pytest
-* Automatic screenshot capture on test failure
-
-### Planned Integrations & Future Extensions
-
-* Selenium WebDriver comparison module
-* Page Object Model (POM) architecture
-* API testing layer expansion
-* Advanced Allure reporting
-* Docker-based execution environments
-* Parallel test execution improvements
-* Environment configuration management
-* Test data management utilities
-* Cross-browser execution support
-* Jenkins CI integration
-
-## Framework and Project Structure
-
-The framework is structured to support scalable UI automation, API testing, reporting, and future CI/CD integration while maintaining readability and modularity.
-
-```text
-playwright-python-qa-automation-framework/
-│
-├── config/                 # Framework and environment configuration
-├── docs/                   # Project documentation
-├── framework/              # Shared framework utilities and core infrastructure
-├── pages/                  # Page Object Model components
-├── reports/                # Test reports, screenshots, and execution artifacts
-├── resources/              # Static resources and supporting files
-├── test_data/              # Externalized test datasets and test inputs
-├── tests/                  # Automated test suites
-│
-├── conftest.py             # Shared pytest fixtures and hooks
-├── pytest.ini              # Centralized pytest configuration
-├── pyproject.toml          # Ruff, Black, and isort configuration
-├── requirements.txt        # Project dependencies
-├── requirements-lock.txt   # Locked dependency versions
-├── .pre-commit-config.yaml # Automated quality hooks configuration
-└── README.md               # Project documentation and portfolio overview
-```
-### Architecture Goals
-
-- Maintainable and scalable project structure
-- Clear separation of framework layers
-- Reusable automation components
-- Centralized test configuration
-- CI/CD-ready development workflow
-- Readable and consistent test organization
-
-## Features
-
-### Currently Implemented
-
-- UI test automation using Playwright
-- Pytest-based test execution
-- Smoke test execution support
-- Centralized pytest configuration
-- Automatic screenshot capture on test failure
-- Virtual environment isolation using venv
-- Static code analysis with Ruff
-- Automated code formatting using Black
-- Import standardization with isort
-- Automated quality gates using pre-commit hooks
-- Linux-based development workflow using WSL2
-- GitHub-based portfolio repository structure
-- CI/CD pipelines with GitHub Actions
-
-### Planned Features
-
-- Selenium-based comparison module
-- Page Object Model (POM) architecture
-- API automation testing layer
-- Allure reporting integration
-- HTML reporting improvements
-- Parallel test execution optimization
-- Environment-based configuration management
-- Test data management utilities
-- Dockerized test execution
-- Cross-browser execution support
-- Jenkins pipeline integration
-- Advanced logging and debugging utilities
 
 ## Getting Started
 
@@ -224,127 +110,40 @@ isort .
 pre-commit run --all-files
 ```
 
-## Quality Tooling
+## Documentation
 
-The framework includes automated quality tooling to maintain consistent code standards, improve readability, and support scalable development workflows.
+All extended project documentation is stored in the `docs/` directory to keep the README lightweight and focused on high-level information.
 
-### Static Analysis
+Each document is separated by domain to improve readability, maintainability, and navigation.
 
-#### Ruff
+### 📁 Available Documentation
 
-Used for fast Python linting and static code analysis.
+- [Quality Tooling](docs/quality-tooling.md)  
+  Details about code quality tools such as Ruff, Black, isort, and pre-commit hooks.
 
-```bash
-ruff check .
-```
+- [Technology Stack](docs/technology-stack.md)  
+  Overview of core technologies, tooling, CI/CD, and future integrations.
 
----
+- [Framework and Project Structure](docs/project-structure.md)  
+  Explanation of folder architecture, design decisions, and scalability approach.
 
-### Code Formatting
+- [CI/CD Pipeline](docs/ci-cd-pipeline.md)  
+  Description of GitHub Actions workflows, pipeline stages, and automation strategy.
 
-#### Black
+- [Git Branching Strategy](docs/git-branching-strategy.md)  
+  Rules for branching model, merge strategy, and repository workflow standards.
 
-Used to enforce consistent Python code formatting.
+- [Features Overview](docs/features.md)  
+  List of implemented and planned framework features.
 
-```bash
-black .
-```
-
-#### isort
-
-Used to standardize and organize Python imports.
-
-```bash
-isort .
-```
+- [Roadmap](docs/roadmap.md)  
+  Long-term development plan and framework evolution strategy.
 
 ---
 
-### Automated Quality Gates
+### 📌 Navigation Notes
 
-#### pre-commit
-
-Pre-commit hooks automatically validate code quality before commits are created.
-
-Configured hooks currently include:
-
-* Ruff
-* Black
-* isort
-
-Run all hooks manually:
-
-```bash
-pre-commit run --all-files
-```
-
-Install hooks locally:
-
-```bash
-pre-commit install
-```
-
----
-
-### Code Quality & Development Tooling
-
-The framework uses automated quality tooling to enforce consistent code standards, improve maintainability, and support scalable development workflows.
-
-* Ruff (linting)
-* Black (code formatting)
-* isort (import standardization)
-* pre-commit hooks (automated local validation)
-* 
-### Quality Goals
-
-* Consistent code formatting
-* Readable and maintainable codebase
-* Automated local validation
-* Reduced formatting conflicts
-* Standardized development workflow
-
-
-## Roadmap
-
-This section outlines the planned evolution of the QA Automation Framework. The goal is to continuously transform this repository into a production-grade automation solution demonstrating modern QA engineering practices.
-
-### Short-Term Goals
-
-- Implement Page Object Model (POM) architecture
-- Expand UI test coverage for critical user flows
-- Add structured API testing layer
-- Improve test data management strategy
-- Enhance logging and debugging capabilities
-
----
-
-### Mid-Term Goals
-
-- Integrate Allure reporting with rich test reporting dashboards
-- Introduce parallel test execution optimization (pytest-xdist tuning)
-- Implement environment-based configuration management
-- Add Dockerized execution environment for reproducibility
-- Extend Selenium-based comparison module alongside Playwright
-
----
-
-### Long-Term Goals
-
-- CI/CD integration with GitHub Actions
-- Jenkins pipeline support for enterprise workflows
-- Cross-browser execution strategy (Chrome, Firefox, WebKit)
-- Advanced test analytics and reporting layer
-- Test execution visualization dashboard
-- Framework packaging as reusable automation template
-
----
-
-### Strategic Vision
-
-The long-term objective is to evolve this repository into a scalable, production-ready QA automation framework that demonstrates:
-
-- strong software engineering principles,
-- maintainable test architecture,
-- modern tooling and CI/CD practices,
-- cross-tool automation expertise (Playwright + Selenium),
-- readiness for enterprise-level QA environments.
+- Clickable links point directly to Markdown files in the repository
+- GitHub automatically renders `.md` files with preview
+- This structure simulates "documentation tabs" using repository navigation
+- All documentation is version-controlled alongside the framework
