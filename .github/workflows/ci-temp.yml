@@ -1,7 +1,7 @@
 name: QA Automation CI Pipeline
 
 on:
-  workflow_dispatch: 
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -39,5 +39,22 @@ jobs:
       - name: Run isort import validation
         run: isort . --check-only
 
-      - name: Run pytest test suite
-        run: pytest -v
+      - name: Run pytest test suite (with HTML report)
+        run: |
+          mkdir -p reports
+          pytest -v --html=reports/report.html --self-contained-html
+        continue-on-error: true
+
+      - name: Upload pytest HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-html-report
+          path: reports/report.html
+
+      - name: Upload reports directory (screenshots, logs, etc.)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-artifacts
+          path: reports/
