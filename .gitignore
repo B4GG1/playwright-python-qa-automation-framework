@@ -217,4 +217,10 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-reports/
+reports/*
+!reports/.gitkeep
+
+allure-results/
+allure-report/
+test-results/
+playwright-report/

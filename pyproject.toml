@@ -6,7 +6,7 @@ target-version = "py312"
 select = ["E", "F", "I"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["framework", "tests"]
+known-first-party = ["config", "framework", "pages", "test_data", "tests"]
 
 [tool.black]
 line-length = 100

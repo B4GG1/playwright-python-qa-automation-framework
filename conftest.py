@@ -1,8 +1,6 @@
 import os
 from datetime import datetime
 
-import Exception
-import print
 import pytest
 
 
