@@ -1,104 +1,185 @@
 # CI/CD Pipeline (GitHub Actions)
+
 ## Overview
 
-The project uses GitHub Actions (CI/CD automation system) to automatically validate code quality and execute the full test suite on every change pushed to the repository.
-
-CI/CD (Continuous Integration / Continuous Delivery) ensures that every change is automatically verified in a clean, isolated environment before being merged into the main branch.
+This project uses GitHub Actions as the main Continuous Integration (CI) pipeline.
+The pipeline automatically validates code quality, installs project dependencies, runs automated tests, generates test reports, and publishes test artifacts after each workflow execution.
+At the current stage, the project focuses on CI. Continuous Delivery / Deployment (CD) is not implemented yet and may be added later if the project requires deployment or publishing automation.
 
 ## CI Trigger Strategy
 
 The pipeline is executed automatically on:
-- ``` push ``` to ``` main ``` branch
-- ``` pull_request ``` targeting ``` main ``` branch
-- manual execution via ``` workflow_dispatch ```
 
-This ensures:
-- all production-like changes are validated 
-- pull requests are verified before merge 
+- `push` to the `main` branch
+- `push` to the `develop` branch
+- `pull_request` targeting the `main` branch
+- `pull_request` targeting the `develop` branch
+- manual execution via `workflow_dispatch`
+
+This ensures that:
+
+- stable branches are continuously validated
+- pull requests are checked before merge
 - manual debugging runs are possible when needed
+- both `develop` and `main` remain protected by automated checks
 
 ## Execution Environment
 
-Each pipeline run is executed on a fresh virtual machine:
-- Ubuntu latest 
-- Clean environment (no cached dependencies unless explicitly configured)
-- Isolated Python runtime
+Each pipeline run is executed on a fresh GitHub-hosted runner.
+
+Current execution environment:
+
+- Ubuntu latest
+- Python 3.12
+- isolated runtime environment
+- Playwright Chromium browser installed during pipeline execution
+
+The runner is temporary and is destroyed after the workflow finishes.
 
 ## Pipeline Stages
 
-The CI pipeline consists of the following stages:
+The CI pipeline consists of the following stages.
 
-1. Repository Checkout
-* Uses ``` actions/checkout ```
-* Downloads repository source code into runner
+### 1. Repository Checkout
 
-2. Python Setup
-* Uses ``` actions/setup-python ```
-* Installs Python 3.12 runtime environment
+The repository source code is downloaded into the GitHub Actions runner using:
 
-3. Dependency Installation
-* Installs project dependencies from ```requirements.txt```
-* Upgrades ``` pip ``` before installation
+- `actions/checkout`
 
-4. Browser Installation (Playwright)
-* Installs Chromium browser required for UI tests
-* Ensures consistent test execution environment
+### 2. Python Setup
 
-5. Code Quality Checks
-Automated static analysis tools:
-* __Ruff (linting)__
-* __Black (formatting)__
-* __isort (import sorting)__
-These steps ensure consistent coding standards across the project.
+Python runtime is installed using:
 
-6. Test Execution (Pytest)
-* Executes full test suite using ``` pytest ``` 
-* Runs UI automation tests (Playwright)
-* Uses verbose output for debugging (``` -v ```)
+- `actions/setup-python`
 
-Optional configuration:
-* HTML reports generation (``` pytest-html ```)
-* Failure screenshots capture
+Current Python version:
 
-## Test Artifacts (CI Outputs)
+- Python 3.12
 
-The pipeline can generate and store artifacts such as:
-* test execution reports (HTML reports)
-* screenshots from failed tests 
-* logs from test execution
+### 3. Dependency Installation
 
-Artifacts are published using __GitHub Actions Artifacts system__ and are available for download directly from the workflow run page.
+Project dependencies are installed from:
 
-## Artifact Retention Strategy
+- `requirements.txt`
 
-* Artifacts are generated only during CI execution 
-* Stored temporarily in GitHub Actions storage 
-* Used for debugging and test failure analysis 
-* Automatically removed after retention period (GitHub default unless configured otherwise)
+The pipeline also upgrades `pip` before installing project dependencies.
 
-## Branch Protection Strategy (CI Integration)
+### 4. Playwright Browser Installation
 
-CI is designed to support protected branch workflow:
-* ```main``` branch is the primary validated branch 
-* Changes should enter via Pull Requests 
-* CI must pass before merging (recommended future enforcement)
+Playwright browser dependencies are installed during the CI run.
 
-## Benefits of Current CI/CD Setup
+Currently installed browser:
 
-* automatic regression validation 
-* consistent execution environment 
-* early detection of bugs and linting issues 
-* reproducible test results 
-* improved debugging via artifacts 
-* foundation for future CD (deployment automation)
+- Chromium
+
+This ensures that UI tests can run in a clean Linux-based CI environment.
+
+### 5. Code Quality Checks
+
+The pipeline validates code quality using:
+
+- Ruff for linting
+- Black for formatting validation
+- isort for import sorting validation
+
+These checks ensure that code formatting and import organization remain consistent across the project.
+
+### 6. Test Execution
+
+Automated tests are executed using Pytest.
+
+The test command generates:
+
+- console output
+- HTML test report
+- screenshots on failure, if configured
+- files inside the `reports/` directory
+
+Current report location:
+
+- `reports/report.html`
+
+## Test Reports And Artifacts
+
+The pipeline uploads test execution outputs as GitHub Actions artifacts.
+
+Current artifacts include:
+
+- pytest HTML report
+- contents of the `reports/` directory
+- screenshots from failed tests, if generated
+
+Artifacts are available for download from the workflow run page in GitHub Actions.
+
+## Artifact Retention
+
+Artifacts are stored temporarily by GitHub Actions.
+
+They are used for:
+
+- debugging failed tests
+- reviewing test execution evidence
+- validating CI output
+- sharing reports without committing generated files to the repository
+
+Generated reports and screenshots should not be committed to Git.
+
+## Quality Gate Expectation
+
+The CI pipeline should act as a quality gate.
+
+Expected behavior:
+
+- linting failure should fail the pipeline
+- formatting failure should fail the pipeline
+- import sorting failure should fail the pipeline
+- test failure should fail the pipeline
+- artifacts should still be uploaded for debugging when failures occur
+
+Artifact upload steps should use `if: always()` so reports are preserved even when tests fail.
+
+## Branch Protection Strategy
+
+The CI pipeline supports the repository branching strategy.
+
+Recommended branch protection rules:
+
+### `main`
+
+- require pull request before merge
+- require CI pipeline to pass
+- disallow direct pushes
+- disallow force pushes
+
+### `develop`
+
+- require pull request before merge
+- require CI pipeline to pass
+- disallow direct pushes where practical
+
+For a solo portfolio project, full enforcement can be introduced gradually.
+
+## Benefits Of Current CI Setup
+
+The current CI setup provides:
+
+- automated validation on repository changes
+- consistent execution environment
+- early detection of linting and formatting issues
+- automated test execution
+- downloadable reports and artifacts
+- foundation for future CI/CD improvements
 
 ## Future Improvements
 
-Planned CI/CD enhancements:
-* Allure reporting integration 
-* parallel test execution
-* Docker-based test environment 
-* test caching for faster builds 
-* deployment pipeline (CD stage)
-* multi-browser execution (Chromium, Firefox, WebKit)
-* test history tracking & analytics
+Planned CI improvements include:
+
+- installing dependencies from a locked requirements file
+- dependency caching for faster pipeline execution
+- Playwright browser caching
+- JUnit XML test result publishing
+- Allure reporting integration
+- parallel test execution
+- multi-browser execution
+- Docker-based execution environment
+- advanced test analytics and history tracking

@@ -106,7 +106,7 @@ pytest -k smoke -v
 ```bash
 ruff check .
 black --check .
-isort .
+isort . --check-only
 pre-commit run --all-files
 ```
 
@@ -114,30 +114,41 @@ pre-commit run --all-files
 
 All extended project documentation is stored in the `docs/` directory to keep the README lightweight and focused on high-level information.
 
-Each document is separated by domain to improve readability, maintainability, and navigation.
+### Core Documentation
 
-### 📁 Available Documentation
-
-- [Quality Tooling](docs/quality-tooling.md)  
-  Details about code quality tools such as Ruff, Black, isort, and pre-commit hooks.
-
-- [Technology Stack](docs/technology-stack.md)  
-  Overview of core technologies, tooling, CI/CD, and future integrations.
+- [Architecture](docs/architecture.md)  
+  Overview of the framework architecture, layers, and design direction.
 
 - [Framework and Project Structure](docs/framework-and-project-structure.md)  
-  Explanation of folder architecture, design decisions, and scalability approach.
+  Explanation of folder structure, responsibilities, and repository organization.
 
-- [CI/CD Pipeline](docs/ci-cd-pipeline.md)  
-  Description of GitHub Actions workflows, pipeline stages, and automation strategy.
+- [Technology Stack](docs/technology-stack.md)  
+  Overview of implemented and planned technologies.
+
+### Engineering Workflow
 
 - [Git Branching Strategy](docs/git-branching-strategy.md)  
-  Rules for branching model, merge strategy, and repository workflow standards.
+  Branching model, merge strategy, and repository workflow standards.
+
+- [Workflow](docs/workflow.md)  
+  Day-to-day development workflow for working with branches, commits, pull requests, and CI.
+
+- [CI/CD Pipeline](docs/ci-cd-pipeline.md)  
+  GitHub Actions workflow, pipeline stages, reports, and artifacts.
+
+- [Quality Tooling](docs/quality-tooling.md)  
+  Ruff, Black, isort, and pre-commit configuration.
+
+### Testing & Planning
+
+- [Testing Strategy](docs/testing-strategy.md)  
+  Test types, test design principles, and automation approach.
 
 - [Features Overview](docs/features.md)  
-  List of implemented and planned framework features.
+  Implemented and planned framework capabilities.
 
 - [Roadmap](docs/roadmap.md)  
-  Long-term development plan and framework evolution strategy.
+  Development phases and long-term project direction.
 
 ---
 

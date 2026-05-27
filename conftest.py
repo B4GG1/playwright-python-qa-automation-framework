@@ -1,11 +1,13 @@
 import os
 from datetime import datetime
 
+import Exception
+import print
 import pytest
 
 
 @pytest.hookimpl(hookwrapper=True)
-def pytest_runtest_makereport(item, call):
+def pytest_runtest_make_report(item, call):
     outcome = yield
     report = outcome.get_result()
 
