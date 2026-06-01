@@ -9,6 +9,9 @@ from test_data.login_test_data import EMPTY_LOGIN_CASES, INVALID_LOGIN_CASES, LO
 INVENTORY_URL_PATTERN = re.compile(r".*inventory.html")
 
 
+@pytest.mark.regression
+@pytest.mark.ui
+@pytest.mark.negative
 @pytest.mark.parametrize(
     "case", INVALID_LOGIN_CASES, ids=[case["case_id"] for case in INVALID_LOGIN_CASES]
 )
@@ -20,6 +23,9 @@ def test_login_with_invalid_credentials(page: Page, case):
     assert login_page.get_error_message() == case["expected_error"]
 
 
+@pytest.mark.regression
+@pytest.mark.ui
+@pytest.mark.negative
 @pytest.mark.parametrize(
     "case", EMPTY_LOGIN_CASES, ids=[case["case_id"] for case in EMPTY_LOGIN_CASES]
 )
@@ -31,6 +37,9 @@ def test_login_with_empty_credentials(page: Page, case):
     assert login_page.get_error_message() == case["expected_error"]
 
 
+@pytest.mark.regression
+@pytest.mark.ui
+@pytest.mark.negative
 def test_login_for_locked_out_user(page: Page):
     login_page = LoginPage(page)
     login_page.open()
