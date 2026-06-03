@@ -19,7 +19,7 @@ from test_data.login_test_data import (
 def test_login_with_invalid_credentials(opened_login_page: LoginPage, case):
     opened_login_page.login(case["username"], case["password"])
     expect(opened_login_page.page).not_to_have_url(INVENTORY_URL_PATTERN)
-    assert opened_login_page.get_error_message() == case["expected_error"]
+    assert opened_login_page.get_error_message_text() == case["expected_error"]
 
 
 @pytest.mark.regression
@@ -31,7 +31,7 @@ def test_login_with_invalid_credentials(opened_login_page: LoginPage, case):
 def test_login_with_empty_credentials(opened_login_page: LoginPage, case):
     opened_login_page.login(case["username"], case["password"])
     expect(opened_login_page.page).not_to_have_url(INVENTORY_URL_PATTERN)
-    assert opened_login_page.get_error_message() == case["expected_error"]
+    assert opened_login_page.get_error_message_text() == case["expected_error"]
 
 
 @pytest.mark.regression
@@ -43,4 +43,4 @@ def test_login_with_empty_credentials(opened_login_page: LoginPage, case):
 def test_login_for_locked_out_user(opened_login_page: LoginPage, case):
     opened_login_page.login(case["username"], case["password"])
     expect(opened_login_page.page).not_to_have_url(INVENTORY_URL_PATTERN)
-    assert opened_login_page.get_error_message() == case["expected_error"]
+    assert opened_login_page.get_error_message_text() == case["expected_error"]
