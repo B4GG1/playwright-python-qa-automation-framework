@@ -4,7 +4,7 @@ import pytest
 from playwright.sync_api import expect
 
 from pages.login_page import LoginPage
-from test_data.login_test_data import INVALID_LOGIN_CASES, INVENTORY_URL_PATTERN
+from test_data.login_test_data import INVALID_LOGIN_CASES, INVENTORY_URL_SUFFIX
 
 
 @pytest.mark.smoke
@@ -29,7 +29,7 @@ def test_login_page_elements_are_visible(opened_login_page: LoginPage, _case_id:
 )
 def test_error_message_can_be_closed(opened_login_page: LoginPage, _case_id: str):
     opened_login_page.login(INVALID_LOGIN_CASES[0]["username"], INVALID_LOGIN_CASES[0]["password"])
-    expect(opened_login_page.page).not_to_have_url(re.compile(rf".*{INVENTORY_URL_PATTERN}"))
+    expect(opened_login_page.page).not_to_have_url(re.compile(rf".*{INVENTORY_URL_SUFFIX}"))
     expect(opened_login_page.get_error_message()).to_be_visible()
     opened_login_page.close_error_message()
     expect(opened_login_page.get_error_message()).to_be_hidden()

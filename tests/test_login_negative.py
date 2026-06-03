@@ -7,7 +7,7 @@ from pages.login_page import LoginPage
 from test_data.login_test_data import (
     EMPTY_LOGIN_CASES,
     INVALID_LOGIN_CASES,
-    INVENTORY_URL_PATTERN,
+    INVENTORY_URL_SUFFIX,
     LOCKED_OUT_USER_CASES,
 )
 
@@ -20,7 +20,7 @@ from test_data.login_test_data import (
 )
 def test_login_with_invalid_credentials(opened_login_page: LoginPage, case):
     opened_login_page.login(case["username"], case["password"])
-    expect(opened_login_page.page).not_to_have_url(re.compile(rf".*{INVENTORY_URL_PATTERN}"))
+    expect(opened_login_page.page).not_to_have_url(re.compile(rf".*{INVENTORY_URL_SUFFIX}"))
     assert opened_login_page.get_error_message_text() == case["expected_error"]
 
 
@@ -32,7 +32,7 @@ def test_login_with_invalid_credentials(opened_login_page: LoginPage, case):
 )
 def test_login_with_empty_credentials(opened_login_page: LoginPage, case):
     opened_login_page.login(case["username"], case["password"])
-    expect(opened_login_page.page).not_to_have_url(re.compile(rf".*{INVENTORY_URL_PATTERN}"))
+    expect(opened_login_page.page).not_to_have_url(re.compile(rf".*{INVENTORY_URL_SUFFIX}"))
     assert opened_login_page.get_error_message_text() == case["expected_error"]
 
 
@@ -44,5 +44,5 @@ def test_login_with_empty_credentials(opened_login_page: LoginPage, case):
 )
 def test_login_for_locked_out_user(opened_login_page: LoginPage, case):
     opened_login_page.login(case["username"], case["password"])
-    expect(opened_login_page.page).not_to_have_url(re.compile(rf".*{INVENTORY_URL_PATTERN}"))
+    expect(opened_login_page.page).not_to_have_url(re.compile(rf".*{INVENTORY_URL_SUFFIX}"))
     assert opened_login_page.get_error_message_text() == case["expected_error"]

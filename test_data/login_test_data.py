@@ -1,4 +1,4 @@
-INVENTORY_URL_PATTERN = "inventory.html"
+INVENTORY_URL_SUFFIX = "inventory.html"
 
 INVALID_CREDENTIALS_ERROR = (
     "Epic sadface: Username and password do not match any user in this service"
