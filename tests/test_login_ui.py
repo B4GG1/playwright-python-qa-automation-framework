@@ -1,3 +1,5 @@
+import re
+
 import pytest
 from playwright.sync_api import expect
 
@@ -25,9 +27,9 @@ def test_login_page_elements_are_visible(opened_login_page: LoginPage, _case_id:
     ["TC-LOGIN-009"],
     ids=["TC-LOGIN-009"],
 )
-def test_error_message_can_be_close(opened_login_page: LoginPage, _case_id: str):
+def test_error_message_can_be_closed(opened_login_page: LoginPage, _case_id: str):
     opened_login_page.login(INVALID_LOGIN_CASES[0]["username"], INVALID_LOGIN_CASES[0]["password"])
-    expect(opened_login_page.page).not_to_have_url(INVENTORY_URL_PATTERN)
+    expect(opened_login_page.page).not_to_have_url(re.compile(rf".*{INVENTORY_URL_PATTERN}"))
     expect(opened_login_page.get_error_message()).to_be_visible()
     opened_login_page.close_error_message()
     expect(opened_login_page.get_error_message()).to_be_hidden()

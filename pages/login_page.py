@@ -36,8 +36,8 @@ class LoginPage:
     def get_credentials_container(self) -> Locator:
         return self.page.locator('[data-test="login-credentials-container"]')
 
-    def get_login_form_container(self) -> Locator:
+    def get_login_credentials_hint(self) -> Locator:
         return self.page.locator('[data-test="login-credentials"]')
 
-    def get_password_form_container(self):
+    def get_password_hint(self) -> Locator:
         return self.page.locator('[data-test="login-password"]')
