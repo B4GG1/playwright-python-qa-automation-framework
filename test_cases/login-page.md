@@ -3,23 +3,26 @@
 ## Overview
 
 This document contains manual test cases for the Sauce Demo login page.
-The goal of this document is to define login-related test scenarios before automation implementation.
+The goal of this document is to define login-related test scenarios before and alongside automation implementation.
 
-## List of Test Cases
+## Test Case Overview And Automation Coverage
 
-* [TC-LOGIN-001 — Successful login with valid credentials](#tc-login-001--successful-login-with-valid-credentials)
-* [TC-LOGIN-002 — Login with invalid username](#tc-login-002--login-with-invalid-username)
-* [TC-LOGIN-003 — Login with invalid password](#tc-login-003--login-with-invalid-password)
-* [TC-LOGIN-004 — Login with empty username](#tc-login-004--login-with-empty-username)
-* [TC-LOGIN-005 — Login with empty password](#tc-login-005--login-with-empty-password)
-* [TC-LOGIN-006 — Login with empty credentials](#tc-login-006--login-with-empty-credentials)
-* [TC-LOGIN-007 — Locked out user login attempt](#tc-login-007--locked-out-user-login-attempt)
-* [TC-LOGIN-008 — Login with invalid username and invalid password](#tc-login-008--login-with-invalid-username-and-invalid-password)
-* [TC-LOGIN-009 — Error message can be closed after failed login](#tc-login-009--error-message-can-be-closed-after-failed-login)
-* [TC-LOGIN-010 — Login page elements are visible](#tc-login-010--login-page-elements-are-visible)
-* [TC-LOGIN-011 — Password field masks entered characters](#tc-login-011--password-field-masks-entered-characters)
-* [TC-LOGIN-012 — Login form can be submitted with Enter key](#tc-login-012--login-form-can-be-submitted-with-enter-key)
-* [TC-LOGIN-013 — Direct access to inventory page without login is blocked](#tc-login-013--direct-access-to-inventory-page-without-login-is-blocked)
+| Test Case ID                                                                            | Scenario                                                 | Type                       | Priority | Automation Status | Automated In                         |
+| --------------------------------------------------------------------------------------- | -------------------------------------------------------- | -------------------------- | -------- | ----------------- | ------------------------------------ |
+| [TC-LOGIN-001](#tc-login-001--successful-login-with-valid-credentials)                  | Successful login with valid credentials                  | Smoke / Positive           | High     | Automated         | `tests/test_login_positive.py`       |
+| [TC-LOGIN-002](#tc-login-002--login-with-invalid-username)                              | Login with invalid username                              | Regression / Negative      | Medium   | Automated         | `tests/test_login_negative.py`       |
+| [TC-LOGIN-003](#tc-login-003--login-with-invalid-password)                              | Login with invalid password                              | Regression / Negative      | Medium   | Automated         | `tests/test_login_negative.py`       |
+| [TC-LOGIN-004](#tc-login-004--login-with-empty-username)                                | Login with empty username                                | Regression / Negative      | Medium   | Automated         | `tests/test_login_negative.py`       |
+| [TC-LOGIN-005](#tc-login-005--login-with-empty-password)                                | Login with empty password                                | Regression / Negative      | Medium   | Automated         | `tests/test_login_negative.py`       |
+| [TC-LOGIN-006](#tc-login-006--login-with-empty-credentials)                             | Login with empty credentials                             | Regression / Negative      | Medium   | Automated         | `tests/test_login_negative.py`       |
+| [TC-LOGIN-007](#tc-login-007--locked-out-user-login-attempt)                            | Locked out user login attempt                            | Regression / Negative      | Medium   | Automated         | `tests/test_login_negative.py`       |
+| [TC-LOGIN-008](#tc-login-008--login-with-invalid-username-and-invalid-password)         | Login with invalid username and invalid password         | Regression / Negative      | Medium   | Automated         | `tests/test_login_negative.py`       |
+| [TC-LOGIN-009](#tc-login-009--error-message-can-be-closed-after-failed-login)           | Error message can be closed after failed login           | UI / Regression            | Medium   | Automated         | `tests/test_login_ui.py`             |
+| [TC-LOGIN-010](#tc-login-010--login-page-elements-are-visible)                          | Login page elements are visible                          | Smoke / UI                 | High     | Automated         | `tests/test_login_ui.py`             |
+| [TC-LOGIN-011](#tc-login-011--password-field-masks-entered-characters)                  | Password field masks entered characters                  | UI / Regression            | Medium   | Automated         | `tests/test_login_ui.py`             |
+| [TC-LOGIN-012](#tc-login-012--login-form-can-be-submitted-with-enter-key)               | Login form can be submitted with Enter key               | UI / Positive / Regression | Medium   | Automated         | `tests/test_login_positive.py`       |
+| [TC-LOGIN-013](#tc-login-013--direct-access-to-inventory-page-without-login-is-blocked) | Direct access to inventory page without login is blocked | Regression / Security      | High     | Automated         | `tests/test_login_access_control.py` |
+
 
 ---
 
@@ -30,6 +33,8 @@ The goal of this document is to define login-related test scenarios before autom
 **Type:** Smoke / Positive
 **Priority:** High
 **Automation Candidate:** Yes
+**Automation Status:** Automated
+**Automated In:** `tests/test_login_positive.py`
 
 **Preconditions:**
 
@@ -37,8 +42,8 @@ The goal of this document is to define login-related test scenarios before autom
 
 **Test Data:**
 
-* Username: standard_user
-* Password: secret_sauce
+* Username: `standard_user`
+* Password: `secret_sauce`
 
 **Steps:**
 
@@ -62,6 +67,8 @@ The goal of this document is to define login-related test scenarios before autom
 **Type:** Regression / Negative
 **Priority:** Medium
 **Automation Candidate:** Yes
+**Automation Status:** Automated
+**Automated In:** `tests/test_login_negative.py`
 
 **Preconditions:**
 
@@ -69,8 +76,8 @@ The goal of this document is to define login-related test scenarios before autom
 
 **Test Data:**
 
-* Username: invalid_username
-* Password: secret_sauce
+* Username: `invalid_user`
+* Password: `secret_sauce`
 
 **Steps:**
 
@@ -84,10 +91,15 @@ The goal of this document is to define login-related test scenarios before autom
 * Red, closable error message is displayed under the login form.
 * Login and password fields are visually marked as invalid.
 
+**Expected Error Message:**
+
+```text
+Epic sadface: Username and password do not match any user in this service
+```
+
 **Notes:**
 
-* Error message should contain the following text:
-  "Epic sadface: Username and password do not match any user in this service"
+* This scenario validates username/password mismatch handling.
 
 ---
 
@@ -96,6 +108,8 @@ The goal of this document is to define login-related test scenarios before autom
 **Type:** Regression / Negative
 **Priority:** Medium
 **Automation Candidate:** Yes
+**Automation Status:** Automated
+**Automated In:** `tests/test_login_negative.py`
 
 **Preconditions:**
 
@@ -103,8 +117,8 @@ The goal of this document is to define login-related test scenarios before autom
 
 **Test Data:**
 
-* Username: standard_user
-* Password: invalid_password
+* Username: `standard_user`
+* Password: `invalid_password`
 
 **Steps:**
 
@@ -118,10 +132,15 @@ The goal of this document is to define login-related test scenarios before autom
 * Red, closable error message is displayed under the login form.
 * Login and password fields are visually marked as invalid.
 
+**Expected Error Message:**
+
+```text
+Epic sadface: Username and password do not match any user in this service
+```
+
 **Notes:**
 
-* Error message should contain the following text:
-  "Epic sadface: Username and password do not match any user in this service"
+* This scenario validates invalid password handling.
 
 ---
 
@@ -130,6 +149,8 @@ The goal of this document is to define login-related test scenarios before autom
 **Type:** Regression / Negative
 **Priority:** Medium
 **Automation Candidate:** Yes
+**Automation Status:** Automated
+**Automated In:** `tests/test_login_negative.py`
 
 **Preconditions:**
 
@@ -138,7 +159,7 @@ The goal of this document is to define login-related test scenarios before autom
 **Test Data:**
 
 * Username: empty
-* Password: secret_sauce
+* Password: `secret_sauce`
 
 **Steps:**
 
@@ -152,10 +173,15 @@ The goal of this document is to define login-related test scenarios before autom
 * Red, closable error message is displayed under the login form.
 * Login and password fields are visually marked as invalid.
 
+**Expected Error Message:**
+
+```text
+Epic sadface: Username is required
+```
+
 **Notes:**
 
-* Error message should contain the following text:
-  "Epic sadface: Username is required"
+* This scenario validates required username field behavior.
 
 ---
 
@@ -164,6 +190,8 @@ The goal of this document is to define login-related test scenarios before autom
 **Type:** Regression / Negative
 **Priority:** Medium
 **Automation Candidate:** Yes
+**Automation Status:** Automated
+**Automated In:** `tests/test_login_negative.py`
 
 **Preconditions:**
 
@@ -171,7 +199,7 @@ The goal of this document is to define login-related test scenarios before autom
 
 **Test Data:**
 
-* Username: standard_user
+* Username: `standard_user`
 * Password: empty
 
 **Steps:**
@@ -186,10 +214,15 @@ The goal of this document is to define login-related test scenarios before autom
 * Red, closable error message is displayed under the login form.
 * Login and password fields are visually marked as invalid.
 
+**Expected Error Message:**
+
+```text
+Epic sadface: Password is required
+```
+
 **Notes:**
 
-* Error message should contain the following text:
-  "Epic sadface: Password is required"
+* This scenario validates required password field behavior.
 
 ---
 
@@ -198,6 +231,8 @@ The goal of this document is to define login-related test scenarios before autom
 **Type:** Regression / Negative
 **Priority:** Medium
 **Automation Candidate:** Yes
+**Automation Status:** Automated
+**Automated In:** `tests/test_login_negative.py`
 
 **Preconditions:**
 
@@ -220,10 +255,15 @@ The goal of this document is to define login-related test scenarios before autom
 * Red, closable error message is displayed under the login form.
 * Login and password fields are visually marked as invalid.
 
+**Expected Error Message:**
+
+```text
+Epic sadface: Username is required
+```
+
 **Notes:**
 
-* Error message should contain the following text:
-  "Epic sadface: Username is required"
+* When both fields are empty, the username validation message is displayed first.
 
 ---
 
@@ -232,6 +272,8 @@ The goal of this document is to define login-related test scenarios before autom
 **Type:** Regression / Negative
 **Priority:** Medium
 **Automation Candidate:** Yes
+**Automation Status:** Automated
+**Automated In:** `tests/test_login_negative.py`
 
 **Preconditions:**
 
@@ -239,8 +281,8 @@ The goal of this document is to define login-related test scenarios before autom
 
 **Test Data:**
 
-* Username: locked_out_user
-* Password: secret_sauce
+* Username: `locked_out_user`
+* Password: `secret_sauce`
 
 **Steps:**
 
@@ -254,10 +296,15 @@ The goal of this document is to define login-related test scenarios before autom
 * Red, closable error message is displayed under the login form.
 * Login and password fields are visually marked as invalid.
 
+**Expected Error Message:**
+
+```text
+Epic sadface: Sorry, this user has been locked out.
+```
+
 **Notes:**
 
-* Error message should contain the following text:
-  "Epic sadface: Sorry, this user has been locked out."
+* This scenario validates application behavior for a blocked user account.
 
 ---
 
@@ -266,6 +313,8 @@ The goal of this document is to define login-related test scenarios before autom
 **Type:** Regression / Negative
 **Priority:** Medium
 **Automation Candidate:** Yes
+**Automation Status:** Automated
+**Automated In:** `tests/test_login_negative.py`
 
 **Preconditions:**
 
@@ -273,8 +322,8 @@ The goal of this document is to define login-related test scenarios before autom
 
 **Test Data:**
 
-* Username: invalid_user
-* Password: invalid_sauce
+* Username: `invalid_user`
+* Password: `invalid_sauce`
 
 **Steps:**
 
@@ -288,10 +337,15 @@ The goal of this document is to define login-related test scenarios before autom
 * Red, closable error message is displayed under the login form.
 * Login and password fields are visually marked as invalid.
 
+**Expected Error Message:**
+
+```text
+Epic sadface: Username and password do not match any user in this service
+```
+
 **Notes:**
 
-* Error message should contain the following text:
-  "Epic sadface: Username and password do not match any user in this service"
+* This scenario validates behavior when both username and password are invalid.
 
 ---
 
@@ -300,33 +354,37 @@ The goal of this document is to define login-related test scenarios before autom
 **Type:** UI / Regression
 **Priority:** Medium
 **Automation Candidate:** Yes
+**Automation Status:** Automated
+**Automated In:** `tests/test_login_ui.py`
 
 **Preconditions:**
 
 * User is on the login page.
-* Failed login attempt has already triggered an error message.
+* Failed login attempt has triggered an error message.
 
 **Test Data:**
 
-* Username: invalid_user
-* Password: invalid_sauce
+* Username: `invalid_user`
+* Password: `secret_sauce`
 
 **Steps:**
 
 1. Enter invalid username.
-2. Enter invalid password.
+2. Enter valid password.
 3. Click the Login button.
-4. Click the close button on the error message.
+4. Verify that the error message is visible.
+5. Click the close button on the error message.
 
 **Expected Result:**
 
 * User remains on the login page.
-* Error message disappears.
-* Login and password fields are no longer visually marked as invalid.
+* Error message is visible after failed login.
+* Error message disappears after clicking the close button.
 
 **Notes:**
 
 * This scenario validates basic error message interaction.
+* The automated test verifies that the error message becomes hidden after closing it.
 
 ---
 
@@ -335,6 +393,8 @@ The goal of this document is to define login-related test scenarios before autom
 **Type:** Smoke / UI
 **Priority:** High
 **Automation Candidate:** Yes
+**Automation Status:** Automated
+**Automated In:** `tests/test_login_ui.py`
 
 **Preconditions:**
 
@@ -355,7 +415,7 @@ The goal of this document is to define login-related test scenarios before autom
 * Username input field is visible.
 * Password input field is visible.
 * Login button is visible.
-* Login form is displayed correctly.
+* Login page credential information section is visible.
 
 **Notes:**
 
@@ -365,9 +425,11 @@ The goal of this document is to define login-related test scenarios before autom
 
 ### TC-LOGIN-011 — Password field masks entered characters
 
-**Type:** UI
+**Type:** UI / Regression
 **Priority:** Medium
 **Automation Candidate:** Yes
+**Automation Status:** Automated
+**Automated In:** `tests/test_login_ui.py`
 
 **Preconditions:**
 
@@ -376,7 +438,7 @@ The goal of this document is to define login-related test scenarios before autom
 **Test Data:**
 
 * Username: N/A
-* Password: secret_sauce
+* Password: `secret_sauce`
 
 **Steps:**
 
@@ -385,20 +447,25 @@ The goal of this document is to define login-related test scenarios before autom
 
 **Expected Result:**
 
-* Entered password is not displayed as plain text.
-* Password field masks the entered characters.
+* Password field is visible.
+* Password field is configured as a password input.
+* Entered password is not displayed as plain text to the user.
 
-**Notes:**
+**Automation Note:**
 
-* This is a basic UI/security-related validation.
+* Automated validation verifies the technical masking mechanism by checking that the password input uses `type="password"`.
+* Visual representation of masked characters is browser-native behavior and is not validated by screenshot comparison.
+* The input value may still be technically readable by automation tools, but the field configuration ensures browser-level visual masking.
 
 ---
 
 ### TC-LOGIN-012 — Login form can be submitted with Enter key
 
-**Type:** UI / Positive
+**Type:** UI / Positive / Regression
 **Priority:** Medium
-**Automation Candidate:** Later
+**Automation Candidate:** Yes
+**Automation Status:** Automated
+**Automated In:** `tests/test_login_positive.py`
 
 **Preconditions:**
 
@@ -406,14 +473,14 @@ The goal of this document is to define login-related test scenarios before autom
 
 **Test Data:**
 
-* Username: standard_user
-* Password: secret_sauce
+* Username: `standard_user`
+* Password: `secret_sauce`
 
 **Steps:**
 
 1. Enter valid username.
 2. Enter valid password.
-3. Press Enter while focus is inside the login form.
+3. Press Enter while focus is inside the password field.
 
 **Expected Result:**
 
@@ -424,7 +491,7 @@ The goal of this document is to define login-related test scenarios before autom
 **Notes:**
 
 * This test validates keyboard-based form submission.
-* Automation priority can be decided later after core login scenarios are implemented.
+* This scenario supports basic UX and accessibility-oriented validation.
 
 ---
 
@@ -433,6 +500,8 @@ The goal of this document is to define login-related test scenarios before autom
 **Type:** Regression / Security
 **Priority:** High
 **Automation Candidate:** Yes
+**Automation Status:** Automated
+**Automated In:** `tests/test_login_access_control.py`
 
 **Preconditions:**
 
@@ -443,6 +512,7 @@ The goal of this document is to define login-related test scenarios before autom
 
 * Username: N/A
 * Password: N/A
+* Direct URL: `https://www.saucedemo.com/inventory.html`
 
 **Steps:**
 
@@ -454,6 +524,13 @@ The goal of this document is to define login-related test scenarios before autom
 * Inventory page is not accessible.
 * Error message informs the user that login is required.
 
+**Expected Error Message:**
+
+```text
+Epic sadface: You can only access '/inventory.html' when you are logged in.
+```
+
 **Notes:**
 
 * This scenario validates basic access control for protected application pages.
+* The automated test uses a fresh browser context provided by Playwright, so no additional session cleanup is required in the current setup.
