@@ -1,3 +1,7 @@
+import re
+
+INVENTORY_URL_PATTERN = re.compile(r".*inventory.html")
+
 INVALID_CREDENTIALS_ERROR = (
     "Epic sadface: Username and password do not match any user in this service"
 )
@@ -6,13 +10,18 @@ USERNAME_REQUIRED_ERROR = "Epic sadface: Username is required"
 PASSWORD_REQUIRED_ERROR = "Epic sadface: Password is required"
 
 
-VALID_USER = {"username": "standard_user", "password": "secret_sauce"}
+VALID_USER_CASES = [
+    {"case_id": "TC-LOGIN-001", "username": "standard_user", "password": "secret_sauce"}
+]
 
-LOCKED_OUT_USER = {
-    "username": "locked_out_user",
-    "password": "secret_sauce",
-    "expected_error": LOCKED_OUT_USER_ERROR,
-}
+LOCKED_OUT_USER_CASES = [
+    {
+        "case_id": "TC-LOGIN-007",
+        "username": "locked_out_user",
+        "password": "secret_sauce",
+        "expected_error": LOCKED_OUT_USER_ERROR,
+    }
+]
 
 INVALID_LOGIN_CASES = [
     {

@@ -1,4 +1,4 @@
-from playwright.sync_api import Page
+from playwright.sync_api import Locator, Page
 
 
 class LoginPage:
@@ -11,10 +11,27 @@ class LoginPage:
         self.page.goto(self.URL)
 
     def login(self, username: str, password: str) -> None:
-        self.page.locator('[data-test="username"]').fill(username)
-        self.page.locator('[data-test="password"]').fill(password)
-        self.page.locator('[data-test="login-button"]').click()
+        self.get_username_input().fill(username)
+        self.get_password_input().fill(password)
+        self.get_login_button().click()
 
     def get_error_message(self) -> str:
-        message = self.page.locator('[data-test="error"]')
-        return message.inner_text()
+        return self.page.locator('[data-test="error"]').inner_text()
+
+    def get_username_input(self) -> Locator:
+        return self.page.locator('[data-test="username"]')
+
+    def get_password_input(self) -> Locator:
+        return self.page.locator('[data-test="password"]')
+
+    def get_login_button(self) -> Locator:
+        return self.page.locator('[data-test="login-button"]')
+
+    def get_credentials_container(self) -> Locator:
+        return self.page.locator('[data-test="login-credentials-container"]')
+
+    def get_login_form_container(self) -> Locator:
+        return self.page.locator('[data-test="login-credentials"]')
+
+    def get_password_form_container(self):
+        return self.page.locator('[data-test="login-password"]')
