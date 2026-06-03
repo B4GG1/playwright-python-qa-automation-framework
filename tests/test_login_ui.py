@@ -31,3 +31,18 @@ def test_error_message_can_be_close(opened_login_page: LoginPage, _case_id: str)
     expect(opened_login_page.get_error_message()).to_be_visible()
     opened_login_page.close_error_message()
     expect(opened_login_page.get_error_message()).to_be_hidden()
+
+
+@pytest.mark.ui
+@pytest.mark.regression
+@pytest.mark.parametrize(
+    "_case_id",
+    ["TC-LOGIN-011"],
+    ids=["TC-LOGIN-011"],
+)
+def test_password_field_masking_input(opened_login_page: LoginPage, _case_id: str):
+    password_field = opened_login_page.get_password_input()
+    expect(password_field).to_be_visible()
+    expect(password_field).to_have_attribute("type", "password")
+    password_field.fill("secret_sauce")
+    expect(password_field).to_have_attribute("type", "password")
