@@ -2,6 +2,9 @@ import os
 from datetime import datetime
 
 import pytest
+from playwright.sync_api import Page
+
+from pages.login_page import LoginPage
 
 
 @pytest.hookimpl(hookwrapper=True)
@@ -28,3 +31,10 @@ def pytest_runtest_makereport(item, call):
         page.screenshot(path=file_path, full_page=True)
     except Exception as e:
         print(f"[screenshot-error] {test_name}: {e}")
+
+
+@pytest.fixture()
+def opened_login_page(page: Page) -> LoginPage:
+    login_page = LoginPage(page)
+    login_page.open()
+    return login_page

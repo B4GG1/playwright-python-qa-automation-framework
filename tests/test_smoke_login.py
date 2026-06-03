@@ -1,19 +1,11 @@
-from playwright.sync_api import Page, expect
+import pytest
+from playwright.sync_api import expect
+
+from pages.login_page import LoginPage
 
 
-def test_sauce_demo_smoke(page: Page):
-    # Arrange
-    url = "https://www.saucedemo.com/"
-    # Act
-    page.goto(url)
-    # Assert
-    expect(page).to_have_title("Swag Labs")
-
-
-# def test_sauce_demo_fail_check(page: Page):
-#     # Arrange
-#     url = "https://www.saucedemo.com/"
-#     # Act
-#     page.goto(url)
-#     # Assert
-#     expect(page).to_have_title("WRONG")
+@pytest.mark.smoke
+@pytest.mark.ui
+@pytest.mark.parametrize("_case_id", ["SMOKE"], ids=["SMOKE"])
+def test_sauce_demo_smoke(opened_login_page: LoginPage, _case_id: str):
+    expect(opened_login_page.page).to_have_title("Swag Labs")
