@@ -1,7 +1,8 @@
 # Framework And Project Structure
 
 This document describes the repository structure and the responsibility of each major directory and configuration file.
-The framework is structured to support scalable UI automation, test data management, reporting, documentation, and future CI/CD expansion while maintaining readability and modularity.
+
+The framework is structured to support scalable UI automation, Page Object Model components, test data management, reporting, documentation, and future CI/CD expansion while maintaining readability and modularity.
 
 ## Current Project Structure
 
@@ -40,22 +41,26 @@ Contains GitHub Actions workflow definitions.
 
 Current responsibility:
 
-- CI pipeline execution
-- dependency installation
-- quality checks
-- test execution
-- artifact upload
+* CI pipeline execution
+* dependency installation
+* code quality checks
+* test execution
+* HTML report generation
+* artifact upload
 
 ### `config/`
 
 Reserved for framework and environment configuration.
 
-Planned responsibility:
+Potential future responsibility:
 
-- environment variables handling
-- base URLs
-- browser settings
-- execution configuration
+* environment variables handling
+* base URLs
+* browser settings
+* execution configuration
+* test environment profiles
+
+This directory is currently intentionally minimal.
 
 ### `docs/`
 
@@ -63,35 +68,45 @@ Contains technical project documentation.
 
 Examples:
 
-- architecture documentation
-- workflow documentation
-- CI/CD documentation
-- quality tooling documentation
-- testing strategy
-- roadmap
+* architecture documentation
+* workflow documentation
+* CI/CD documentation
+* quality tooling documentation
+* testing strategy
+* roadmap
+* framework structure documentation
 
 ### `framework/`
 
 Reserved for shared framework-level utilities and base components.
 
-Planned responsibility:
+Potential future responsibility:
 
-- BasePage abstraction
-- shared helpers
-- reusable assertions
-- reporting utilities
-- common framework logic
+* BasePage abstraction
+* shared helpers
+* reusable assertions
+* reporting utilities
+* logging utilities
+* common framework logic
+
+This directory is currently intentionally minimal and should only be expanded when repeated framework logic appears.
 
 ### `pages/`
 
-Reserved for Page Object Model classes.
+Contains Page Object Model classes.
 
-Planned responsibility:
+Current implementation:
 
-- page-specific locators
-- page interaction methods
-- reusable UI actions
-- separation of page logic from test logic
+* `login_page.py`
+
+Current responsibility:
+
+* page-specific locators
+* page interaction methods
+* reusable UI actions
+* separation of page interaction logic from test logic
+
+The current Page Object layer includes `LoginPage`, which supports login page interactions, error message handling, and access to login page UI elements.
 
 ### `reports/`
 
@@ -99,10 +114,10 @@ Stores runtime test outputs.
 
 Examples:
 
-- HTML reports
-- screenshots
-- logs
-- CI artifact sources
+* HTML reports
+* screenshots
+* logs
+* CI artifact sources
 
 Generated report files should not be committed to Git. They are intended for local debugging and CI artifact publishing.
 
@@ -112,52 +127,70 @@ Reserved for static resources and supporting files.
 
 Possible future usage:
 
-- sample files
-- upload test files
-- static fixtures
-- external resources used by tests
+* sample files
+* upload test files
+* static fixtures
+* external resources used by tests
+
+This directory is currently intentionally minimal.
 
 ### `test_cases/`
 
 Contains manual test cases and test design notes.
 
-This directory supports QA analysis before automation implementation.
+Current implementation:
 
-Planned usage:
+* `login-page.md`
 
-- login page test cases
-- inventory page test cases
-- cart test cases
-- checkout test cases
-- regression test ideas
+Current responsibility:
+
+* manual test case documentation
+* test design before automation
+* mapping manual test cases to automated test files
+* documenting automation coverage status
+
+Current login test cases use `TC-LOGIN-XXX` identifiers, which are also reflected in parametrized pytest output where practical.
 
 ### `test_data/`
 
-Reserved for externalized test data.
+Contains externalized test data.
 
-Planned usage:
+Current implementation:
 
-- user credentials
-- input datasets
-- parametrized test data
-- reusable static test values
+* `login_test_data.py`
+
+Current responsibility:
+
+* valid login user data
+* invalid login cases
+* empty credentials cases
+* locked out user cases
+* expected login error messages
+* login-related URL values
+* test case IDs for parametrized tests
+
+This directory keeps test data separate from test logic and supports pytest parametrization.
 
 ### `tests/`
 
 Contains automated test suites.
 
-Current usage:
+Current login-related test modules:
 
-- smoke tests
+* `test_smoke_login.py` — basic smoke validation
+* `test_login_positive.py` — positive login scenarios
+* `test_login_negative.py` — negative login scenarios
+* `test_login_ui.py` — login page UI behavior
+* `test_login_access_control.py` — protected route access validation
 
-Planned usage:
+Planned future test modules may include:
 
-- login tests
-- inventory tests
-- cart tests
-- checkout tests
-- API tests
-- regression suites
+* inventory tests
+* product tests
+* cart tests
+* checkout tests
+* API tests
+* broader regression suites
 
 ## Root Configuration Files
 
@@ -167,7 +200,10 @@ Contains shared Pytest hooks, fixtures, and test execution configuration.
 
 Current usage:
 
-- screenshot capture on test failure
+* screenshot capture on test failure
+* reusable `opened_login_page` fixture
+
+The `opened_login_page` fixture prepares a `LoginPage` instance and opens the login page before a test starts.
 
 ### `pytest.ini`
 
@@ -175,9 +211,20 @@ Contains Pytest configuration.
 
 Current usage:
 
-- test discovery settings
-- marker definitions
-- default Pytest options
+* test discovery settings
+* marker definitions
+* default Pytest options
+* strict marker validation
+
+Current markers include:
+
+* `smoke`
+* `regression`
+* `ui`
+* `api`
+* `e2e`
+* `positive`
+* `negative`
 
 ### `pyproject.toml`
 
@@ -185,9 +232,9 @@ Contains tool configuration.
 
 Current usage:
 
-- Ruff configuration
-- Black configuration
-- isort configuration
+* Ruff configuration
+* Black configuration
+* isort configuration
 
 ### `.pre-commit-config.yaml`
 
@@ -195,34 +242,80 @@ Contains pre-commit hook configuration.
 
 Current usage:
 
-- Ruff
-- Ruff format
-- Black
-- isort
+* Ruff
+* Black
+* isort
+
+### `requirements.txt`
+
+Contains the main project dependency list.
+
+This file is used as a readable dependency declaration.
+
+### `requirements-lock.txt`
+
+Contains locked dependency versions.
+
+This file supports reproducible local and CI dependency installation.
+
+## Current Login Test Suite Structure
+
+The login automation workstream is organized as follows:
+
+```text
+test_cases/login-page.md
+        ↓
+test_data/login_test_data.py
+        ↓
+pages/login_page.py
+        ↓
+tests/test_smoke_login.py
+tests/test_login_positive.py
+tests/test_login_negative.py
+tests/test_login_ui.py
+tests/test_login_access_control.py
+        ↓
+pytest markers and parametrized output
+        ↓
+GitHub Actions CI validation
+```
 
 ## Architecture Goals
 
 The project structure is designed to support:
 
-- maintainable test organization
-- clear separation of framework layers
-- reusable automation components
-- scalable Page Object Model implementation
-- centralized test configuration
-- CI/CD-ready development workflow
-- readable and consistent test structure
-- future UI and API automation expansion
+* maintainable test organization
+* clear separation of framework layers
+* reusable automation components
+* scalable Page Object Model implementation
+* centralized test configuration
+* centralized test data
+* reusable pytest fixtures
+* CI/CD-ready development workflow
+* readable and consistent test structure
+* traceability between manual test cases and automated tests
+* future UI and API automation expansion
 
 ## Structure Evolution
 
-The current structure represents the foundation stage of the framework.
+The project has moved beyond the initial foundation stage and now contains the first complete login page automation workstream.
+
+Implemented structure currently includes:
+
+* concrete LoginPage Page Object
+* centralized login test data
+* reusable opened login page fixture
+* login test case documentation
+* parametrized negative login tests
+* marker-based test categorization
+* login UI and access-control coverage
 
 Future improvements will include:
 
-- concrete Page Object classes
-- reusable BasePage abstraction
-- test data modules
-- test case documentation
-- fixture expansion
-- reporting utilities
-- additional test suites
+* additional Page Object classes for inventory, cart, and checkout pages
+* reusable BasePage abstraction when justified
+* expanded fixture organization
+* reporting utilities
+* API testing structure
+* Selenium comparison module
+* additional test suites for future application areas
