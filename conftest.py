@@ -4,7 +4,9 @@ from datetime import datetime
 import pytest
 from playwright.sync_api import Page
 
+from pages.inventory_page import InventoryPage
 from pages.login_page import LoginPage
+from test_data.login_test_data import VALID_USER_CASES
 
 
 @pytest.hookimpl(hookwrapper=True)
@@ -38,3 +40,10 @@ def opened_login_page(page: Page) -> LoginPage:
     login_page = LoginPage(page)
     login_page.open()
     return login_page
+
+
+@pytest.fixture()
+def logged_in_inventory_page(opened_login_page: LoginPage) -> InventoryPage:
+    valid_user = VALID_USER_CASES[0]
+    opened_login_page.login(valid_user["username"], valid_user["password"])
+    return InventoryPage(opened_login_page.page)
