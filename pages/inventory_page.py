@@ -12,20 +12,20 @@ class InventoryPage:
     def __init__(self, page: Page):
         self.page = page
 
+    def open(self) -> None:
+        self.page.goto(self.URL)
+
     def get_inventory_container(self) -> Locator:
         return self.page.locator('[data-test="inventory-container"]')
 
     def get_product_list(self) -> Locator:
         return self.page.locator('[data-test="inventory-list"]')
 
-    def get_product_cards_as_locator(self) -> Locator:
+    def get_product_cards(self) -> Locator:
         return self.page.locator('[data-test="inventory-item"]')
 
-    def get_product_cards_as_list(self) -> list[Locator]:
-        return self.page.locator('[data-test="inventory-item"]').all()
-
     def get_product_card_by_name(self, product_name: str) -> Locator:
-        return self.get_product_cards_as_locator().filter(has_text=product_name)
+        return self.get_product_cards().filter(has_text=product_name)
 
     @staticmethod
     def get_product_name_from_card(product_card: Locator) -> Locator:
