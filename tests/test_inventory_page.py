@@ -153,13 +153,14 @@ def test_product_details_opened_from_product_image(
 @pytest.mark.ui
 @pytest.mark.positive
 @pytest.mark.parametrize(
-    "product, _case_id",
-    [(LIST_OF_PRODUCTS[0], "TC-INVENTORY-006")],
+    "_case_id",
+    ["TC-INVENTORY-006"],
     ids=["TC-INVENTORY-006"],
 )
 def test_return_from_product_details_to_inventory_page(
-    logged_in_inventory_page: InventoryPage, product, _case_id: str
+    logged_in_inventory_page: InventoryPage, _case_id: str
 ):
+    product = LIST_OF_PRODUCTS[0]
     product_details = logged_in_inventory_page.open_product_details_by_name(product["product_name"])
 
     expect(product_details.page).to_have_url(f"{product_details.URL}{product['product_id']}")
@@ -169,3 +170,92 @@ def test_return_from_product_details_to_inventory_page(
     expect(logged_in_inventory_page.page).to_have_url(InventoryPage.URL)
     expect(logged_in_inventory_page.get_inventory_container()).to_be_visible()
     expect(logged_in_inventory_page.get_product_list()).to_be_visible()
+
+
+@pytest.mark.sorting
+@pytest.mark.ui
+@pytest.mark.regression
+@pytest.mark.parametrize(
+    "_case_id",
+    ["TC-INVENTORY-007"],
+    ids=["TC-INVENTORY-007"],
+)
+def test_sorting_products_by_name_a_to_z(logged_in_inventory_page: InventoryPage, _case_id: str):
+    sorted_product_names = sorted(product["product_name"] for product in LIST_OF_PRODUCTS)
+    logged_in_inventory_page.sort_products_by(InventoryPage.SORT_NAME_ASC)
+    actual_product_names = logged_in_inventory_page.get_product_names()
+    assert sorted_product_names == actual_product_names, (
+        f"Expected product names order: {sorted_product_names}, " f"but got: {actual_product_names}"
+    )
+
+
+def _convert_price_to_float(price: str) -> float:
+    return float(price.replace("$", ""))
+
+
+@pytest.mark.sorting
+@pytest.mark.ui
+@pytest.mark.regression
+@pytest.mark.parametrize(
+    "_case_id",
+    ["TC-INVENTORY-008"],
+    ids=["TC-INVENTORY-008"],
+)
+def test_sorting_products_by_name_z_to_a(logged_in_inventory_page: InventoryPage, _case_id: str):
+    sorted_product_names = sorted(
+        (product["product_name"] for product in LIST_OF_PRODUCTS), reverse=True
+    )
+    logged_in_inventory_page.sort_products_by(InventoryPage.SORT_NAME_DESC)
+    actual_product_names = logged_in_inventory_page.get_product_names()
+    assert sorted_product_names == actual_product_names, (
+        f"Expected product names order: {sorted_product_names}, " f"but got: {actual_product_names}"
+    )
+
+
+@pytest.mark.sorting
+@pytest.mark.ui
+@pytest.mark.regression
+@pytest.mark.parametrize(
+    "_case_id",
+    ["TC-INVENTORY-009"],
+    ids=["TC-INVENTORY-009"],
+)
+def test_sorting_products_by_price_low_to_high(
+    logged_in_inventory_page: InventoryPage, _case_id: str
+):
+    sorted_product_prices = sorted(
+        _convert_price_to_float(product["product_price"]) for product in LIST_OF_PRODUCTS
+    )
+    logged_in_inventory_page.sort_products_by(InventoryPage.SORT_PRICE_LOW_HIGH)
+    actual_product_prices = [
+        _convert_price_to_float(price) for price in logged_in_inventory_page.get_product_prices()
+    ]
+    assert sorted_product_prices == actual_product_prices, (
+        f"Expected product prices order: {sorted_product_prices}, "
+        f"but got: {actual_product_prices}"
+    )
+
+
+@pytest.mark.sorting
+@pytest.mark.ui
+@pytest.mark.regression
+@pytest.mark.parametrize(
+    "_case_id",
+    ["TC-INVENTORY-010"],
+    ids=["TC-INVENTORY-010"],
+)
+def test_sorting_products_by_price_high_to_low(
+    logged_in_inventory_page: InventoryPage, _case_id: str
+):
+    sorted_product_prices = sorted(
+        (_convert_price_to_float(product["product_price"]) for product in LIST_OF_PRODUCTS),
+        reverse=True,
+    )
+    logged_in_inventory_page.sort_products_by(InventoryPage.SORT_PRICE_HIGH_LOW)
+    actual_product_prices = [
+        _convert_price_to_float(price) for price in logged_in_inventory_page.get_product_prices()
+    ]
+    assert sorted_product_prices == actual_product_prices, (
+        f"Expected product prices order: {sorted_product_prices}, "
+        f"but got: {actual_product_prices}"
+    )
