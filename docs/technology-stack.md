@@ -39,6 +39,11 @@ Current automated UI coverage:
 * negative login scenarios
 * login UI behavior
 * protected inventory route access validation
+* inventory page validation
+* product list validation
+* product card content validation
+* product details navigation validation
+* product sorting validation
 
 Planned browser execution:
 
@@ -51,6 +56,8 @@ Planned browser execution:
 Currently implemented:
 
 * `LoginPage`
+* `InventoryPage`
+* `ProductDetailsPage`
 
 Current Page Object responsibilities:
 
@@ -60,10 +67,16 @@ Current Page Object responsibilities:
 * login button interaction
 * error message handling
 * login page UI element locators
+* inventory page visibility and product list access
+* inventory product card access
+* inventory product sorting
+* product details navigation from product name
+* product details navigation from product image
+* product details page element locators
+* returning from product details to inventory page
 
 Planned Page Object expansion:
 
-* InventoryPage
 * CartPage
 * CheckoutPage
 * additional page objects as application coverage grows
@@ -73,23 +86,29 @@ Planned Page Object expansion:
 Currently implemented:
 
 * centralized login test data
+* centralized inventory product test data
 * valid user cases
 * invalid login cases
 * empty credential cases
 * locked out user cases
 * expected login error messages
 * login-related URL values
-* test case IDs used in parametrized pytest output
+* inventory product IDs
+* inventory product names
+* inventory product descriptions
+* inventory product prices
+* inventory product image paths
+* test case IDs used in parametrized pytest output where practical
 
 Current test data location:
 
 ```text
 test_data/login_test_data.py
+test_data/inventory_test_data.py
 ```
 
 Planned test data expansion:
 
-* inventory product data
 * cart scenario data
 * checkout form data
 * API test data
@@ -255,14 +274,14 @@ Future planned integrations include:
 
 ## Current Stack Status
 
-The current stack is sufficient to support a complete login page automation workstream.
+The current stack is sufficient to support complete login page and inventory/products automation workstreams.
 
 Implemented technical capabilities include:
 
 * UI automation with Playwright
 * test execution with Pytest
 * Page Object Model
-* reusable pytest fixture
+* reusable pytest fixtures
 * centralized test data
 * parametrized tests
 * marker-based test organization
@@ -271,4 +290,4 @@ Implemented technical capabilities include:
 * screenshot capture on failure
 * technical documentation
 
-The next stack expansion will focus on additional Page Objects and test coverage for inventory, products, cart, and checkout flows.
+The next stack expansion will focus on additional Page Objects and test coverage for cart and checkout flows.

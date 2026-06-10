@@ -12,6 +12,7 @@ The purpose of this file is to provide a quick overview of what the framework al
 * Pytest-based test execution
 * Smoke test execution support
 * Regression test execution support
+* Sorting test execution support
 * Marker-based selective test execution
 * Centralized pytest configuration
 * Playwright Chromium execution in CI
@@ -19,20 +20,30 @@ The purpose of this file is to provide a quick overview of what the framework al
 ### Page Object Model
 
 * Login Page Object implemented
+* Inventory Page Object implemented
+* Product Details Page Object implemented
 * Centralized login page locators
+* Centralized inventory page locators
+* Centralized product details page locators
 * Reusable login page actions
+* Reusable inventory page actions
+* Reusable product details page actions
 * Error message interaction support
 * Login page UI element access methods
+* Inventory product list and product card access methods
+* Product details page element access methods
 
 ### Test Data Management
 
 * Centralized login test data
+* Centralized inventory product test data
 * Valid user test data
 * Invalid login test data
 * Empty credentials test data
 * Locked out user test data
 * Expected login error messages
-* Test case IDs mapped to automated test data
+* Product IDs, names, descriptions, prices, and image paths
+* Test case IDs mapped to automated test data where practical
 
 ### Login Page Test Coverage
 
@@ -54,19 +65,41 @@ Implemented login scenarios:
 * login form submission with Enter key
 * direct inventory page access without login
 
+### Inventory And Products Test Coverage
+
+The framework currently includes automated coverage for the Sauce Demo inventory and products area.
+
+Implemented inventory and product scenarios:
+
+* inventory page visibility after successful login
+* product list visibility
+* expected product list validation
+* product card content validation
+* product details opened from product name
+* product details opened from product image
+* return from product details page to inventory page
+* product sorting by name A to Z
+* product sorting by name Z to A
+* product sorting by price low to high
+* product sorting by price high to low
+
 ### Test Organization
 
 * Pytest marker-based test categorization
-* Smoke, regression, UI, positive, and negative markers
+* Smoke, regression, UI, positive, negative, and sorting markers
 * Parametrized negative login scenarios
+* Parametrized inventory product scenarios
 * Parametrized test output with manual test case IDs
 * Manual test case documentation under `test_cases/`
 * Login test case coverage mapped to automated tests
+* Inventory and products test case coverage mapped to automated tests
 
 ### Fixtures And Reusable Setup
 
 * Shared pytest fixture for opened login page
+* Shared pytest fixture for logged-in inventory page
 * Reusable setup for login page tests
+* Reusable setup for inventory and product tests
 * Screenshot capture hook on test failure
 
 ### Code Quality
@@ -103,7 +136,9 @@ Implemented login scenarios:
 * README used as project landing page and documentation hub
 * Linux-based development workflow using WSL2
 * Login page manual test cases documented in Markdown
+* Inventory and products manual test cases documented in Markdown
 * Login page automation coverage documented and mapped to test files
+* Inventory and products automation coverage documented and mapped to test files
 
 ## Planned Features
 
@@ -119,9 +154,6 @@ Implemented login scenarios:
 
 Planned next automation areas:
 
-* inventory / products page validation
-* product list validation
-* product sorting validation
 * cart functionality tests
 * cart badge validation
 * cart page validation

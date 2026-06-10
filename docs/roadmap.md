@@ -78,39 +78,40 @@ Phase 2 produced the first complete and reviewed automation workstream in the pr
 
 ## Phase 2 Checkpoint: Review And Phase 3 Preparation
 
-**Status:** Current
+**Status:** Completed
 
-The current checkpoint verifies that Phase 2 is fully completed and that the project is ready for the next automation area.
+The Phase 2 checkpoint verified that the login page workstream was completed and that the project was ready for the next automation area.
 
-Checkpoint scope:
+Completed checkpoint scope:
 
-* review completed login page scope
-* verify full local test execution
-* verify marker-based test execution
-* review CI status after merge
-* review documentation
-* clean up outdated project information
-* confirm Git status
-* prepare high-level Phase 3 scope
+* reviewed completed login page scope
+* verified full local test execution
+* verified marker-based test execution
+* reviewed CI status after merge
+* reviewed documentation
+* cleaned up outdated project information
+* confirmed Git status
+* prepared high-level Phase 3 scope
 
-This checkpoint must be completed before starting Phase 3.
+This checkpoint allowed the project to move from login-only automation into broader application coverage.
 
 ---
 
 ## Phase 3: Products, Cart, And Checkout Coverage
 
-**Status:** Planned
+**Status:** In Progress
 
-Phase 3 will expand automation coverage beyond login.
+Phase 3 expands automation coverage beyond login.
 
-Planned work:
+The phase is split into smaller workstreams to keep the scope controlled and reviewable.
+
+Planned and completed work:
 
 * inventory page Page Object Model
 * product list validation
 * product sorting validation
-* product details validation if needed
-* add to cart scenarios
-* remove from cart scenarios
+* product details validation
+* cart functionality tests
 * cart badge validation
 * cart page validation
 * checkout form validation
@@ -118,7 +119,7 @@ Planned work:
 * full purchase flow
 * logout and session behavior if relevant
 * manual test cases for inventory, cart, and checkout areas
-* test data expansion for product/cart/checkout scenarios
+* test data expansion for product, cart, and checkout scenarios
 
 Main learning goals:
 
@@ -129,6 +130,90 @@ Main learning goals:
 * end-to-end scenario design
 * Page Object interaction between multiple pages
 * clearer smoke/regression separation
+
+---
+
+## Phase 3A: Inventory And Products Automation Workstream
+
+**Status:** In Review
+
+Phase 3A focuses on inventory page and product-related validation before cart and checkout scenarios are implemented.
+
+Completed areas:
+
+* inventory and products manual test cases
+* InventoryPage Page Object Model
+* ProductDetailsPage Page Object Model
+* reusable logged-in inventory page fixture
+* centralized inventory product test data
+* inventory page visibility test
+* product list validation
+* product card content validation
+* product details navigation from product name
+* product details navigation from product image
+* return from product details page to inventory page
+* product sorting by name A to Z
+* product sorting by name Z to A
+* product sorting by price low to high
+* product sorting by price high to low
+* sorting marker registration
+* local validation of inventory tests
+* full local test suite validation
+
+Current review scope:
+
+* review completed inventory and products scope
+* verify test case coverage
+* verify Page Object structure
+* verify fixture usage
+* verify test data consistency
+* verify marker usage
+* review documentation updates
+* confirm cleanup needs
+* prepare the workstream for Pull Request into `develop`
+
+Phase 3A should be completed and merged before starting cart and checkout automation.
+
+---
+
+## Phase 3B: Cart Automation Workstream
+
+**Status:** Planned
+
+Phase 3B will focus on cart-related behavior.
+
+Planned areas:
+
+* cart-related manual test cases
+* CartPage Page Object Model if justified
+* add product to cart scenarios
+* remove product from cart scenarios
+* cart badge validation
+* cart link navigation
+* cart page product validation
+* cart state validation across inventory and cart pages
+* cart-related test data if needed
+* documentation updates
+
+---
+
+## Phase 3C: Checkout Automation Workstream
+
+**Status:** Planned
+
+Phase 3C will focus on checkout-related behavior.
+
+Planned areas:
+
+* checkout-related manual test cases
+* CheckoutPage Page Object Model if justified
+* checkout information form validation
+* checkout error handling
+* checkout overview validation
+* complete order flow
+* order confirmation validation
+* checkout-related test data
+* documentation updates
 
 ---
 
@@ -237,6 +322,17 @@ Recommended use:
 * internal review
 * selective portfolio sharing
 * preparation for CV/GitHub profile updates
+
+### After Phase 3A
+
+The project contains login coverage plus inventory and product validation.
+
+Recommended use:
+
+* stronger GitHub portfolio presentation
+* early QA Automation application support
+* demonstration of Page Object Model beyond a single page
+* demonstration of product data validation and sorting tests
 
 ### After Phase 3
 

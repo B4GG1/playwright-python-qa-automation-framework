@@ -57,13 +57,19 @@ Current implemented test case documentation:
 
 ```text
 test_cases/login-page.md
+test_cases/inventory-products.md
 ```
 
-Login test cases use `TC-LOGIN-XXX` identifiers. These identifiers are also used in parametrized pytest output where practical.
+Current test case identifiers include:
+
+* `TC-LOGIN-XXX`
+* `TC-INVENTORY-XXX`
+
+These identifiers are also used in parametrized pytest output where practical.
 
 ## Current Test Coverage
 
-The current automated test coverage focuses on the Sauce Demo login page and authentication-related behavior.
+The current automated test coverage focuses on the Sauce Demo login, authentication, inventory, and product-related behavior.
 
 Implemented login coverage includes:
 
@@ -81,6 +87,22 @@ Implemented login coverage includes:
 * login form submission with Enter key
 * direct inventory page access without login
 
+Implemented inventory and products coverage includes:
+
+* inventory page visibility after successful login
+* product list visibility
+* expected product list validation
+* product card content validation
+* product details opened from product name
+* product details opened from product image
+* return from product details page to inventory page
+* product sorting by name A to Z
+* product sorting by name Z to A
+* product sorting by price low to high
+* product sorting by price high to low
+
+Cart and checkout scenarios are not implemented yet and are planned for later workstreams.
+
 ## Test Types
 
 ### Smoke Tests
@@ -92,10 +114,11 @@ Current examples:
 * Sauce Demo page availability
 * login page basic UI availability
 * successful login with valid credentials
+* inventory page visibility after successful login
+* product list visibility
 
 Future examples:
 
-* product page availability
 * basic cart operation
 * basic checkout availability
 
@@ -110,12 +133,14 @@ Current examples:
 * locked out user validation
 * error message behavior
 * protected route access validation
+* product card content validation
+* product details navigation
+* product sorting behavior
 
 Future examples:
 
 * cart update behavior
 * checkout validation
-* sorting behavior
 * full purchase flow
 
 ### UI Tests
@@ -129,6 +154,10 @@ Current examples:
 * error message visibility
 * error message close behavior
 * inventory page visibility after login
+* product list visibility
+* product card content visibility
+* product details page visibility
+* product sorting behavior
 
 ### Positive Tests
 
@@ -138,6 +167,9 @@ Current examples:
 
 * valid user can log in successfully
 * valid user can submit login form using Enter key
+* product details can be opened from product name
+* product details can be opened from product image
+* user can return from product details page to inventory page
 
 ### Negative Tests
 
@@ -157,6 +189,19 @@ Access control tests validate that protected application areas cannot be accesse
 Current example:
 
 * unauthenticated user cannot directly access the inventory page
+
+### Sorting Tests
+
+Sorting tests validate that product ordering changes correctly after selecting sorting options.
+
+Current examples:
+
+* products can be sorted by name A to Z
+* products can be sorted by name Z to A
+* products can be sorted by price low to high
+* products can be sorted by price high to low
+
+Sorting tests use plain Python assertions for comparing extracted product names and converted product prices.
 
 ### End-To-End Tests
 
@@ -196,6 +241,8 @@ Current implementation:
 
 ```text
 pages/login_page.py
+pages/inventory_page.py
+pages/product_details_page.py
 ```
 
 The `LoginPage` object is responsible for:
@@ -207,9 +254,26 @@ The `LoginPage` object is responsible for:
 * closing error messages
 * exposing login page UI locators where needed
 
+The `InventoryPage` object is responsible for:
+
+* exposing inventory page locators
+* accessing the product list
+* accessing product cards
+* reading product names and prices
+* sorting products
+* opening product details from product name
+* opening product details from product image
+* exposing cart-related locators for future cart workstreams
+
+The `ProductDetailsPage` object is responsible for:
+
+* exposing product details page locators
+* validating product details content through test-level assertions
+* exposing the Back to products button
+* returning from product details page to inventory page
+
 Future Page Objects may include:
 
-* InventoryPage
 * CartPage
 * CheckoutPage
 
@@ -219,17 +283,24 @@ Page Objects should be introduced when they reduce duplication and improve reada
 
 Fixtures are used to prepare reusable test setup.
 
-Current fixture:
+Current fixtures:
 
 ```text
 opened_login_page
+logged_in_inventory_page
 ```
 
-This fixture:
+The `opened_login_page` fixture:
 
 * creates a `LoginPage` instance
 * opens the login page
 * returns a ready-to-use Page Object for login-related tests
+
+The `logged_in_inventory_page` fixture:
+
+* uses valid user credentials
+* logs in through the login page
+* returns a ready-to-use `InventoryPage` instance
 
 Fixtures should be added when setup logic becomes repeated across multiple tests.
 
@@ -243,6 +314,7 @@ Current test data location:
 
 ```text
 test_data/login_test_data.py
+test_data/inventory_test_data.py
 ```
 
 Current login test data includes:
@@ -253,6 +325,14 @@ Current login test data includes:
 * locked out user cases
 * expected error messages
 * login-related URL values
+
+Current inventory product test data includes:
+
+* product IDs
+* product names
+* product descriptions
+* product prices
+* product image paths
 
 Test data should support:
 
@@ -271,6 +351,9 @@ Current parametrized areas:
 * empty credential scenarios
 * locked out user scenario
 * positive login user case
+* inventory product card validation
+* product details navigation from product name
+* product details navigation from product image
 * selected single-case tests where test case ID visibility in `pytest -v` is desired
 
 Parametrized test IDs should use manual test case IDs where practical, for example:
@@ -279,6 +362,8 @@ Parametrized test IDs should use manual test case IDs where practical, for examp
 TC-LOGIN-002
 TC-LOGIN-003
 TC-LOGIN-004
+TC-INVENTORY-001
+TC-INVENTORY-007
 ```
 
 This improves traceability between:
@@ -302,6 +387,7 @@ Current markers:
 * `e2e`
 * `positive`
 * `negative`
+* `sorting`
 
 Example marker commands:
 
@@ -310,8 +396,10 @@ pytest -m smoke -v
 pytest -m regression -v
 pytest -m positive -v
 pytest -m negative -v
+pytest -m sorting -v
 pytest -m "ui and smoke" -v
 pytest -m "ui and regression" -v
+pytest -m "ui and sorting" -v
 ```
 
 Markers should be used consistently to support selective local and CI execution.
@@ -328,10 +416,16 @@ Current assertion examples:
 * error message text matches expected value
 * password input has `type="password"`
 * protected route redirects unauthenticated user to login page
+* inventory page container is visible
+* product list is visible
+* product card content matches expected product data
+* product details page content matches selected product data
+* product names match expected sorted order
+* product prices match expected sorted order after numeric conversion
 
 Use Playwright assertions for UI/browser state when possible because they include built-in waiting behavior.
 
-Use plain Python assertions when comparing simple values, such as extracted text.
+Use plain Python assertions when comparing simple values, such as extracted text, product names, converted prices, or sorted lists.
 
 ## Automation Priority
 
@@ -386,6 +480,14 @@ pytest -m negative -v
 pytest -m "ui and smoke" -v
 ```
 
+Recommended validation when inventory and product tests are changed:
+
+```bash
+pytest -v tests/test_inventory_page.py
+pytest -m sorting -v
+pytest -m "ui and sorting" -v
+```
+
 ## CI Validation Strategy
 
 GitHub Actions validates the project automatically on:
@@ -411,7 +513,6 @@ Failing tests or quality checks should block merging.
 
 Planned improvements:
 
-* inventory and product page test coverage
 * cart test coverage
 * checkout flow automation
 * logout and session behavior validation

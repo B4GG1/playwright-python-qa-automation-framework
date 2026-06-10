@@ -40,7 +40,7 @@ This ensures that:
 
 * stable branches are continuously validated
 * pull requests are checked before merge
-* login page and future feature workstreams are validated before integration
+* login, inventory, and future feature workstreams are validated before integration
 * manual debugging runs are possible when needed
 * both `develop` and `main` can be protected by automated checks
 
@@ -138,13 +138,17 @@ Current report location:
 reports/report.html
 ```
 
-The test suite currently includes login page coverage such as:
+The test suite currently includes:
 
 * smoke validation
 * positive login scenarios
 * negative login scenarios
-* UI behavior checks
+* login UI behavior checks
 * protected route access validation
+* inventory page validation
+* product list and product card validation
+* product details navigation validation
+* product sorting validation
 
 ### 7. Artifact Upload
 
@@ -233,6 +237,7 @@ Current marker categories include:
 * `e2e`
 * `positive`
 * `negative`
+* `sorting`
 
 Useful local validation commands:
 
@@ -241,13 +246,15 @@ pytest -m smoke -v
 pytest -m regression -v
 pytest -m positive -v
 pytest -m negative -v
+pytest -m sorting -v
 pytest -m "ui and smoke" -v
 pytest -m "ui and regression" -v
+pytest -m "ui and sorting" -v
 ```
 
 The main CI pipeline currently executes the full test suite.
 
-Future CI improvements may include separate jobs for smoke, regression, API, and cross-browser test execution.
+Future CI improvements may include separate jobs for smoke, regression, API, sorting, and cross-browser test execution.
 
 ## Branch Protection Strategy
 
@@ -313,7 +320,7 @@ The current CI setup provides:
 
 ## Current CI Status
 
-The CI pipeline is operational and supports the completed Login Page Automation Workstream.
+The CI pipeline is operational and supports the completed Login Page Automation Workstream and the Inventory And Products Automation Workstream.
 
 The pipeline validates:
 
@@ -323,7 +330,7 @@ The pipeline validates:
 * generated reports
 * CI artifacts
 
-It is ready to support future framework expansion into inventory, products, cart, checkout, API testing, and reporting improvements.
+It is ready to support future framework expansion into cart, checkout, API testing, and reporting improvements.
 
 ## Future Improvements
 
