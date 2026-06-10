@@ -13,6 +13,7 @@ The project currently uses:
 * isort for import sorting
 * pre-commit for local quality validation before commits
 * Pytest as the main automated test runner
+* Playwright assertions for stable UI validation
 
 These tools are used locally and in the CI pipeline to validate changes before they are merged into stable branches.
 
@@ -137,8 +138,10 @@ pytest -m smoke -v
 pytest -m regression -v
 pytest -m positive -v
 pytest -m negative -v
+pytest -m sorting -v
 pytest -m "ui and smoke" -v
 pytest -m "ui and regression" -v
+pytest -m "ui and sorting" -v
 ```
 
 Marker definitions are stored in:
@@ -158,8 +161,14 @@ Examples of current assertion usage include:
 * checking element visibility
 * checking form field attributes
 * checking protected route redirection
+* checking inventory page visibility
+* checking product card content
+* checking product details content
+* checking product image attributes
 
-Playwright assertions should be preferred for browser/UI state validation because they include built-in waiting behavior.
+Playwright assertions should be preferred for browser and UI state validation because they include built-in waiting behavior.
+
+Plain Python assertions are used when comparing extracted values such as product names, product prices, sorted lists, or other already-read data.
 
 ## Local Quality Workflow
 
@@ -196,6 +205,14 @@ pytest -m regression -v
 pytest -m positive -v
 pytest -m negative -v
 pytest -m "ui and smoke" -v
+```
+
+For inventory and product-related changes, these commands may also be useful:
+
+```bash
+pytest -v tests/test_inventory_page.py
+pytest -m sorting -v
+pytest -m "ui and sorting" -v
 ```
 
 ## CI Quality Checks
@@ -256,14 +273,19 @@ Before merging Pull Requests:
 
 ## Current Quality Status
 
-The current quality tooling supports the completed Login Page Automation Workstream.
+The current quality tooling supports the completed Login Page Automation Workstream and the Inventory And Products Automation Workstream.
 
 The project currently includes:
 
 * Page Object Model implementation for login page
+* Page Object Model implementation for inventory page
+* Page Object Model implementation for product details page
 * reusable pytest fixture for opened login page
+* reusable pytest fixture for logged-in inventory page
 * centralized login test data
+* centralized inventory product test data
 * parametrized login tests
+* parametrized inventory product tests
 * marker-based test categorization
 * screenshot capture on test failure
 * local and CI validation workflow

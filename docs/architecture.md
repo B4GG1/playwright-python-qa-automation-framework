@@ -2,7 +2,7 @@
 
 This document describes the current architecture of the QA automation framework.
 
-The project follows a lightweight, modular architecture focused on readability, maintainability, and incremental framework growth. The architecture is intentionally simple at this stage, but already includes Page Object Model, reusable pytest fixtures, centralized test data, marker-based test organization, CI execution, and technical documentation.
+The project follows a lightweight, modular architecture focused on readability, maintainability, and incremental framework growth. The architecture is intentionally simple at this stage, but already includes Page Object Model, reusable pytest fixtures, centralized test data, marker-based test organization, CI execution, reporting support, screenshot capture, and technical documentation.
 
 ## Current Architecture Scope
 
@@ -10,17 +10,26 @@ The current framework includes:
 
 * Pytest-based test execution
 * Playwright browser automation
-* Page Object Model for login page
+* Page Object Model for login, inventory, and product details pages
 * reusable pytest fixtures
-* centralized login test data
+* centralized login and inventory product test data
 * marker-based test categorization
+* parametrized test execution with manual test case IDs
 * CI execution with GitHub Actions
 * code quality tooling
 * HTML reporting and CI artifacts
 * screenshot capture on test failure
 * manual test case documentation mapped to automated tests
 
-The current automated coverage focuses on the Sauce Demo login page and related authentication behavior.
+The current automated coverage focuses on:
+
+* Sauce Demo login page and authentication behavior
+* inventory page availability
+* product list and product card validation
+* product details navigation
+* product sorting
+
+Cart and checkout coverage are planned for later workstreams.
 
 ## Project Layers
 
@@ -30,13 +39,14 @@ The framework is organized into the following layers.
 
 Contains automated test suites.
 
-Current login-related test modules include:
+Current test modules include:
 
 * `test_smoke_login.py` — basic smoke validation
 * `test_login_positive.py` — positive login scenarios
 * `test_login_negative.py` — negative login scenarios
 * `test_login_ui.py` — login page UI behavior
 * `test_login_access_control.py` — protected route access validation
+* `test_inventory_page.py` — inventory page, product cards, product details navigation, and product sorting tests
 
 Tests should focus on behavior and assertions, while reusable page interactions should be handled by Page Object classes.
 
@@ -47,6 +57,8 @@ Contains Page Object Model classes.
 Current implementation:
 
 * `LoginPage`
+* `InventoryPage`
+* `ProductDetailsPage`
 
 The Page Object layer is responsible for:
 
@@ -54,8 +66,9 @@ The Page Object layer is responsible for:
 * reusable page actions
 * interaction methods
 * hiding direct selector usage from tests where practical
+* returning the next Page Object when navigation changes the current page context
 
-Tests may still use direct Playwright assertions when validating behavior outside the current Page Object scope, for example inventory page visibility before a dedicated InventoryPage object exists.
+The current Page Object implementation remains intentionally lightweight. A shared BasePage abstraction has not been introduced yet because repeated page-level behavior is still limited.
 
 ### `test_data/`
 
@@ -70,6 +83,14 @@ Current login test data includes:
 * expected error messages
 * inventory URL suffix used in login-related assertions
 
+Current inventory test data includes:
+
+* product IDs
+* product names
+* product descriptions
+* product prices
+* product image paths
+
 The goal of this layer is to keep test data separate from test logic and support pytest parametrization.
 
 ### `conftest.py`
@@ -80,8 +101,11 @@ Current responsibilities:
 
 * screenshot capture on test failure
 * reusable `opened_login_page` fixture
+* reusable `logged_in_inventory_page` fixture
 
 The `opened_login_page` fixture prepares a ready-to-use `LoginPage` instance with the login page already opened.
+
+The `logged_in_inventory_page` fixture logs in with a valid user and returns a ready-to-use `InventoryPage` instance.
 
 ### `framework/`
 
@@ -126,8 +150,14 @@ Contains manual test case documentation.
 Current implementation:
 
 * `login-page.md`
+* `inventory-products.md`
 
-Manual test cases are mapped to automated tests through `TC-LOGIN-XXX` identifiers. These identifiers are also used in parametrized pytest output where practical.
+Manual test cases are mapped to automated tests through identifiers such as:
+
+* `TC-LOGIN-XXX`
+* `TC-INVENTORY-XXX`
+
+These identifiers are also used in parametrized pytest output where practical.
 
 ### `docs/`
 
@@ -148,7 +178,7 @@ The login test suite is built around the following structure:
 ```text
 Manual test cases
         ↓
-Centralized test data
+Centralized login test data
         ↓
 LoginPage Page Object
         ↓
@@ -201,7 +231,76 @@ Parametrized IDs are based on manual test case IDs, such as:
 
 This improves traceability between documentation, test output, and automated coverage.
 
-### Markers
+## Current Inventory And Products Test Architecture
+
+The inventory and products test suite is built around the following structure:
+
+```text
+Manual inventory test cases
+        ↓
+Centralized inventory product test data
+        ↓
+InventoryPage and ProductDetailsPage Page Objects
+        ↓
+Reusable logged-in inventory fixture
+        ↓
+Pytest inventory test module
+        ↓
+Markers and parametrization
+        ↓
+CI execution and reports
+```
+
+### InventoryPage
+
+`InventoryPage` centralizes inventory page interactions such as:
+
+* accessing the inventory container
+* accessing the product list
+* accessing product cards
+* reading product names and prices
+* sorting products
+* opening product details from product name
+* opening product details from product image
+* exposing cart-related locators for future workstreams
+
+### ProductDetailsPage
+
+`ProductDetailsPage` centralizes product details page interactions such as:
+
+* accessing product name
+* accessing product description
+* accessing product price
+* accessing product image
+* accessing Add to cart button
+* accessing Back to products button
+* returning to the inventory page
+
+### Reusable Fixture
+
+The `logged_in_inventory_page` fixture prepares a logged-in user session and returns an `InventoryPage` instance.
+
+This reduces repeated login setup in inventory and product-related tests.
+
+### Test Data
+
+Inventory product data is centralized in `test_data/inventory_test_data.py`.
+
+This supports:
+
+* product list validation
+* product card validation
+* product details validation
+* product sorting validation
+* parametrized execution across all product data where useful
+
+### Helper Assertions
+
+Inventory tests use small private helper functions inside the test module to reduce duplication when validating repeated product content.
+
+These helpers keep assertions in the test layer while avoiding unnecessary duplication across product card and product details scenarios.
+
+## Markers
 
 Tests are categorized using pytest markers such as:
 
@@ -210,6 +309,7 @@ Tests are categorized using pytest markers such as:
 * `ui`
 * `positive`
 * `negative`
+* `sorting`
 
 Markers allow selective test execution for different validation needs.
 
@@ -226,7 +326,7 @@ The framework follows a modular architecture where:
 
 Planned architecture improvements include:
 
-* additional Page Object classes for inventory, cart, and checkout areas
+* additional Page Object classes for cart and checkout areas
 * BasePage abstraction when repeated page behavior appears
 * improved fixture organization
 * enhanced reporting and diagnostics
@@ -249,6 +349,9 @@ The framework should prioritize:
 
 ## Current Architecture Status
 
-The architecture is no longer only a setup foundation. It now contains the first complete functional automation workstream for the login page.
+The architecture is no longer only a setup foundation. It now contains two complete functional automation workstreams:
 
-The next architecture step is to extend the same principles to additional application areas, starting with inventory, products, cart, and checkout coverage.
+* Login Page Automation Workstream
+* Inventory And Products Automation Workstream
+
+The next architecture step is to extend the same principles to cart and checkout coverage while avoiding unnecessary early abstractions.

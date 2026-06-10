@@ -98,6 +98,8 @@ Contains Page Object Model classes.
 Current implementation:
 
 * `login_page.py`
+* `inventory_page.py`
+* `product_details_page.py`
 
 Current responsibility:
 
@@ -105,8 +107,13 @@ Current responsibility:
 * page interaction methods
 * reusable UI actions
 * separation of page interaction logic from test logic
+* lightweight navigation between Page Objects when a user action opens a different page
 
-The current Page Object layer includes `LoginPage`, which supports login page interactions, error message handling, and access to login page UI elements.
+The current Page Object layer includes:
+
+* `LoginPage`, which supports login page interactions, error message handling, and access to login page UI elements
+* `InventoryPage`, which supports inventory page visibility, product list access, product card access, product sorting, and opening product details
+* `ProductDetailsPage`, which supports product details validation and returning to the inventory page
 
 ### `reports/`
 
@@ -141,6 +148,7 @@ Contains manual test cases and test design notes.
 Current implementation:
 
 * `login-page.md`
+* `inventory-products.md`
 
 Current responsibility:
 
@@ -149,7 +157,12 @@ Current responsibility:
 * mapping manual test cases to automated test files
 * documenting automation coverage status
 
-Current login test cases use `TC-LOGIN-XXX` identifiers, which are also reflected in parametrized pytest output where practical.
+Current test case identifiers include:
+
+* `TC-LOGIN-XXX`
+* `TC-INVENTORY-XXX`
+
+These identifiers are also reflected in parametrized pytest output where practical.
 
 ### `test_data/`
 
@@ -158,6 +171,7 @@ Contains externalized test data.
 Current implementation:
 
 * `login_test_data.py`
+* `inventory_test_data.py`
 
 Current responsibility:
 
@@ -167,7 +181,12 @@ Current responsibility:
 * locked out user cases
 * expected login error messages
 * login-related URL values
-* test case IDs for parametrized tests
+* inventory product IDs
+* inventory product names
+* inventory product descriptions
+* inventory product prices
+* inventory product image paths
+* test case IDs for parametrized tests where practical
 
 This directory keeps test data separate from test logic and supports pytest parametrization.
 
@@ -175,18 +194,17 @@ This directory keeps test data separate from test logic and supports pytest para
 
 Contains automated test suites.
 
-Current login-related test modules:
+Current test modules:
 
 * `test_smoke_login.py` — basic smoke validation
 * `test_login_positive.py` — positive login scenarios
 * `test_login_negative.py` — negative login scenarios
 * `test_login_ui.py` — login page UI behavior
 * `test_login_access_control.py` — protected route access validation
+* `test_inventory_page.py` — inventory page, product cards, product details navigation, and product sorting validation
 
 Planned future test modules may include:
 
-* inventory tests
-* product tests
 * cart tests
 * checkout tests
 * API tests
@@ -202,8 +220,11 @@ Current usage:
 
 * screenshot capture on test failure
 * reusable `opened_login_page` fixture
+* reusable `logged_in_inventory_page` fixture
 
 The `opened_login_page` fixture prepares a `LoginPage` instance and opens the login page before a test starts.
+
+The `logged_in_inventory_page` fixture logs in with a valid user and returns an `InventoryPage` instance for inventory and product-related tests.
 
 ### `pytest.ini`
 
@@ -225,6 +246,7 @@ Current markers include:
 * `e2e`
 * `positive`
 * `negative`
+* `sorting`
 
 ### `pyproject.toml`
 
@@ -280,6 +302,25 @@ pytest markers and parametrized output
 GitHub Actions CI validation
 ```
 
+## Current Inventory And Products Test Suite Structure
+
+The inventory and products automation workstream is organized as follows:
+
+```text
+test_cases/inventory-products.md
+        ↓
+test_data/inventory_test_data.py
+        ↓
+pages/inventory_page.py
+pages/product_details_page.py
+        ↓
+tests/test_inventory_page.py
+        ↓
+pytest markers and parametrized output
+        ↓
+GitHub Actions CI validation
+```
+
 ## Architecture Goals
 
 The project structure is designed to support:
@@ -298,21 +339,31 @@ The project structure is designed to support:
 
 ## Structure Evolution
 
-The project has moved beyond the initial foundation stage and now contains the first complete login page automation workstream.
+The project has moved beyond the initial foundation stage and now contains two complete automation workstreams:
+
+* Login Page Automation Workstream
+* Inventory And Products Automation Workstream
 
 Implemented structure currently includes:
 
 * concrete LoginPage Page Object
+* concrete InventoryPage Page Object
+* concrete ProductDetailsPage Page Object
 * centralized login test data
+* centralized inventory product test data
 * reusable opened login page fixture
+* reusable logged-in inventory page fixture
 * login test case documentation
-* parametrized negative login tests
+* inventory and products test case documentation
+* parametrized login tests
+* parametrized inventory product tests
 * marker-based test categorization
 * login UI and access-control coverage
+* inventory page, product details, and product sorting coverage
 
 Future improvements will include:
 
-* additional Page Object classes for inventory, cart, and checkout pages
+* additional Page Object classes for cart and checkout pages
 * reusable BasePage abstraction when justified
 * expanded fixture organization
 * reporting utilities

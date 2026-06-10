@@ -62,6 +62,10 @@ def _assert_product_details_page_displays_expected_product(
     )
 
 
+def _convert_price_to_float(price: str) -> float:
+    return float(price.replace("$", ""))
+
+
 @pytest.mark.smoke
 @pytest.mark.positive
 @pytest.mark.ui
@@ -187,10 +191,6 @@ def test_sorting_products_by_name_a_to_z(logged_in_inventory_page: InventoryPage
     assert sorted_product_names == actual_product_names, (
         f"Expected product names order: {sorted_product_names}, " f"but got: {actual_product_names}"
     )
-
-
-def _convert_price_to_float(price: str) -> float:
-    return float(price.replace("$", ""))
 
 
 @pytest.mark.sorting

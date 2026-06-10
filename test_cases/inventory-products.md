@@ -4,7 +4,7 @@
 
 This document contains manual test cases for the Sauce Demo inventory and products area.
 
-The goal of this document is to define inventory and product-related test scenarios before automation implementation.
+The goal of this document is to define inventory and product-related test scenarios before and alongside automation implementation.
 
 This workstream focuses only on:
 
@@ -18,18 +18,18 @@ Cart and checkout scenarios are intentionally excluded from this document and wi
 
 ## Test Case Overview And Automation Coverage
 
-| Test Case ID                                                                                  | Scenario                                                  | Type                  | Priority | Automation Status | Automated In |
-| --------------------------------------------------------------------------------------------- | --------------------------------------------------------- | --------------------- | -------- | ----------------- | ------------ |
-| [TC-INVENTORY-001](#tc-inventory-001--inventory-page-is-visible-after-successful-login)       | Inventory page is visible after successful login          | Smoke / Positive      | High     | Planned           | TBD          |
-| [TC-INVENTORY-002](#tc-inventory-002--product-list-is-displayed)                              | Product list is displayed                                 | Smoke / UI            | High     | Planned           | TBD          |
-| [TC-INVENTORY-003](#tc-inventory-003--product-cards-contain-name-description-price-and-image) | Product cards contain name, description, price, and image | Regression / UI       | Medium   | Planned           | TBD          |
-| [TC-INVENTORY-004](#tc-inventory-004--product-details-can-be-opened-from-product-name)        | Product details can be opened from product name           | Regression / Positive / UI | Medium   | Planned           | TBD          |
-| [TC-INVENTORY-005](#tc-inventory-005--product-details-can-be-opened-from-product-image)       | Product details can be opened from product image          | Regression / Positive / UI | Medium   | Planned           | TBD          |
-| [TC-INVENTORY-006](#tc-inventory-006--user-can-return-from-product-details-to-inventory-page) | User can return from product details to inventory page    | Regression / Positive / UI| Medium   | Planned           | TBD          |
-| [TC-INVENTORY-007](#tc-inventory-007--products-can-be-sorted-by-name-a-to-z)                  | Products can be sorted by name A to Z                     | Regression / Sorting  | Medium   | Planned           | TBD          |
-| [TC-INVENTORY-008](#tc-inventory-008--products-can-be-sorted-by-name-z-to-a)                  | Products can be sorted by name Z to A                     | Regression / Sorting  | Medium   | Planned           | TBD          |
-| [TC-INVENTORY-009](#tc-inventory-009--products-can-be-sorted-by-price-low-to-high)            | Products can be sorted by price low to high               | Regression / Sorting  | Medium   | Planned           | TBD          |
-| [TC-INVENTORY-010](#tc-inventory-010--products-can-be-sorted-by-price-high-to-low)            | Products can be sorted by price high to low               | Regression / Sorting  | Medium   | Planned           | TBD          |
+| Test Case ID                                                                                  | Scenario                                                  | Type                       | Priority | Automation Status | Automated In                   |
+| --------------------------------------------------------------------------------------------- | --------------------------------------------------------- | -------------------------- | -------- | ----------------- | ------------------------------ |
+| [TC-INVENTORY-001](#tc-inventory-001--inventory-page-is-visible-after-successful-login)       | Inventory page is visible after successful login          | Smoke / Positive           | High     | Automated         | `tests/test_inventory_page.py` |
+| [TC-INVENTORY-002](#tc-inventory-002--product-list-is-displayed)                              | Product list is displayed                                 | Smoke / UI                 | High     | Automated         | `tests/test_inventory_page.py` |
+| [TC-INVENTORY-003](#tc-inventory-003--product-cards-contain-name-description-price-and-image) | Product cards contain name, description, price, and image | Regression / UI            | Medium   | Automated         | `tests/test_inventory_page.py` |
+| [TC-INVENTORY-004](#tc-inventory-004--product-details-can-be-opened-from-product-name)        | Product details can be opened from product name           | Regression / Positive / UI | Medium   | Automated         | `tests/test_inventory_page.py` |
+| [TC-INVENTORY-005](#tc-inventory-005--product-details-can-be-opened-from-product-image)       | Product details can be opened from product image          | Regression / Positive / UI | Medium   | Automated         | `tests/test_inventory_page.py` |
+| [TC-INVENTORY-006](#tc-inventory-006--user-can-return-from-product-details-to-inventory-page) | User can return from product details to inventory page    | Regression / Positive / UI | Medium   | Automated         | `tests/test_inventory_page.py` |
+| [TC-INVENTORY-007](#tc-inventory-007--products-can-be-sorted-by-name-a-to-z)                  | Products can be sorted by name A to Z                     | Regression / Sorting       | Medium   | Automated         | `tests/test_inventory_page.py` |
+| [TC-INVENTORY-008](#tc-inventory-008--products-can-be-sorted-by-name-z-to-a)                  | Products can be sorted by name Z to A                     | Regression / Sorting       | Medium   | Automated         | `tests/test_inventory_page.py` |
+| [TC-INVENTORY-009](#tc-inventory-009--products-can-be-sorted-by-price-low-to-high)            | Products can be sorted by price low to high               | Regression / Sorting       | Medium   | Automated         | `tests/test_inventory_page.py` |
+| [TC-INVENTORY-010](#tc-inventory-010--products-can-be-sorted-by-price-high-to-low)            | Products can be sorted by price high to low               | Regression / Sorting       | Medium   | Automated         | `tests/test_inventory_page.py` |
 
 ---
 
@@ -40,8 +40,8 @@ Cart and checkout scenarios are intentionally excluded from this document and wi
 **Type:** Smoke / Positive
 **Priority:** High
 **Automation Candidate:** Yes
-**Automation Status:** Planned
-**Automated In:** TBD
+**Automation Status:** Automated
+**Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
 
@@ -79,8 +79,8 @@ Cart and checkout scenarios are intentionally excluded from this document and wi
 **Type:** Smoke / UI
 **Priority:** High
 **Automation Candidate:** Yes
-**Automation Status:** Planned
-**Automated In:** TBD
+**Automation Status:** Automated
+**Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
 
@@ -115,8 +115,8 @@ Cart and checkout scenarios are intentionally excluded from this document and wi
 **Type:** Regression / UI
 **Priority:** Medium
 **Automation Candidate:** Yes
-**Automation Status:** Planned
-**Automated In:** TBD
+**Automation Status:** Automated
+**Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
 
@@ -127,12 +127,13 @@ Cart and checkout scenarios are intentionally excluded from this document and wi
 **Test Data:**
 
 * User: `standard_user`
+* Products: all products from the inventory product test data set
 
 **Steps:**
 
 1. Log in with valid credentials.
 2. Observe the product list.
-3. Check product card content.
+3. Check product card content for each product from the inventory product test data set.
 
 **Expected Result:**
 
@@ -141,11 +142,12 @@ Cart and checkout scenarios are intentionally excluded from this document and wi
 * Each product card contains a visible product price.
 * Each product card contains a visible product image.
 * Each product card contains an Add to cart button.
+* Product card content matches expected centralized test data.
 
 **Notes:**
 
 * This scenario validates that product cards contain the minimum user-facing information required to understand and select a product.
-* Exact product data can be moved to centralized test data if needed during automation.
+* Exact product data is stored in centralized inventory product test data.
 
 ---
 
@@ -154,8 +156,8 @@ Cart and checkout scenarios are intentionally excluded from this document and wi
 **Type:** Regression / Positive / UI
 **Priority:** Medium
 **Automation Candidate:** Yes
-**Automation Status:** Planned
-**Automated In:** TBD
+**Automation Status:** Automated
+**Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
 
@@ -197,8 +199,8 @@ Cart and checkout scenarios are intentionally excluded from this document and wi
 **Type:** Regression / Positive / UI
 **Priority:** Medium
 **Automation Candidate:** Yes
-**Automation Status:** Planned
-**Automated In:** TBD
+**Automation Status:** Automated
+**Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
 
@@ -237,11 +239,11 @@ Cart and checkout scenarios are intentionally excluded from this document and wi
 
 ### TC-INVENTORY-006 — User can return from product details to inventory page
 
-**Type:** Regression / Positive
+**Type:** Regression / Positive / UI
 **Priority:** Medium
 **Automation Candidate:** Yes
-**Automation Status:** Planned
-**Automated In:** TBD
+**Automation Status:** Automated
+**Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
 
@@ -263,12 +265,14 @@ Cart and checkout scenarios are intentionally excluded from this document and wi
 
 * User is returned to the inventory page.
 * Inventory page URL contains `inventory.html`.
+* Inventory container is visible.
 * Product list is visible.
 
 **Notes:**
 
 * This scenario validates navigation back from product details to the inventory page.
 * This test should not validate cart behavior.
+* One representative product is enough because product details entry paths are already covered separately.
 
 ---
 
@@ -277,8 +281,8 @@ Cart and checkout scenarios are intentionally excluded from this document and wi
 **Type:** Regression / Sorting
 **Priority:** Medium
 **Automation Candidate:** Yes
-**Automation Status:** Planned
-**Automated In:** TBD
+**Automation Status:** Automated
+**Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
 
@@ -304,7 +308,7 @@ Cart and checkout scenarios are intentionally excluded from this document and wi
 
 **Notes:**
 
-* During automation, product names should be read from the UI and compared with an ascending sorted list.
+* During automation, product names are read from the UI and compared with an ascending sorted list.
 * Avoid hardcoded sleeps.
 
 ---
@@ -314,8 +318,8 @@ Cart and checkout scenarios are intentionally excluded from this document and wi
 **Type:** Regression / Sorting
 **Priority:** Medium
 **Automation Candidate:** Yes
-**Automation Status:** Planned
-**Automated In:** TBD
+**Automation Status:** Automated
+**Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
 
@@ -341,7 +345,8 @@ Cart and checkout scenarios are intentionally excluded from this document and wi
 
 **Notes:**
 
-* During automation, product names should be read from the UI and compared with a descending sorted list.
+* During automation, product names are read from the UI and compared with a descending sorted list.
+* Avoid hardcoded sleeps.
 
 ---
 
@@ -350,8 +355,8 @@ Cart and checkout scenarios are intentionally excluded from this document and wi
 **Type:** Regression / Sorting
 **Priority:** Medium
 **Automation Candidate:** Yes
-**Automation Status:** Planned
-**Automated In:** TBD
+**Automation Status:** Automated
+**Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
 
@@ -377,9 +382,10 @@ Cart and checkout scenarios are intentionally excluded from this document and wi
 
 **Notes:**
 
-* During automation, product prices should be read from the UI.
-* Price values should be converted from strings to numeric values before comparison.
+* During automation, product prices are read from the UI.
+* Price values are converted from strings to numeric values before comparison.
 * Do not compare prices as raw strings.
+* Avoid hardcoded sleeps.
 
 ---
 
@@ -388,8 +394,8 @@ Cart and checkout scenarios are intentionally excluded from this document and wi
 **Type:** Regression / Sorting
 **Priority:** Medium
 **Automation Candidate:** Yes
-**Automation Status:** Planned
-**Automated In:** TBD
+**Automation Status:** Automated
+**Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
 
@@ -415,6 +421,7 @@ Cart and checkout scenarios are intentionally excluded from this document and wi
 
 **Notes:**
 
-* During automation, product prices should be read from the UI.
-* Price values should be converted from strings to numeric values before comparison.
+* During automation, product prices are read from the UI.
+* Price values are converted from strings to numeric values before comparison.
 * Do not compare prices as raw strings.
+* Avoid hardcoded sleeps.
