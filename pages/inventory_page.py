@@ -1,5 +1,7 @@
 from playwright.sync_api import Locator, Page
 
+from pages.product_details_page import ProductDetailsPage
+
 
 class InventoryPage:
     URL = "https://www.saucedemo.com/inventory.html"
@@ -59,13 +61,15 @@ class InventoryPage:
     def sort_products_by(self, sort_option_value: str) -> None:
         self.get_product_sorting_dropdown().select_option(sort_option_value)
 
-    def open_product_details_by_name(self, product_name: str) -> None:
+    def open_product_details_by_name(self, product_name: str) -> ProductDetailsPage:
         product_card = self.get_product_card_by_name(product_name)
         self.get_product_name_from_card(product_card).click()
+        return ProductDetailsPage(self.page)
 
-    def open_product_details_by_image(self, product_name: str) -> None:
+    def open_product_details_by_image(self, product_name: str) -> ProductDetailsPage:
         product_card = self.get_product_card_by_name(product_name)
         self.get_product_image_from_card(product_card).click()
+        return ProductDetailsPage(self.page)
 
     def get_cart_link(self) -> Locator:
         return self.page.locator('[data-test="shopping-cart-link"]')
