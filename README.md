@@ -13,6 +13,7 @@
 * [Reports And Artifacts](#reports-and-artifacts)
 * [Documentation](#documentation)
 * [Roadmap](#roadmap)
+* [Navigation Notes](#navigation-notes)
 
 ## Project Overview
 
@@ -41,10 +42,18 @@ The long-term goal of the project is to evolve into a production-style automatio
 Current project phase:
 
 ```text
-Phase 2 completed — Login Page Automation Workstream
+Phase 3A completed — Inventory And Products Automation Workstream
 ```
 
-The project currently includes a complete login page automation workstream covering:
+The project currently includes completed automation coverage for:
+
+* login page and authentication behavior
+* inventory page visibility and product listing behavior
+* product card content validation
+* product details navigation
+* product sorting scenarios
+
+Completed login automation workstream includes:
 
 * manual login test cases
 * LoginPage Page Object Model
@@ -59,12 +68,28 @@ The project currently includes a complete login page automation workstream cover
 * GitHub Actions CI validation
 * HTML reporting and CI artifacts
 
-The next planned phase will expand automation coverage into:
+Completed inventory/products automation workstream includes:
 
-* inventory / products page
-* cart functionality
-* checkout flow
-* multi-page user journeys
+* manual inventory/products test cases
+* InventoryPage Page Object Model extensions
+* ProductDetailsPage Page Object Model
+* centralized inventory/product test data
+* inventory page visibility validation
+* product list validation
+* product card content validation
+* product details navigation validation
+* product sorting validation
+* page-level UI assertions
+* regression and smoke coverage for product-related behavior
+
+The next planned workstream will expand automation coverage into:
+
+* cart page navigation
+* add-to-cart behavior
+* cart badge validation
+* cart product content validation
+* remove-from-cart behavior
+* continue shopping navigation
 
 ## System Under Test
 
@@ -86,31 +111,30 @@ This makes it suitable for demonstrating end-to-end test automation scenarios an
 
 ## Implemented Coverage
 
-Current automated coverage focuses on login page and authentication-related behavior.
+Current automated coverage includes login, authentication, inventory, and product-related behavior.
 
-Implemented test cases:
+Detailed test case definitions are stored in dedicated files under the `test_cases/` directory. The README provides only a high-level coverage overview to keep the project entry point readable and maintainable.
 
-| Test Case ID | Scenario                                                 | Test Area        |
-| ------------ | -------------------------------------------------------- | ---------------- |
-| TC-LOGIN-001 | Successful login with valid credentials                  | Positive / Smoke |
-| TC-LOGIN-002 | Login with invalid username                              | Negative         |
-| TC-LOGIN-003 | Login with invalid password                              | Negative         |
-| TC-LOGIN-004 | Login with empty username                                | Negative         |
-| TC-LOGIN-005 | Login with empty password                                | Negative         |
-| TC-LOGIN-006 | Login with empty credentials                             | Negative         |
-| TC-LOGIN-007 | Locked out user login attempt                            | Negative         |
-| TC-LOGIN-008 | Login with invalid username and invalid password         | Negative         |
-| TC-LOGIN-009 | Error message can be closed after failed login           | UI               |
-| TC-LOGIN-010 | Login page elements are visible                          | UI / Smoke       |
-| TC-LOGIN-011 | Password field masks entered characters                  | UI / Regression  |
-| TC-LOGIN-012 | Login form can be submitted with Enter key               | Positive / UI    |
-| TC-LOGIN-013 | Direct access to inventory page without login is blocked | Access Control   |
+| Workstream                        | Status    | Covered Areas                                                                                                         | Test Case Documentation                                               |
+| --------------------------------- | --------- | --------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| Login Page Automation             | Completed | positive login, negative login, UI validation, protected route access                                                 | [Login Page Test Cases](test_cases/login-page.md)                     |
+| Inventory And Products Automation | Completed | inventory page visibility, product list validation, product card content, product details navigation, product sorting | [Inventory And Products Test Cases](test_cases/inventory-products.md) |
+| Cart Automation                   | Planned   | cart navigation, add to cart, cart badge validation, cart product content, remove from cart, continue shopping        | Planned                                                               |
+| Checkout Flow Automation          | Planned   | checkout information, checkout overview, order completion, validation scenarios                                       | Planned                                                               |
 
-Detailed manual test cases are documented in:
+Current automated test areas:
 
-```text
-test_cases/login-page.md
-```
+* login and authentication tests
+* inventory page tests
+* product details tests
+* product sorting tests
+
+Future automated test areas:
+
+* cart functionality tests
+* checkout flow tests
+* multi-page user journey tests
+* API-level tests
 
 ## Technology Stack
 
@@ -237,10 +261,18 @@ Run UI regression tests:
 pytest -m "ui and regression" -v
 ```
 
-Run a selected test file:
+Run a selected login test file:
 
 ```bash
 pytest tests/test_login_positive.py -v
+```
+
+Run inventory and product test files:
+
+```bash
+pytest tests/test_inventory_page.py -v
+pytest tests/test_product_details_page.py -v
+pytest tests/test_product_sorting.py -v
 ```
 
 ## Quality Checks
@@ -355,22 +387,27 @@ All extended project documentation is stored in the `docs/` directory to keep th
 * [Login Page Test Cases](test_cases/login-page.md)
   Manual login test cases mapped to automated test coverage.
 
+* [Inventory And Products Test Cases](test_cases/inventory-products.md)
+  Manual inventory and product test cases mapped to automated test coverage.
+
 ## Roadmap
 
 Current roadmap direction:
 
 * **Phase 1:** Foundation — completed
 * **Phase 2:** Login Page Automation Workstream — completed
-* **Phase 2 Checkpoint:** Documentation review and Phase 3 preparation — current
-* **Phase 3:** Products, Cart, and Checkout Coverage — planned
+* **Phase 2 Checkpoint:** Documentation review and Phase 3 preparation — completed
+* **Phase 3A:** Inventory And Products Automation Workstream — completed
+* **Phase 3B:** Cart Automation Workstream — next
+* **Phase 3C:** Checkout Flow Automation Workstream — planned
 * **Phase 4:** Framework Maturity — planned
 * **Phase 5:** Advanced Extensions — future
 
 Future planned areas include:
 
-* inventory and product page validation
 * cart functionality tests
 * checkout flow automation
+* multi-page user journey tests
 * API testing layer
 * Allure reporting
 * cross-browser execution
@@ -383,4 +420,5 @@ Future planned areas include:
 * Clickable links point directly to Markdown files in the repository.
 * GitHub automatically renders `.md` files with preview.
 * Extended documentation is version-controlled alongside the framework.
+* Detailed manual test cases are stored outside the README to keep the main project overview concise.
 * Runtime outputs such as reports and screenshots are ignored by Git and handled through local output or CI artifacts.
