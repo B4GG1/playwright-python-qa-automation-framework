@@ -38,5 +38,5 @@ def test_direct_cart_access_without_login_is_blocked(page: Page, _case_id: str):
     login_page = LoginPage(page)
     page.goto(login_page.URL + CART_URL_SUFFIX)
     expect(page).to_have_url(login_page.URL)
-    expect(page.locator("[data-test='inventory-container']")).not_to_be_visible()
+    expect(page.locator("[data-test='cart-contents-container']")).not_to_be_visible()
     assert login_page.get_error_message_text() == ACCESS_DENIED_CART_ERROR
