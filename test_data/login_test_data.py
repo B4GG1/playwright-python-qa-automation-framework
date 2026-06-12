@@ -1,4 +1,5 @@
 INVENTORY_URL_SUFFIX = "inventory.html"
+CART_URL_SUFFIX = "cart.html"
 
 INVALID_CREDENTIALS_ERROR = (
     "Epic sadface: Username and password do not match any user in this service"
@@ -6,7 +7,10 @@ INVALID_CREDENTIALS_ERROR = (
 LOCKED_OUT_USER_ERROR = "Epic sadface: Sorry, this user has been locked out."
 USERNAME_REQUIRED_ERROR = "Epic sadface: Username is required"
 PASSWORD_REQUIRED_ERROR = "Epic sadface: Password is required"
-ACCESS_DENIED_ERROR = "Epic sadface: You can only access '/inventory.html' when you are logged in."
+ACCESS_DENIED_INVENTORY_ERROR = (
+    "Epic sadface: You can only access '/inventory.html' when you are logged in."
+)
+ACCESS_DENIED_CART_ERROR = "Epic sadface: You can only access '/cart.html' when you are logged in."
 
 
 VALID_USER_CASES = [
