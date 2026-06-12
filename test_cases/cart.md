@@ -42,10 +42,10 @@ Checkout scenarios are intentionally excluded from this document and will be cov
 
 ### TC-CART-001 — Cart page can be opened from inventory page
 
-**Type:** Smoke / Navigation
-**Priority:** High
-**Automation Candidate:** Yes
-**Automation Status:** Planned
+**Type:** Smoke / Navigation\
+**Priority:** High\
+**Automation Candidate:** Yes\
+**Automation Status:** Planned\
 **Automated In:** TBD
 
 **Preconditions:**
@@ -79,10 +79,10 @@ Checkout scenarios are intentionally excluded from this document and will be cov
 
 ### TC-CART-002 — Cart is empty before adding products
 
-**Type:** Smoke / UI
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Planned
+**Type:** Smoke / UI\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Planned\
 **Automated In:** TBD
 
 **Preconditions:**
@@ -117,10 +117,10 @@ Checkout scenarios are intentionally excluded from this document and will be cov
 
 ### TC-CART-003 — Product can be added to cart from inventory page
 
-**Type:** Regression / Positive
-**Priority:** High
-**Automation Candidate:** Yes
-**Automation Status:** Planned
+**Type:** Regression / Positive\
+**Priority:** High\
+**Automation Candidate:** Yes\
+**Automation Status:** Planned\
 **Automated In:** TBD
 
 **Preconditions:**
@@ -157,10 +157,10 @@ Checkout scenarios are intentionally excluded from this document and will be cov
 
 ### TC-CART-004 — Add to cart button changes to Remove after adding product
 
-**Type:** Regression / UI
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Planned
+**Type:** Regression / UI\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Planned\
 **Automated In:** TBD
 
 **Preconditions:**
@@ -197,10 +197,10 @@ Checkout scenarios are intentionally excluded from this document and will be cov
 
 ### TC-CART-005 — Cart badge is displayed after adding one product
 
-**Type:** Regression / UI
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Planned
+**Type:** Regression / UI\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Planned\
 **Automated In:** TBD
 
 **Preconditions:**
@@ -235,10 +235,10 @@ Checkout scenarios are intentionally excluded from this document and will be cov
 
 ### TC-CART-006 — Cart badge count updates after adding multiple products
 
-**Type:** Regression / UI
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Planned
+**Type:** Regression / UI\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Planned\
 **Automated In:** TBD
 
 **Preconditions:**
@@ -277,10 +277,10 @@ Checkout scenarios are intentionally excluded from this document and will be cov
 
 ### TC-CART-007 — Added product is displayed on cart page
 
-**Type:** Regression / Positive
-**Priority:** High
-**Automation Candidate:** Yes
-**Automation Status:** Planned
+**Type:** Regression / Positive\
+**Priority:** High\
+**Automation Candidate:** Yes\
+**Automation Status:** Planned\
 **Automated In:** TBD
 
 **Preconditions:**
@@ -316,10 +316,10 @@ Checkout scenarios are intentionally excluded from this document and will be cov
 
 ### TC-CART-008 — Cart product content matches added product data
 
-**Type:** Regression / UI
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Planned
+**Type:** Regression / UI\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Planned\
 **Automated In:** TBD
 
 **Preconditions:**
@@ -359,10 +359,10 @@ Checkout scenarios are intentionally excluded from this document and will be cov
 
 ### TC-CART-009 — Product can be removed from cart page
 
-**Type:** Regression / Positive
-**Priority:** High
-**Automation Candidate:** Yes
-**Automation Status:** Planned
+**Type:** Regression / Positive\
+**Priority:** High\
+**Automation Candidate:** Yes\
+**Automation Status:** Planned\
 **Automated In:** TBD
 
 **Preconditions:**
@@ -400,10 +400,10 @@ Checkout scenarios are intentionally excluded from this document and will be cov
 
 ### TC-CART-010 — Cart badge is removed after removing last product
 
-**Type:** Regression / UI
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Planned
+**Type:** Regression / UI\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Planned\
 **Automated In:** TBD
 
 **Preconditions:**
@@ -440,10 +440,10 @@ Checkout scenarios are intentionally excluded from this document and will be cov
 
 ### TC-CART-011 — User can return from cart page to inventory page
 
-**Type:** Regression / Navigation
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Planned
+**Type:** Regression / Navigation\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Planned\
 **Automated In:** TBD
 
 **Preconditions:**
