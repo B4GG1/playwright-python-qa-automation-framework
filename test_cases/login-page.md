@@ -65,11 +65,11 @@ The goal of this document is to define login-related test scenarios before and a
 
 ### TC-LOGIN-002 — Login with invalid username
 
-**Type:** Regression / Negative
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
-**Automated In:** `tests/test_login_negative.py`
+**Type:** Regression / Negative\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
+**Automated In:** `tests/test_login_negative.py`\
 
 **Preconditions:**
 
