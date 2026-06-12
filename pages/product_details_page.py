@@ -10,6 +10,9 @@ class ProductDetailsPage:
     def open_by_id(self, product_id: int) -> None:
         self.page.goto(f"{self.URL}{product_id}")
 
+    def get_item_details_container(self) -> Locator:
+        return self.page.locator('[data-test="inventory-container"]')
+
     def get_product_name(self) -> Locator:
         return self.page.locator('[data-test="inventory-item-name"]')
 

@@ -23,7 +23,7 @@ The goal of this document is to define login-related test scenarios before and a
 | [TC-LOGIN-012](#tc-login-012--login-form-can-be-submitted-with-enter-key)               | Login form can be submitted with Enter key               | UI / Positive / Regression | Medium   | Automated         | `tests/test_login_positive.py`       |
 | [TC-LOGIN-013](#tc-login-013--direct-access-to-inventory-page-without-login-is-blocked) | Direct access to inventory page without login is blocked | Regression / Security      | High     | Automated         | `tests/test_login_access_control.py` |
 | [TC-LOGIN-014](#tc-login-014--direct-access-to-cart-page-without-login-is-blocked)      | Direct access to cart page without login is blocked      | Regression / Security      | High     | Automated         | `tests/test_login_access_control.py` |
-
+| [TC-LOGIN-015](#tc-login-015--direct-access-to-item-page-without-login-is-blocked)      | Direct access to item page without login is blocked      | Regression / Security      | High     | Automated         | `tests/test_login_access_control.py` |
 
 ---
 
@@ -571,6 +571,49 @@ Epic sadface: You can only access '/inventory.html' when you are logged in.
 
 ```text
 Epic sadface: You can only access '/cart.html' when you are logged in.
+```
+
+**Notes:**
+
+* This scenario validates basic access control for protected application pages.
+* The automated test uses a fresh browser context provided by Playwright, so no additional session cleanup is required in the current setup.
+
+---
+
+### TC-LOGIN-015 — Direct access to item page without login is blocked
+
+**Type:** Regression / Security
+**Priority:** High
+**Automation Candidate:** Yes
+**Automation Status:** Automated
+**Automated In:** `tests/test_login_access_control.py`
+
+**Preconditions:**
+
+* User is not logged in.
+* Browser session does not contain an active authenticated state.
+
+**Test Data:**
+
+* Username: N/A
+* Password: N/A
+* Direct URL: `https://www.saucedemo.com/inventory-item.html?id=4`
+* Example product: `Sauce Labs Backpack`
+
+**Steps:**
+
+1. Open the item page URL directly without logging in.
+
+**Expected Result:**
+
+* User is redirected to the login page.
+* Item page is not accessible.
+* Error message informs the user that login is required.
+
+**Expected Error Message:**
+
+```text
+Epic sadface: You can only access '/inventory-item.html' when you are logged in.
 ```
 
 **Notes:**
