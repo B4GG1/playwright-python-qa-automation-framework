@@ -23,8 +23,8 @@ Checkout scenarios are intentionally excluded from this document and will be cov
 ## Test Case Overview And Automation Coverage
 
 | Test Case ID                                                                           | Scenario                                                  | Type                    | Priority | Automation Status | Automated In |
-| -------------------------------------------------------------------------------------- | --------------------------------------------------------- | ----------------------- | -------- | ----------------- | ------------ |
-| [TC-CART-001](#tc-cart-001--cart-page-can-be-opened-from-inventory-page)               | Cart page can be opened from inventory page               | Smoke / Navigation      | High     | Planned           | TBD          |
+| -------------------------------------------------------------------------------------- | --------------------------------------------------------- |-------------------------| -------- | ----------------- | ------------ |
+| [TC-CART-001](#tc-cart-001--cart-page-can-be-opened-from-inventory-page)               | Cart page can be opened from inventory page               | Smoke / UI              | High     | Planned           | TBD          |
 | [TC-CART-002](#tc-cart-002--cart-is-empty-before-adding-products)                      | Cart is empty before adding products                      | Smoke / UI              | Medium   | Planned           | TBD          |
 | [TC-CART-003](#tc-cart-003--product-can-be-added-to-cart-from-inventory-page)          | Product can be added to cart from inventory page          | Regression / Positive   | High     | Planned           | TBD          |
 | [TC-CART-004](#tc-cart-004--add-to-cart-button-changes-to-remove-after-adding-product) | Add to cart button changes to Remove after adding product | Regression / UI         | Medium   | Planned           | TBD          |
@@ -42,11 +42,11 @@ Checkout scenarios are intentionally excluded from this document and will be cov
 
 ### TC-CART-001 — Cart page can be opened from inventory page
 
-**Type:** Smoke / Navigation\
+**Type:** Smoke / Navigation / UI\
 **Priority:** High\
 **Automation Candidate:** Yes\
-**Automation Status:** Planned\
-**Automated In:** TBD
+**Automation Status:** Automated\
+**Automated In:** `tests/test_cart_page.py`
 
 **Preconditions:**
 

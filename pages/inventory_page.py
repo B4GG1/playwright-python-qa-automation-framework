@@ -1,5 +1,6 @@
 from playwright.sync_api import Locator, Page
 
+from pages.cart_page import CartPage
 from pages.product_details_page import ProductDetailsPage
 
 
@@ -86,8 +87,9 @@ class InventoryPage:
     def get_shopping_cart_link(self) -> Locator:
         return self.page.locator('[data-test="shopping-cart-link"]')
 
-    def open_cart(self) -> None:
+    def open_cart(self) -> CartPage:
         self.get_shopping_cart_link().click()
+        return CartPage(self.page)
 
     def get_shopping_cart_badge(self) -> Locator:
         return self.page.locator('[data-test="shopping-cart-badge"]')
