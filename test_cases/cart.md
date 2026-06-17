@@ -28,8 +28,8 @@ Checkout scenarios are intentionally excluded from this document and will be cov
 | [TC-CART-002](#tc-cart-002--cart-is-empty-before-adding-products)                      | Cart is empty before adding products                      | Smoke / UI                 | Medium   | Planned           | TBD          |
 | [TC-CART-003](#tc-cart-003--product-can-be-added-to-cart-from-inventory-page)          | Product can be added to cart from inventory page          | Regression / Positive / UI | High     | Automated         | `tests/test_cart_page.py`          |
 | [TC-CART-004](#tc-cart-004--add-to-cart-button-changes-to-remove-after-adding-product) | Add to cart button changes to Remove after adding product | Regression / UI            | Medium   | Planned           | TBD          |
-| [TC-CART-005](#tc-cart-005--cart-badge-is-displayed-after-adding-one-product)          | Cart badge is displayed after adding one product          | Regression / UI            | Medium   | Planned           | TBD          |
-| [TC-CART-006](#tc-cart-006--cart-badge-count-updates-after-adding-multiple-products)   | Cart badge count updates after adding multiple products   | Regression / UI            | Medium   | Planned           | TBD          |
+| [TC-CART-005](#tc-cart-005--cart-badge-is-displayed-after-adding-one-product)          | Cart badge is displayed after adding one product          | Regression / UI            | Medium   | Automated         | `tests/test_cart_page.py`           |
+| [TC-CART-006](#tc-cart-006--cart-badge-count-updates-after-adding-multiple-products)   | Cart badge count updates after adding multiple products   | Regression / UI            | Medium   | Automated         | `tests/test_cart_page.py`           |
 | [TC-CART-007](#tc-cart-007--added-product-is-displayed-on-cart-page)                   | Added product is displayed on cart page                   | Regression / Positive / UI | High     | Automated         | `tests/test_cart_page.py`         |
 | [TC-CART-008](#tc-cart-008--cart-product-content-matches-added-product-data)           | Cart product content matches added product data           | Regression / UI            | Medium   | Planned           | TBD          |
 | [TC-CART-009](#tc-cart-009--product-can-be-removed-from-cart-page)                     | Product can be removed from cart page                     | Regression / Positive      | High     | Planned           | TBD          |
@@ -200,8 +200,8 @@ Checkout scenarios are intentionally excluded from this document and will be cov
 **Type:** Regression / UI\
 **Priority:** Medium\
 **Automation Candidate:** Yes\
-**Automation Status:** Planned\
-**Automated In:** TBD
+**Automation Status:** Automated\
+**Automated In:** `tests/test_cart_page.py`
 
 **Preconditions:**
 
@@ -238,8 +238,8 @@ Checkout scenarios are intentionally excluded from this document and will be cov
 **Type:** Regression / UI\
 **Priority:** Medium\
 **Automation Candidate:** Yes\
-**Automation Status:** Planned\
-**Automated In:** TBD
+**Automation Status:** Automated\
+**Automated In:** `tests/test_cart_page.py`
 
 **Preconditions:**
 
@@ -253,7 +253,7 @@ Checkout scenarios are intentionally excluded from this document and will be cov
 * Example products:
 
   * `Sauce Labs Backpack`
-  * `Sauce Labs Bike Light`
+  * `Sauce Labs Bolt T-Shirt`
 
 **Steps:**
 
