@@ -36,8 +36,8 @@ class CartPage:
         return product_card.locator('[data-test="inventory-item-price"]')
 
     @staticmethod
-    def get_product_quantity_from_card_in_cart(product_card: Locator) -> int:
-        return int(product_card.locator('[data-test="item-quantity"]').inner_text())
+    def get_product_quantity_from_card_in_cart(product_card: Locator) -> Locator:
+        return product_card.locator('[data-test="item-quantity"]')
 
     @staticmethod
     def get_remove_from_cart_button_from_card_in_cart(product_card: Locator) -> Locator:
