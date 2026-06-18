@@ -40,12 +40,12 @@ class CartPage:
         return product_card.locator('[data-test="item-quantity"]')
 
     @staticmethod
-    def get_remove_from_cart_button_from_card_in_cart(product_card: Locator) -> Locator:
+    def get_remove_button_from_card_in_cart(product_card: Locator) -> Locator:
         return product_card.get_by_role("button", name="Remove")
 
     def remove_item_from_cart(self, product_name: str) -> None:
         product_card = self.get_product_card_by_name(product_name)
-        self.get_remove_from_cart_button_from_card_in_cart(product_card).click()
+        self.get_remove_button_from_card_in_cart(product_card).click()
 
     def open_product_details_by_name(self, product_name: str) -> None:
         product_card = self.get_product_card_by_name(product_name)

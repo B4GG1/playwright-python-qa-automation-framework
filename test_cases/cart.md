@@ -32,7 +32,7 @@ Checkout scenarios are intentionally excluded from this document and will be cov
 | [TC-CART-006](#tc-cart-006--cart-badge-count-updates-after-adding-multiple-products)   | Cart badge count updates after adding multiple products   | Regression / UI            | Medium   | Automated         | `tests/test_cart_page.py`          |
 | [TC-CART-007](#tc-cart-007--added-product-is-displayed-on-cart-page)                   | Added product is displayed on cart page                   | Regression / Positive / UI | High     | Automated         | `tests/test_cart_page.py`         |
 | [TC-CART-008](#tc-cart-008--cart-product-content-matches-added-product-data)           | Cart product content matches added product data           | Regression / UI            | Medium   | Automated         | `tests/test_cart_page.py`         |
-| [TC-CART-009](#tc-cart-009--product-can-be-removed-from-cart-page)                     | Product can be removed from cart page                     | Regression / Positive      | High     | Planned           | TBD          |
+| [TC-CART-009](#tc-cart-009--product-can-be-removed-from-cart-page)                     | Product can be removed from cart page                     | Regression / Positive / UI      | High     | Automated         | `tests/test_cart_page.py`          |
 | [TC-CART-010](#tc-cart-010--cart-badge-is-removed-after-removing-last-product)         | Cart badge is removed after removing last product         | Regression / UI            | Medium   | Planned           | TBD          |
 | [TC-CART-011](#tc-cart-011--user-can-return-from-cart-page-to-inventory-page)          | User can return from cart page to inventory page          | Regression / Navigation    | Medium   | Planned           | TBD          |
 
@@ -359,11 +359,11 @@ Checkout scenarios are intentionally excluded from this document and will be cov
 
 ### TC-CART-009 — Product can be removed from cart page
 
-**Type:** Regression / Positive\
+**Type:** Regression / Positive / UI\
 **Priority:** High\
 **Automation Candidate:** Yes\
-**Automation Status:** Planned\
-**Automated In:** TBD
+**Automation Status:** Automated\
+**Automated In:** `tests/test_cart_page.py`
 
 **Preconditions:**
 

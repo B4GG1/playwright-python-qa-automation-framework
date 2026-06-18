@@ -76,6 +76,19 @@ def test_cart_product_content_matches_added_product_data(
     )
     expect(cart_page.get_product_quantity_from_card_in_cart(added_product_card)).to_be_visible()
     expect(cart_page.get_product_quantity_from_card_in_cart(added_product_card)).to_have_text("1")
-    expect(
-        cart_page.get_remove_from_cart_button_from_card_in_cart(added_product_card)
-    ).to_be_visible()
+    expect(cart_page.get_remove_button_from_card_in_cart(added_product_card)).to_be_visible()
+
+
+@pytest.mark.regression
+@pytest.mark.positive
+@pytest.mark.ui
+@pytest.mark.parametrize("_case_id", ["TC-CART-009"], ids=["TC-CART-009"])
+def test_product_can_be_removed_from_cart_page(
+    logged_in_inventory_page: InventoryPage, _case_id: str
+):
+    logged_in_inventory_page.add_product_to_cart(EXAMPLE_PRODUCT["product_name"])
+    cart_page = logged_in_inventory_page.open_cart()
+    added_product_card = cart_page.get_product_card_by_name(EXAMPLE_PRODUCT["product_name"])
+    expect(added_product_card).to_be_visible()
+    cart_page.remove_item_from_cart(EXAMPLE_PRODUCT["product_name"])
+    expect(added_product_card).to_be_hidden()
