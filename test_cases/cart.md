@@ -17,24 +17,25 @@ This workstream focuses only on:
 * cart item content validation
 * removing products from cart
 * navigation between cart and inventory page
+* cart state persistence after logout and re-login
 
 Checkout scenarios are intentionally excluded from this document and will be covered in a separate checkout test case file.
 
 ## Test Case Overview And Automation Coverage
 
 | Test Case ID                                                                           | Scenario                                                  | Type                       | Priority | Automation Status | Automated In |
-| -------------------------------------------------------------------------------------- | --------------------------------------------------------- |----------------------------| -------- |-------------------| ------------ |
-| [TC-CART-001](#tc-cart-001--cart-page-can-be-opened-from-inventory-page)               | Cart page can be opened from inventory page               | Smoke / UI                 | High     | Automated         | `tests/test_cart_page.py`         |
-| [TC-CART-002](#tc-cart-002--cart-is-empty-before-adding-products)                      | Cart is empty before adding products                      | Smoke / UI                 | Medium   | Planned           | TBD          |
-| [TC-CART-003](#tc-cart-003--product-can-be-added-to-cart-from-inventory-page)          | Product can be added to cart from inventory page          | Regression / Positive / UI | High     | Automated         | `tests/test_cart_page.py`         |
-| [TC-CART-004](#tc-cart-004--add-to-cart-button-changes-to-remove-after-adding-product) | Add to cart button changes to Remove after adding product | Regression / UI            | Medium   | Planned           | TBD          |
-| [TC-CART-005](#tc-cart-005--cart-badge-is-displayed-after-adding-one-product)          | Cart badge is displayed after adding one product          | Regression / UI            | Medium   | Automated         | `tests/test_cart_page.py`          |
-| [TC-CART-006](#tc-cart-006--cart-badge-count-updates-after-adding-multiple-products)   | Cart badge count updates after adding multiple products   | Regression / UI            | Medium   | Automated         | `tests/test_cart_page.py`          |
-| [TC-CART-007](#tc-cart-007--added-product-is-displayed-on-cart-page)                   | Added product is displayed on cart page                   | Regression / Positive / UI | High     | Automated         | `tests/test_cart_page.py`         |
-| [TC-CART-008](#tc-cart-008--cart-product-content-matches-added-product-data)           | Cart product content matches added product data           | Regression / UI            | Medium   | Automated         | `tests/test_cart_page.py`         |
-| [TC-CART-009](#tc-cart-009--product-can-be-removed-from-cart-page)                     | Product can be removed from cart page                     | Regression / Positive / UI      | High     | Automated         | `tests/test_cart_page.py`          |
-| [TC-CART-010](#tc-cart-010--cart-badge-is-removed-after-removing-last-product)         | Cart badge is removed after removing last product         | Regression / UI            | Medium   | Planned           | TBD          |
-| [TC-CART-011](#tc-cart-011--user-can-return-from-cart-page-to-inventory-page)          | User can return from cart page to inventory page          | Regression / Navigation    | Medium   | Planned           | TBD          |
+| [TC-CART-001](#tc-cart-001--cart-page-can-be-opened-from-inventory-page)               | Cart page can be opened from inventory page               | Smoke / Navigation / UI    | High     | Automated         | `tests/test_cart_page.py` |
+| [TC-CART-002](#tc-cart-002--cart-is-empty-before-adding-products)                      | Cart is empty before adding products                      | Smoke / UI                 | Medium   | Planned           | TBD |
+| [TC-CART-003](#tc-cart-003--product-can-be-added-to-cart-from-inventory-page)          | Product can be added to cart from inventory page          | Regression / Positive / UI | High     | Automated         | `tests/test_cart_page.py` |
+| [TC-CART-004](#tc-cart-004--add-to-cart-button-changes-to-remove-after-adding-product) | Add to cart button changes to Remove after adding product | Regression / UI            | Medium   | Planned           | TBD |
+| [TC-CART-005](#tc-cart-005--cart-badge-is-displayed-after-adding-one-product)          | Cart badge is displayed after adding one product          | Regression / UI            | Medium   | Automated         | `tests/test_cart_page.py` |
+| [TC-CART-006](#tc-cart-006--cart-badge-count-updates-after-adding-multiple-products)   | Cart badge count updates after adding multiple products   | Regression / UI            | Medium   | Automated         | `tests/test_cart_page.py` |
+| [TC-CART-007](#tc-cart-007--added-product-is-displayed-on-cart-page)                   | Added product is displayed on cart page                   | Regression / Positive / UI | High     | Automated         | `tests/test_cart_page.py` |
+| [TC-CART-008](#tc-cart-008--cart-product-content-matches-added-product-data)           | Cart product content matches added product data           | Regression / UI            | Medium   | Automated         | `tests/test_cart_page.py` |
+| [TC-CART-009](#tc-cart-009--product-can-be-removed-from-cart-page)                     | Product can be removed from cart page                     | Regression / Positive / UI | High     | Automated         | `tests/test_cart_page.py` |
+| [TC-CART-010](#tc-cart-010--cart-badge-is-removed-after-removing-last-product)         | Cart badge is removed after removing last product         | Regression / UI            | Medium   | Planned           | TBD |
+| [TC-CART-011](#tc-cart-011--user-can-return-from-cart-page-to-inventory-page)          | User can return from cart page to inventory page          | Regression / Navigation    | Medium   | Planned           | TBD |
+| [TC-CART-012](#tc-cart-012--cart-state-persists-after-logout-and-re-login)             | Cart state persists after logout and re-login             | Regression / Positive / UI | Medium   | Planned           | TBD |
 
 ---
 
@@ -472,3 +473,50 @@ Checkout scenarios are intentionally excluded from this document and will be cov
 
 * This scenario validates navigation from the cart page back to the inventory page.
 * This test should not validate checkout behavior.
+
+---
+
+### TC-CART-012 — Cart state persists after logout and re-login
+
+**Type:** Regression / Positive / UI\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Planned\
+**Automated In:** TBD
+
+**Preconditions:**
+
+* User is logged in.
+* User is on the inventory page.
+* Product list is visible.
+
+**Test Data:**
+
+* User: `standard_user`
+* Example product: `Sauce Labs Backpack`
+
+**Steps:**
+
+1. Log in with valid credentials.
+2. Add the selected product to the cart.
+3. Log out from the application.
+4. Log in again with the same valid user.
+5. Open the cart page.
+6. Observe the cart item list.
+
+**Expected Result:**
+
+* User is successfully logged in again.
+* Cart page is opened after re-login.
+* Previously added product is still visible in the cart.
+* Cart item list contains the previously added product.
+* No error is displayed.
+
+**Notes:**
+
+* This scenario validates cart state persistence after logout and re-login.
+* This test should use one deterministic product from centralized inventory product test data.
+* This test should use the same user before and after logout.
+* This test should not validate checkout behavior.
+* This test should not validate browser restart, storage clearing, cross-user cart behavior, or persistence across different users.
+* This test should not cover multiple logout locations unless a future task explicitly expands the scope.
