@@ -10,6 +10,7 @@ MULTIPLE_EXAMPLE_PRODUCTS = LIST_OF_PRODUCTS[0:2]
 
 
 @pytest.mark.smoke
+@pytest.mark.navigation
 @pytest.mark.ui
 @pytest.mark.parametrize("_case_id", ["TC-CART-001"], ids=["TC-CART-001"])
 def test_open_cart_page_from_inventory(logged_in_inventory_page: InventoryPage, _case_id: str):
@@ -92,3 +93,16 @@ def test_product_can_be_removed_from_cart_page(
     expect(added_product_card).to_be_visible()
     cart_page.remove_item_from_cart(EXAMPLE_PRODUCT["product_name"])
     expect(added_product_card).to_be_hidden()
+
+
+@pytest.mark.regression
+@pytest.mark.navigation
+@pytest.mark.ui
+@pytest.mark.parametrize("_case_id", ["TC-CART-011"], ids=["TC-CART-011"])
+def test_user_can_continue_shopping_from_cart_page(
+    logged_in_inventory_page: InventoryPage, _case_id: str
+):
+    cart_page = logged_in_inventory_page.open_cart()
+    cart_page.continue_shopping()
+    expect(logged_in_inventory_page.page).to_have_url(InventoryPage.URL)
+    expect(logged_in_inventory_page.get_product_list()).to_be_visible()
