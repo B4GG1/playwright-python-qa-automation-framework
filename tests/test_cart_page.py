@@ -5,7 +5,9 @@ from pages.cart_page import CartPage
 from pages.inventory_page import InventoryPage
 from pages.product_details_page import ProductDetailsPage
 from test_data.inventory_test_data import LIST_OF_PRODUCTS
+from test_data.login_test_data import VALID_USER_CASES
 
+VALID_USER = VALID_USER_CASES[0]
 FIRST_EXAMPLE_PRODUCT = LIST_OF_PRODUCTS[0]
 SECOND_EXAMPLE_PRODUCT = LIST_OF_PRODUCTS[1]
 
@@ -181,6 +183,43 @@ def test_user_can_continue_shopping_from_cart_page(
     cart_page.continue_shopping()
     expect(logged_in_inventory_page.page).to_have_url(InventoryPage.URL)
     expect(logged_in_inventory_page.get_product_list()).to_be_visible()
+
+
+@pytest.mark.regression
+@pytest.mark.positive
+@pytest.mark.ui
+@pytest.mark.parametrize("_case_id", ["TC-CART-012"], ids=["TC-CART-012"])
+def test_cart_state_persists_after_logout_and_relogin(
+    logged_in_inventory_page: InventoryPage, _case_id: str
+):
+    tested_product_name = FIRST_EXAMPLE_PRODUCT["product_name"]
+    tested_product_card = logged_in_inventory_page.get_product_card_by_name(tested_product_name)
+
+    logged_in_inventory_page.add_product_to_cart(tested_product_name)
+    expect(
+        logged_in_inventory_page.get_remove_from_cart_button_from_card(tested_product_card)
+    ).to_be_visible()
+    expect(logged_in_inventory_page.get_shopping_cart_badge()).to_be_visible()
+    expect(logged_in_inventory_page.get_shopping_cart_badge()).to_have_text("1")
+
+    cart_page = logged_in_inventory_page.open_cart()
+    expect(cart_page.get_product_card_by_name(tested_product_name)).to_be_visible()
+    cart_page.continue_shopping()
+
+    login_page = logged_in_inventory_page.logout()
+    login_page.login(VALID_USER["username"], VALID_USER["password"])
+
+    relogged_inventory_page = InventoryPage(login_page.page)
+    expect(relogged_inventory_page.page).to_have_url(InventoryPage.URL)
+    expect(
+        relogged_inventory_page.get_remove_from_cart_button_from_card(tested_product_card)
+    ).to_be_visible()
+    expect(relogged_inventory_page.get_shopping_cart_badge()).to_be_visible()
+    expect(relogged_inventory_page.get_shopping_cart_badge()).to_have_text("1")
+
+    cart_page_after_reload = relogged_inventory_page.open_cart()
+
+    expect(cart_page_after_reload.get_product_card_by_name(tested_product_name)).to_be_visible()
 
 
 @pytest.mark.regression

@@ -1,6 +1,7 @@
 from playwright.sync_api import Locator, Page
 
 from pages.cart_page import CartPage
+from pages.login_page import LoginPage
 from pages.product_details_page import ProductDetailsPage
 
 
@@ -96,3 +97,17 @@ class InventoryPage:
 
     def get_cart_badge_count(self) -> int:
         return int(self.get_shopping_cart_badge().inner_text())
+
+    def get_burger_menu_button(self) -> Locator:
+        return self.page.get_by_role("button", name="Open Menu")
+
+    def get_logout_sidebar_link(self) -> Locator:
+        return self.page.locator('[data-test="logout-sidebar-link"]')
+
+    def open_menu(self) -> None:
+        self.get_burger_menu_button().click()
+
+    def logout(self) -> LoginPage:
+        self.open_menu()
+        self.get_logout_sidebar_link().click()
+        return LoginPage(self.page)

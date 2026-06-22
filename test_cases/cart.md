@@ -36,7 +36,7 @@ Checkout scenarios are intentionally excluded from this document and will be cov
 | [TC-CART-009](#tc-cart-009--product-can-be-removed-from-cart-page)                                       | Product can be removed from cart page                                       | Regression / Positive / UI | High   | Automated         | `tests/test_cart_page.py` |
 | [TC-CART-010](#tc-cart-010--cart-badge-is-removed-after-removing-last-product)                           | Cart badge is removed after removing last product                           | Regression / UI            | Medium | Automated         | `tests/test_cart_page.py` |
 | [TC-CART-011](#tc-cart-011--user-can-return-from-cart-page-to-inventory-page)                            | User can return from cart page to inventory page                            | Regression / Navigation / UI | Medium | Automated         | `tests/test_cart_page.py` |
-| [TC-CART-012](#tc-cart-012--cart-state-persists-after-logout-and-re-login)                               | Cart state persists after logout and re-login                               | Regression / Positive / UI | Medium | Planned           | TBD |
+| [TC-CART-012](#tc-cart-012--cart-state-persists-after-logout-and-re-login)                               | Cart state persists after logout and re-login                               | Regression / Positive / UI | Medium | Automated         | `tests/test_cart_page.py`  |
 | [TC-CART-013](#tc-cart-013--add-to-cart-button-changes-to-remove-after-adding-product-from-details-page) | Add to cart button changes to Remove after adding product from details page | Regression / UI            | Medium | Automated         | `tests/test_cart_page.py` |
 
 ---
@@ -483,8 +483,8 @@ Checkout scenarios are intentionally excluded from this document and will be cov
 **Type:** Regression / Positive / UI\
 **Priority:** Medium\
 **Automation Candidate:** Yes\
-**Automation Status:** Planned\
-**Automated In:** TBD
+**Automation Status:** Automated\
+**Automated In:** `tests/test_cart_page.py`
 
 **Preconditions:**
 
@@ -509,7 +509,7 @@ Checkout scenarios are intentionally excluded from this document and will be cov
 **Expected Result:**
 
 * User is successfully logged in again.
-* Cart page is opened after re-login.
+* Inventory page is opened after re-login.
 * Previously added product is still visible in the cart.
 * Cart item list contains the previously added product.
 * No error is displayed.
