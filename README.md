@@ -42,16 +42,24 @@ The long-term goal of the project is to evolve into a production-style automatio
 Current project phase:
 
 ```text
-Phase 3A completed — Inventory And Products Automation Workstream
+Phase 3B in final review — Cart Automation Workstream
 ```
 
-The project currently includes completed automation coverage for:
+The project currently includes completed or implemented automation coverage for:
 
 * login page and authentication behavior
+* protected route access validation
 * inventory page visibility and product listing behavior
 * product card content validation
 * product details navigation
 * product sorting scenarios
+* cart page navigation
+* add-to-cart behavior
+* cart badge behavior
+* cart product content validation
+* remove-from-cart behavior
+* continue shopping navigation
+* cart state persistence after logout and re-login
 
 Completed login automation workstream includes:
 
@@ -62,7 +70,9 @@ Completed login automation workstream includes:
 * positive login scenarios
 * negative login scenarios
 * UI validation scenarios
-* protected route access validation
+* protected inventory route access validation
+* protected cart route access validation
+* protected item details route access validation
 * pytest parametrization
 * pytest markers
 * GitHub Actions CI validation
@@ -82,14 +92,28 @@ Completed inventory/products automation workstream includes:
 * page-level UI assertions
 * regression and smoke coverage for product-related behavior
 
+Implemented cart automation workstream includes:
+
+* manual cart test cases
+* CartPage Page Object Model
+* cart page availability validation
+* empty cart state validation
+* add-to-cart validation
+* cart badge validation
+* cart product visibility validation
+* cart product content validation
+* remove-from-cart validation
+* continue shopping navigation validation
+* cart state persistence validation after logout and re-login
+* product-details-side Add to cart and Remove button state validation
+
 The next planned workstream will expand automation coverage into:
 
-* cart page navigation
-* add-to-cart behavior
-* cart badge validation
-* cart product content validation
-* remove-from-cart behavior
-* continue shopping navigation
+* checkout information form validation
+* checkout error handling
+* checkout overview validation
+* complete order flow
+* order confirmation validation
 
 ## System Under Test
 
@@ -111,29 +135,34 @@ This makes it suitable for demonstrating end-to-end test automation scenarios an
 
 ## Implemented Coverage
 
-Current automated coverage includes login, authentication, inventory, and product-related behavior.
+Current automated coverage includes login, authentication, inventory, product, and cart-related behavior.
 
 Detailed test case definitions are stored in dedicated files under the `test_cases/` directory. The README provides only a high-level coverage overview to keep the project entry point readable and maintainable.
 
-| Workstream                        | Status    | Covered Areas                                                                                                         | Test Case Documentation                                               |
-| --------------------------------- | --------- | --------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| Login Page Automation             | Completed | positive login, negative login, UI validation, protected route access                                                 | [Login Page Test Cases](test_cases/login-page.md)                     |
-| Inventory And Products Automation | Completed | inventory page visibility, product list validation, product card content, product details navigation, product sorting | [Inventory And Products Test Cases](test_cases/inventory-products.md) |
-| Cart Automation                   | Planned   | cart navigation, add to cart, cart badge validation, cart product content, remove from cart, continue shopping        | Planned                                                               |
-| Checkout Flow Automation          | Planned   | checkout information, checkout overview, order completion, validation scenarios                                       | Planned                                                               |
+| Workstream                        | Status          | Covered Areas                                                                                                                                            | Test Case Documentation                                               |
+|-----------------------------------|-----------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------|
+| Login Page Automation             | Completed       | positive login, negative login, UI validation, protected route access                                                                                    | [Login Page Test Cases](test_cases/login-page.md)                     |
+| Inventory And Products Automation | Completed       | inventory page visibility, product list validation, product card content, product details navigation, product sorting                                    | [Inventory And Products Test Cases](test_cases/inventory-products.md) |
+| Cart Automation                   | In Final Review | cart navigation, empty cart state, add to cart, cart badge validation, cart product content, remove from cart, continue shopping, cart state persistence | [Cart Test Cases](test_cases/cart.md)                                 |
+| Checkout Flow Automation          | Planned         | checkout information, checkout overview, order completion, validation scenarios                                                                          | Planned                                                               |
 
 Current automated test areas:
 
 * login and authentication tests
+* protected route access tests
 * inventory page tests
 * product details tests
 * product sorting tests
+* cart page tests
+* cart badge tests
+* cart item content tests
+* cart persistence tests
 
 Future automated test areas:
 
-* cart functionality tests
 * checkout flow tests
-* multi-page user journey tests
+* complete purchase flow tests
+* broader multipage user journey tests
 * API-level tests
 
 ## Technology Stack
@@ -213,6 +242,14 @@ pip install -r requirements.txt
 
 ### 4. Install Playwright Browser
 
+For local Linux or WSL2 setup:
+
+```bash
+playwright install --with-deps chromium
+```
+
+If system dependencies are already installed, Chromium-only installation is also sufficient:
+
 ```bash
 playwright install chromium
 ```
@@ -249,6 +286,18 @@ Run negative tests:
 pytest -m negative -v
 ```
 
+Run sorting tests:
+
+```bash
+pytest -m sorting -v
+```
+
+Run navigation tests:
+
+```bash
+pytest -m navigation -v
+```
+
 Run UI smoke tests:
 
 ```bash
@@ -261,18 +310,38 @@ Run UI regression tests:
 pytest -m "ui and regression" -v
 ```
 
-Run a selected login test file:
+Run UI sorting tests:
 
 ```bash
-pytest tests/test_login_positive.py -v
+pytest -m "ui and sorting" -v
 ```
 
-Run inventory and product test files:
+Run UI navigation tests:
+
+```bash
+pytest -m "ui and navigation" -v
+```
+
+Run selected login test files:
+
+```bash
+pytest tests/test_smoke_login.py -v
+pytest tests/test_login_positive.py -v
+pytest tests/test_login_negative.py -v
+pytest tests/test_login_ui.py -v
+pytest tests/test_login_access_control.py -v
+```
+
+Run inventory and product tests:
 
 ```bash
 pytest tests/test_inventory_page.py -v
-pytest tests/test_product_details_page.py -v
-pytest tests/test_product_sorting.py -v
+```
+
+Run cart tests:
+
+```bash
+pytest tests/test_cart_page.py -v
 ```
 
 ## Quality Checks
@@ -390,6 +459,9 @@ All extended project documentation is stored in the `docs/` directory to keep th
 * [Inventory And Products Test Cases](test_cases/inventory-products.md)
   Manual inventory and product test cases mapped to automated test coverage.
 
+* [Cart Test Cases](test_cases/cart.md)
+  Manual cart test cases mapped to automated test coverage.
+
 ## Roadmap
 
 Current roadmap direction:
@@ -398,16 +470,16 @@ Current roadmap direction:
 * **Phase 2:** Login Page Automation Workstream — completed
 * **Phase 2 Checkpoint:** Documentation review and Phase 3 preparation — completed
 * **Phase 3A:** Inventory And Products Automation Workstream — completed
-* **Phase 3B:** Cart Automation Workstream — next
+* **Phase 3B:** Cart Automation Workstream — in final review
 * **Phase 3C:** Checkout Flow Automation Workstream — planned
 * **Phase 4:** Framework Maturity — planned
 * **Phase 5:** Advanced Extensions — future
 
 Future planned areas include:
 
-* cart functionality tests
 * checkout flow automation
-* multi-page user journey tests
+* complete purchase flow tests
+* broader multipage user journey tests
 * API testing layer
 * Allure reporting
 * cross-browser execution

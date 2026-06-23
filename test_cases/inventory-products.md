@@ -14,7 +14,7 @@ This workstream focuses only on:
 * product details navigation
 * product sorting
 
-Cart and checkout scenarios are intentionally excluded from this document and will be covered in separate test case files.
+Cart scenarios are covered in a separate cart test case file. Checkout scenarios are intentionally excluded and will be covered in a separate checkout test case file.
 
 ## Test Case Overview And Automation Coverage
 

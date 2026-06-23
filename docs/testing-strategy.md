@@ -2,7 +2,7 @@
 
 This document defines the testing approach for the QA automation framework.
 
-The current focus is UI automation testing for the Sauce Demo application using Playwright and Pytest. The project follows an iterative testing strategy: manual test design is created first, then selected scenarios are automated and gradually refactored into reusable framework components.
+The current focus is UI automation testing for the Sauce Demo application using Playwright and Pytest. The project follows an iterative testing strategy: manual test design is created before or alongside automation, then selected scenarios are automated and gradually refactored into reusable framework components.
 
 ## System Under Test
 
@@ -58,18 +58,20 @@ Current implemented test case documentation:
 ```text
 test_cases/login-page.md
 test_cases/inventory-products.md
+test_cases/cart.md
 ```
 
 Current test case identifiers include:
 
 * `TC-LOGIN-XXX`
 * `TC-INVENTORY-XXX`
+* `TC-CART-XXX`
 
 These identifiers are also used in parametrized pytest output where practical.
 
 ## Current Test Coverage
 
-The current automated test coverage focuses on the Sauce Demo login, authentication, inventory, and product-related behavior.
+The current automated test coverage focuses on the Sauce Demo login, authentication, inventory, product, and cart behavior.
 
 Implemented login coverage includes:
 
@@ -86,6 +88,8 @@ Implemented login coverage includes:
 * password field masking validation
 * login form submission with Enter key
 * direct inventory page access without login
+* direct cart page access without login
+* direct item details page access without login
 
 Implemented inventory and products coverage includes:
 
@@ -101,7 +105,23 @@ Implemented inventory and products coverage includes:
 * product sorting by price low to high
 * product sorting by price high to low
 
-Cart and checkout scenarios are not implemented yet and are planned for later workstreams.
+Implemented cart coverage includes:
+
+* cart page can be opened from the inventory page
+* cart is empty before adding products
+* product can be added to cart from the inventory page
+* inventory-side Add to cart button changes to Remove after adding a product
+* cart badge is displayed after adding one product
+* cart badge count updates after adding multiple products
+* added product is displayed on the cart page
+* cart product content matches added product data
+* product can be removed from the cart page
+* cart badge is removed after removing the last product
+* user can return from cart page to inventory page
+* cart state persists after logout and re-login
+* product-details-side Add to cart button changes to Remove after adding a product
+
+Checkout scenarios are not implemented yet and are planned for a later workstream.
 
 ## Test Types
 
@@ -116,11 +136,13 @@ Current examples:
 * successful login with valid credentials
 * inventory page visibility after successful login
 * product list visibility
+* cart page can be opened from the inventory page
+* cart is empty before adding products
 
 Future examples:
 
-* basic cart operation
 * basic checkout availability
+* order completion availability
 
 ### Regression Tests
 
@@ -136,11 +158,15 @@ Current examples:
 * product card content validation
 * product details navigation
 * product sorting behavior
+* cart badge behavior
+* cart item content validation
+* remove-from-cart behavior
+* cart state persistence after logout and re-login
 
 Future examples:
 
-* cart update behavior
 * checkout validation
+* checkout overview behavior
 * full purchase flow
 
 ### UI Tests
@@ -158,6 +184,11 @@ Current examples:
 * product card content visibility
 * product details page visibility
 * product sorting behavior
+* cart page visibility
+* cart item visibility
+* cart badge visibility
+* Add to cart and Remove button visibility
+* Continue Shopping navigation behavior
 
 ### Positive Tests
 
@@ -170,6 +201,9 @@ Current examples:
 * product details can be opened from product name
 * product details can be opened from product image
 * user can return from product details page to inventory page
+* user can add a product to the cart
+* user can remove a product from the cart
+* cart state persists after logout and re-login
 
 ### Negative Tests
 
@@ -186,9 +220,11 @@ Current examples:
 
 Access control tests validate that protected application areas cannot be accessed without proper authentication.
 
-Current example:
+Current examples:
 
 * unauthenticated user cannot directly access the inventory page
+* unauthenticated user cannot directly access the cart page
+* unauthenticated user cannot directly access an item details page
 
 ### Sorting Tests
 
@@ -203,17 +239,32 @@ Current examples:
 
 Sorting tests use plain Python assertions for comparing extracted product names and converted product prices.
 
-### End-To-End Tests
+### Navigation Tests
 
-End-to-end tests will validate complete user journeys across multiple pages.
+Navigation tests validate page transitions and user navigation paths.
+
+Current examples:
+
+* cart page can be opened from the inventory page
+* user can return from cart page to inventory page
+* user can return from product details page to inventory page
+
+### End-to-End Tests
+
+End-to-end tests validate complete user journeys across multiple pages.
 
 Current status:
 
-* not fully implemented yet
+* partial multipage UI flows are implemented
+* complete purchase flow is not implemented yet
+
+Current examples:
+
+* add product to cart from inventory and verify it on the cart page
+* add product to cart, log out, log in again, and verify cart state is preserved
 
 Planned examples:
 
-* add product to cart
 * complete checkout flow
 * verify order completion
 
@@ -243,6 +294,7 @@ Current implementation:
 pages/login_page.py
 pages/inventory_page.py
 pages/product_details_page.py
+pages/cart_page.py
 ```
 
 The `LoginPage` object is responsible for:
@@ -263,18 +315,44 @@ The `InventoryPage` object is responsible for:
 * sorting products
 * opening product details from product name
 * opening product details from product image
-* exposing cart-related locators for future cart workstreams
+* adding products to the cart from inventory product cards
+* removing products from the cart from inventory product cards
+* accessing the cart link and cart badge
+* opening the cart page
+* opening the application menu
+* logging out from the inventory page
 
 The `ProductDetailsPage` object is responsible for:
 
 * exposing product details page locators
 * validating product details content through test-level assertions
+* exposing Add to cart and Remove button locators
+* adding a product to the cart from the product details page
+* removing a product from the cart from the product details page
 * exposing the Back to products button
 * returning from product details page to inventory page
+* opening the cart page from product details
+* accessing the cart badge
+
+The `CartPage` object is responsible for:
+
+* opening the cart page
+* exposing cart page locators
+* accessing the cart contents container
+* accessing the cart list
+* accessing cart item cards
+* locating cart items by product name
+* reading cart item name, description, price, and quantity
+* exposing Remove button locators
+* removing products from the cart
+* opening product details from cart item name
+* exposing Continue Shopping button
+* returning from cart page to inventory page
+* exposing cart link and cart badge
+* exposing Checkout button locators without testing checkout behavior in the cart workstream
 
 Future Page Objects may include:
 
-* CartPage
 * CheckoutPage
 
 Page Objects should be introduced when they reduce duplication and improve readability.
@@ -302,6 +380,8 @@ The `logged_in_inventory_page` fixture:
 * logs in through the login page
 * returns a ready-to-use `InventoryPage` instance
 
+The `logged_in_inventory_page` fixture is reused by inventory, product, and cart tests.
+
 Fixtures should be added when setup logic becomes repeated across multiple tests.
 
 Avoid creating too many fixtures too early. Fixture growth should follow real framework needs.
@@ -324,7 +404,7 @@ Current login test data includes:
 * empty credential cases
 * locked out user cases
 * expected error messages
-* login-related URL values
+* protected route URL suffixes
 
 Current inventory product test data includes:
 
@@ -333,6 +413,13 @@ Current inventory product test data includes:
 * product descriptions
 * product prices
 * product image paths
+
+Cart tests currently reuse:
+
+* valid user data from login test data
+* deterministic product data from inventory product test data
+
+A separate cart test data module is not needed at the current stage because cart tests reuse existing product and user data without introducing unique cart-only datasets.
 
 Test data should support:
 
@@ -351,10 +438,12 @@ Current parametrized areas:
 * empty credential scenarios
 * locked out user scenario
 * positive login user case
+* protected route access scenarios
 * inventory product card validation
 * product details navigation from product name
 * product details navigation from product image
 * selected single-case tests where test case ID visibility in `pytest -v` is desired
+* cart tests where test case ID visibility in `pytest -v` is desired
 
 Parametrized test IDs should use manual test case IDs where practical, for example:
 
@@ -364,6 +453,9 @@ TC-LOGIN-003
 TC-LOGIN-004
 TC-INVENTORY-001
 TC-INVENTORY-007
+TC-CART-001
+TC-CART-009
+TC-CART-012
 ```
 
 This improves traceability between:
@@ -388,6 +480,7 @@ Current markers:
 * `positive`
 * `negative`
 * `sorting`
+* `navigation`
 
 Example marker commands:
 
@@ -397,9 +490,11 @@ pytest -m regression -v
 pytest -m positive -v
 pytest -m negative -v
 pytest -m sorting -v
+pytest -m navigation -v
 pytest -m "ui and smoke" -v
 pytest -m "ui and regression" -v
 pytest -m "ui and sorting" -v
+pytest -m "ui and navigation" -v
 ```
 
 Markers should be used consistently to support selective local and CI execution.
@@ -413,6 +508,7 @@ Current assertion examples:
 * page title is correct
 * URL matches expected page
 * element is visible
+* element is hidden
 * error message text matches expected value
 * password input has `type="password"`
 * protected route redirects unauthenticated user to login page
@@ -422,10 +518,18 @@ Current assertion examples:
 * product details page content matches selected product data
 * product names match expected sorted order
 * product prices match expected sorted order after numeric conversion
+* cart badge is visible
+* cart badge text matches expected count
+* cart item is visible
+* cart item content matches added product data
+* cart item quantity matches expected value
+* Add to cart button changes to Remove
+* Remove button changes cart state
+* cart state remains visible after logout and re-login
 
 Use Playwright assertions for UI/browser state when possible because they include built-in waiting behavior.
 
-Use plain Python assertions when comparing simple values, such as extracted text, product names, converted prices, or sorted lists.
+Use plain Python assertions when comparing simple values, such as extracted text, product names, converted prices, expected error message strings, or sorted lists.
 
 ## Automation Priority
 
@@ -441,6 +545,22 @@ Automation should focus on:
 Not every possible case should be automated.
 
 Some scenarios may remain manual or exploratory if automation would be unstable, low-value, or overly complex.
+
+## Scope Boundaries
+
+The project uses scope boundaries to keep workstreams focused and maintainable.
+
+Current cart workstream boundaries:
+
+* cart behavior is included
+* checkout behavior is excluded
+* browser restart persistence is excluded
+* storage clearing is excluded
+* cross-user cart persistence is excluded
+* multi-user cart behavior is excluded
+* logout from multiple page locations is excluded
+
+Checkout behavior should be implemented in a separate checkout workstream.
 
 ## Reporting And Debugging
 
@@ -488,6 +608,22 @@ pytest -m sorting -v
 pytest -m "ui and sorting" -v
 ```
 
+Recommended validation when cart tests are changed:
+
+```bash
+pytest -v tests/test_cart_page.py
+pytest -m navigation -v
+pytest -m "ui and navigation" -v
+pytest -m "ui and regression" -v
+```
+
+For checkpoint or stabilization tasks, run both scoped and full validation when possible:
+
+```bash
+pytest -v tests/test_cart_page.py
+pytest -v
+```
+
 ## CI Validation Strategy
 
 GitHub Actions validates the project automatically on:
@@ -513,13 +649,12 @@ Failing tests or quality checks should block merging.
 
 Planned improvements:
 
-* cart test coverage
 * checkout flow automation
-* logout and session behavior validation
 * broader end-to-end scenarios
 * API testing layer
 * multi-browser execution
 * smoke and regression CI job separation
+* marker-based CI job separation
 * Allure reporting integration
 * improved diagnostics and logs
 * reusable assertion helpers

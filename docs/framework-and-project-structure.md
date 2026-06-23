@@ -2,7 +2,7 @@
 
 This document describes the repository structure and the responsibility of each major directory and configuration file.
 
-The framework is structured to support scalable UI automation, Page Object Model components, test data management, reporting, documentation, and future CI/CD expansion while maintaining readability and modularity.
+The framework is structured to support scalable UI automation, Page Object Model components, test data management, reporting, documentation, CI execution, and future framework expansion while maintaining readability and modularity.
 
 ## Current Project Structure
 
@@ -43,6 +43,7 @@ Current responsibility:
 
 * CI pipeline execution
 * dependency installation
+* Playwright Chromium browser installation
 * code quality checks
 * test execution
 * HTML report generation
@@ -75,6 +76,8 @@ Examples:
 * testing strategy
 * roadmap
 * framework structure documentation
+* technology stack documentation
+* feature overview documentation
 
 ### `framework/`
 
@@ -100,6 +103,7 @@ Current implementation:
 * `login_page.py`
 * `inventory_page.py`
 * `product_details_page.py`
+* `cart_page.py`
 
 Current responsibility:
 
@@ -112,8 +116,11 @@ Current responsibility:
 The current Page Object layer includes:
 
 * `LoginPage`, which supports login page interactions, error message handling, and access to login page UI elements
-* `InventoryPage`, which supports inventory page visibility, product list access, product card access, product sorting, and opening product details
-* `ProductDetailsPage`, which supports product details validation and returning to the inventory page
+* `InventoryPage`, which supports inventory page visibility, product list access, product card access, product sorting, product details navigation, cart entry points, cart badge access, product add/remove actions, menu opening, and logout
+* `ProductDetailsPage`, which supports product details validation, product details cart actions, cart badge access, cart navigation, and returning to the inventory page
+* `CartPage`, which supports cart page availability, cart contents access, cart item lookup, cart item content access, remove-from-cart actions, Continue Shopping navigation, checkout button access, and cart badge access
+
+The Page Object layer remains intentionally lightweight. A shared BasePage abstraction has not been introduced yet because repeated page-level behavior is still limited and does not justify an additional inheritance layer.
 
 ### `reports/`
 
@@ -149,18 +156,21 @@ Current implementation:
 
 * `login-page.md`
 * `inventory-products.md`
+* `cart.md`
 
 Current responsibility:
 
 * manual test case documentation
-* test design before automation
+* test design before and alongside automation
 * mapping manual test cases to automated test files
 * documenting automation coverage status
+* documenting scope boundaries for each application area
 
 Current test case identifiers include:
 
 * `TC-LOGIN-XXX`
 * `TC-INVENTORY-XXX`
+* `TC-CART-XXX`
 
 These identifiers are also reflected in parametrized pytest output where practical.
 
@@ -180,15 +190,18 @@ Current responsibility:
 * empty credentials cases
 * locked out user cases
 * expected login error messages
-* login-related URL values
+* protected route URL suffixes
 * inventory product IDs
 * inventory product names
 * inventory product descriptions
 * inventory product prices
 * inventory product image paths
+* deterministic product data reused by inventory, product details, and cart tests
 * test case IDs for parametrized tests where practical
 
 This directory keeps test data separate from test logic and supports pytest parametrization.
+
+Cart tests intentionally reuse existing login and inventory product data instead of introducing a separate cart-specific test data file.
 
 ### `tests/`
 
@@ -202,13 +215,14 @@ Current test modules:
 * `test_login_ui.py` — login page UI behavior
 * `test_login_access_control.py` — protected route access validation
 * `test_inventory_page.py` — inventory page, product cards, product details navigation, and product sorting validation
+* `test_cart_page.py` — cart page, empty cart state, add-to-cart behavior, cart badge behavior, cart item visibility and content, remove-from-cart behavior, continue shopping navigation, and cart persistence validation
 
 Planned future test modules may include:
 
-* cart tests
 * checkout tests
 * API tests
 * broader regression suites
+* cross-browser execution suites if needed
 
 ## Root Configuration Files
 
@@ -224,7 +238,7 @@ Current usage:
 
 The `opened_login_page` fixture prepares a `LoginPage` instance and opens the login page before a test starts.
 
-The `logged_in_inventory_page` fixture logs in with a valid user and returns an `InventoryPage` instance for inventory and product-related tests.
+The `logged_in_inventory_page` fixture logs in with a valid user and returns an `InventoryPage` instance for inventory, product-related, and cart-related tests.
 
 ### `pytest.ini`
 
@@ -247,6 +261,7 @@ Current markers include:
 * `positive`
 * `negative`
 * `sorting`
+* `navigation`
 
 ### `pyproject.toml`
 
@@ -302,6 +317,14 @@ pytest markers and parametrized output
 GitHub Actions CI validation
 ```
 
+The login workstream covers positive login, negative login, login UI behavior, and protected route access validation.
+
+Protected route validation currently includes direct access checks for:
+
+* inventory page
+* cart page
+* item details page
+
 ## Current Inventory And Products Test Suite Structure
 
 The inventory and products automation workstream is organized as follows:
@@ -321,6 +344,46 @@ pytest markers and parametrized output
 GitHub Actions CI validation
 ```
 
+The inventory and products workstream covers inventory page availability, product list validation, product card content validation, product details navigation, return navigation from product details, and product sorting.
+
+## Current Cart Test Suite Structure
+
+The cart automation workstream is organized as follows:
+
+```text
+test_cases/cart.md
+        ↓
+test_data/login_test_data.py
+test_data/inventory_test_data.py
+        ↓
+pages/inventory_page.py
+pages/product_details_page.py
+pages/cart_page.py
+        ↓
+tests/test_cart_page.py
+        ↓
+pytest markers and parametrized output
+        ↓
+GitHub Actions CI validation
+```
+
+The cart workstream covers:
+
+* cart page availability
+* empty cart state
+* adding products to cart from inventory
+* inventory-side Add to cart and Remove button behavior
+* product-details-side Add to cart and Remove button behavior
+* cart badge visibility and count behavior
+* cart item visibility
+* cart item content validation
+* removing products from cart
+* cart badge removal after removing the last product
+* Continue Shopping navigation
+* cart state persistence after logout and re-login
+
+Checkout behavior is intentionally excluded from the cart workstream and will be handled in a separate checkout workstream.
+
 ## Architecture Goals
 
 The project structure is designed to support:
@@ -339,33 +402,42 @@ The project structure is designed to support:
 
 ## Structure Evolution
 
-The project has moved beyond the initial foundation stage and now contains two complete automation workstreams:
+The project has moved beyond the initial foundation stage and now contains three complete automation workstreams:
 
 * Login Page Automation Workstream
 * Inventory And Products Automation Workstream
+* Cart Automation Workstream
 
 Implemented structure currently includes:
 
 * concrete LoginPage Page Object
 * concrete InventoryPage Page Object
 * concrete ProductDetailsPage Page Object
+* concrete CartPage Page Object
 * centralized login test data
 * centralized inventory product test data
 * reusable opened login page fixture
 * reusable logged-in inventory page fixture
 * login test case documentation
 * inventory and products test case documentation
+* cart test case documentation
 * parametrized login tests
 * parametrized inventory product tests
+* parametrized cart tests
 * marker-based test categorization
 * login UI and access-control coverage
 * inventory page, product details, and product sorting coverage
+* cart page, cart item, cart badge, remove-from-cart, continue shopping, and cart persistence coverage
+* GitHub Actions CI validation
+* pytest HTML reporting
+* screenshot capture on test failure
+* local and CI quality checks
 
 Future improvements will include:
 
-* additional Page Object classes for cart and checkout pages
+* additional Page Object classes for checkout pages
 * reusable BasePage abstraction when justified
-* expanded fixture organization
+* expanded fixture organization when setup flows grow
 * reporting utilities
 * API testing structure
 * Selenium comparison module

@@ -58,7 +58,8 @@ Examples:
 ```text
 feature/login-page
 feature/inventory-products
-feature/cart-checkout
+feature/cart-page
+feature/checkout-flow
 feature/api-client
 ```
 
@@ -72,13 +73,15 @@ For small independent tasks, one branch per task is preferred.
 
 For tightly connected workstreams, one larger branch is acceptable if commits remain organized and traceable by task ID.
 
-Example from the project:
+Examples from the project:
 
 ```text
 feature/login-page
+feature/inventory-products
+feature/cart-page
 ```
 
-This branch was used for the complete Login Page Automation Workstream.
+These branches can be used for complete functional automation workstreams when the tasks are tightly related and easier to validate together.
 
 ### Fix Branches
 
@@ -114,7 +117,7 @@ Examples:
 docs/update-readme
 docs/testing-strategy
 docs/git-workflow
-docs/phase-2-review
+docs/phase-review
 ```
 
 ### Refactor Branches
@@ -152,6 +155,8 @@ docs(AQA-0026): create login page test cases
 feat(AQA-0027): implement login page object model
 refactor(AQA-0032): parametrize negative login scenarios
 test(AQA-0038): add protected inventory route access test
+test(AQA-0057): add product to cart test
+chore(AQA-0064): review and stabilize cart workstream
 ```
 
 Common commit types:
@@ -161,23 +166,27 @@ Common commit types:
 * `docs` — documentation changes
 * `refactor` — structural changes without behavior change
 * `fix` — bug fixes
-* `chore` — maintenance/configuration tasks
+* `chore` — maintenance/configuration/review tasks
 
 ## Workstream Branch Strategy
 
 For larger functional areas, the project may use one workstream branch.
 
-Example:
+Examples:
 
 ```text
 feature/login-page
+feature/inventory-products
+feature/cart-page
 ```
 
 In this approach:
 
 * all related tasks are committed on the same branch,
 * each task still gets its own meaningful commit,
+* commits should include the task ID when applicable,
 * the branch is pushed regularly as backup,
+* local validation is performed during and after the workstream,
 * Pull Request is created only when the whole workstream is ready,
 * final merge into `develop` is performed using Squash and merge.
 
@@ -203,7 +212,14 @@ Benefits:
 Example final squash commit:
 
 ```text
-test(AQA-0040): complete login page test suite
+test(AQA-0064): complete cart automation workstream
+```
+
+For documentation-only or checkpoint-only changes, the squash commit may use `docs` or `chore` instead:
+
+```text
+chore(AQA-0064): review and stabilize cart workstream
+docs(AQA-0064): update project documentation after cart workstream
 ```
 
 ## Direct Push Policy
@@ -220,6 +236,8 @@ feature branch -> Pull Request -> CI validation -> Review -> Squash merge
 ```
 
 For this project, even when working solo, Pull Requests are used to practice professional workflow and validate changes through CI.
+
+Direct pushes to a feature branch are acceptable during active implementation, review, and checkpoint work.
 
 ## Branch Protection Rules
 
@@ -289,8 +307,21 @@ pytest -m smoke -v
 pytest -m regression -v
 pytest -m positive -v
 pytest -m negative -v
+pytest -m sorting -v
+pytest -m navigation -v
 pytest -m "ui and smoke" -v
+pytest -m "ui and regression" -v
+pytest -m "ui and sorting" -v
+pytest -m "ui and navigation" -v
 ```
+
+For workstream-specific stabilization tasks, scoped validation may also be used before the full suite, for example:
+
+```bash
+pytest -v tests/test_cart_page.py
+```
+
+The full test suite should still pass before a workstream is considered ready for merge unless a scoped validation exception is explicitly accepted.
 
 ## Pull Request Review Checklist
 
@@ -302,6 +333,9 @@ Before merging a Pull Request, verify:
 * changed files match the intended task or workstream scope
 * documentation is updated when needed
 * test cases and automated tests are aligned
+* Page Object responsibilities remain logically separated
+* test data remains centralized where practical
+* checkout behavior is not mixed into cart scope
 * commit message for squash merge is clear
 * target branch is correct
 
@@ -332,27 +366,30 @@ If the remote branch was deleted on GitHub, clean stale remote references:
 git fetch --prune
 ```
 
-## Phase Checkpoint Strategy
+## Phase And Workstream Checkpoint Strategy
 
-Before moving to the next major project phase, a checkpoint task should be completed.
+Before moving to the next major project phase or before merging a completed workstream, a checkpoint task should be completed.
 
 A checkpoint task should verify:
 
 * completed scope
 * test coverage
 * local test execution
+* full suite execution or accepted scoped validation
 * CI status
 * documentation status
 * Git status
 * cleanup needs
-* readiness for the next phase
+* generated files and ignored artifacts
+* readiness for the next phase or merge
 
 This prevents new work from being built on top of unstable or outdated project state.
 
-Example checkpoint task:
+Example checkpoint tasks:
 
 ```text
 AQA-0041 — Review Phase 2 And Prepare Phase 3 Scope
+AQA-0064 — Review And Stabilize Cart Workstream
 ```
 
 ## Summary

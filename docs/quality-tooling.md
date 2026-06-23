@@ -40,6 +40,20 @@ Ruff configuration is stored in:
 pyproject.toml
 ```
 
+Current Ruff configuration:
+
+```toml
+[tool.ruff]
+line-length = 200
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["config", "framework", "pages", "test_data", "tests"]
+```
+
 ## Black
 
 Black is used as the main Python code formatter.
@@ -62,6 +76,14 @@ Black configuration is stored in:
 
 ```text
 pyproject.toml
+```
+
+Current Black configuration:
+
+```toml
+[tool.black]
+line-length = 100
+target-version = ['py312']
 ```
 
 ## isort
@@ -88,6 +110,14 @@ isort configuration is stored in:
 pyproject.toml
 ```
 
+Current isort configuration:
+
+```toml
+[tool.isort]
+profile = "black"
+line_length = 100
+```
+
 ## pre-commit
 
 pre-commit runs configured quality checks before a commit is created.
@@ -110,7 +140,13 @@ Run all hooks manually:
 pre-commit run --all-files
 ```
 
-The purpose of pre-commit is to catch common formatting and linting issues before code is committed.
+The purpose of pre-commit is to catch common formatting, import sorting, and linting issues before code is committed.
+
+Current pre-commit hook sources:
+
+* `astral-sh/ruff-pre-commit`
+* `psf/black`
+* `pycqa/isort`
 
 ## Pytest
 
@@ -139,9 +175,11 @@ pytest -m regression -v
 pytest -m positive -v
 pytest -m negative -v
 pytest -m sorting -v
+pytest -m navigation -v
 pytest -m "ui and smoke" -v
 pytest -m "ui and regression" -v
 pytest -m "ui and sorting" -v
+pytest -m "ui and navigation" -v
 ```
 
 Marker definitions are stored in:
@@ -149,6 +187,20 @@ Marker definitions are stored in:
 ```text
 pytest.ini
 ```
+
+Current marker categories include:
+
+* `smoke`
+* `regression`
+* `ui`
+* `api`
+* `e2e`
+* `positive`
+* `negative`
+* `sorting`
+* `navigation`
+
+The project uses strict marker validation, so markers used in tests should be registered in `pytest.ini`.
 
 ## Playwright Assertions
 
@@ -158,17 +210,25 @@ Examples of current assertion usage include:
 
 * checking page title
 * checking URL after login
+* checking URL after navigation
 * checking element visibility
+* checking element hidden state
 * checking form field attributes
 * checking protected route redirection
 * checking inventory page visibility
 * checking product card content
 * checking product details content
 * checking product image attributes
+* checking cart page visibility
+* checking cart badge visibility and text
+* checking cart item visibility
+* checking cart item content
+* checking Add to cart and Remove button states
+* checking cart state after logout and re-login
 
 Playwright assertions should be preferred for browser and UI state validation because they include built-in waiting behavior.
 
-Plain Python assertions are used when comparing extracted values such as product names, product prices, sorted lists, or other already-read data.
+Plain Python assertions are used when comparing extracted values such as product names, product prices, sorted lists, expected error message strings, or other already-read data.
 
 ## Local Quality Workflow
 
@@ -205,6 +265,10 @@ pytest -m regression -v
 pytest -m positive -v
 pytest -m negative -v
 pytest -m "ui and smoke" -v
+pytest -v tests/test_login_positive.py
+pytest -v tests/test_login_negative.py
+pytest -v tests/test_login_ui.py
+pytest -v tests/test_login_access_control.py
 ```
 
 For inventory and product-related changes, these commands may also be useful:
@@ -213,6 +277,22 @@ For inventory and product-related changes, these commands may also be useful:
 pytest -v tests/test_inventory_page.py
 pytest -m sorting -v
 pytest -m "ui and sorting" -v
+```
+
+For cart-related changes, these commands may also be useful:
+
+```bash
+pytest -v tests/test_cart_page.py
+pytest -m navigation -v
+pytest -m "ui and navigation" -v
+pytest -m "ui and regression" -v
+```
+
+For checkpoint or stabilization tasks, run both scoped and full validation when possible:
+
+```bash
+pytest -v tests/test_cart_page.py
+pytest -v
 ```
 
 ## CI Quality Checks
@@ -227,6 +307,15 @@ Current CI checks include:
 * Pytest test execution
 * pytest HTML report generation
 * artifact upload for reports and screenshots
+
+Current CI quality commands include:
+
+```bash
+ruff check .
+black --check .
+isort . --check-only
+pytest -v --html=reports/report.html --self-contained-html
+```
 
 These checks help ensure that only validated changes are integrated into stable branches.
 
@@ -256,11 +345,21 @@ pytest -v
 
 ### Pre-commit quality gate
 
-Before creating commits:
+Before creating commits, or manually before final validation:
 
 ```bash
 pre-commit run --all-files
 ```
+
+### Scoped workstream quality gate
+
+For workstream-specific review or stabilization tasks:
+
+```bash
+pytest -v tests/test_cart_page.py
+```
+
+The scoped command should be followed by full-suite validation before the workstream is considered ready for merge unless a scoped validation exception is explicitly accepted.
 
 ### CI quality gate
 
@@ -273,22 +372,28 @@ Before merging Pull Requests:
 
 ## Current Quality Status
 
-The current quality tooling supports the completed Login Page Automation Workstream and the Inventory And Products Automation Workstream.
+The current quality tooling supports the completed Login Page Automation Workstream, Inventory And Products Automation Workstream, and Cart Automation Workstream.
 
 The project currently includes:
 
 * Page Object Model implementation for login page
 * Page Object Model implementation for inventory page
 * Page Object Model implementation for product details page
+* Page Object Model implementation for cart page
 * reusable pytest fixture for opened login page
 * reusable pytest fixture for logged-in inventory page
 * centralized login test data
 * centralized inventory product test data
 * parametrized login tests
+* parametrized protected route access tests
 * parametrized inventory product tests
+* parametrized cart tests
 * marker-based test categorization
 * screenshot capture on test failure
 * local and CI validation workflow
+* HTML report generation
+* CI artifact upload
+* full-suite CI validation
 
 ## Quality Goals
 
@@ -303,6 +408,8 @@ The project quality tooling supports:
 * stable automated test execution
 * scalable development workflow
 * professional Pull Request workflow
+* traceability between test cases and automated coverage
+* safe checkpoint validation before workstream merge preparation
 
 ## Future Improvements
 
@@ -316,4 +423,5 @@ Planned quality tooling improvements may include:
 * improved custom assertion helpers
 * stronger test diagnostics
 * separate CI jobs for smoke and regression suites
+* separate marker-based CI jobs for selected test categories
 * Allure reporting integration
