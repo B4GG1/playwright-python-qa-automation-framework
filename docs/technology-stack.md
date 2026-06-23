@@ -39,11 +39,21 @@ Current automated UI coverage:
 * negative login scenarios
 * login UI behavior
 * protected inventory route access validation
+* protected cart route access validation
+* protected item details route access validation
 * inventory page validation
 * product list validation
 * product card content validation
 * product details navigation validation
 * product sorting validation
+* cart page validation
+* empty cart state validation
+* add-to-cart behavior validation
+* cart badge validation
+* cart item visibility and content validation
+* remove-from-cart validation
+* continue shopping navigation validation
+* cart state persistence after logout and re-login
 
 Planned browser execution:
 
@@ -58,6 +68,7 @@ Currently implemented:
 * `LoginPage`
 * `InventoryPage`
 * `ProductDetailsPage`
+* `CartPage`
 
 Current Page Object responsibilities:
 
@@ -73,11 +84,20 @@ Current Page Object responsibilities:
 * product details navigation from product name
 * product details navigation from product image
 * product details page element locators
+* product details cart actions
 * returning from product details to inventory page
+* inventory cart actions
+* inventory cart badge access
+* inventory logout support
+* cart page navigation
+* cart item lookup
+* cart item content access
+* cart product removal
+* continue shopping navigation
+* cart badge access
 
 Planned Page Object expansion:
 
-* CartPage
 * CheckoutPage
 * additional page objects as application coverage grows
 
@@ -92,12 +112,13 @@ Currently implemented:
 * empty credential cases
 * locked out user cases
 * expected login error messages
-* login-related URL values
+* protected route URL suffixes
 * inventory product IDs
 * inventory product names
 * inventory product descriptions
 * inventory product prices
 * inventory product image paths
+* deterministic product data reused by inventory, product details, and cart tests
 * test case IDs used in parametrized pytest output where practical
 
 Current test data location:
@@ -109,7 +130,6 @@ test_data/inventory_test_data.py
 
 Planned test data expansion:
 
-* cart scenario data
 * checkout form data
 * API test data
 * environment-specific test data if needed
@@ -166,6 +186,7 @@ Planned CI/CD improvements:
 * browser caching
 * JUnit XML reporting
 * separate smoke and regression jobs
+* separate marker-based CI jobs
 * multi-browser CI execution
 * Docker-based execution
 * advanced reporting publication
@@ -206,7 +227,7 @@ Planned usage:
 
 * API smoke tests
 * backend validation support
-* hybrid UI + API test scenarios
+* hybrid UI and API test scenarios
 * test data setup or validation through API calls where appropriate
 
 ## Test Execution Optimization
@@ -241,7 +262,6 @@ Current usage:
 
 Planned improvements:
 
-* consistent CI installation from locked dependency versions
 * dependency update workflow
 * optional dependency grouping if the project grows
 
@@ -274,7 +294,7 @@ Future planned integrations include:
 
 ## Current Stack Status
 
-The current stack is sufficient to support complete login page and inventory/products automation workstreams.
+The current stack is sufficient to support completed login page, inventory/products, and cart automation workstreams.
 
 Implemented technical capabilities include:
 
@@ -290,4 +310,4 @@ Implemented technical capabilities include:
 * screenshot capture on failure
 * technical documentation
 
-The next stack expansion will focus on additional Page Objects and test coverage for cart and checkout flows.
+The next stack expansion will focus on additional Page Object support and test coverage for checkout flows.

@@ -10,7 +10,7 @@ The current framework includes:
 
 * Pytest-based test execution
 * Playwright browser automation
-* Page Object Model for login, inventory, and product details pages
+* Page Object Model for login, inventory, product details, and cart pages
 * reusable pytest fixtures
 * centralized login and inventory product test data
 * marker-based test categorization
@@ -24,12 +24,21 @@ The current framework includes:
 The current automated coverage focuses on:
 
 * Sauce Demo login page and authentication behavior
+* protected route access validation
 * inventory page availability
 * product list and product card validation
 * product details navigation
 * product sorting
+* cart page navigation
+* empty cart state
+* add-to-cart behavior
+* cart badge behavior
+* cart item visibility and content validation
+* remove-from-cart behavior
+* continue shopping navigation
+* cart state persistence after logout and re-login
 
-Cart and checkout coverage are planned for later workstreams.
+Checkout coverage is planned for a later workstream.
 
 ## Project Layers
 
@@ -47,6 +56,7 @@ Current test modules include:
 * `test_login_ui.py` — login page UI behavior
 * `test_login_access_control.py` — protected route access validation
 * `test_inventory_page.py` — inventory page, product cards, product details navigation, and product sorting tests
+* `test_cart_page.py` — cart page, add-to-cart, cart badge, cart content, remove-from-cart, continue shopping, and cart persistence tests
 
 Tests should focus on behavior and assertions, while reusable page interactions should be handled by Page Object classes.
 
@@ -59,6 +69,7 @@ Current implementation:
 * `LoginPage`
 * `InventoryPage`
 * `ProductDetailsPage`
+* `CartPage`
 
 The Page Object layer is responsible for:
 
@@ -68,7 +79,7 @@ The Page Object layer is responsible for:
 * hiding direct selector usage from tests where practical
 * returning the next Page Object when navigation changes the current page context
 
-The current Page Object implementation remains intentionally lightweight. A shared BasePage abstraction has not been introduced yet because repeated page-level behavior is still limited.
+The current Page Object implementation remains intentionally lightweight. A shared BasePage abstraction has not been introduced yet because repeated page-level behavior is still limited and does not justify an additional inheritance layer.
 
 ### `test_data/`
 
@@ -81,7 +92,7 @@ Current login test data includes:
 * empty credential cases
 * locked out user cases
 * expected error messages
-* inventory URL suffix used in login-related assertions
+* protected route URL suffixes used in login-related assertions
 
 Current inventory test data includes:
 
@@ -90,6 +101,8 @@ Current inventory test data includes:
 * product descriptions
 * product prices
 * product image paths
+
+Cart tests intentionally reuse existing login and inventory product test data instead of introducing a separate cart-specific test data file. This keeps cart scenarios deterministic while avoiding unnecessary duplication.
 
 The goal of this layer is to keep test data separate from test logic and support pytest parametrization.
 
@@ -151,11 +164,13 @@ Current implementation:
 
 * `login-page.md`
 * `inventory-products.md`
+* `cart.md`
 
 Manual test cases are mapped to automated tests through identifiers such as:
 
 * `TC-LOGIN-XXX`
 * `TC-INVENTORY-XXX`
+* `TC-CART-XXX`
 
 These identifiers are also used in parametrized pytest output where practical.
 
@@ -170,19 +185,20 @@ Contains technical documentation related to:
 * quality tooling
 * technology stack
 * roadmap
+* framework and project structure
 
 ## Current Login Test Architecture
 
 The login test suite is built around the following structure:
 
 ```text
-Manual test cases
+Manual login test cases
         ↓
 Centralized login test data
         ↓
 LoginPage Page Object
         ↓
-Pytest test modules
+Pytest login test modules
         ↓
 Markers and parametrization
         ↓
@@ -218,10 +234,11 @@ This supports:
 * consistent expected error messages
 * parametrized test execution
 * mapping automated tests to manual test cases
+* protected route access validation
 
 ### Parametrization
 
-Negative login scenarios use pytest parametrization to execute the same test logic against multiple data cases.
+Negative login scenarios and protected route scenarios use pytest parametrization to execute the same test logic against multiple data cases.
 
 Parametrized IDs are based on manual test case IDs, such as:
 
@@ -262,25 +279,38 @@ CI execution and reports
 * sorting products
 * opening product details from product name
 * opening product details from product image
-* exposing cart-related locators for future workstreams
+* adding products to the cart from inventory product cards
+* removing products from the cart from inventory product cards
+* accessing cart link and cart badge
+* opening the cart page
+* opening the application menu
+* logging out from the inventory page
+
+`InventoryPage` acts as the main authenticated landing page object and provides navigation entry points into product details and cart flows.
 
 ### ProductDetailsPage
 
 `ProductDetailsPage` centralizes product details page interactions such as:
 
+* opening a product details page by product ID
 * accessing product name
 * accessing product description
 * accessing product price
 * accessing product image
 * accessing Add to cart button
+* accessing Remove button
+* adding a product to the cart from the product details page
+* removing a product from the cart from the product details page
 * accessing Back to products button
 * returning to the inventory page
+* opening the cart page
+* accessing cart badge
 
 ### Reusable Fixture
 
 The `logged_in_inventory_page` fixture prepares a logged-in user session and returns an `InventoryPage` instance.
 
-This reduces repeated login setup in inventory and product-related tests.
+This reduces repeated login setup in inventory, product details, and cart-related tests.
 
 ### Test Data
 
@@ -292,6 +322,7 @@ This supports:
 * product card validation
 * product details validation
 * product sorting validation
+* deterministic cart product selection
 * parametrized execution across all product data where useful
 
 ### Helper Assertions
@@ -299,6 +330,105 @@ This supports:
 Inventory tests use small private helper functions inside the test module to reduce duplication when validating repeated product content.
 
 These helpers keep assertions in the test layer while avoiding unnecessary duplication across product card and product details scenarios.
+
+## Current Cart Test Architecture
+
+The cart test suite is built around the following structure:
+
+```text
+Manual cart test cases
+        ↓
+Existing login and inventory product test data
+        ↓
+InventoryPage, ProductDetailsPage, and CartPage Page Objects
+        ↓
+Reusable logged-in inventory fixture
+        ↓
+Pytest cart test module
+        ↓
+Markers and parametrization
+        ↓
+CI execution and reports
+```
+
+### CartPage
+
+`CartPage` centralizes cart page interactions such as:
+
+* opening the cart page directly
+* accessing the cart contents container
+* accessing the cart list
+* accessing cart items
+* locating cart item cards by product name
+* accessing cart item name, description, price, quantity, and Remove button
+* removing a product from the cart
+* opening product details from a cart item name
+* accessing Continue Shopping button
+* returning from the cart page to the inventory page
+* accessing Checkout button
+* accessing cart link and cart badge
+
+Checkout-related locators are available in `CartPage`, but checkout behavior remains outside the current cart workstream test scope.
+
+### InventoryPage And ProductDetailsPage In Cart Scenarios
+
+Cart tests reuse `InventoryPage` and `ProductDetailsPage` for cart-related actions that originate outside the cart page.
+
+`InventoryPage` is used for:
+
+* adding products to the cart from inventory cards
+* validating inventory-side Add to cart and Remove button states
+* validating cart badge behavior from the header
+* opening the cart page
+* logging out during cart persistence scenarios
+
+`ProductDetailsPage` is used for:
+
+* adding a product to the cart from the product details page
+* validating product-details-side Add to cart and Remove button states
+* opening the cart from product details when needed
+
+### Reusable Fixture
+
+The cart test module uses `logged_in_inventory_page` as its main setup fixture.
+
+This keeps cart tests focused on cart behavior while avoiding repeated login steps.
+
+### Test Data
+
+Cart tests intentionally use:
+
+* valid user data from `test_data/login_test_data.py`
+* deterministic product data from `test_data/inventory_test_data.py`
+
+No separate cart test data module is currently required.
+
+### Cart Scope Boundaries
+
+The current cart workstream covers:
+
+* cart page availability
+* empty cart state
+* adding products to cart
+* inventory-side cart button behavior
+* cart badge behavior
+* cart item visibility
+* cart item content validation
+* removing products from cart
+* navigation between cart and inventory page
+* cart state persistence after logout and re-login
+* product-details-side Add to cart and Remove button behavior
+
+The current cart workstream does not cover:
+
+* checkout flow
+* browser restart persistence
+* storage clearing
+* cross-user cart persistence
+* multi-user cart behavior
+* logout from multiple page locations
+
+These exclusions keep the cart workstream focused and prevent it from expanding into checkout or session-management scope that belongs to later tasks.
 
 ## Markers
 
@@ -310,6 +440,7 @@ Tests are categorized using pytest markers such as:
 * `positive`
 * `negative`
 * `sorting`
+* `navigation`
 
 Markers allow selective test execution for different validation needs.
 
@@ -324,15 +455,16 @@ The framework follows a modular architecture where:
 * documentation tracks test design and coverage,
 * CI validates the project automatically.
 
-Planned architecture improvements include:
+Near-term architecture direction includes:
 
-* additional Page Object classes for cart and checkout areas
-* BasePage abstraction when repeated page behavior appears
-* improved fixture organization
-* enhanced reporting and diagnostics
-* API testing layer
-* future Selenium comparison module
-* environment-based configuration
+* completing final stabilization of the cart workstream before merge preparation
+* extending automation coverage into checkout in a separate workstream
+* keeping checkout scope separate from cart scope
+* introducing BasePage only when repeated page-level behavior justifies it
+* improving fixture organization only when the number of reusable setup flows grows
+* enhancing reporting and diagnostics incrementally
+* expanding API testing in a later project phase
+* adding a future Selenium comparison module only after the Playwright framework is mature enough
 
 ## Architecture Principles
 
@@ -347,11 +479,23 @@ The framework should prioritize:
 * CI/CD compatibility
 * incremental improvement over unnecessary early complexity
 
+The project should avoid:
+
+* premature BasePage abstraction
+* unnecessary helper layers
+* duplicated selectors in tests when a Page Object method already exists
+* test data duplication across workstreams
+* mixing checkout behavior into cart tests
+* expanding a workstream beyond its approved scope only because it is technically possible
+
 ## Current Architecture Status
 
-The architecture is no longer only a setup foundation. It now contains two complete functional automation workstreams:
+The architecture is no longer only a setup foundation. It now contains three functional automation workstreams:
 
 * Login Page Automation Workstream
 * Inventory And Products Automation Workstream
+* Cart Automation Workstream
 
-The next architecture step is to extend the same principles to cart and checkout coverage while avoiding unnecessary early abstractions.
+The current branch contains completed cart automation coverage and is undergoing final review and stabilization before the next project step.
+
+The next architecture step is to extend the same principles to check out coverage while avoiding unnecessary early abstractions and keeping checkout scenarios separated from cart scope.

@@ -13,16 +13,18 @@ At the current stage, the project focuses on CI. Continuous Delivery / Deploymen
 The current CI pipeline supports:
 
 * Python 3.12 setup
-* dependency installation
-* Playwright Chromium browser installation
+* dependency installation from `requirements-lock.txt`
+* Playwright Chromium browser installation with Linux dependencies
 * Ruff linting
 * Black formatting validation
 * isort import validation
-* Pytest test execution
+* full Pytest test suite execution
 * pytest HTML report generation
-* screenshot artifact upload on failure
-* reports directory upload as CI artifact
+* screenshot artifact upload on failure through the `reports/` directory
+* reports directory upload as a CI artifact
+* explicit artifact retention configuration
 * validation for both `main` and `develop` workflows
+* manual workflow execution through GitHub Actions
 
 The pipeline is designed to act as a quality gate before changes are merged into stable branches.
 
@@ -40,9 +42,22 @@ This ensures that:
 
 * stable branches are continuously validated
 * pull requests are checked before merge
-* login, inventory, and future feature workstreams are validated before integration
+* completed feature workstreams are validated before integration
 * manual debugging runs are possible when needed
 * both `develop` and `main` can be protected by automated checks
+
+## Workflow Permissions
+
+The current workflow uses minimal GitHub token permissions for the CI scope:
+
+```yaml
+permissions:
+  contents: read
+```
+
+This is sufficient because the workflow only needs to read repository contents, install dependencies, execute checks, run tests, and upload artifacts through GitHub Actions.
+
+The project currently does not require deployment credentials, cloud credentials, package publishing tokens, or elevated repository permissions.
 
 ## Execution Environment
 
@@ -65,7 +80,7 @@ The CI pipeline consists of the following stages.
 
 The repository source code is downloaded into the GitHub Actions runner using:
 
-* `actions/checkout`
+* `actions/checkout@v4`
 
 This gives the runner access to the project files, tests, configuration, and documentation.
 
@@ -73,7 +88,7 @@ This gives the runner access to the project files, tests, configuration, and doc
 
 Python runtime is installed using:
 
-* `actions/setup-python`
+* `actions/setup-python@v5`
 
 Current Python version:
 
@@ -95,11 +110,17 @@ Using a locked dependency file improves repeatability because CI installs exact 
 
 Playwright browser dependencies are installed during the CI run.
 
-Currently installed browser:
+Current browser installation command:
+
+```bash
+playwright install --with-deps chromium
+```
+
+Currently, installed browser:
 
 * Chromium
 
-This ensures that UI tests can run in a clean Linux-based CI environment.
+The `--with-deps` option installs required Linux dependencies for Playwright browser execution in the GitHub-hosted Ubuntu environment.
 
 Future framework expansion may include Firefox and WebKit execution.
 
@@ -125,11 +146,18 @@ These checks ensure that code formatting, linting rules, and import organization
 
 Automated tests are executed using Pytest.
 
-Current test command generates:
+Current CI test command:
 
-* console output
-* HTML test report
-* screenshots on failure, if configured
+```bash
+mkdir -p reports
+pytest -v --html=reports/report.html --self-contained-html
+```
+
+The command generates:
+
+* verbose console output
+* self-contained HTML test report
+* screenshots on failure, if configured by the pytest hook
 * files inside the `reports/` directory
 
 Current report location:
@@ -149,24 +177,44 @@ The test suite currently includes:
 * product list and product card validation
 * product details navigation validation
 * product sorting validation
+* cart page validation
+* empty cart state validation
+* add-to-cart behavior validation
+* cart badge validation
+* cart product visibility and content validation
+* remove-from-cart validation
+* continue shopping navigation validation
+* cart state persistence after logout and re-login
 
 ### 7. Artifact Upload
 
 The pipeline uploads test execution outputs as GitHub Actions artifacts.
 
-Current artifacts include:
+Current artifact upload steps:
 
-* pytest HTML report
-* contents of the `reports/` directory
-* screenshots from failed tests, if generated
+* pytest HTML report upload
+* full `reports/` directory upload
 
-Artifact upload steps should use:
+Current artifacts:
+
+* `pytest-html-report`
+* `test-artifacts`
+
+Artifact upload steps use:
 
 ```yaml
 if: always()
 ```
 
 This ensures that reports and screenshots are still uploaded even when tests fail.
+
+Current artifact retention:
+
+```yaml
+retention-days: 7
+```
+
+This keeps artifacts available long enough for debugging while avoiding unnecessary long-term storage.
 
 ## Test Reports And Artifacts
 
@@ -196,13 +244,13 @@ They are used for:
 * validating CI output
 * sharing reports without committing generated files to the repository
 
-The project may configure artifact retention explicitly, for example:
+The current workflow explicitly keeps artifacts for:
 
 ```yaml
 retention-days: 7
 ```
 
-This keeps artifacts available long enough for debugging while avoiding unnecessary long-term storage.
+This retention period is appropriate for a portfolio framework because it preserves debugging evidence without keeping generated outputs longer than necessary.
 
 ## Quality Gate Expectation
 
@@ -224,9 +272,11 @@ continue-on-error: true
 
 for the main test suite, because failing tests should block the pipeline.
 
+The current workflow follows this expectation by running quality checks and the full test suite as regular failing steps.
+
 ## Marker-Based Test Execution
 
-The framework supports pytest markers for selective test execution.
+The framework supports pytest markers for selective local test execution.
 
 Current marker categories include:
 
@@ -238,6 +288,7 @@ Current marker categories include:
 * `positive`
 * `negative`
 * `sorting`
+* `navigation`
 
 Useful local validation commands:
 
@@ -247,14 +298,16 @@ pytest -m regression -v
 pytest -m positive -v
 pytest -m negative -v
 pytest -m sorting -v
+pytest -m navigation -v
 pytest -m "ui and smoke" -v
 pytest -m "ui and regression" -v
 pytest -m "ui and sorting" -v
+pytest -m "ui and navigation" -v
 ```
 
-The main CI pipeline currently executes the full test suite.
+The main CI pipeline currently executes the full test suite rather than a marker-filtered subset.
 
-Future CI improvements may include separate jobs for smoke, regression, API, sorting, and cross-browser test execution.
+Future CI improvements may include separate jobs for smoke, regression, API, sorting, navigation, and cross-browser test execution.
 
 ## Branch Protection Strategy
 
@@ -303,7 +356,7 @@ permissions:
   contents: read
 ```
 
-The project currently does not require deployment credentials, cloud credentials, or publish tokens.
+The project currently uses this minimal permission model.
 
 ## Benefits Of Current CI Setup
 
@@ -320,7 +373,7 @@ The current CI setup provides:
 
 ## Current CI Status
 
-The CI pipeline is operational and supports the completed Login Page Automation Workstream and the Inventory And Products Automation Workstream.
+The CI pipeline is operational and supports the completed Login Page Automation Workstream, Inventory And Products Automation Workstream, and Cart Automation Workstream.
 
 The pipeline validates:
 
@@ -330,7 +383,7 @@ The pipeline validates:
 * generated reports
 * CI artifacts
 
-It is ready to support future framework expansion into cart, checkout, API testing, and reporting improvements.
+It is ready to support future framework expansion into checkout, API testing, reporting improvements, and additional CI optimization.
 
 ## Future Improvements
 
@@ -341,6 +394,7 @@ Planned CI improvements include:
 * JUnit XML test result publishing
 * Allure reporting integration
 * separate smoke and regression jobs
+* separate marker-based jobs for selected test categories
 * parallel test execution
 * multi-browser execution
 * Docker-based execution environment

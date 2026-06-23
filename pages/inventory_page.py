@@ -1,5 +1,7 @@
 from playwright.sync_api import Locator, Page
 
+from pages.cart_page import CartPage
+from pages.login_page import LoginPage
 from pages.product_details_page import ProductDetailsPage
 
 
@@ -49,6 +51,10 @@ class InventoryPage:
     def get_add_to_cart_button_from_card(product_card: Locator) -> Locator:
         return product_card.get_by_role("button", name="Add to cart")
 
+    @staticmethod
+    def get_remove_from_cart_button_from_card(product_card: Locator) -> Locator:
+        return product_card.get_by_role("button", name="Remove")
+
     def get_product_names(self) -> list[str]:
         return self.page.locator('[data-test="inventory-item-name"]').all_inner_texts()
 
@@ -71,8 +77,37 @@ class InventoryPage:
         self.get_product_image_from_card(product_card).click()
         return ProductDetailsPage(self.page)
 
-    def get_cart_link(self) -> Locator:
+    def add_product_to_cart(self, product_name: str) -> None:
+        product = self.get_product_card_by_name(product_name)
+        self.get_add_to_cart_button_from_card(product).click()
+
+    def remove_product_from_cart_using_card_button(self, product_name: str) -> None:
+        product = self.get_product_card_by_name(product_name)
+        self.get_remove_from_cart_button_from_card(product).click()
+
+    def get_shopping_cart_link(self) -> Locator:
         return self.page.locator('[data-test="shopping-cart-link"]')
 
-    def get_cart_badge(self) -> Locator:
+    def open_cart(self) -> CartPage:
+        self.get_shopping_cart_link().click()
+        return CartPage(self.page)
+
+    def get_shopping_cart_badge(self) -> Locator:
         return self.page.locator('[data-test="shopping-cart-badge"]')
+
+    def get_cart_badge_count(self) -> int:
+        return int(self.get_shopping_cart_badge().inner_text())
+
+    def get_burger_menu_button(self) -> Locator:
+        return self.page.get_by_role("button", name="Open Menu")
+
+    def get_logout_sidebar_link(self) -> Locator:
+        return self.page.locator('[data-test="logout-sidebar-link"]')
+
+    def open_menu(self) -> None:
+        self.get_burger_menu_button().click()
+
+    def logout(self) -> LoginPage:
+        self.open_menu()
+        self.get_logout_sidebar_link().click()
+        return LoginPage(self.page)

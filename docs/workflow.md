@@ -25,7 +25,7 @@ CI validation
   ↓
 Squash merge
   ↓
-phase checkpoint when needed
+phase or workstream checkpoint when needed
 ```
 
 The goal is to keep development organized, validated, and easy to review.
@@ -50,10 +50,12 @@ For small independent tasks, the recommended workflow is:
 
 For larger tightly connected areas, the project may use one workstream branch.
 
-Example:
+Examples:
 
 ```text
 feature/login-page
+feature/inventory-products
+feature/cart-page
 ```
 
 In this workflow:
@@ -63,11 +65,12 @@ In this workflow:
 3. Create separate commits for individual tasks.
 4. Push regularly as backup.
 5. Run local validation after meaningful changes.
-6. Open one Pull Request only when the whole workstream is complete.
-7. Validate CI.
-8. Squash merge the complete workstream into `develop`.
+6. Review scope, tests, documentation, and cleanup during a checkpoint task when the workstream is complete.
+7. Open one Pull Request only when the whole workstream is ready.
+8. Validate CI.
+9. Squash merge the complete workstream into `develop`.
 
-This approach was used for the Login Page Automation Workstream.
+This approach was used for complete functional automation workstreams such as Login Page Automation and Cart Automation.
 
 It is useful when tasks are connected and reviewing them together makes more sense than creating many small Pull Requests.
 
@@ -83,13 +86,14 @@ git pull origin develop
 Create a new branch:
 
 ```bash
-git checkout -b feature/login-page
+git checkout -b feature/cart-page
 ```
 
 Other examples:
 
 ```bash
 git checkout -b feature/inventory-products
+git checkout -b feature/checkout-flow
 git checkout -b fix/screenshot-hook
 git checkout -b docs/update-testing-strategy
 git checkout -b refactor/login-fixtures
@@ -150,9 +154,24 @@ pytest -m smoke -v
 pytest -m regression -v
 pytest -m positive -v
 pytest -m negative -v
+pytest -m sorting -v
+pytest -m navigation -v
 pytest -m "ui and smoke" -v
 pytest -m "ui and regression" -v
+pytest -m "ui and sorting" -v
+pytest -m "ui and navigation" -v
 ```
+
+For workstream-specific validation, run the relevant test module before the full suite when useful.
+
+Examples:
+
+```bash
+pytest -v tests/test_inventory_page.py
+pytest -v tests/test_cart_page.py
+```
+
+The full test suite should still pass before a workstream is considered ready for merge unless a scoped validation exception is explicitly accepted.
 
 ## Commit Convention
 
@@ -171,6 +190,8 @@ git commit -m "docs(AQA-0026): create login page test cases"
 git commit -m "feat(AQA-0027): implement login page object model"
 git commit -m "refactor(AQA-0032): parametrize negative login scenarios"
 git commit -m "test(AQA-0038): add protected inventory route access test"
+git commit -m "test(AQA-0057): add product to cart test"
+git commit -m "chore(AQA-0064): review and stabilize cart workstream"
 ```
 
 Common commit types:
@@ -180,7 +201,7 @@ Common commit types:
 * `docs` — documentation changes
 * `refactor` — structural improvements without behavior change
 * `fix` — bug fixes
-* `chore` — maintenance/configuration changes
+* `chore` — maintenance, configuration, or review changes
 
 ## Pull Request Flow
 
@@ -208,6 +229,7 @@ Before opening a Pull Request, verify:
 * local working tree is clean
 * relevant commits are pushed
 * local quality checks passed
+* relevant scoped test module passed when applicable
 * full test suite passed
 * documentation is updated if needed
 * no generated reports or screenshots are tracked
@@ -221,6 +243,15 @@ git status
 ruff check .
 black --check .
 isort . --check-only
+pytest -v
+```
+
+For a workstream checkpoint, also run the relevant scoped test module.
+
+Example:
+
+```bash
+pytest -v tests/test_cart_page.py
 pytest -v
 ```
 
@@ -262,7 +293,14 @@ This keeps `develop` and `main` history readable.
 Example final squash commit:
 
 ```text
-test(AQA-0040): complete login page test suite
+test(AQA-0064): complete cart automation workstream
+```
+
+For checkpoint-only or documentation-heavy stabilization tasks, a `chore` or `docs` squash commit may also be appropriate:
+
+```text
+chore(AQA-0064): review and stabilize cart workstream
+docs(AQA-0064): update project documentation after cart workstream
 ```
 
 ## Post-Merge Workflow
@@ -283,7 +321,7 @@ git log --oneline --decorate -5
 Optionally delete the completed local feature branch:
 
 ```bash
-git branch -d feature/login-page
+git branch -d feature/<short-description>
 ```
 
 Clean deleted remote branch references:
@@ -298,28 +336,32 @@ Run final validation if needed:
 pytest -v
 ```
 
-## Phase Checkpoint Workflow
+## Phase And Workstream Checkpoint Workflow
 
-Before moving to the next major project phase, a checkpoint task must be completed.
+Before moving to the next major project phase or before merging a completed workstream, a checkpoint task must be completed.
 
 A checkpoint verifies:
 
 * completed scope
 * test coverage
 * local validation
+* relevant scoped test execution
+* full test suite execution or accepted scoped validation
 * CI status
 * documentation status
 * Git status
 * cleanup needs
-* readiness for the next phase
+* generated files and ignored artifacts
+* readiness for the next phase or merge
 
-Example checkpoint:
+Example checkpoints:
 
 ```text
 AQA-0041 — Review Phase 2 And Prepare Phase 3 Scope
+AQA-0064 — Review And Stabilize Cart Workstream
 ```
 
-No new functional work should start before the checkpoint is completed.
+No new functional work should start before the relevant checkpoint is completed.
 
 ## Documentation Updates
 
@@ -332,10 +374,13 @@ Documentation should be updated when changes affect:
 * quality tooling
 * roadmap
 * feature list
+* technology stack
 * test case coverage
 * README instructions
 
-Documentation changes may be committed as part of the relevant task or as a separate documentation cleanup task.
+Documentation changes may be committed as part of the relevant task or as a separate documentation cleanup or stabilization task.
+
+For automation work that implements a documented manual test case, update the related test case metadata in the same task when required.
 
 ## Summary
 

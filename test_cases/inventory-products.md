@@ -14,7 +14,7 @@ This workstream focuses only on:
 * product details navigation
 * product sorting
 
-Cart and checkout scenarios are intentionally excluded from this document and will be covered in separate test case files.
+Cart scenarios are covered in a separate cart test case file. Checkout scenarios are intentionally excluded and will be covered in a separate checkout test case file.
 
 ## Test Case Overview And Automation Coverage
 
@@ -37,10 +37,10 @@ Cart and checkout scenarios are intentionally excluded from this document and wi
 
 ### TC-INVENTORY-001 — Inventory page is visible after successful login
 
-**Type:** Smoke / Positive
-**Priority:** High
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Smoke / Positive\
+**Priority:** High\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -76,10 +76,10 @@ Cart and checkout scenarios are intentionally excluded from this document and wi
 
 ### TC-INVENTORY-002 — Product list is displayed
 
-**Type:** Smoke / UI
-**Priority:** High
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Smoke / UI\
+**Priority:** High\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -112,10 +112,10 @@ Cart and checkout scenarios are intentionally excluded from this document and wi
 
 ### TC-INVENTORY-003 — Product cards contain name, description, price, and image
 
-**Type:** Regression / UI
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / UI\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -153,10 +153,10 @@ Cart and checkout scenarios are intentionally excluded from this document and wi
 
 ### TC-INVENTORY-004 — Product details can be opened from product name
 
-**Type:** Regression / Positive / UI
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / Positive / UI\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -196,10 +196,10 @@ Cart and checkout scenarios are intentionally excluded from this document and wi
 
 ### TC-INVENTORY-005 — Product details can be opened from product image
 
-**Type:** Regression / Positive / UI
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / Positive / UI\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -239,10 +239,10 @@ Cart and checkout scenarios are intentionally excluded from this document and wi
 
 ### TC-INVENTORY-006 — User can return from product details to inventory page
 
-**Type:** Regression / Positive / UI
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / Positive / UI\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -278,10 +278,10 @@ Cart and checkout scenarios are intentionally excluded from this document and wi
 
 ### TC-INVENTORY-007 — Products can be sorted by name A to Z
 
-**Type:** Regression / Sorting
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / Sorting\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -315,10 +315,10 @@ Cart and checkout scenarios are intentionally excluded from this document and wi
 
 ### TC-INVENTORY-008 — Products can be sorted by name Z to A
 
-**Type:** Regression / Sorting
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / Sorting\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -352,10 +352,10 @@ Cart and checkout scenarios are intentionally excluded from this document and wi
 
 ### TC-INVENTORY-009 — Products can be sorted by price low to high
 
-**Type:** Regression / Sorting
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / Sorting\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -391,10 +391,10 @@ Cart and checkout scenarios are intentionally excluded from this document and wi
 
 ### TC-INVENTORY-010 — Products can be sorted by price high to low
 
-**Type:** Regression / Sorting
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / Sorting\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
