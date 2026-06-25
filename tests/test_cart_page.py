@@ -27,7 +27,7 @@ def test_cart_is_empty_before_adding_products(
     expect(cart_page.get_cart_items()).to_have_count(0)
 
 
-@pytest.mark.regression
+@pytest.mark.smoke
 @pytest.mark.positive
 @pytest.mark.ui
 @pytest.mark.parametrize(
@@ -77,7 +77,7 @@ def test_cart_product_content_matches_added_product_data(
     expect(cart_page.get_remove_button_from_card_in_cart(added_product_card)).to_be_visible()
 
 
-@pytest.mark.regression
+@pytest.mark.smoke
 @pytest.mark.positive
 @pytest.mark.ui
 @pytest.mark.parametrize(

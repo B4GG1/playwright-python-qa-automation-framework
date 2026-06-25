@@ -46,45 +46,51 @@ def _assert_product_details_page_displays_expected_product(
     )
 
 
-@pytest.mark.regression
+@pytest.mark.smoke
 @pytest.mark.ui
-@pytest.mark.positive
 @pytest.mark.parametrize(
-    "product",
-    LIST_OF_PRODUCTS,
-    ids=[f"TC-PRODUCT-DETAILS-001-{product['product_id']}" for product in LIST_OF_PRODUCTS],
+    "_case_id",
+    ["TC-PRODUCT-DETAILS-001"],
+    ids=["TC-PRODUCT-DETAILS-001"],
 )
-def test_product_details_opened_from_product_name(logged_in_inventory_page: InventoryPage, product):
-    product_details = logged_in_inventory_page.open_product_details_by_name(product["product_name"])
+def test_product_details_content_is_displayed_for_selected_product(
+    logged_in_inventory_page: InventoryPage, _case_id: str
+):
+    product_details = logged_in_inventory_page.open_product_details_by_name(
+        FIRST_EXAMPLE_PRODUCT["product_name"]
+    )
 
-    _assert_product_details_page_displays_expected_product(product_details, product)
+    _assert_product_details_page_displays_expected_product(
+        product_details=product_details,
+        product=FIRST_EXAMPLE_PRODUCT,
+    )
 
     expect(product_details.get_back_to_products_button()).to_be_visible()
 
 
 @pytest.mark.regression
 @pytest.mark.ui
-@pytest.mark.positive
 @pytest.mark.parametrize(
     "product",
     LIST_OF_PRODUCTS,
     ids=[f"TC-PRODUCT-DETAILS-002-{product['product_id']}" for product in LIST_OF_PRODUCTS],
 )
-def test_product_details_opened_from_product_image(
+def test_product_details_content_matches_product_data_for_each_product(
     logged_in_inventory_page: InventoryPage, product
 ):
-    product_details = logged_in_inventory_page.open_product_details_by_image(
-        product["product_name"]
-    )
+    product_details = logged_in_inventory_page.open_product_details_by_name(product["product_name"])
 
-    _assert_product_details_page_displays_expected_product(product_details, product)
+    _assert_product_details_page_displays_expected_product(
+        product_details=product_details,
+        product=product,
+    )
 
     expect(product_details.get_back_to_products_button()).to_be_visible()
 
 
 @pytest.mark.regression
+@pytest.mark.navigation
 @pytest.mark.ui
-@pytest.mark.positive
 @pytest.mark.parametrize(
     "_case_id",
     ["TC-PRODUCT-DETAILS-003"],

@@ -3,6 +3,7 @@ from playwright.sync_api import Locator, expect
 
 from pages.cart_page import CartPage
 from pages.inventory_page import InventoryPage
+from pages.product_details_page import ProductDetailsPage
 from test_data.product_test_data import LIST_OF_PRODUCTS
 
 FIRST_EXAMPLE_PRODUCT = LIST_OF_PRODUCTS[0]
@@ -46,6 +47,21 @@ def _assert_inventory_product_card_displays_expected_product(
         product_price=inventory_page.get_product_price_from_card(actual_product),
         product_image=inventory_page.get_product_image_from_card(actual_product),
         add_to_cart_button=inventory_page.get_add_to_cart_button_from_card(actual_product),
+        product=product,
+    )
+
+
+def _assert_product_details_page_displays_expected_product(
+    product_details: ProductDetailsPage, product
+) -> None:
+    expect(product_details.page).to_have_url(f"{product_details.URL}{product['product_id']}")
+
+    _assert_product_content_is_displayed(
+        product_name=product_details.get_product_name(),
+        product_description=product_details.get_product_description(),
+        product_price=product_details.get_product_price(),
+        product_image=product_details.get_product_image(),
+        add_to_cart_button=product_details.get_add_to_cart_button(),
         product=product,
     )
 
@@ -122,7 +138,7 @@ def test_open_cart_page_from_inventory(logged_in_inventory_page: InventoryPage, 
     expect(cart_page.get_cart_contents_container()).to_be_visible()
 
 
-@pytest.mark.regression
+@pytest.mark.smoke
 @pytest.mark.positive
 @pytest.mark.ui
 @pytest.mark.parametrize(
@@ -318,3 +334,41 @@ def test_sorting_products_by_price_high_to_low(
         f"Expected product prices order: {sorted_product_prices}, "
         f"but got: {actual_product_prices}"
     )
+
+
+@pytest.mark.regression
+@pytest.mark.navigation
+@pytest.mark.ui
+@pytest.mark.parametrize(
+    "product",
+    LIST_OF_PRODUCTS,
+    ids=[f"TC-INVENTORY-013-{product['product_id']}" for product in LIST_OF_PRODUCTS],
+)
+def test_product_details_opened_from_product_name_on_inventory_page(
+    logged_in_inventory_page: InventoryPage, product
+):
+    product_details = logged_in_inventory_page.open_product_details_by_name(product["product_name"])
+
+    _assert_product_details_page_displays_expected_product(product_details, product)
+
+    expect(product_details.get_back_to_products_button()).to_be_visible()
+
+
+@pytest.mark.regression
+@pytest.mark.navigation
+@pytest.mark.ui
+@pytest.mark.parametrize(
+    "product",
+    LIST_OF_PRODUCTS,
+    ids=[f"TC-INVENTORY-014-{product['product_id']}" for product in LIST_OF_PRODUCTS],
+)
+def test_product_details_opened_from_product_image_on_inventory_page(
+    logged_in_inventory_page: InventoryPage, product
+):
+    product_details = logged_in_inventory_page.open_product_details_by_image(
+        product["product_name"]
+    )
+
+    _assert_product_details_page_displays_expected_product(product_details, product)
+
+    expect(product_details.get_back_to_products_button()).to_be_visible()
