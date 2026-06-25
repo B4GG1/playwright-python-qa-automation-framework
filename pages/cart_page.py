@@ -1,15 +1,18 @@
-from playwright.sync_api import Locator, Page
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+from playwright.sync_api import Locator
+
+from pages.app_page import AppPage
+
+if TYPE_CHECKING:
+    from pages.inventory_page import InventoryPage
+    from pages.product_details_page import ProductDetailsPage
 
 
-class CartPage:
-
+class CartPage(AppPage):
     URL = "https://www.saucedemo.com/cart.html"
-
-    def __init__(self, page: Page):
-        self.page = page
-
-    def open(self) -> None:
-        self.page.goto(self.URL)
 
     def get_cart_contents_container(self) -> Locator:
         return self.page.locator("[data-test='cart-contents-container']")
@@ -17,57 +20,38 @@ class CartPage:
     def get_cart_list(self) -> Locator:
         return self.page.locator("[data-test='cart-list']")
 
-    def get_cart_items(self) -> Locator:
+    def get_product_items(self) -> Locator:
         return self.page.locator("[data-test='inventory-item']")
 
-    def get_product_card_by_name(self, product_name: str) -> Locator:
-        return self.get_cart_items().filter(has_text=product_name)
+    def get_product_item_by_name(self, product_name: str) -> Locator:
+        return self.get_product_items().filter(has_text=product_name)
 
     @staticmethod
-    def get_product_name_from_card_in_cart(product_card: Locator) -> Locator:
-        return product_card.locator('[data-test="inventory-item-name"]')
+    def get_product_quantity_from_item(product_item: Locator) -> Locator:
+        return product_item.locator('[data-test="item-quantity"]')
 
-    @staticmethod
-    def get_product_description_from_card_in_cart(product_card: Locator) -> Locator:
-        return product_card.locator('[data-test="inventory-item-desc"]')
+    def remove_product_from_cart(self, product_name: str) -> None:
+        product_item = self.get_product_item_by_name(product_name)
+        self.get_remove_button_from_item(product_item).click()
 
-    @staticmethod
-    def get_product_price_from_card_in_cart(product_card: Locator) -> Locator:
-        return product_card.locator('[data-test="inventory-item-price"]')
+    def open_product_details_by_name(self, product_name: str) -> ProductDetailsPage:
+        from pages.product_details_page import ProductDetailsPage
 
-    @staticmethod
-    def get_product_quantity_from_card_in_cart(product_card: Locator) -> Locator:
-        return product_card.locator('[data-test="item-quantity"]')
-
-    @staticmethod
-    def get_remove_button_from_card_in_cart(product_card: Locator) -> Locator:
-        return product_card.get_by_role("button", name="Remove")
-
-    def remove_item_from_cart(self, product_name: str) -> None:
-        product_card = self.get_product_card_by_name(product_name)
-        self.get_remove_button_from_card_in_cart(product_card).click()
-
-    def open_product_details_by_name(self, product_name: str) -> None:
-        product_card = self.get_product_card_by_name(product_name)
-        self.get_product_name_from_card_in_cart(product_card).click()
+        product_item = self.get_product_item_by_name(product_name)
+        self.get_product_name_from_item(product_item).click()
+        return ProductDetailsPage(self.page)
 
     def get_continue_shopping_button(self) -> Locator:
         return self.page.locator("[data-test='continue-shopping']")
 
-    def continue_shopping(self) -> None:
+    def continue_shopping(self) -> InventoryPage:
+        from pages.inventory_page import InventoryPage
+
         self.get_continue_shopping_button().click()
+        return InventoryPage(self.page)
 
     def get_checkout_button(self) -> Locator:
         return self.page.locator("[data-test='checkout']")
 
     def checkout(self) -> None:
         self.get_checkout_button().click()
-
-    def get_shopping_cart_link(self) -> Locator:
-        return self.page.locator('[data-test="shopping-cart-link"]')
-
-    def get_shopping_cart_badge(self) -> Locator:
-        return self.page.locator('[data-test="shopping-cart-badge"]')
-
-    def get_cart_badge_count(self) -> int:
-        return int(self.get_shopping_cart_badge().inner_text())

@@ -24,6 +24,7 @@ The goal of this document is to define login-related test scenarios before and a
 | [TC-LOGIN-013](#tc-login-013--direct-access-to-inventory-page-without-login-is-blocked) | Direct access to inventory page without login is blocked | Regression / Security      | High     | Automated         | `tests/test_login_page.py` |
 | [TC-LOGIN-014](#tc-login-014--direct-access-to-cart-page-without-login-is-blocked)      | Direct access to cart page without login is blocked      | Regression / Security      | High     | Automated         | `tests/test_login_page.py` |
 | [TC-LOGIN-015](#tc-login-015--direct-access-to-item-page-without-login-is-blocked)      | Direct access to item page without login is blocked      | Regression / Security      | High     | Automated         | `tests/test_login_page.py` |
+| [TC-LOGIN-016](#tc-login-016--input-error-icons-are-displayed-after-failed-login)       | Input error icons are displayed after failed login       | UI / Regression            | Medium   | Planned           | TBD                        |
 
 ---
 
@@ -620,3 +621,44 @@ Epic sadface: You can only access '/inventory-item.html' when you are logged in.
 
 * This scenario validates basic access control for protected application pages.
 * The automated test uses a fresh browser context provided by Playwright, so no additional session cleanup is required in the current setup.
+
+---
+
+### TC-LOGIN-016 — Input error icons are displayed after failed login
+
+**Type:** UI / Regression\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Planned\
+**Automated In:** TBD
+
+**Preconditions:**
+
+* User is on the login page.
+
+**Test Data:**
+
+* Username: `invalid_user`
+* Password: `invalid_sauce`
+
+**Steps:**
+
+1. Enter invalid username.
+2. Enter invalid password.
+3. Click the Login button.
+4. Observe the username input field.
+5. Observe the password input field.
+
+**Expected Result:**
+
+* User remains on the login page.
+* Error message is displayed under the login form.
+* Username input field displays an error icon.
+* Password input field displays an error icon.
+* Both input error icons use the expected error icon styling.
+
+**Notes:**
+
+* This scenario validates visual invalid-state indicators for login inputs after a failed login attempt.
+* Current Page Object support exists through `LoginPage.get_input_error_icon()`.
+* Automation should verify that two input error icons are visible after failed login.
