@@ -33,8 +33,10 @@ def test_sauce_demo_smoke(opened_login_page: LoginPage, _case_id: str):
 )
 def test_valid_user_can_log_in_successfully(opened_login_page: LoginPage, case):
     opened_login_page.login(case["username"], case["password"])
-    expect(opened_login_page.page).to_have_url(re.compile(rf".*{INVENTORY_URL_SUFFIX}"))
-    expect(opened_login_page.page.locator("[data-test='inventory-container']")).to_be_visible()
+    inventory_page = InventoryPage(opened_login_page.page)
+
+    expect(inventory_page.page).to_have_url(re.compile(rf".*{INVENTORY_URL_SUFFIX}"))
+    expect(inventory_page.get_inventory_container()).to_be_visible()
 
 
 @pytest.mark.regression
@@ -44,6 +46,7 @@ def test_valid_user_can_log_in_successfully(opened_login_page: LoginPage, case):
 )
 def test_login_with_invalid_credentials(opened_login_page: LoginPage, case):
     opened_login_page.login(case["username"], case["password"])
+
     expect(opened_login_page.page).not_to_have_url(re.compile(rf".*{INVENTORY_URL_SUFFIX}"))
     assert opened_login_page.get_error_message_text() == case["expected_error"]
 
@@ -55,6 +58,7 @@ def test_login_with_invalid_credentials(opened_login_page: LoginPage, case):
 )
 def test_login_with_empty_credentials(opened_login_page: LoginPage, case):
     opened_login_page.login(case["username"], case["password"])
+
     expect(opened_login_page.page).not_to_have_url(re.compile(rf".*{INVENTORY_URL_SUFFIX}"))
     assert opened_login_page.get_error_message_text() == case["expected_error"]
 
@@ -66,6 +70,7 @@ def test_login_with_empty_credentials(opened_login_page: LoginPage, case):
 )
 def test_login_for_locked_out_user(opened_login_page: LoginPage, case):
     opened_login_page.login(case["username"], case["password"])
+
     expect(opened_login_page.page).not_to_have_url(re.compile(rf".*{INVENTORY_URL_SUFFIX}"))
     assert opened_login_page.get_error_message_text() == case["expected_error"]
 
@@ -79,9 +84,12 @@ def test_login_for_locked_out_user(opened_login_page: LoginPage, case):
 )
 def test_error_message_can_be_closed(opened_login_page: LoginPage, _case_id: str):
     opened_login_page.login(INVALID_LOGIN_CASES[0]["username"], INVALID_LOGIN_CASES[0]["password"])
+
     expect(opened_login_page.page).not_to_have_url(re.compile(rf".*{INVENTORY_URL_SUFFIX}"))
     expect(opened_login_page.get_error_message()).to_be_visible()
+
     opened_login_page.close_error_message()
+
     expect(opened_login_page.get_error_message()).to_be_hidden()
 
 
@@ -108,9 +116,12 @@ def test_login_page_elements_are_visible(opened_login_page: LoginPage, _case_id:
 )
 def test_password_field_masking_input(opened_login_page: LoginPage, _case_id: str):
     password_field = opened_login_page.get_password_input()
+
     expect(password_field).to_be_visible()
     expect(password_field).to_have_attribute("type", "password")
+
     password_field.fill("secret_sauce")
+
     expect(password_field).to_have_attribute("type", "password")
 
 
@@ -122,13 +133,19 @@ def test_password_field_masking_input(opened_login_page: LoginPage, _case_id: st
     ["TC-LOGIN-012"],
     ids=["TC-LOGIN-012"],
 )
-def test_user_can_log_in_by_pressing_enter_key(opened_login_page: LoginPage, _case_id: str):
-    case = VALID_USER_CASES[0]
-    opened_login_page.get_username_input().fill(case["username"])
-    opened_login_page.get_password_input().fill(case["password"])
+def test_user_can_log_in_by_pressing_enter_key(
+    opened_login_page: LoginPage,
+    standard_user: dict[str, str],
+    _case_id: str,
+):
+    opened_login_page.get_username_input().fill(standard_user["username"])
+    opened_login_page.get_password_input().fill(standard_user["password"])
     opened_login_page.get_password_input().press("Enter")
-    expect(opened_login_page.page).to_have_url(re.compile(rf".*{INVENTORY_URL_SUFFIX}"))
-    expect(opened_login_page.page.locator("[data-test='inventory-container']")).to_be_visible()
+
+    inventory_page = InventoryPage(opened_login_page.page)
+
+    expect(inventory_page.page).to_have_url(re.compile(rf".*{INVENTORY_URL_SUFFIX}"))
+    expect(inventory_page.get_inventory_container()).to_be_visible()
 
 
 @pytest.mark.regression
@@ -141,7 +158,9 @@ def test_user_can_log_in_by_pressing_enter_key(opened_login_page: LoginPage, _ca
 def test_direct_inventory_access_without_login_is_blocked(page: Page, _case_id: str):
     login_page = LoginPage(page)
     inventory_page = InventoryPage(page)
+
     inventory_page.open()
+
     expect(page).to_have_url(login_page.URL)
     expect(inventory_page.get_inventory_container()).not_to_be_visible()
     assert login_page.get_error_message_text() == ACCESS_DENIED_TEMPLATE_ERROR.format(
@@ -159,7 +178,9 @@ def test_direct_inventory_access_without_login_is_blocked(page: Page, _case_id: 
 def test_direct_cart_access_without_login_is_blocked(page: Page, _case_id: str):
     login_page = LoginPage(page)
     cart_page = CartPage(page)
+
     cart_page.open()
+
     expect(page).to_have_url(login_page.URL)
     expect(cart_page.get_cart_contents_container()).not_to_be_visible()
     assert login_page.get_error_message_text() == ACCESS_DENIED_TEMPLATE_ERROR.format(
@@ -178,9 +199,11 @@ def test_direct_item_page_access_without_login_is_blocked(page: Page, _case_id: 
     login_page = LoginPage(page)
     product = LIST_OF_PRODUCTS[1]
     item_page = ProductDetailsPage(page)
+
     item_page.open(product["product_id"])
+
     expect(page).to_have_url(login_page.URL)
-    expect(item_page.get_item_details_container()).not_to_be_visible()
+    expect(item_page.get_product_item()).not_to_be_visible()
     assert login_page.get_error_message_text() == ACCESS_DENIED_TEMPLATE_ERROR.format(
         url_suffix=ITEM_URL_SUFFIX
     )

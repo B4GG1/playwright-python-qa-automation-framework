@@ -12,7 +12,9 @@ from test_data.product_test_data import LIST_OF_PRODUCTS
 
 
 @pytest.hookimpl(hookwrapper=True)
-def pytest_runtest_makereport(item, _call):
+def pytest_runtest_makereport(item, call):
+    _ = call
+
     outcome = yield
     report = outcome.get_result()
 

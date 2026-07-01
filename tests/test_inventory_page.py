@@ -33,20 +33,20 @@ def _assert_product_content_is_displayed(
     expect(add_to_cart_button).to_be_visible()
 
 
-def _assert_inventory_product_card_displays_expected_product(
+def _assert_inventory_product_item_displays_expected_product(
     inventory_page: InventoryPage, product
 ) -> None:
-    actual_product = inventory_page.get_product_card_by_name(product["product_name"])
+    actual_product = inventory_page.get_product_item_by_name(product["product_name"])
 
     expect(actual_product).to_have_count(1)
     expect(actual_product).to_be_visible()
 
     _assert_product_content_is_displayed(
-        product_name=inventory_page.get_product_name_from_card(actual_product),
-        product_description=inventory_page.get_product_description_from_card(actual_product),
-        product_price=inventory_page.get_product_price_from_card(actual_product),
-        product_image=inventory_page.get_product_image_from_card(actual_product),
-        add_to_cart_button=inventory_page.get_add_to_cart_button_from_card(actual_product),
+        product_name=inventory_page.get_product_name_from_item(actual_product),
+        product_description=inventory_page.get_product_description_from_item(actual_product),
+        product_price=inventory_page.get_product_price_from_item(actual_product),
+        product_image=inventory_page.get_product_image_from_item(actual_product),
+        add_to_cart_button=inventory_page.get_add_to_cart_button_from_item(actual_product),
         product=product,
     )
 
@@ -54,14 +54,16 @@ def _assert_inventory_product_card_displays_expected_product(
 def _assert_product_details_page_displays_expected_product(
     product_details: ProductDetailsPage, product
 ) -> None:
+    product_item = product_details.get_product_item()
+
     expect(product_details.page).to_have_url(f"{product_details.URL}{product['product_id']}")
 
     _assert_product_content_is_displayed(
-        product_name=product_details.get_product_name(),
-        product_description=product_details.get_product_description(),
-        product_price=product_details.get_product_price(),
-        product_image=product_details.get_product_image(),
-        add_to_cart_button=product_details.get_add_to_cart_button(),
+        product_name=product_details.get_product_name_from_item(product_item),
+        product_description=product_details.get_product_description_from_item(product_item),
+        product_price=product_details.get_product_price_from_item(product_item),
+        product_image=product_details.get_product_image_from_item(product_item),
+        add_to_cart_button=product_details.get_add_to_cart_button_from_item(product_item),
         product=product,
     )
 
@@ -101,7 +103,7 @@ def test_product_list_is_displayed_with_expected_products(
     actual_product_names = logged_in_inventory_page.get_product_names()
 
     expect(logged_in_inventory_page.get_product_list()).to_be_visible()
-    expect(logged_in_inventory_page.get_product_cards()).to_have_count(len(LIST_OF_PRODUCTS))
+    expect(logged_in_inventory_page.get_product_items()).to_have_count(len(LIST_OF_PRODUCTS))
     assert set(actual_product_names) == set(expected_product_names), (
         f"Expected product names: {expected_product_names}, " f"but got: {actual_product_names}"
     )
@@ -114,8 +116,8 @@ def test_product_list_is_displayed_with_expected_products(
     LIST_OF_PRODUCTS,
     ids=[f"TC-INVENTORY-003-{product['product_id']}" for product in LIST_OF_PRODUCTS],
 )
-def test_product_card_elements_are_displayed(logged_in_inventory_page: InventoryPage, product):
-    _assert_inventory_product_card_displays_expected_product(
+def test_product_item_elements_are_displayed(logged_in_inventory_page: InventoryPage, product):
+    _assert_inventory_product_item_displays_expected_product(
         inventory_page=logged_in_inventory_page,
         product=product,
     )
@@ -154,7 +156,7 @@ def test_user_can_add_product_to_cart_from_inventory(
     cart_page = logged_in_inventory_page.open_cart()
 
     expect(
-        cart_page.get_product_card_by_name(FIRST_EXAMPLE_PRODUCT["product_name"])
+        cart_page.get_product_item_by_name(FIRST_EXAMPLE_PRODUCT["product_name"])
     ).to_be_visible()
 
 
@@ -168,38 +170,30 @@ def test_user_can_add_product_to_cart_from_inventory(
 def test_add_to_cart_button_changes_to_remove_after_adding_product_from_inventory(
     logged_in_inventory_page: InventoryPage, _case_id: str
 ):
-    first_product = logged_in_inventory_page.get_product_card_by_name(
+    first_product = logged_in_inventory_page.get_product_item_by_name(
         FIRST_EXAMPLE_PRODUCT["product_name"]
     )
-    second_product = logged_in_inventory_page.get_product_card_by_name(
+    second_product = logged_in_inventory_page.get_product_item_by_name(
         SECOND_EXAMPLE_PRODUCT["product_name"]
     )
 
-    expect(logged_in_inventory_page.get_add_to_cart_button_from_card(first_product)).to_be_visible()
-    expect(
-        logged_in_inventory_page.get_remove_from_cart_button_from_card(first_product)
-    ).to_be_hidden()
+    expect(logged_in_inventory_page.get_add_to_cart_button_from_item(first_product)).to_be_visible()
+    expect(logged_in_inventory_page.get_remove_button_from_item(first_product)).to_be_hidden()
 
     expect(
-        logged_in_inventory_page.get_add_to_cart_button_from_card(second_product)
+        logged_in_inventory_page.get_add_to_cart_button_from_item(second_product)
     ).to_be_visible()
-    expect(
-        logged_in_inventory_page.get_remove_from_cart_button_from_card(second_product)
-    ).to_be_hidden()
+    expect(logged_in_inventory_page.get_remove_button_from_item(second_product)).to_be_hidden()
 
-    logged_in_inventory_page.get_add_to_cart_button_from_card(first_product).click()
+    logged_in_inventory_page.get_add_to_cart_button_from_item(first_product).click()
 
-    expect(logged_in_inventory_page.get_add_to_cart_button_from_card(first_product)).to_be_hidden()
+    expect(logged_in_inventory_page.get_add_to_cart_button_from_item(first_product)).to_be_hidden()
+    expect(logged_in_inventory_page.get_remove_button_from_item(first_product)).to_be_visible()
+
     expect(
-        logged_in_inventory_page.get_remove_from_cart_button_from_card(first_product)
+        logged_in_inventory_page.get_add_to_cart_button_from_item(second_product)
     ).to_be_visible()
-
-    expect(
-        logged_in_inventory_page.get_add_to_cart_button_from_card(second_product)
-    ).to_be_visible()
-    expect(
-        logged_in_inventory_page.get_remove_from_cart_button_from_card(second_product)
-    ).to_be_hidden()
+    expect(logged_in_inventory_page.get_remove_button_from_item(second_product)).to_be_hidden()
 
 
 @pytest.mark.regression

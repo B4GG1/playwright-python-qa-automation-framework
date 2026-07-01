@@ -34,14 +34,16 @@ def _assert_product_content_is_displayed(
 def _assert_product_details_page_displays_expected_product(
     product_details: ProductDetailsPage, product
 ) -> None:
+    product_item = product_details.get_product_item()
+
     expect(product_details.page).to_have_url(f"{product_details.URL}{product['product_id']}")
 
     _assert_product_content_is_displayed(
-        product_name=product_details.get_product_name(),
-        product_description=product_details.get_product_description(),
-        product_price=product_details.get_product_price(),
-        product_image=product_details.get_product_image(),
-        add_to_cart_button=product_details.get_add_to_cart_button(),
+        product_name=product_details.get_product_name_from_item(product_item),
+        product_description=product_details.get_product_description_from_item(product_item),
+        product_price=product_details.get_product_price_from_item(product_item),
+        product_image=product_details.get_product_image_from_item(product_item),
+        add_to_cart_button=product_details.get_add_to_cart_button_from_item(product_item),
         product=product,
     )
 
@@ -105,11 +107,11 @@ def test_return_from_product_details_to_inventory_page(
 
     expect(product_details.page).to_have_url(f"{product_details.URL}{product['product_id']}")
 
-    product_details.return_to_inventory()
+    inventory_page = product_details.return_to_inventory()
 
-    expect(logged_in_inventory_page.page).to_have_url(InventoryPage.URL)
-    expect(logged_in_inventory_page.get_inventory_container()).to_be_visible()
-    expect(logged_in_inventory_page.get_product_list()).to_be_visible()
+    expect(inventory_page.page).to_have_url(InventoryPage.URL)
+    expect(inventory_page.get_inventory_container()).to_be_visible()
+    expect(inventory_page.get_product_list()).to_be_visible()
 
 
 @pytest.mark.regression
@@ -125,14 +127,15 @@ def test_add_to_cart_button_changes_to_remove_after_adding_product_from_details_
     details_page = logged_in_inventory_page.open_product_details_by_name(
         FIRST_EXAMPLE_PRODUCT["product_name"]
     )
+    product_item = details_page.get_product_item()
 
-    expect(details_page.get_remove_from_cart_button()).to_be_hidden()
-    expect(details_page.get_add_to_cart_button()).to_be_visible()
+    expect(details_page.get_remove_button_from_item(product_item)).to_be_hidden()
+    expect(details_page.get_add_to_cart_button_from_item(product_item)).to_be_visible()
 
     details_page.add_product_to_cart()
 
-    expect(details_page.get_remove_from_cart_button()).to_be_visible()
-    expect(details_page.get_add_to_cart_button()).to_be_hidden()
+    expect(details_page.get_remove_button_from_item(product_item)).to_be_visible()
+    expect(details_page.get_add_to_cart_button_from_item(product_item)).to_be_hidden()
 
     expect(details_page.page).to_have_url(
         f'{ProductDetailsPage.URL}{FIRST_EXAMPLE_PRODUCT["product_id"]}'
