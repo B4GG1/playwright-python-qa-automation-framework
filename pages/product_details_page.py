@@ -13,14 +13,11 @@ if TYPE_CHECKING:
 class ProductDetailsPage(AppPage):
     URL = "https://www.saucedemo.com/inventory-item.html?id="
 
-    def get_product_item(self) -> Locator:
-        return self.page.locator('[data-test="inventory-item"]')
-
     def add_product_to_cart(self) -> None:
-        self.get_add_to_cart_button_from_item(self.get_product_item()).click()
+        self.get_add_to_cart_button_from_item(self.get_product_item_or_items()).click()
 
     def remove_product_from_cart(self) -> None:
-        self.get_remove_button_from_item(self.get_product_item()).click()
+        self.get_remove_button_from_item(self.get_product_item_or_items()).click()
 
     def get_back_to_products_button(self) -> Locator:
         return self.page.locator('[data-test="back-to-products"]')

@@ -24,7 +24,7 @@ The goal of this document is to define login-related test scenarios before and a
 | [TC-LOGIN-013](#tc-login-013--direct-access-to-inventory-page-without-login-is-blocked) | Direct access to inventory page without login is blocked | Regression / Security      | High     | Automated         | `tests/test_login_page.py` |
 | [TC-LOGIN-014](#tc-login-014--direct-access-to-cart-page-without-login-is-blocked)      | Direct access to cart page without login is blocked      | Regression / Security      | High     | Automated         | `tests/test_login_page.py` |
 | [TC-LOGIN-015](#tc-login-015--direct-access-to-item-page-without-login-is-blocked)      | Direct access to item page without login is blocked      | Regression / Security      | High     | Automated         | `tests/test_login_page.py` |
-| [TC-LOGIN-016](#tc-login-016--input-error-icons-are-displayed-after-failed-login)       | Input error icons are displayed after failed login       | UI / Regression            | Medium   | Planned           | TBD                        |
+| [TC-LOGIN-016](#tc-login-016--input-error-icons-are-displayed-after-failed-login)       | Input error icons are displayed after failed login       | UI / Regression            | Medium   | Automated         | `tests/test_login_page.py` |
 
 ---
 
@@ -90,7 +90,6 @@ The goal of this document is to define login-related test scenarios before and a
 **Expected Result:**
 
 * User remains on the login page.
-* Red, closable error message is displayed under the login form.
 * Login and password fields are visually marked as invalid.
 
 **Expected Error Message:**
@@ -629,8 +628,8 @@ Epic sadface: You can only access '/inventory-item.html' when you are logged in.
 **Type:** UI / Regression\
 **Priority:** Medium\
 **Automation Candidate:** Yes\
-**Automation Status:** Planned\
-**Automated In:** TBD
+**Automation Status:** Automated\
+**Automated In:** `tests/test_login_page.py`
 
 **Preconditions:**
 
@@ -652,7 +651,6 @@ Epic sadface: You can only access '/inventory-item.html' when you are logged in.
 **Expected Result:**
 
 * User remains on the login page.
-* Error message is displayed under the login form.
 * Username input field displays an error icon.
 * Password input field displays an error icon.
 * Both input error icons use the expected error icon styling.

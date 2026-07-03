@@ -11,8 +11,9 @@ class LoginPage(BasePage):
         self.get_password_input().fill(password)
         self.get_login_button().click()
 
-    def get_input_error_icon(self) -> Locator:
-        return self.page.locator("[data-icon='times-circle']")
+    @staticmethod
+    def get_input_error_icon(input_container: Locator) -> Locator:
+        return input_container.locator("[data-icon='times-circle']")
 
     def get_error_message(self) -> Locator:
         return self.page.locator('[data-test="error"]')

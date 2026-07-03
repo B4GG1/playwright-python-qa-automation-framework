@@ -24,11 +24,8 @@ class InventoryPage(AppPage):
     def get_product_list(self) -> Locator:
         return self.page.locator('[data-test="inventory-list"]')
 
-    def get_product_items(self) -> Locator:
-        return self.page.locator('[data-test="inventory-item"]')
-
     def get_product_item_by_name(self, product_name: str) -> Locator:
-        return self.get_product_items().filter(has_text=product_name)
+        return self.get_product_item_or_items().filter(has_text=product_name)
 
     def get_product_names(self) -> list[str]:
         return self.page.locator('[data-test="inventory-item-name"]').all_inner_texts()

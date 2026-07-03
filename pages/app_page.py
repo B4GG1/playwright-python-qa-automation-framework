@@ -77,6 +77,9 @@ class AppPage(BasePage):
         return InventoryPage(self.page)
 
     # Shared locators for product-like item containers
+    def get_product_item_or_items(self) -> Locator:
+        return self.page.locator('[data-test="inventory-item"]')
+
     @staticmethod
     def get_product_name_from_item(product_item: Locator) -> Locator:
         return product_item.locator('[data-test="inventory-item-name"]')

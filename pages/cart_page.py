@@ -20,11 +20,11 @@ class CartPage(AppPage):
     def get_cart_list(self) -> Locator:
         return self.page.locator("[data-test='cart-list']")
 
-    def get_product_items(self) -> Locator:
+    def get_product_item_or_items(self) -> Locator:
         return self.page.locator("[data-test='inventory-item']")
 
     def get_product_item_by_name(self, product_name: str) -> Locator:
-        return self.get_product_items().filter(has_text=product_name)
+        return self.get_product_item_or_items().filter(has_text=product_name)
 
     @staticmethod
     def get_product_quantity_from_item(product_item: Locator) -> Locator:

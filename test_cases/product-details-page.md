@@ -8,22 +8,22 @@ The goal of this document is to define product-details-page-owned scenarios and 
 
 ## Test Case Overview And Automation Coverage
 
-| Test Case ID                                                                                                                          | Scenario                                                                           | Type                         | Priority | Automation Status  | Automated In                         |
-|---------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------|------------------------------|----------|--------------------|--------------------------------------|
-| [TC-PRODUCT-DETAILS-001](#tc-product-details-001--product-details-content-is-displayed-for-selected-product)                          | Product details content is displayed for selected product                          | Smoke / UI                   | High     | Refactor Candidate | `tests/test_product_details_page.py` |
-| [TC-PRODUCT-DETAILS-002](#tc-product-details-002--product-details-content-matches-product-data-for-each-product)                      | Product details content matches product data for each product                      | Regression / UI              | Medium   | Refactor Candidate | `tests/test_product_details_page.py` |
-| [TC-PRODUCT-DETAILS-003](#tc-product-details-003--user-can-return-from-product-details-to-inventory-page)                             | User can return from product details to inventory page                             | Regression / Navigation / UI | Medium   | Automated          | `tests/test_product_details_page.py` |
-| [TC-PRODUCT-DETAILS-004](#tc-product-details-004--add-to-cart-button-changes-to-remove-after-adding-product-from-details-page)        | Add to cart button changes to Remove after adding product from details page        | Regression / UI              | Medium   | Automated          | `tests/test_product_details_page.py` |
-| [TC-PRODUCT-DETAILS-005](#tc-product-details-005--product-can-be-added-to-cart-from-product-details-page)                             | Product can be added to cart from product details page                             | Smoke / Positive / UI        | High     | Planned            | TBD                                  |
-| [TC-PRODUCT-DETAILS-006](#tc-product-details-006--all-products-can-be-added-to-cart-from-product-details-page)                        | All products can be added to cart from product details page                        | Regression / Positive / UI   | Medium   | Planned            | TBD                                  |
-| [TC-PRODUCT-DETAILS-007](#tc-product-details-007--product-can-be-removed-from-cart-from-product-details-page)                         | Product can be removed from cart from product details page                         | Smoke / Positive / UI        | High     | Planned            | TBD                                  |
-| [TC-PRODUCT-DETAILS-008](#tc-product-details-008--remove-button-changes-back-to-add-to-cart-after-removing-product-from-details-page) | Remove button changes back to Add to cart after removing product from details page | Regression / UI              | Medium   | Planned            | TBD                                  |
-| [TC-PRODUCT-DETAILS-009](#tc-product-details-009--cart-badge-is-displayed-after-adding-product-from-product-details-page)             | Cart badge is displayed after adding product from product details page             | Regression / UI              | Medium   | Planned            | TBD                                  |
-| [TC-PRODUCT-DETAILS-010](#tc-product-details-010--cart-badge-count-updates-after-adding-product-from-details-when-cart-is-not-empty)  | Cart badge count updates after adding product from details when cart is not empty  | Regression / UI              | Medium   | Planned            | TBD                                  |
-| [TC-PRODUCT-DETAILS-011](#tc-product-details-011--cart-badge-count-updates-after-removing-one-of-multiple-products-from-details-page) | Cart badge count updates after removing one of multiple products from details page | Regression / UI              | Medium   | Planned            | TBD                                  |
-| [TC-PRODUCT-DETAILS-012](#tc-product-details-012--cart-badge-disappears-after-removing-last-product-from-product-details-page)        | Cart badge disappears after removing last product from product details page        | Regression / UI              | Medium   | Planned            | TBD                                  |
-| [TC-PRODUCT-DETAILS-013](#tc-product-details-013--cart-page-can-be-opened-from-product-details-page)                                  | Cart page can be opened from product details page                                  | Regression / Navigation / UI | Medium   | Planned            | TBD                                  |
-| [TC-PRODUCT-DETAILS-014](#tc-product-details-014--all-products-can-be-removed-from-cart-from-product-details-page)                    | All products can be removed from cart from product details page                    | Regression / Positive / UI   | Medium   | Planned            | TBD                                  |
+| Test Case ID                                                                                                                          | Scenario                                                                           | Type                         | Priority | Automation Status | Automated In                         |
+|---------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------|------------------------------|----------|-------------------|--------------------------------------|
+| [TC-PRODUCT-DETAILS-001](#tc-product-details-001--product-details-content-is-displayed-for-selected-product)                          | Product details content is displayed for selected product                          | Smoke / UI                   | High     | Automated         | `tests/test_product_details_page.py` |
+| [TC-PRODUCT-DETAILS-002](#tc-product-details-002--product-details-content-matches-product-data-for-each-product)                      | Product details content matches product data for each product                      | Regression / UI              | Medium   | Automated         | `tests/test_product_details_page.py` |
+| [TC-PRODUCT-DETAILS-003](#tc-product-details-003--user-can-return-from-product-details-to-inventory-page)                             | User can return from product details to inventory page                             | Regression / Navigation / UI | Medium   | Automated         | `tests/test_product_details_page.py` |
+| [TC-PRODUCT-DETAILS-004](#tc-product-details-004--add-to-cart-button-changes-to-remove-after-adding-product-from-details-page)        | Add to cart button changes to Remove after adding product from details page        | Regression / UI              | Medium   | Automated         | `tests/test_product_details_page.py` |
+| [TC-PRODUCT-DETAILS-005](#tc-product-details-005--product-can-be-added-to-cart-from-product-details-page)                             | Product can be added to cart from product details page                             | Smoke / Positive / UI        | High     | Automated         | `tests/test_product_details_page.py` |
+| [TC-PRODUCT-DETAILS-006](#tc-product-details-006--all-products-can-be-added-to-cart-from-product-details-page)                        | All products can be added to cart from product details page                        | Regression / Positive / UI   | Medium   | Automated         | `tests/test_product_details_page.py` |
+| [TC-PRODUCT-DETAILS-007](#tc-product-details-007--product-can-be-removed-from-cart-from-product-details-page)                         | Product can be removed from cart from product details page                         | Smoke / Positive / UI        | High     | Automated         | `tests/test_product_details_page.py` |
+| [TC-PRODUCT-DETAILS-008](#tc-product-details-008--remove-button-changes-back-to-add-to-cart-after-removing-product-from-details-page) | Remove button changes back to Add to cart after removing product from details page | Regression / UI              | Medium   | Automated         | `tests/test_product_details_page.py` |
+| [TC-PRODUCT-DETAILS-009](#tc-product-details-009--cart-badge-is-displayed-after-adding-product-from-product-details-page)             | Cart badge is displayed after adding product from product details page             | Regression / UI              | Medium   | Automated         | `tests/test_product_details_page.py` |
+| [TC-PRODUCT-DETAILS-010](#tc-product-details-010--cart-badge-count-updates-after-adding-product-from-details-when-cart-is-not-empty)  | Cart badge count updates after adding product from details when cart is not empty  | Regression / UI              | Medium   | Automated         | `tests/test_product_details_page.py` |
+| [TC-PRODUCT-DETAILS-011](#tc-product-details-011--cart-badge-count-updates-after-removing-one-of-multiple-products-from-details-page) | Cart badge count updates after removing one of multiple products from details page | Regression / UI              | Medium   | Automated         | `tests/test_product_details_page.py` |
+| [TC-PRODUCT-DETAILS-012](#tc-product-details-012--cart-badge-disappears-after-removing-last-product-from-product-details-page)        | Cart badge disappears after removing last product from product details page        | Regression / UI              | Medium   | Automated         | `tests/test_product_details_page.py` |
+| [TC-PRODUCT-DETAILS-013](#tc-product-details-013--cart-page-can-be-opened-from-product-details-page)                                  | Cart page can be opened from product details page                                  | Regression / Navigation / UI | Medium   | Automated         | `tests/test_product_details_page.py` |
+| [TC-PRODUCT-DETAILS-014](#tc-product-details-014--all-products-can-be-removed-from-cart-from-product-details-page)                    | All products can be removed from cart from product details page                    | Regression / Positive / UI   | Medium   | Automated         | `tests/test_product_details_page.py` |
 
 ---
 
@@ -34,7 +34,7 @@ The goal of this document is to define product-details-page-owned scenarios and 
 **Type:** Smoke / UI\
 **Priority:** High\
 **Automation Candidate:** Yes\
-**Automation Status:** Refactor Candidate\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_product_details_page.py`
 
 **Preconditions:**
@@ -74,7 +74,7 @@ The goal of this document is to define product-details-page-owned scenarios and 
 **Type:** Regression / UI\
 **Priority:** Medium\
 **Automation Candidate:** Yes\
-**Automation Status:** Refactor Candidate\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_product_details_page.py`
 
 **Preconditions:**
@@ -196,8 +196,8 @@ The goal of this document is to define product-details-page-owned scenarios and 
 **Type:** Smoke / Positive / UI\
 **Priority:** High\
 **Automation Candidate:** Yes\
-**Automation Status:** Planned\
-**Automated In:** TBD
+**Automation Status:** Automated\
+**Automated In:** `tests/test_product_details_page.py`
 
 **Preconditions:**
 
@@ -239,14 +239,14 @@ The goal of this document is to define product-details-page-owned scenarios and 
 **Type:** Regression / Positive / UI\
 **Priority:** Medium\
 **Automation Candidate:** Yes\
-**Automation Status:** Planned\
-**Automated In:** TBD
+**Automation Status:** Automated\
+**Automated In:** `tests/test_product_details_page.py`
 
 **Preconditions:**
 
 * User is logged in.
 * User can open product details pages for products from the product test data set.
-* Cart is empty at the start of the test.
+* Cart is empty at the start of each product check.
 
 **Test Data:**
 
@@ -256,21 +256,17 @@ The goal of this document is to define product-details-page-owned scenarios and 
 **Steps:**
 
 1. Log in with valid credentials.
-2. For each product from the product test data set, open the product details page.
+2. For each product from the product test data set, open that product details page in an isolated test iteration.
 3. Click the Add to cart button on the product details page.
-4. Observe the product details page and cart badge.
+4. Observe the product details page, cart badge, and cart page item list.
 
 **Expected Result:**
 
-* Each product can be added to the cart from its product details page.
+* The tested product can be added to the cart from its product details page.
 * Add to cart action does not display an error.
-* Cart badge count matches the number of products added to the cart.
-
-**Notes:**
-
-* This is the full regression variant of TC-PRODUCT-DETAILS-005.
-* Temporary AQA-0068 note: automate in AQA-0072 and remove this note after AQA-0072.
-* Detailed cart item validation remains owned by `cart-page.md`.
+* Product details page remains open after adding the product.
+* Cart badge displays `1` for the tested product iteration.
+* The tested product is visible on the cart page.
 
 ---
 
@@ -279,8 +275,8 @@ The goal of this document is to define product-details-page-owned scenarios and 
 **Type:** Smoke / Positive / UI\
 **Priority:** High\
 **Automation Candidate:** Yes\
-**Automation Status:** Planned\
-**Automated In:** TBD
+**Automation Status:** Automated\
+**Automated In:** `tests/test_product_details_page.py`
 
 **Preconditions:**
 
@@ -324,8 +320,8 @@ The goal of this document is to define product-details-page-owned scenarios and 
 **Type:** Regression / UI\
 **Priority:** Medium\
 **Automation Candidate:** Yes\
-**Automation Status:** Planned\
-**Automated In:** TBD
+**Automation Status:** Automated\
+**Automated In:** `tests/test_product_details_page.py`
 
 **Preconditions:**
 
@@ -367,8 +363,8 @@ The goal of this document is to define product-details-page-owned scenarios and 
 **Type:** Regression / UI\
 **Priority:** Medium\
 **Automation Candidate:** Yes\
-**Automation Status:** Planned\
-**Automated In:** TBD
+**Automation Status:** Automated\
+**Automated In:** `tests/test_product_details_page.py`
 
 **Preconditions:**
 
@@ -407,8 +403,8 @@ The goal of this document is to define product-details-page-owned scenarios and 
 **Type:** Regression / UI\
 **Priority:** Medium\
 **Automation Candidate:** Yes\
-**Automation Status:** Planned\
-**Automated In:** TBD
+**Automation Status:** Automated\
+**Automated In:** `tests/test_product_details_page.py`
 
 **Preconditions:**
 
@@ -450,8 +446,8 @@ The goal of this document is to define product-details-page-owned scenarios and 
 **Type:** Regression / UI\
 **Priority:** Medium\
 **Automation Candidate:** Yes\
-**Automation Status:** Planned\
-**Automated In:** TBD
+**Automation Status:** Automated\
+**Automated In:** `tests/test_product_details_page.py`
 
 **Preconditions:**
 
@@ -496,8 +492,8 @@ The goal of this document is to define product-details-page-owned scenarios and 
 **Type:** Regression / UI\
 **Priority:** Medium\
 **Automation Candidate:** Yes\
-**Automation Status:** Planned\
-**Automated In:** TBD
+**Automation Status:** Automated\
+**Automated In:** `tests/test_product_details_page.py`
 
 **Preconditions:**
 
@@ -538,8 +534,8 @@ The goal of this document is to define product-details-page-owned scenarios and 
 **Type:** Regression / Navigation / UI\
 **Priority:** Medium\
 **Automation Candidate:** Yes\
-**Automation Status:** Planned\
-**Automated In:** TBD
+**Automation Status:** Automated\
+**Automated In:** `tests/test_product_details_page.py`
 
 **Preconditions:**
 
@@ -578,14 +574,14 @@ The goal of this document is to define product-details-page-owned scenarios and 
 **Type:** Regression / Positive / UI\
 **Priority:** Medium\
 **Automation Candidate:** Yes\
-**Automation Status:** Planned\
-**Automated In:** TBD
+**Automation Status:** Automated\
+**Automated In:** `tests/test_product_details_page.py`
 
 **Preconditions:**
 
 * User is logged in.
 * User can open product details pages for products from the product test data set.
-* All products from the product test data set have been added to the cart.
+* All products from the product test data set have been added to the cart before each product removal check.
 
 **Test Data:**
 
@@ -596,20 +592,15 @@ The goal of this document is to define product-details-page-owned scenarios and 
 
 1. Log in with valid credentials.
 2. Add all products from the product test data set to the cart.
-3. For each added product, open its product details page.
+3. For each product from the product test data set, open that product details page in an isolated test iteration.
 4. Click the Remove button on the product details page.
-5. Observe the product details page and cart badge.
+5. Observe the product details page, cart badge, and cart page item list.
 
 **Expected Result:**
 
-* Each product can be removed from the cart from its product details page.
+* The tested product can be removed from the cart from its product details page.
 * Remove action does not display an error.
-* Cart badge count decreases after each removal.
-* Cart badge is no longer displayed after the last product is removed.
-* Product details page reflects the updated cart state for the selected product.
-
-**Notes:**
-
-* This is the full regression variant of TC-PRODUCT-DETAILS-007.
-* Temporary AQA-0068 note: automate in AQA-0072 and remove this note after AQA-0072.
-* Detailed cart item validation remains owned by `cart-page.md`.
+* Product details page remains open after removing the tested product.
+* Cart badge count decreases by one after removing the tested product.
+* The tested product is no longer visible on the cart page.
+* Other products that were previously added to the cart are not negatively affected by removing the tested product.

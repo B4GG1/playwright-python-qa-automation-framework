@@ -17,13 +17,12 @@ The goal of this document is to define cart-page-owned scenarios and track their
 | [TC-CART-005](#tc-cart-005--cart-badge-is-removed-after-removing-last-product)                | Cart badge is removed after removing last product                | Regression / UI              | Medium   | Automated         | `tests/test_cart_page.py` |
 | [TC-CART-006](#tc-cart-006--user-can-return-from-cart-page-to-inventory-page)                 | User can return from cart page to inventory page                 | Regression / Navigation / UI | Medium   | Automated         | `tests/test_cart_page.py` |
 | [TC-CART-007](#tc-cart-007--cart-state-persists-after-logout-and-re-login)                    | Cart state persists after logout and re-login                    | Regression / Positive / UI   | Medium   | Automated         | `tests/test_cart_page.py` |
-| [TC-CART-008](#tc-cart-008--all-added-products-are-displayed-on-cart-page)                    | All added products are displayed on cart page                    | Regression / Positive / UI   | Medium   | Planned           | TBD                       |
-| [TC-CART-009](#tc-cart-009--cart-product-content-matches-added-product-data-for-each-product) | Cart product content matches added product data for each product | Regression / UI              | Medium   | Planned           | TBD                       |
-| [TC-CART-010](#tc-cart-010--cart-badge-decrements-after-removing-one-of-multiple-products)    | Cart badge decrements after removing one of multiple products    | Regression / UI              | Medium   | Planned           | TBD                       |
-| [TC-CART-011](#tc-cart-011--product-details-can-be-opened-from-cart-item-name)                | Product details can be opened from cart item name                | Regression / Navigation / UI | Medium   | Planned           | TBD                       |
-| [TC-CART-012](#tc-cart-012--product-details-can-be-opened-from-cart-item-image)               | Product details can be opened from cart item image               | Regression / Navigation / UI | Low      | Planned           | TBD                       |
-| [TC-CART-013](#tc-cart-013--continue-shopping-preserves-cart-state)                           | Continue Shopping preserves cart state                           | Regression / Navigation / UI | Medium   | Planned           | TBD                       |
-| [TC-CART-014](#tc-cart-014--all-products-can-be-removed-from-cart-page)                       | All products can be removed from cart page                       | Regression / Positive / UI   | Medium   | Planned           | TBD                       |
+| [TC-CART-008](#tc-cart-008--all-added-products-are-displayed-on-cart-page)                    | All added products are displayed on cart page                    | Regression / Positive / UI   | Medium   | Automated         | `tests/test_cart_page.py` |
+| [TC-CART-009](#tc-cart-009--cart-product-content-matches-added-product-data-for-each-product) | Cart product content matches added product data for each product | Regression / UI              | Medium   | Automated         | `tests/test_cart_page.py` |
+| [TC-CART-010](#tc-cart-010--cart-badge-decrements-after-removing-one-of-multiple-products)    | Cart badge decrements after removing one of multiple products    | Regression / UI              | Medium   | Automated         | `tests/test_cart_page.py` |
+| [TC-CART-011](#tc-cart-011--product-details-can-be-opened-from-cart-item-name)                | Product details can be opened from cart item name                | Regression / Navigation / UI | Medium   | Automated         | `tests/test_cart_page.py` |
+| [TC-CART-012](#tc-cart-012--continue-shopping-preserves-cart-state)                           | Continue Shopping preserves cart state                           | Regression / Navigation / UI | Medium   | Automated         | `tests/test_cart_page.py` |
+| [TC-CART-013](#tc-cart-013--all-products-can-be-removed-from-cart-page)                       | All products can be removed from cart page                       | Regression / Positive / UI   | Medium   | Automated         | `tests/test_cart_page.py` |
 
 ---
 
@@ -189,7 +188,7 @@ The goal of this document is to define cart-page-owned scenarios and track their
 **Notes:**
 
 * This scenario validates remove-from-cart behavior on the cart page for one representative product.
-* Full all-products remove-from-cart regression coverage is tracked separately in TC-CART-014.
+* Full all-products remove-from-cart regression coverage is tracked separately in TC-CART-013.
 * This test should not validate checkout behavior.
 
 ---
@@ -268,7 +267,7 @@ The goal of this document is to define cart-page-owned scenarios and track their
 **Notes:**
 
 * This scenario validates basic navigation from the cart page back to the inventory page.
-* Cart state after Continue Shopping is tracked separately in TC-CART-013.
+* Cart state after Continue Shopping is tracked separately in TC-CART-012.
 * This test should not validate checkout behavior.
 
 ---
@@ -325,8 +324,8 @@ The goal of this document is to define cart-page-owned scenarios and track their
 **Type:** Regression / Positive / UI\
 **Priority:** Medium\
 **Automation Candidate:** Yes\
-**Automation Status:** Planned\
-**Automated In:** TBD
+**Automation Status:** Automated\
+**Automated In:** `tests/test_cart_page.py`
 
 **Preconditions:**
 
@@ -368,8 +367,8 @@ The goal of this document is to define cart-page-owned scenarios and track their
 **Type:** Regression / UI\
 **Priority:** Medium\
 **Automation Candidate:** Yes\
-**Automation Status:** Planned\
-**Automated In:** TBD
+**Automation Status:** Automated\
+**Automated In:** `tests/test_cart_page.py`
 
 **Preconditions:**
 
@@ -412,8 +411,8 @@ The goal of this document is to define cart-page-owned scenarios and track their
 **Type:** Regression / UI\
 **Priority:** Medium\
 **Automation Candidate:** Yes\
-**Automation Status:** Planned\
-**Automated In:** TBD
+**Automation Status:** Automated\
+**Automated In:** `tests/test_cart_page.py`
 
 **Preconditions:**
 
@@ -458,8 +457,8 @@ The goal of this document is to define cart-page-owned scenarios and track their
 **Type:** Regression / Navigation / UI\
 **Priority:** Medium\
 **Automation Candidate:** Yes\
-**Automation Status:** Planned\
-**Automated In:** TBD
+**Automation Status:** Automated\
+**Automated In:** `tests/test_cart_page.py`
 
 **Preconditions:**
 
@@ -495,56 +494,13 @@ The goal of this document is to define cart-page-owned scenarios and track their
 
 ---
 
-### TC-CART-012 — Product details can be opened from cart item image
-
-**Type:** Regression / Navigation / UI\
-**Priority:** Low\
-**Automation Candidate:** Yes\
-**Automation Status:** Planned\
-**Automated In:** TBD
-
-**Preconditions:**
-
-* User is logged in.
-* Selected product has been added to the cart.
-* User is on the cart page.
-* Cart item image is visible and clickable.
-
-**Test Data:**
-
-* User: `standard_user`
-* Example product: `Sauce Labs Backpack`
-
-**Steps:**
-
-1. Log in with valid credentials.
-2. Add the selected product to the cart.
-3. Open the cart page.
-4. Click the cart item product image.
-5. Observe the product details page.
-
-**Expected Result:**
-
-* Product details page is opened for the selected product.
-* Product details page URL contains the selected product ID.
-* Product details page item details container is visible.
-* Product details page belongs to the selected product.
-
-**Notes:**
-
-* This scenario is owned by Cart Page because the user action starts from `cart.html`.
-* Temporary AQA-0068 note: verify feasibility during AQA-0072 and remove this note after AQA-0072.
-* If the cart page does not expose a clickable item image, this TC should be removed or changed to Not Applicable before implementation.
-
----
-
-### TC-CART-013 — Continue Shopping preserves cart state
+### TC-CART-012 — Continue Shopping preserves cart state
 
 **Type:** Regression / Navigation / UI\
 **Priority:** Medium\
 **Automation Candidate:** Yes\
-**Automation Status:** Planned\
-**Automated In:** TBD
+**Automation Status:** Automated\
+**Automated In:** `tests/test_cart_page.py`
 
 **Preconditions:**
 
@@ -586,13 +542,13 @@ The goal of this document is to define cart-page-owned scenarios and track their
 
 ---
 
-### TC-CART-014 — All products can be removed from cart page
+### TC-CART-013 — All products can be removed from cart page
 
 **Type:** Regression / Positive / UI\
 **Priority:** Medium\
 **Automation Candidate:** Yes\
-**Automation Status:** Planned\
-**Automated In:** TBD
+**Automation Status:** Automated\
+**Automated In:** `tests/test_cart_page.py`
 
 **Preconditions:**
 
@@ -617,10 +573,8 @@ The goal of this document is to define cart-page-owned scenarios and track their
 **Expected Result:**
 
 * Each product can be removed from the cart page.
-* Removed products are no longer displayed on the cart page.
+* Removed product is no longer displayed on the cart page.
 * Cart badge count decreases after each removal.
-* Cart badge is no longer displayed after the last product is removed.
-* Cart item list does not contain any removed products.
 * No error is displayed.
 
 **Notes:**

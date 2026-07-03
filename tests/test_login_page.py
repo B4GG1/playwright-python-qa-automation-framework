@@ -203,7 +203,36 @@ def test_direct_item_page_access_without_login_is_blocked(page: Page, _case_id: 
     item_page.open(product["product_id"])
 
     expect(page).to_have_url(login_page.URL)
-    expect(item_page.get_product_item()).not_to_be_visible()
+    expect(item_page.get_product_item_or_items()).not_to_be_visible()
     assert login_page.get_error_message_text() == ACCESS_DENIED_TEMPLATE_ERROR.format(
         url_suffix=ITEM_URL_SUFFIX
     )
+
+
+@pytest.mark.regression
+@pytest.mark.ui
+@pytest.mark.parametrize(
+    "_case_id",
+    ["TC-LOGIN-016"],
+    ids=["TC-LOGIN-016"],
+)
+def test_input_error_icons_are_displayed_after_failed_login(
+    opened_login_page: LoginPage,
+    _case_id: str,
+):
+    invalid_user = INVALID_LOGIN_CASES[0]
+    username_input = opened_login_page.get_username_input()
+    password_input = opened_login_page.get_password_input()
+
+    opened_login_page.login(invalid_user["username"], invalid_user["password"])
+
+    username_input_parent = opened_login_page.page.locator("div .form_group").filter(
+        has=username_input
+    )
+    password_input_parent = opened_login_page.page.locator("div .form_group").filter(
+        has=password_input
+    )
+
+    expect(opened_login_page.page).to_have_url(LoginPage.URL)
+    expect(opened_login_page.get_input_error_icon(username_input_parent)).to_be_visible()
+    expect(opened_login_page.get_input_error_icon(password_input_parent)).to_be_visible()
