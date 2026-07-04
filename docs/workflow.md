@@ -56,6 +56,7 @@ Examples:
 feature/login-page
 feature/inventory-products
 feature/cart-page
+feature/structure-cleanup
 ```
 
 In this workflow:
@@ -70,7 +71,7 @@ In this workflow:
 8. Validate CI.
 9. Squash merge the complete workstream into `develop`.
 
-This approach was used for complete functional automation workstreams such as Login Page Automation and Cart Automation.
+This approach is used for complete functional automation, refactor, documentation sync, and stabilization workstreams such as Login Page Automation, Cart Automation, and Phase 3C Structure Cleanup.
 
 It is useful when tasks are connected and reviewing them together makes more sense than creating many small Pull Requests.
 
@@ -94,6 +95,7 @@ Other examples:
 ```bash
 git checkout -b feature/inventory-products
 git checkout -b feature/checkout-flow
+git checkout -b feature/structure-cleanup
 git checkout -b fix/screenshot-hook
 git checkout -b docs/update-testing-strategy
 git checkout -b refactor/login-fixtures
@@ -192,6 +194,7 @@ git commit -m "refactor(AQA-0032): parametrize negative login scenarios"
 git commit -m "test(AQA-0038): add protected inventory route access test"
 git commit -m "test(AQA-0057): add product to cart test"
 git commit -m "chore(AQA-0064): review and stabilize cart workstream"
+git commit -m "chore(AQA-0073): finalize phase 3c structure cleanup"
 ```
 
 Common commit types:
@@ -301,6 +304,7 @@ For checkpoint-only or documentation-heavy stabilization tasks, a `chore` or `do
 ```text
 chore(AQA-0064): review and stabilize cart workstream
 docs(AQA-0064): update project documentation after cart workstream
+chore(AQA-0073): finalize phase 3c structure cleanup
 ```
 
 ## Post-Merge Workflow
@@ -359,6 +363,7 @@ Example checkpoints:
 ```text
 AQA-0041 — Review Phase 2 And Prepare Phase 3 Scope
 AQA-0064 — Review And Stabilize Cart Workstream
+AQA-0073 — Phase 3C Final Validation And Documentation Sync
 ```
 
 No new functional work should start before the relevant checkpoint is completed.

@@ -4,7 +4,7 @@
 
 This project uses GitHub Actions as the main Continuous Integration (CI) pipeline.
 
-The pipeline automatically validates code quality, installs project dependencies, prepares the Playwright browser environment, runs automated tests, generates test reports, and publishes test artifacts after each workflow execution.
+The pipeline validates code quality, installs project dependencies, prepares the Playwright browser environment, runs automated tests, generates test reports, and publishes test artifacts after each workflow execution.
 
 At the current stage, the project focuses on CI. Continuous Delivery / Deployment (CD) is not implemented yet and may be added later if the project requires deployment, package publishing, or environment-based execution.
 
@@ -23,7 +23,8 @@ The current CI pipeline supports:
 * screenshot artifact upload on failure through the `reports/` directory
 * reports directory upload as a CI artifact
 * explicit artifact retention configuration
-* validation for both `main` and `develop` workflows
+* validation for `main` and `develop`
+* validation for Pull Requests targeting `main` and `develop`
 * manual workflow execution through GitHub Actions
 
 The pipeline is designed to act as a quality gate before changes are merged into stable branches.
@@ -38,7 +39,9 @@ The pipeline is executed automatically on:
 * `pull_request` targeting the `develop` branch
 * manual execution via `workflow_dispatch`
 
-This ensures that:
+This means that regular pushes to feature branches do not automatically trigger the CI workflow unless the workflow is executed manually or the branch is opened as a Pull Request targeting `main` or `develop`.
+
+This trigger strategy ensures that:
 
 * stable branches are continuously validated
 * pull requests are checked before merge
@@ -132,7 +135,7 @@ The pipeline validates code quality using:
 * Black for formatting validation
 * isort for import sorting validation
 
-Current quality commands:
+Current, quality commands:
 
 ```bash
 ruff check .
@@ -166,16 +169,20 @@ Current report location:
 reports/report.html
 ```
 
-The test suite currently includes:
+The current automated test suite includes:
 
-* smoke validation
+* login page validation
 * positive login scenarios
 * negative login scenarios
 * login UI behavior checks
 * protected route access validation
 * inventory page validation
 * product list and product card validation
-* product details navigation validation
+* inventory-side product details navigation validation
+* product details page validation
+* product details content validation
+* product details add-to-cart validation
+* product details remove-from-cart validation
 * product sorting validation
 * cart page validation
 * empty cart state validation
@@ -183,7 +190,7 @@ The test suite currently includes:
 * cart badge validation
 * cart product visibility and content validation
 * remove-from-cart validation
-* continue shopping navigation validation
+* Continue Shopping navigation validation
 * cart state persistence after logout and re-login
 
 ### 7. Artifact Upload
@@ -317,7 +324,7 @@ Recommended branch protection rules:
 
 ### `main`
 
-* require pull request before merge
+* require Pull Request before merge
 * require CI pipeline to pass
 * disallow direct pushes
 * disallow force pushes
@@ -325,7 +332,7 @@ Recommended branch protection rules:
 
 ### `develop`
 
-* require pull request before merge
+* require Pull Request before merge
 * require CI pipeline to pass
 * disallow direct pushes where practical
 * use as the main integration branch for completed workstreams
@@ -373,17 +380,17 @@ The current CI setup provides:
 
 ## Current CI Status
 
-The CI pipeline is operational and supports the completed Login Page Automation Workstream, Inventory And Products Automation Workstream, and Cart Automation Workstream.
+The CI pipeline is operational and supports the completed page-level automation coverage for Login, Inventory, Product Details, and Cart areas.
 
 The pipeline validates:
 
 * project setup
 * code quality
-* test execution
-* generated reports
+* full automated test execution
+* generated HTML report
 * CI artifacts
 
-It is ready to support future framework expansion into checkout, API testing, reporting improvements, and additional CI optimization.
+It is ready to support Phase 3C final validation, PR readiness checks, and future framework expansion into checkout, API testing, reporting improvements, and additional CI optimization.
 
 ## Future Improvements
 

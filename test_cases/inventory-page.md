@@ -39,10 +39,10 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-001 — Inventory page is visible after successful login
 
-**Type:** Smoke / Positive / UI\
-**Priority:** High\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Smoke / Positive / UI
+**Priority:** High
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -78,10 +78,10 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-002 — Product list is displayed
 
-**Type:** Smoke / UI\
-**Priority:** High\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Smoke / UI
+**Priority:** High
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -114,10 +114,10 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-003 — Product cards contain name, description, price, and image
 
-**Type:** Regression / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -155,10 +155,10 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-004 — Cart page can be opened from inventory page
 
-**Type:** Smoke / Navigation / UI\
-**Priority:** High\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Smoke / Navigation / UI
+**Priority:** High
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -192,10 +192,10 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-005 — Product can be added to cart from inventory page
 
-**Type:** Smoke / Positive / UI\
-**Priority:** High\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Smoke / Positive / UI
+**Priority:** High
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -233,10 +233,10 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-006 — Add to cart button changes to Remove after adding product from inventory
 
-**Type:** Regression / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -273,10 +273,10 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-007 — Cart badge is displayed after adding one product
 
-**Type:** Regression / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -311,10 +311,10 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-008 — Cart badge count updates after adding multiple products
 
-**Type:** Regression / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -353,10 +353,10 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-009 — Products can be sorted by name A to Z
 
-**Type:** Regression / Sorting / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / Sorting / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -391,10 +391,10 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-010 — Products can be sorted by name Z to A
 
-**Type:** Regression / Sorting / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / Sorting / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -429,10 +429,10 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-011 — Products can be sorted by price low to high
 
-**Type:** Regression / Sorting / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / Sorting / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -469,10 +469,10 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-012 — Products can be sorted by price high to low
 
-**Type:** Regression / Sorting / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / Sorting / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -509,10 +509,10 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-013 — Product details can be opened for all products by product name on inventory page
 
-**Type:** Regression / Navigation / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / Navigation / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -550,10 +550,10 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-014 — Product details can be opened for all products by product image on inventory page
 
-**Type:** Regression / Navigation / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / Navigation / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -591,10 +591,10 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-015 — All products can be added to cart from inventory page
 
-**Type:** Regression / Positive / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / Positive / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -602,7 +602,7 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 * User is logged in.
 * User is on the inventory page.
 * Product list is visible.
-* Cart is empty at the start of the test.
+* Cart is empty at the start of each product check.
 
 **Test Data:**
 
@@ -612,21 +612,19 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 **Steps:**
 
 1. Log in with valid credentials.
-2. For each product from the product test data set, click the Add to cart button on the inventory product card.
-3. Observe the inventory page header.
-4. Open the cart page.
-5. Observe the cart item list.
+2. For each product from the product test data set, click the Add to cart button on the inventory product card in an isolated test iteration.
+3. Open the cart page.
+4. Observe the cart item list.
 
 **Expected Result:**
 
-* Each product can be added to the cart from the inventory page.
-* Cart page displays the added product.
+* The tested product can be added to the cart from the inventory page.
+* Cart page displays the tested product.
 * No error is displayed.
 
 **Notes:**
 
 * This is the full regression variant of TC-INVENTORY-005.
-* Temporary AQA-0068 note: automate in AQA-0072 and remove this note after AQA-0072.
 * This scenario should use parametrized or loop-based product data.
 * Detailed cart content validation remains owned by `cart-page.md`.
 
@@ -634,10 +632,10 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-016 — Product can be removed from cart from inventory page
 
-**Type:** Smoke / Positive / UI\
-**Priority:** High\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Smoke / Positive / UI
+**Priority:** High
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -670,7 +668,6 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 **Notes:**
 
 * This scenario validates inventory-side remove-from-cart behavior for one representative product.
-* Temporary AQA-0068 note: automate in AQA-0072 and remove this note after AQA-0072.
 * Full all-products remove-from-cart regression coverage is tracked separately in TC-INVENTORY-020.
 * This scenario should not validate checkout behavior.
 
@@ -678,10 +675,10 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-017 — Remove button changes back to Add to cart after removing product from inventory
 
-**Type:** Regression / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -714,17 +711,16 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 **Notes:**
 
 * This scenario validates inventory-side button state after removing a product from the cart.
-* Temporary AQA-0068 note: automate in AQA-0072 and remove this note after AQA-0072.
 * This scenario is the reverse-state counterpart to TC-INVENTORY-006.
 
 ---
 
 ### TC-INVENTORY-018 — Cart badge count updates after removing one of multiple products from inventory page
 
-**Type:** Regression / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -759,16 +755,15 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 **Notes:**
 
 * This scenario validates inventory-side cart badge count update after removing one product while another product remains in the cart.
-* Temporary AQA-0068 note: automate in AQA-0072 and remove this note after AQA-0072.
 
 ---
 
 ### TC-INVENTORY-019 — Cart badge disappears after removing last product from inventory page
 
-**Type:** Regression / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -800,16 +795,15 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 **Notes:**
 
 * This scenario validates complete cart badge disappearance after inventory-side removal of the last product.
-* Temporary AQA-0068 note: automate in AQA-0072 and remove this note after AQA-0072.
 
 ---
 
 ### TC-INVENTORY-020 — All products can be removed from cart from inventory page
 
-**Type:** Regression / Positive / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / Positive / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -817,7 +811,7 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 * User is logged in.
 * User is on the inventory page.
 * Product list is visible.
-* All products from the product test data set have been added to the cart from the inventory page.
+* All products from the product test data set have been added to the cart from the inventory page before each product removal check.
 
 **Test Data:**
 
@@ -828,31 +822,31 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 1. Log in with valid credentials.
 2. Add all products from the product test data set to the cart from the inventory page.
-3. For each added product, click the Remove button on the inventory product card.
+3. For each product from the product test data set, remove the tested product from the inventory product card in an isolated test iteration.
 4. Observe the inventory page header.
 5. Open the cart page.
 6. Observe the cart item list.
 
 **Expected Result:**
 
-* Each product can be removed from the cart from the inventory page.
-* Cart badge count decreases after each removal.
+* The tested product can be removed from the cart from the inventory page.
+* Cart badge count decreases by one after removing the tested product.
 * Cart page does not display the removed product.
+* Other products that were previously added to the cart are not negatively affected by removing the tested product.
 * No error is displayed.
 
 **Notes:**
 
 * This is the full regression variant of TC-INVENTORY-016.
-* Temporary AQA-0068 note: automate in AQA-0072 and remove this note after AQA-0072.
 
 ---
 
 ### TC-INVENTORY-021 — Product details can be opened from product name for example product
 
-**Type:** Smoke / Navigation / UI\
-**Priority:** High\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Smoke / Navigation / UI
+**Priority:** High
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -889,10 +883,10 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-022 — Product details can be opened from product image for example product
 
-**Type:** Smoke / Navigation / UI\
-**Priority:** High\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Smoke / Navigation / UI
+**Priority:** High
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**

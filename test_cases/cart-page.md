@@ -30,10 +30,10 @@ The goal of this document is to define cart-page-owned scenarios and track their
 
 ### TC-CART-001 — Cart is empty before adding products
 
-**Type:** Smoke / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Smoke / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_cart_page.py`
 
 **Preconditions:**
@@ -68,10 +68,10 @@ The goal of this document is to define cart-page-owned scenarios and track their
 
 ### TC-CART-002 — Added product is displayed on cart page
 
-**Type:** Smoke / Positive / UI\
-**Priority:** High\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Smoke / Positive / UI
+**Priority:** High
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_cart_page.py`
 
 **Preconditions:**
@@ -109,10 +109,10 @@ The goal of this document is to define cart-page-owned scenarios and track their
 
 ### TC-CART-003 — Cart product content matches added product data
 
-**Type:** Regression / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_cart_page.py`
 
 **Preconditions:**
@@ -153,10 +153,10 @@ The goal of this document is to define cart-page-owned scenarios and track their
 
 ### TC-CART-004 — Product can be removed from cart page
 
-**Type:** Smoke / Positive / UI\
-**Priority:** High\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Smoke / Positive / UI
+**Priority:** High
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_cart_page.py`
 
 **Preconditions:**
@@ -195,10 +195,10 @@ The goal of this document is to define cart-page-owned scenarios and track their
 
 ### TC-CART-005 — Cart badge is removed after removing last product
 
-**Type:** Regression / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_cart_page.py`
 
 **Preconditions:**
@@ -235,10 +235,10 @@ The goal of this document is to define cart-page-owned scenarios and track their
 
 ### TC-CART-006 — User can return from cart page to inventory page
 
-**Type:** Regression / Navigation / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / Navigation / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_cart_page.py`
 
 **Preconditions:**
@@ -274,10 +274,10 @@ The goal of this document is to define cart-page-owned scenarios and track their
 
 ### TC-CART-007 — Cart state persists after logout and re-login
 
-**Type:** Regression / Positive / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / Positive / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_cart_page.py`
 
 **Preconditions:**
@@ -321,10 +321,10 @@ The goal of this document is to define cart-page-owned scenarios and track their
 
 ### TC-CART-008 — All added products are displayed on cart page
 
-**Type:** Regression / Positive / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / Positive / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_cart_page.py`
 
 **Preconditions:**
@@ -357,17 +357,16 @@ The goal of this document is to define cart-page-owned scenarios and track their
 **Notes:**
 
 * This is the full regression variant of TC-CART-002.
-* Temporary AQA-0068 note: automate in AQA-0072 and remove this note after AQA-0072.
 * This scenario may use a loop or parametrized product data.
 
 ---
 
 ### TC-CART-009 — Cart product content matches added product data for each product
 
-**Type:** Regression / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_cart_page.py`
 
 **Preconditions:**
@@ -375,7 +374,7 @@ The goal of this document is to define cart-page-owned scenarios and track their
 * User is logged in.
 * User is on the inventory page.
 * Product list is visible.
-* Cart is empty at the start of the test.
+* Cart is empty at the start of each product check.
 
 **Test Data:**
 
@@ -385,33 +384,32 @@ The goal of this document is to define cart-page-owned scenarios and track their
 **Steps:**
 
 1. Log in with valid credentials.
-2. Add products from the product test data set to the cart.
+2. For each product from the product test data set, add the tested product to the cart in an isolated test iteration.
 3. Open the cart page.
-4. For each cart item, observe product content.
+4. Observe the cart item content for the tested product.
 
 **Expected Result:**
 
-* Each cart item name matches the expected product name.
-* Each cart item description matches the expected product description.
-* Each cart item price matches the expected product price.
-* Each cart item quantity is visible.
-* Each cart item quantity displays `1`.
-* Each cart item has a visible Remove button.
+* Tested cart item name matches the expected product name.
+* Tested cart item description matches the expected product description.
+* Tested cart item price matches the expected product price.
+* Tested cart item quantity is visible.
+* Tested cart item quantity displays `1`.
+* Tested cart item has a visible Remove button.
 
 **Notes:**
 
 * This is the full regression variant of TC-CART-003.
-* Temporary AQA-0068 note: automate in AQA-0072 and remove this note after AQA-0072.
 * Expected product data should come from centralized product test data.
 
 ---
 
 ### TC-CART-010 — Cart badge decrements after removing one of multiple products
 
-**Type:** Regression / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_cart_page.py`
 
 **Preconditions:**
@@ -448,16 +446,15 @@ The goal of this document is to define cart-page-owned scenarios and track their
 **Notes:**
 
 * This scenario validates cart badge decrement after removing one product while another product remains in the cart.
-* Temporary AQA-0068 note: automate in AQA-0072 and remove this note after AQA-0072.
 
 ---
 
 ### TC-CART-011 — Product details can be opened from cart item name
 
-**Type:** Regression / Navigation / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / Navigation / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_cart_page.py`
 
 **Preconditions:**
@@ -490,16 +487,15 @@ The goal of this document is to define cart-page-owned scenarios and track their
 **Notes:**
 
 * This scenario is owned by Cart Page because the user action starts from `cart.html`.
-* Temporary AQA-0068 note: automate in AQA-0072 and remove this note after AQA-0072.
 
 ---
 
 ### TC-CART-012 — Continue Shopping preserves cart state
 
-**Type:** Regression / Navigation / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / Navigation / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_cart_page.py`
 
 **Preconditions:**
@@ -537,24 +533,23 @@ The goal of this document is to define cart-page-owned scenarios and track their
 **Notes:**
 
 * This scenario validates that navigation from cart back to inventory does not reset cart state.
-* Temporary AQA-0068 note: automate in AQA-0072 and remove this note after AQA-0072.
 * Basic Continue Shopping navigation is already covered by TC-CART-006.
 
 ---
 
 ### TC-CART-013 — All products can be removed from cart page
 
-**Type:** Regression / Positive / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / Positive / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_cart_page.py`
 
 **Preconditions:**
 
 * User is logged in.
 * User is on the inventory page.
-* All products from the product test data set have been added to the cart.
+* All products from the product test data set have been added to the cart before each product removal check.
 * User is on the cart page.
 
 **Test Data:**
@@ -567,17 +562,17 @@ The goal of this document is to define cart-page-owned scenarios and track their
 1. Log in with valid credentials.
 2. Add all products from the product test data set to the cart.
 3. Open the cart page.
-4. For each cart item, click the Remove button.
+4. For each product from the product test data set, remove the tested product from the cart page in an isolated test iteration.
 5. Observe the cart item list and cart badge.
 
 **Expected Result:**
 
-* Each product can be removed from the cart page.
+* The tested product can be removed from the cart page.
 * Removed product is no longer displayed on the cart page.
-* Cart badge count decreases after each removal.
+* Cart badge count decreases by one after removing the tested product.
+* Other products that were previously added to the cart are not negatively affected by removing the tested product.
 * No error is displayed.
 
 **Notes:**
 
 * This is the full regression variant of TC-CART-004.
-* Temporary AQA-0068 note: automate in AQA-0072 and remove this note after AQA-0072.

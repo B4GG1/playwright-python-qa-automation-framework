@@ -31,10 +31,10 @@ The goal of this document is to define product-details-page-owned scenarios and 
 
 ### TC-PRODUCT-DETAILS-001 — Product details content is displayed for selected product
 
-**Type:** Smoke / UI\
-**Priority:** High\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Smoke / UI
+**Priority:** High
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_product_details_page.py`
 
 **Preconditions:**
@@ -65,16 +65,15 @@ The goal of this document is to define product-details-page-owned scenarios and 
 **Notes:**
 
 * This scenario validates product details content visibility for one representative product.
-* Temporary AQA-0068 note: current automation validates details content together with inventory-origin navigation; review split during AQA-0072 and remove this note after AQA-0072.
 
 ---
 
 ### TC-PRODUCT-DETAILS-002 — Product details content matches product data for each product
 
-**Type:** Regression / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_product_details_page.py`
 
 **Preconditions:**
@@ -105,17 +104,16 @@ The goal of this document is to define product-details-page-owned scenarios and 
 **Notes:**
 
 * This is the full regression variant of TC-PRODUCT-DETAILS-001.
-* Temporary AQA-0068 note: current automation validates this together with inventory-origin navigation; review split during AQA-0072 and remove this note after AQA-0072.
 * This scenario should remain focused on product details page content, not cart behavior.
 
 ---
 
 ### TC-PRODUCT-DETAILS-003 — User can return from product details to inventory page
 
-**Type:** Regression / Navigation / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / Navigation / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_product_details_page.py`
 
 **Preconditions:**
@@ -151,10 +149,10 @@ The goal of this document is to define product-details-page-owned scenarios and 
 
 ### TC-PRODUCT-DETAILS-004 — Add to cart button changes to Remove after adding product from details page
 
-**Type:** Regression / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_product_details_page.py`
 
 **Preconditions:**
@@ -193,10 +191,10 @@ The goal of this document is to define product-details-page-owned scenarios and 
 
 ### TC-PRODUCT-DETAILS-005 — Product can be added to cart from product details page
 
-**Type:** Smoke / Positive / UI\
-**Priority:** High\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Smoke / Positive / UI
+**Priority:** High
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_product_details_page.py`
 
 **Preconditions:**
@@ -227,7 +225,6 @@ The goal of this document is to define product-details-page-owned scenarios and 
 **Notes:**
 
 * This scenario validates the core add-to-cart action initiated from the product details page for one representative product.
-* Temporary AQA-0068 note: automate in AQA-0072 and remove this note after AQA-0072.
 * Button state is covered separately in TC-PRODUCT-DETAILS-004.
 * Cart badge behavior is covered separately in TC-PRODUCT-DETAILS-009 and TC-PRODUCT-DETAILS-010.
 * Cart page item validation remains owned by `cart-page.md`.
@@ -236,10 +233,10 @@ The goal of this document is to define product-details-page-owned scenarios and 
 
 ### TC-PRODUCT-DETAILS-006 — All products can be added to cart from product details page
 
-**Type:** Regression / Positive / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / Positive / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_product_details_page.py`
 
 **Preconditions:**
@@ -272,10 +269,10 @@ The goal of this document is to define product-details-page-owned scenarios and 
 
 ### TC-PRODUCT-DETAILS-007 — Product can be removed from cart from product details page
 
-**Type:** Smoke / Positive / UI\
-**Priority:** High\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Smoke / Positive / UI
+**Priority:** High
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_product_details_page.py`
 
 **Preconditions:**
@@ -307,7 +304,6 @@ The goal of this document is to define product-details-page-owned scenarios and 
 **Notes:**
 
 * This scenario validates the core remove-from-cart action initiated from the product details page for one representative product.
-* Temporary AQA-0068 note: automate in AQA-0072 and remove this note after AQA-0072.
 * Full all-products remove-from-cart regression coverage is tracked separately in TC-PRODUCT-DETAILS-014.
 * Button state after removal is covered separately in TC-PRODUCT-DETAILS-008.
 * Cart badge behavior after removal is covered separately in TC-PRODUCT-DETAILS-011 and TC-PRODUCT-DETAILS-012.
@@ -317,10 +313,10 @@ The goal of this document is to define product-details-page-owned scenarios and 
 
 ### TC-PRODUCT-DETAILS-008 — Remove button changes back to Add to cart after removing product from details page
 
-**Type:** Regression / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_product_details_page.py`
 
 **Preconditions:**
@@ -353,17 +349,16 @@ The goal of this document is to define product-details-page-owned scenarios and 
 **Notes:**
 
 * This scenario validates product-details-side UI feedback after removing a product from the cart.
-* Temporary AQA-0068 note: automate in AQA-0072 and remove this note after AQA-0072.
 * This scenario is the reverse-state counterpart to TC-PRODUCT-DETAILS-004.
 
 ---
 
 ### TC-PRODUCT-DETAILS-009 — Cart badge is displayed after adding product from product details page
 
-**Type:** Regression / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_product_details_page.py`
 
 **Preconditions:**
@@ -394,16 +389,15 @@ The goal of this document is to define product-details-page-owned scenarios and 
 **Notes:**
 
 * This scenario validates cart badge visibility from a product-details-side add-to-cart action when the cart starts empty.
-* Temporary AQA-0068 note: automate in AQA-0072 and remove this note after AQA-0072.
 
 ---
 
 ### TC-PRODUCT-DETAILS-010 — Cart badge count updates after adding product from details when cart is not empty
 
-**Type:** Regression / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_product_details_page.py`
 
 **Preconditions:**
@@ -437,16 +431,15 @@ The goal of this document is to define product-details-page-owned scenarios and 
 **Notes:**
 
 * This scenario validates cart badge count update from a product-details-side add-to-cart action when the cart already contains another product.
-* Temporary AQA-0068 note: automate in AQA-0072 and remove this note after AQA-0072.
 
 ---
 
 ### TC-PRODUCT-DETAILS-011 — Cart badge count updates after removing one of multiple products from details page
 
-**Type:** Regression / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_product_details_page.py`
 
 **Preconditions:**
@@ -483,16 +476,15 @@ The goal of this document is to define product-details-page-owned scenarios and 
 **Notes:**
 
 * This scenario validates cart badge count update from a product-details-side remove action when another product remains in the cart.
-* Temporary AQA-0068 note: automate in AQA-0072 and remove this note after AQA-0072.
 
 ---
 
 ### TC-PRODUCT-DETAILS-012 — Cart badge disappears after removing last product from product details page
 
-**Type:** Regression / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_product_details_page.py`
 
 **Preconditions:**
@@ -525,16 +517,15 @@ The goal of this document is to define product-details-page-owned scenarios and 
 **Notes:**
 
 * This scenario validates complete cart badge disappearance after product-details-side removal of the last product.
-* Temporary AQA-0068 note: automate in AQA-0072 and remove this note after AQA-0072.
 
 ---
 
 ### TC-PRODUCT-DETAILS-013 — Cart page can be opened from product details page
 
-**Type:** Regression / Navigation / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / Navigation / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_product_details_page.py`
 
 **Preconditions:**
@@ -564,17 +555,16 @@ The goal of this document is to define product-details-page-owned scenarios and 
 **Notes:**
 
 * This scenario validates cart navigation from the product details page header.
-* Temporary AQA-0068 note: automate in AQA-0072 and remove this note after AQA-0072.
 * This test should not validate checkout behavior.
 
 ---
 
 ### TC-PRODUCT-DETAILS-014 — All products can be removed from cart from product details page
 
-**Type:** Regression / Positive / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / Positive / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_product_details_page.py`
 
 **Preconditions:**

@@ -45,7 +45,7 @@ Rules:
 
 ### Feature Branches
 
-Feature branches are used for new functionality, framework improvements, or larger functional workstreams.
+Feature branches are used for new functionality, framework improvements, refactors, or larger functional workstreams.
 
 Naming convention:
 
@@ -59,6 +59,7 @@ Examples:
 feature/login-page
 feature/inventory-products
 feature/cart-page
+feature/structure-cleanup
 feature/checkout-flow
 feature/api-client
 ```
@@ -67,7 +68,8 @@ A feature branch may represent:
 
 * one small task,
 * one larger feature,
-* one complete workstream.
+* one complete workstream,
+* one structure cleanup or stabilization workstream.
 
 For small independent tasks, one branch per task is preferred.
 
@@ -79,9 +81,10 @@ Examples from the project:
 feature/login-page
 feature/inventory-products
 feature/cart-page
+feature/structure-cleanup
 ```
 
-These branches can be used for complete functional automation workstreams when the tasks are tightly related and easier to validate together.
+These branches can be used for complete functional automation, structure cleanup, documentation synchronization, or stabilization workstreams when the tasks are tightly related and easier to validate together.
 
 ### Fix Branches
 
@@ -157,6 +160,7 @@ refactor(AQA-0032): parametrize negative login scenarios
 test(AQA-0038): add protected inventory route access test
 test(AQA-0057): add product to cart test
 chore(AQA-0064): review and stabilize cart workstream
+chore(AQA-0073): finalize phase 3c structure cleanup
 ```
 
 Common commit types:
@@ -170,7 +174,7 @@ Common commit types:
 
 ## Workstream Branch Strategy
 
-For larger functional areas, the project may use one workstream branch.
+For larger functional areas or tightly connected cleanup phases, the project may use one workstream branch.
 
 Examples:
 
@@ -178,6 +182,7 @@ Examples:
 feature/login-page
 feature/inventory-products
 feature/cart-page
+feature/structure-cleanup
 ```
 
 In this approach:
@@ -191,6 +196,8 @@ In this approach:
 * final merge into `develop` is performed using Squash and merge.
 
 This approach is acceptable when tasks are tightly connected and reviewing them together makes sense.
+
+The `feature/structure-cleanup` branch is an example of a workstream branch used for structural cleanup, coverage synchronization, final validation, and documentation sync after page-level Login, Inventory, Product Details, and Cart automation coverage.
 
 ## Merge Strategy
 
@@ -215,11 +222,12 @@ Example final squash commit:
 test(AQA-0064): complete cart automation workstream
 ```
 
-For documentation-only or checkpoint-only changes, the squash commit may use `docs` or `chore` instead:
+For documentation-only, cleanup, or checkpoint-only changes, the squash commit may use `docs` or `chore` instead:
 
 ```text
 chore(AQA-0064): review and stabilize cart workstream
 docs(AQA-0064): update project documentation after cart workstream
+chore(AQA-0073): finalize phase 3c structure cleanup
 ```
 
 ## Direct Push Policy
@@ -237,7 +245,7 @@ feature branch -> Pull Request -> CI validation -> Review -> Squash merge
 
 For this project, even when working solo, Pull Requests are used to practice professional workflow and validate changes through CI.
 
-Direct pushes to a feature branch are acceptable during active implementation, review, and checkpoint work.
+Direct pushes to a feature branch are acceptable during active implementation, review, documentation sync, and checkpoint work.
 
 ## Branch Protection Rules
 
@@ -315,10 +323,25 @@ pytest -m "ui and sorting" -v
 pytest -m "ui and navigation" -v
 ```
 
-For workstream-specific stabilization tasks, scoped validation may also be used before the full suite, for example:
+For workstream-specific stabilization tasks, scoped validation may also be used before the full suite.
+
+Examples:
+
+```bash
+pytest -v tests/test_login_page.py
+pytest -v tests/test_inventory_page.py
+pytest -v tests/test_product_details_page.py
+pytest -v tests/test_cart_page.py
+pytest -v
+```
+
+For a single-page task, running the relevant module before the full suite is usually enough.
+
+Example:
 
 ```bash
 pytest -v tests/test_cart_page.py
+pytest -v
 ```
 
 The full test suite should still pass before a workstream is considered ready for merge unless a scoped validation exception is explicitly accepted.
@@ -334,8 +357,10 @@ Before merging a Pull Request, verify:
 * documentation is updated when needed
 * test cases and automated tests are aligned
 * Page Object responsibilities remain logically separated
+* shared authenticated-page behavior remains owned by the correct abstraction
+* reusable assertion helpers remain focused on shared validation logic
 * test data remains centralized where practical
-* checkout behavior is not mixed into cart scope
+* checkout behavior is not mixed into inventory, product details, or cart scope
 * commit message for squash merge is clear
 * target branch is correct
 
@@ -390,6 +415,7 @@ Example checkpoint tasks:
 ```text
 AQA-0041 — Review Phase 2 And Prepare Phase 3 Scope
 AQA-0064 — Review And Stabilize Cart Workstream
+AQA-0073 — Phase 3C Final Validation And Documentation Sync
 ```
 
 ## Summary

@@ -56,6 +56,7 @@ Completed areas:
 * protected inventory route access validation
 * protected cart route access validation
 * protected item details route access validation
+* input error icon validation after failed login
 * login test case coverage mapping
 * login suite stabilization
 * Pull Request workflow
@@ -107,38 +108,49 @@ Phase 3 expands automation coverage beyond login.
 
 The phase is split into smaller workstreams to keep the scope controlled and reviewable.
 
-Planned and completed work:
+Completed and in-progress work:
 
-* inventory page: Page Object Model
+* inventory page Page Object Model
 * product details Page Object Model
+* cart page Page Object Model
+* shared authenticated-page behavior through `AppPage`
+* reusable product assertion helpers
 * product list validation
 * product sorting validation
 * product details validation
-* cart page: Page Object Model
+* inventory-side product details navigation
 * cart functionality tests
 * cart badge validation
 * cart page validation
 * cart product content validation
-* remove-from-cart validation
+* remove-from-cart validation from inventory, product details, and cart pages
 * continue shopping navigation validation
 * cart state persistence after logout and re-login
+* manual test cases for login, inventory, product details, and cart areas
+* test data expansion for product scenarios
+* documentation synchronization after structure cleanup
+
+Planned later in Phase 3:
+
 * checkout form validation
 * checkout form error handling
 * checkout overview validation
 * full purchase flow
-* manual test cases for inventory, cart, and checkout areas
-* test data expansion for product, cart, and checkout scenarios where needed
+* checkout-related manual test cases
+* checkout-related test data where needed
 
 Main learning goals:
 
 * multi-page flows
 * stateful UI testing
 * reusable fixtures
+* reusable assertion helpers
 * test data strategy
 * end-to-end scenario design
 * Page Object interaction between multiple pages
 * clearer smoke/regression separation
 * scope control between cart and checkout behavior
+* documentation synchronization after structural refactors
 
 ---
 
@@ -154,7 +166,7 @@ Completed areas:
 * InventoryPage Page Object Model
 * ProductDetailsPage Page Object Model
 * reusable logged-in inventory page fixture
-* centralized inventory product test data
+* centralized product test data
 * inventory page visibility test
 * product list validation
 * product card content validation
@@ -188,11 +200,11 @@ Phase 3A completed the inventory and product validation layer required before ca
 
 ## Phase 3B: Cart Automation Workstream
 
-**Status:** In Final Review / Stabilization
+**Status:** Completed
 
-Phase 3B focuses on cart-related behavior.
+Phase 3B focused on cart-related behavior.
 
-Implemented areas:
+Completed areas:
 
 * cart-related manual test cases
 * CartPage Page Object Model
@@ -209,60 +221,76 @@ Implemented areas:
 * continue shopping navigation from cart to inventory
 * cart state persistence after logout and re-login
 * product-details-side Add to cart and Remove button behavior
-* use of existing centralized inventory product test data for cart scenarios
+* use of existing centralized product test data for cart scenarios
 * use of existing valid user test data for persistence scenarios
 * cart test case coverage mapping
 * documentation updates
 
-Current stabilization scope:
+Completed stabilization scope:
 
-* review completed cart workstream files
-* verify cart test cases against implemented automation
-* verify TC-CART IDs used in tests
-* verify Page Object responsibility boundaries
-* verify that tests do not duplicate selectors unnecessarily
-* confirm checkout behavior remains excluded from cart scope
-* review README and technical docs for current project state
-* run cart-specific validation
-* run full local test suite
-* run quality checks
-* confirm Git status and cleanup needs
-* prepare the workstream for the next project step
+* reviewed completed cart workstream files
+* verified cart test cases against implemented automation
+* verified TC-CART IDs used in tests
+* verified Page Object responsibility boundaries
+* verified that tests do not duplicate selectors unnecessarily
+* confirmed checkout behavior remains excluded from cart scope
+* reviewed README and technical docs for current project state
+* ran cart-specific validation
+* ran full local test suite
+* ran quality checks
+* confirmed Git status and cleanup needs
+* prepared the workstream for the next project step
 
-Phase 3B should be considered complete after the final stabilization checkpoint passes and the branch is ready for merge preparation.
-
----
-
-## Phase 3B Checkpoint: Review And Stabilize Cart Workstream
-
-**Status:** In Progress
-
-The Phase 3B checkpoint verifies that the completed Cart Automation Workstream is consistent, stable, documented, and ready for the next project step.
-
-Checkpoint scope:
-
-* review cart test case documentation
-* review cart automated tests
-* review cart-related Page Object methods
-* review shared fixtures and test data usage
-* review README and technical documentation updates
-* verify checkout scope exclusion
-* verify local quality checks
-* verify cart test module execution
-* verify full test suite execution
-* confirm no generated files or local artifacts are tracked
-* commit documentation and cleanup changes
-* push the branch to GitHub
-
-This checkpoint prevents checkout work from being built on top of outdated cart documentation or unstable cart automation.
+Phase 3B completed cart behavior automation while keeping checkout behavior out of scope.
 
 ---
 
-## Phase 3C: Checkout Automation Workstream
+## Phase 3C: Structure Cleanup, Coverage Completion, And Documentation Sync
+
+**Status:** In Final Validation
+
+Phase 3C focuses on final cleanup after the Login, Inventory, Product Details, and Cart page-level coverage work.
+
+The goal of this workstream is to align project structure, test coverage, Page Objects, fixtures, test case files, and documentation before PR and merge.
+
+Completed and in-progress areas:
+
+* one automated test module per covered page area
+* one manual test case file per covered page area
+* Login, Inventory, Product Details, and Cart test case coverage synchronization
+* missing page-level coverage completion after cart workstream
+* Page Object responsibility review
+* `BasePage` and `AppPage` structure review
+* authenticated shared behavior ownership review
+* reusable product assertion helper extraction
+* fixture naming and reuse review
+* navigation return type review
+* TC coverage mapping review
+* test case metadata cleanup
+* README and technical documentation synchronization
+* roadmap readiness review for the next workstream
+* final local quality validation
+* final full pytest validation
+* PR readiness confirmation or blocker listing
+
+Current Phase 3C validation scope:
+
+* review test files, test case files, Page Objects, fixtures, and documentation end to end
+* confirm that no new feature coverage is added during final validation
+* confirm that checkout behavior remains excluded from current coverage
+* confirm documentation reflects the final post-refactor state
+* confirm full pytest suite and quality checks pass
+* confirm branch readiness for PR
+
+Phase 3C should be considered complete after AQA-0073 final validation passes, documentation sync is committed, Git status is clean, and the branch is ready for PR.
+
+---
+
+## Next Phase 3 Workstream: Checkout Automation
 
 **Status:** Planned
 
-Phase 3C will focus on checkout-related behavior.
+The next Phase 3 functional workstream should focus on checkout-related behavior.
 
 Planned areas:
 
@@ -276,7 +304,7 @@ Planned areas:
 * checkout-related test data
 * documentation updates
 
-Checkout work should remain separate from the cart workstream to keep scope clear and maintainable.
+Checkout work should remain separate from inventory, product details, and cart work to keep scope clear and maintainable.
 
 ---
 
@@ -316,7 +344,6 @@ Planned work:
 * improved reporting structure
 * Allure reporting integration
 * environment-based configuration
-* reusable assertion helpers
 * logging utilities
 * improved fixture organization
 * stronger diagnostics for failed tests
@@ -410,6 +437,18 @@ Recommended use:
 * demonstration of multipage Page Object interaction
 * demonstration of cart behavior validation without mixing checkout scope
 * continued preparation for regular QA Automation applications
+
+### After Phase 3C
+
+The project contains synchronized page-level coverage, cleaned-up structure, aligned test case documentation, shared authenticated-page behavior, reusable product assertions, and final documentation sync after Login, Inventory, Product Details, and Cart coverage.
+
+Recommended use:
+
+* stronger portfolio presentation before checkout automation
+* demonstration of structure cleanup and documentation discipline
+* demonstration of traceability between manual test cases and automated tests
+* demonstration of reusable framework components
+* preparation for PR review and merge readiness
 
 ### After Phase 3
 
