@@ -257,26 +257,32 @@ isort . --check-only
 pytest -v
 ```
 
-For login-related changes, marker-based checks may also be useful:
+For login-related changes, these commands may also be useful:
 
 ```bash
+pytest -v tests/test_login_page.py
 pytest -m smoke -v
 pytest -m regression -v
 pytest -m positive -v
 pytest -m negative -v
 pytest -m "ui and smoke" -v
-pytest -v tests/test_login_positive.py
-pytest -v tests/test_login_negative.py
-pytest -v tests/test_login_ui.py
-pytest -v tests/test_login_access_control.py
 ```
 
-For inventory and product-related changes, these commands may also be useful:
+For inventory-related changes, these commands may also be useful:
 
 ```bash
 pytest -v tests/test_inventory_page.py
 pytest -m sorting -v
 pytest -m "ui and sorting" -v
+```
+
+For product-details-related changes, these commands may also be useful:
+
+```bash
+pytest -v tests/test_product_details_page.py
+pytest -m navigation -v
+pytest -m "ui and navigation" -v
+pytest -m "ui and regression" -v
 ```
 
 For cart-related changes, these commands may also be useful:
@@ -288,9 +294,12 @@ pytest -m "ui and navigation" -v
 pytest -m "ui and regression" -v
 ```
 
-For checkpoint or stabilization tasks, run both scoped and full validation when possible:
+For checkpoint or stabilization tasks, run relevant scoped modules and full validation when possible:
 
 ```bash
+pytest -v tests/test_login_page.py
+pytest -v tests/test_inventory_page.py
+pytest -v tests/test_product_details_page.py
 pytest -v tests/test_cart_page.py
 pytest -v
 ```
@@ -356,6 +365,9 @@ pre-commit run --all-files
 For workstream-specific review or stabilization tasks:
 
 ```bash
+pytest -v tests/test_login_page.py
+pytest -v tests/test_inventory_page.py
+pytest -v tests/test_product_details_page.py
 pytest -v tests/test_cart_page.py
 ```
 
@@ -372,7 +384,7 @@ Before merging Pull Requests:
 
 ## Current Quality Status
 
-The current quality tooling supports the completed Login Page Automation Workstream, Inventory And Products Automation Workstream, and Cart Automation Workstream.
+The current quality tooling supports completed page-level automation coverage for Login, Inventory, Product Details, and Cart areas.
 
 The project currently includes:
 
@@ -380,13 +392,19 @@ The project currently includes:
 * Page Object Model implementation for inventory page
 * Page Object Model implementation for product details page
 * Page Object Model implementation for cart page
+* shared authenticated-page behavior through `AppPage`
+* reusable product assertion helpers
 * reusable pytest fixture for opened login page
+* reusable pytest fixture for standard user credentials
 * reusable pytest fixture for logged-in inventory page
+* reusable pytest fixture for inventory page with one product in cart
+* reusable pytest fixture for cart page with one product
 * centralized login test data
-* centralized inventory product test data
+* centralized product test data
 * parametrized login tests
 * parametrized protected route access tests
 * parametrized inventory product tests
+* parametrized product details tests
 * parametrized cart tests
 * marker-based test categorization
 * screenshot capture on test failure
@@ -420,7 +438,6 @@ Planned quality tooling improvements may include:
 * test coverage reporting
 * JUnit XML output for CI test results
 * refined pre-commit hook configuration
-* improved custom assertion helpers
 * stronger test diagnostics
 * separate CI jobs for smoke and regression suites
 * separate marker-based CI jobs for selected test categories

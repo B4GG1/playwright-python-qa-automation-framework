@@ -2,7 +2,7 @@
 
 This document defines the testing approach for the QA automation framework.
 
-The current focus is UI automation testing for the Sauce Demo application using Playwright and Pytest. The project follows an iterative testing strategy: manual test design is created before or alongside automation, then selected scenarios are automated and gradually refactored into reusable framework components.
+The current focus is UI automation testing for the Sauce Demo application using Playwright and Pytest. The project follows an iterative testing strategy: manual test design is created before or alongside automation, selected scenarios are automated, and repeated interactions are gradually refactored into reusable framework components.
 
 ## System Under Test
 
@@ -21,11 +21,13 @@ The project follows a progressive testing approach:
 4. Prepare test data when needed.
 5. Implement automated tests using Playwright and Pytest.
 6. Refactor repeated interactions into Page Object Model components.
-7. Use fixtures to reduce repeated setup.
-8. Use parametrization for repeated data-driven scenarios.
-9. Categorize tests with pytest markers.
-10. Validate tests locally and in CI.
-11. Update documentation when test coverage changes.
+7. Extract shared authenticated-page behavior when it is reused across pages.
+8. Extract reusable assertions when the same validation logic is needed across multiple page areas.
+9. Use fixtures to reduce repeated setup.
+10. Use parametrization for repeated data-driven scenarios.
+11. Categorize tests with pytest markers.
+12. Validate tests locally and in CI.
+13. Update documentation when test coverage changes.
 
 This approach supports both QA thinking and automation engineering practice.
 
@@ -57,21 +59,43 @@ Current implemented test case documentation:
 
 ```text
 test_cases/login-page.md
-test_cases/inventory-products.md
-test_cases/cart.md
+test_cases/inventory-page.md
+test_cases/product-details-page.md
+test_cases/cart-page.md
 ```
 
 Current test case identifiers include:
 
 * `TC-LOGIN-XXX`
 * `TC-INVENTORY-XXX`
+* `TC-PRODUCT-DETAILS-XXX`
 * `TC-CART-XXX`
 
 These identifiers are also used in parametrized pytest output where practical.
 
+## Current Automated Test Modules
+
+Current automated test modules follow the one test file per covered page area principle:
+
+```text
+tests/test_login_page.py
+tests/test_inventory_page.py
+tests/test_product_details_page.py
+tests/test_cart_page.py
+```
+
+Each automated test module maps to the corresponding manual test case file:
+
+| Automated Test Module                | Manual Test Case File                | Test Case ID Range             |
+| ------------------------------------ | ------------------------------------ | ------------------------------ |
+| `tests/test_login_page.py`           | `test_cases/login-page.md`           | `TC-LOGIN-001`–`016`           |
+| `tests/test_inventory_page.py`       | `test_cases/inventory-page.md`       | `TC-INVENTORY-001`–`022`       |
+| `tests/test_product_details_page.py` | `test_cases/product-details-page.md` | `TC-PRODUCT-DETAILS-001`–`014` |
+| `tests/test_cart_page.py`            | `test_cases/cart-page.md`            | `TC-CART-001`–`013`            |
+
 ## Current Test Coverage
 
-The current automated test coverage focuses on the Sauce Demo login, authentication, inventory, product, and cart behavior.
+The current automated test coverage focuses on Sauce Demo Login, Inventory, Product Details, and Cart page behavior.
 
 Implemented login coverage includes:
 
@@ -90,36 +114,65 @@ Implemented login coverage includes:
 * direct inventory page access without login
 * direct cart page access without login
 * direct item details page access without login
+* input error icon visibility after failed login
 
-Implemented inventory and products coverage includes:
+Implemented inventory coverage includes:
 
 * inventory page visibility after successful login
 * product list visibility
-* expected product list validation
 * product card content validation
-* product details opened from product name
-* product details opened from product image
-* return from product details page to inventory page
+* cart page navigation from inventory page
+* product add-to-cart from inventory page
+* inventory-side Add to cart button changing to Remove
+* cart badge visibility after adding one product
+* cart badge count update after adding multiple products
 * product sorting by name A to Z
 * product sorting by name Z to A
 * product sorting by price low to high
 * product sorting by price high to low
+* product details navigation from inventory product name for all products
+* product details navigation from inventory product image for all products
+* all-products add-to-cart coverage from inventory page
+* inventory-side remove-from-cart behavior
+* inventory-side Remove button changing back to Add to cart
+* cart badge count update after removing one of multiple products
+* cart badge disappearance after removing the last product
+* all-products remove-from-cart coverage from inventory page
+* product details navigation from product name for an example product
+* product details navigation from product image for an example product
+
+Implemented product details coverage includes:
+
+* product details content visibility for a selected product
+* product details content matching centralized product test data for all products
+* return navigation from product details page to inventory page
+* product-details-side Add to cart button changing to Remove
+* product add-to-cart from product details page
+* all-products add-to-cart coverage from product details page
+* product remove-from-cart from product details page
+* product-details-side Remove button changing back to Add to cart
+* cart badge visibility after adding a product from product details page
+* cart badge count update when adding from product details with a non-empty cart
+* cart badge count update after removing one of multiple products from product details page
+* cart badge disappearance after removing the last product from product details page
+* cart page navigation from product details page
+* all-products remove-from-cart coverage from product details page
 
 Implemented cart coverage includes:
 
-* cart page can be opened from the inventory page
-* cart is empty before adding products
-* product can be added to cart from the inventory page
-* inventory-side Add to cart button changes to Remove after adding a product
-* cart badge is displayed after adding one product
-* cart badge count updates after adding multiple products
-* added product is displayed on the cart page
-* cart product content matches added product data
-* product can be removed from the cart page
-* cart badge is removed after removing the last product
-* user can return from cart page to inventory page
-* cart state persists after logout and re-login
-* product-details-side Add to cart button changes to Remove after adding a product
+* empty cart state before adding products
+* added product visibility on cart page
+* cart product content matching added product data
+* product remove-from-cart from cart page
+* cart badge removal after removing the last product
+* Continue Shopping navigation from cart page to inventory page
+* cart state persistence after logout and re-login
+* all-products cart visibility coverage
+* cart product content validation for each product
+* cart badge decrement after removing one of multiple products
+* product details navigation from cart item name
+* Continue Shopping cart state preservation
+* all-products remove-from-cart coverage from cart page
 
 Checkout scenarios are not implemented yet and are planned for a later workstream.
 
@@ -131,13 +184,16 @@ Smoke tests validate the most critical application flows and should execute quic
 
 Current examples:
 
-* Sauce Demo page availability
 * login page basic UI availability
 * successful login with valid credentials
 * inventory page visibility after successful login
 * product list visibility
 * cart page can be opened from the inventory page
-* cart is empty before adding products
+* product can be added to cart from inventory page
+* product can be removed from cart page
+* product details content is displayed for a selected product
+* product can be added to cart from product details page
+* product can be removed from cart from product details page
 
 Future examples:
 
@@ -157,11 +213,15 @@ Current examples:
 * protected route access validation
 * product card content validation
 * product details navigation
+* product details content validation
 * product sorting behavior
 * cart badge behavior
 * cart item content validation
-* remove-from-cart behavior
+* add-to-cart and remove-from-cart behavior from inventory page
+* add-to-cart and remove-from-cart behavior from product details page
+* add-to-cart and remove-from-cart behavior from cart page
 * cart state persistence after logout and re-login
+* Continue Shopping cart state preservation
 
 Future examples:
 
@@ -179,6 +239,7 @@ Current examples:
 * password field configuration
 * error message visibility
 * error message close behavior
+* input error icon visibility
 * inventory page visibility after login
 * product list visibility
 * product card content visibility
@@ -201,8 +262,9 @@ Current examples:
 * product details can be opened from product name
 * product details can be opened from product image
 * user can return from product details page to inventory page
-* user can add a product to the cart
-* user can remove a product from the cart
+* user can add products to the cart
+* user can remove products from the cart
+* user can open the cart page from authenticated pages
 * cart state persists after logout and re-login
 
 ### Negative Tests
@@ -246,8 +308,13 @@ Navigation tests validate page transitions and user navigation paths.
 Current examples:
 
 * cart page can be opened from the inventory page
-* user can return from cart page to inventory page
+* cart page can be opened from the product details page
+* product details can be opened from inventory product names
+* product details can be opened from inventory product images
+* product details can be opened from cart item names
 * user can return from product details page to inventory page
+* user can return from cart page to inventory page
+* Continue Shopping returns the user from the cart page to the inventory page while preserving cart state
 
 ### End-to-End Tests
 
@@ -260,8 +327,10 @@ Current status:
 
 Current examples:
 
-* add product to cart from inventory and verify it on the cart page
+* log in, add product to cart from inventory, and verify it on the cart page
+* log in, open product details, add product to cart, and verify cart state
 * add product to cart, log out, log in again, and verify cart state is preserved
+* add multiple products, remove one product, and verify badge/cart state
 
 Planned examples:
 
@@ -276,6 +345,8 @@ Automated tests should follow:
 * clear and descriptive test names
 * stable assertions
 * reusable Page Objects
+* shared authenticated-page behavior where appropriate
+* reusable assertion helpers where validation is shared across page areas
 * externalized test data where useful
 * no hardcoded waits
 * independent test execution
@@ -291,20 +362,42 @@ Page Object Model is used to separate test logic from page interaction logic.
 Current implementation:
 
 ```text
+pages/base_page.py
+pages/app_page.py
 pages/login_page.py
 pages/inventory_page.py
 pages/product_details_page.py
 pages/cart_page.py
 ```
 
+The `BasePage` object is responsible for:
+
+* storing the Playwright `Page` instance
+* storing page URL metadata where applicable
+* opening the page URL through a shared `open()` method
+
+The `AppPage` object is responsible for shared authenticated-page behavior, including:
+
+* opening the cart page from authenticated page headers
+* accessing the cart link
+* accessing the cart badge
+* opening the application menu
+* logging out
+* resetting app state
+* opening the All Items page
+* opening the About link
+* exposing shared product-card/product-item locator helpers where reused by authenticated pages
+
 The `LoginPage` object is responsible for:
 
 * opening the login page
 * filling username and password
 * clicking the login button
+* submitting login credentials
 * reading error messages
 * closing error messages
 * exposing login page UI locators where needed
+* exposing input error icon locators
 
 The `InventoryPage` object is responsible for:
 
@@ -317,22 +410,16 @@ The `InventoryPage` object is responsible for:
 * opening product details from product image
 * adding products to the cart from inventory product cards
 * removing products from the cart from inventory product cards
-* accessing the cart link and cart badge
-* opening the cart page
-* opening the application menu
-* logging out from the inventory page
 
 The `ProductDetailsPage` object is responsible for:
 
 * exposing product details page locators
-* validating product details content through test-level assertions
+* exposing product details content locators
 * exposing Add to cart and Remove button locators
 * adding a product to the cart from the product details page
 * removing a product from the cart from the product details page
 * exposing the Back to products button
 * returning from product details page to inventory page
-* opening the cart page from product details
-* accessing the cart badge
 
 The `CartPage` object is responsible for:
 
@@ -348,14 +435,32 @@ The `CartPage` object is responsible for:
 * opening product details from cart item name
 * exposing Continue Shopping button
 * returning from cart page to inventory page
-* exposing cart link and cart badge
-* exposing Checkout button locators without testing checkout behavior in the cart workstream
+* exposing Checkout button locators without testing checkout behavior in the current cart scope
 
 Future Page Objects may include:
 
 * CheckoutPage
 
 Page Objects should be introduced when they reduce duplication and improve readability.
+
+## Reusable Assertion Strategy
+
+Reusable assertions are used when the same product-related validation appears across multiple page areas.
+
+Current reusable assertion helper location:
+
+```text
+framework/assertions/product_assertions.py
+```
+
+Current reusable product assertions support:
+
+* inventory product card content validation
+* product details content validation
+* cart product item content validation
+* price string conversion for numeric sorting assertions
+
+Reusable assertion helpers should stay focused on shared validation logic. They should not contain navigation logic, test setup logic, or Page Object responsibilities.
 
 ## Fixture Strategy
 
@@ -365,7 +470,10 @@ Current fixtures:
 
 ```text
 opened_login_page
+standard_user
 logged_in_inventory_page
+inventory_page_with_one_product_in_cart
+cart_page_with_one_product
 ```
 
 The `opened_login_page` fixture:
@@ -374,13 +482,27 @@ The `opened_login_page` fixture:
 * opens the login page
 * returns a ready-to-use Page Object for login-related tests
 
+The `standard_user` fixture:
+
+* returns the primary valid user credentials from centralized login test data
+
 The `logged_in_inventory_page` fixture:
 
 * uses valid user credentials
 * logs in through the login page
 * returns a ready-to-use `InventoryPage` instance
 
-The `logged_in_inventory_page` fixture is reused by inventory, product, and cart tests.
+The `inventory_page_with_one_product_in_cart` fixture:
+
+* starts from a logged-in inventory page
+* adds one deterministic product from centralized product test data to the cart
+* returns the inventory page and selected product data
+
+The `cart_page_with_one_product` fixture:
+
+* starts from an inventory page with one product already in the cart
+* opens the cart page
+* returns the cart page and selected product data
 
 Fixtures should be added when setup logic becomes repeated across multiple tests.
 
@@ -394,7 +516,7 @@ Current test data location:
 
 ```text
 test_data/login_test_data.py
-test_data/inventory_test_data.py
+test_data/product_test_data.py
 ```
 
 Current login test data includes:
@@ -406,7 +528,7 @@ Current login test data includes:
 * expected error messages
 * protected route URL suffixes
 
-Current inventory product test data includes:
+Current product test data includes:
 
 * product IDs
 * product names
@@ -414,10 +536,10 @@ Current inventory product test data includes:
 * product prices
 * product image paths
 
-Cart tests currently reuse:
+Inventory, product details, and cart tests reuse:
 
 * valid user data from login test data
-* deterministic product data from inventory product test data
+* deterministic product data from product test data
 
 A separate cart test data module is not needed at the current stage because cart tests reuse existing product and user data without introducing unique cart-only datasets.
 
@@ -440,10 +562,12 @@ Current parametrized areas:
 * positive login user case
 * protected route access scenarios
 * inventory product card validation
-* product details navigation from product name
-* product details navigation from product image
+* product details navigation from inventory product name
+* product details navigation from inventory product image
+* product details content validation for all products
+* add-to-cart and remove-from-cart checks across all products
+* cart item content validation across all products
 * selected single-case tests where test case ID visibility in `pytest -v` is desired
-* cart tests where test case ID visibility in `pytest -v` is desired
 
 Parametrized test IDs should use manual test case IDs where practical, for example:
 
@@ -452,10 +576,13 @@ TC-LOGIN-002
 TC-LOGIN-003
 TC-LOGIN-004
 TC-INVENTORY-001
-TC-INVENTORY-007
+TC-INVENTORY-013
+TC-INVENTORY-015
+TC-PRODUCT-DETAILS-002
+TC-PRODUCT-DETAILS-014
 TC-CART-001
 TC-CART-009
-TC-CART-012
+TC-CART-013
 ```
 
 This improves traceability between:
@@ -505,8 +632,7 @@ Assertions should be stable, meaningful, and focused on user-observable behavior
 
 Current assertion examples:
 
-* page title is correct
-* URL matches expected page
+* page URL matches expected page
 * element is visible
 * element is hidden
 * error message text matches expected value
@@ -520,6 +646,7 @@ Current assertion examples:
 * product prices match expected sorted order after numeric conversion
 * cart badge is visible
 * cart badge text matches expected count
+* cart badge is hidden when cart becomes empty
 * cart item is visible
 * cart item content matches added product data
 * cart item quantity matches expected value
@@ -531,6 +658,8 @@ Use Playwright assertions for UI/browser state when possible because they includ
 
 Use plain Python assertions when comparing simple values, such as extracted text, product names, converted prices, expected error message strings, or sorted lists.
 
+Use reusable assertion helpers when the same product-content assertions are shared across test modules.
+
 ## Automation Priority
 
 Automation should focus on:
@@ -541,6 +670,7 @@ Automation should focus on:
 * stable application behavior
 * high-value validation
 * scenarios that benefit from CI execution
+* scenarios with clear expected results and stable selectors
 
 Not every possible case should be automated.
 
@@ -550,15 +680,18 @@ Some scenarios may remain manual or exploratory if automation would be unstable,
 
 The project uses scope boundaries to keep workstreams focused and maintainable.
 
-Current cart workstream boundaries:
+Current page-level automation boundaries:
 
+* login behavior is included
+* inventory behavior is included
+* product details behavior is included
 * cart behavior is included
 * checkout behavior is excluded
 * browser restart persistence is excluded
 * storage clearing is excluded
 * cross-user cart persistence is excluded
 * multi-user cart behavior is excluded
-* logout from multiple page locations is excluded
+* logout from multiple page locations is excluded unless explicitly scoped
 
 Checkout behavior should be implemented in a separate checkout workstream.
 
@@ -590,22 +723,28 @@ isort . --check-only
 pytest -v
 ```
 
-Recommended marker validation when login tests are changed:
+Recommended validation when login tests are changed:
 
 ```bash
-pytest -m smoke -v
-pytest -m regression -v
-pytest -m positive -v
+pytest -v tests/test_login_page.py
 pytest -m negative -v
 pytest -m "ui and smoke" -v
 ```
 
-Recommended validation when inventory and product tests are changed:
+Recommended validation when inventory tests are changed:
 
 ```bash
 pytest -v tests/test_inventory_page.py
 pytest -m sorting -v
 pytest -m "ui and sorting" -v
+```
+
+Recommended validation when product details tests are changed:
+
+```bash
+pytest -v tests/test_product_details_page.py
+pytest -m navigation -v
+pytest -m "ui and regression" -v
 ```
 
 Recommended validation when cart tests are changed:
@@ -617,12 +756,17 @@ pytest -m "ui and navigation" -v
 pytest -m "ui and regression" -v
 ```
 
-For checkpoint or stabilization tasks, run both scoped and full validation when possible:
+For checkpoint or stabilization tasks, run relevant scoped modules and full validation when possible:
 
 ```bash
+pytest -v tests/test_login_page.py
+pytest -v tests/test_inventory_page.py
+pytest -v tests/test_product_details_page.py
 pytest -v tests/test_cart_page.py
 pytest -v
 ```
+
+The full test suite should still pass before a workstream is considered ready for merge unless a scoped validation exception is explicitly accepted.
 
 ## CI Validation Strategy
 
@@ -636,11 +780,13 @@ GitHub Actions validates the project automatically on:
 
 The CI pipeline should validate:
 
+* dependency installation
+* Playwright browser installation
 * linting
 * formatting
 * import sorting
 * test execution
-* report generation
+* HTML report generation
 * artifact upload
 
 Failing tests or quality checks should block merging.
@@ -657,5 +803,4 @@ Planned improvements:
 * marker-based CI job separation
 * Allure reporting integration
 * improved diagnostics and logs
-* reusable assertion helpers
 * environment-based configuration

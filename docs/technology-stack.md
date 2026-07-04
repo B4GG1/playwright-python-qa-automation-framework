@@ -14,6 +14,7 @@ The project is currently built with:
 * pytest-playwright
 * Git
 * GitHub
+* GitHub Actions
 * WSL2 with Ubuntu Linux
 
 ## Test Automation
@@ -24,6 +25,8 @@ Current test automation stack:
 * Pytest as the test runner
 * pytest-playwright for Playwright and Pytest integration
 * Page Object Model for page interaction abstraction
+* shared authenticated-page behavior through `AppPage`
+* reusable assertion helpers for repeated product-related validations
 * pytest fixtures for reusable test setup
 * pytest parametrization for data-driven test scenarios
 * pytest markers for test categorization
@@ -44,14 +47,17 @@ Current automated UI coverage:
 * inventory page validation
 * product list validation
 * product card content validation
-* product details navigation validation
+* inventory-side product details navigation validation
+* product details page validation
+* product details add-to-cart behavior validation
+* product details remove-from-cart behavior validation
 * product sorting validation
 * cart page validation
 * empty cart state validation
-* add-to-cart behavior validation
+* add-to-cart behavior validation from inventory and product details pages
 * cart badge validation
 * cart item visibility and content validation
-* remove-from-cart validation
+* remove-from-cart validation from inventory, product details, and cart pages
 * continue shopping navigation validation
 * cart state persistence after logout and re-login
 
@@ -65,6 +71,8 @@ Planned browser execution:
 
 Currently implemented:
 
+* `BasePage`
+* `AppPage`
 * `LoginPage`
 * `InventoryPage`
 * `ProductDetailsPage`
@@ -72,6 +80,8 @@ Currently implemented:
 
 Current Page Object responsibilities:
 
+* shared page initialization and open behavior through `BasePage`
+* shared authenticated-page behavior through `AppPage`
 * login page navigation
 * username input interaction
 * password input interaction
@@ -87,45 +97,62 @@ Current Page Object responsibilities:
 * product details cart actions
 * returning from product details to inventory page
 * inventory cart actions
-* inventory cart badge access
-* inventory logout support
+* authenticated header cart link and cart badge access
+* application menu interactions
+* logout support
 * cart page navigation
 * cart item lookup
 * cart item content access
 * cart product removal
+* product details navigation from cart item name
 * continue shopping navigation
-* cart badge access
+* checkout button locator exposure without checkout behavior validation in the current scope
 
 Planned Page Object expansion:
 
-* CheckoutPage
+* `CheckoutPage`
 * additional page objects as application coverage grows
+
+## Reusable Assertions
+
+Currently implemented:
+
+* `framework/assertions/product_assertions.py`
+
+Current reusable assertion helper responsibilities:
+
+* inventory product card content validation
+* product details content validation
+* cart item content validation
+* price string conversion for numeric sorting assertions
+
+Reusable assertion helpers are used when the same validation logic is shared across multiple page areas. They should remain focused on assertions and should not own navigation, setup, or Page Object responsibilities.
 
 ## Test Data Management
 
 Currently implemented:
 
 * centralized login test data
-* centralized inventory product test data
+* centralized product test data
 * valid user cases
 * invalid login cases
 * empty credential cases
 * locked out user cases
 * expected login error messages
 * protected route URL suffixes
-* inventory product IDs
-* inventory product names
-* inventory product descriptions
-* inventory product prices
-* inventory product image paths
+* product IDs
+* product names
+* product descriptions
+* product prices
+* product image paths
 * deterministic product data reused by inventory, product details, and cart tests
 * test case IDs used in parametrized pytest output where practical
 
 Current test data location:
 
-```text
+```
 test_data/login_test_data.py
-test_data/inventory_test_data.py
+test_data/product_test_data.py
 ```
 
 Planned test data expansion:
@@ -147,7 +174,7 @@ These tools are used to maintain consistent code style, reduce formatting-relate
 
 Tool configuration is stored in:
 
-```text
+```
 pyproject.toml
 .pre-commit-config.yaml
 pytest.ini
@@ -260,6 +287,20 @@ Current usage:
 * `requirements.txt` provides a readable list of main project dependencies
 * `requirements-lock.txt` provides locked dependency versions for reproducible setup and CI execution
 
+Main project dependencies include:
+
+* `pytest`
+* `playwright`
+* `pytest-playwright`
+* `requests`
+* `allure-pytest`
+* `pytest-html`
+* `pytest-xdist`
+* `ruff`
+* `black`
+* `isort`
+* `pre-commit`
+
 Planned improvements:
 
 * dependency update workflow
@@ -294,17 +335,20 @@ Future planned integrations include:
 
 ## Current Stack Status
 
-The current stack is sufficient to support completed login page, inventory/products, and cart automation workstreams.
+The current stack is sufficient to support completed page-level automation coverage for Login, Inventory, Product Details, and Cart areas.
 
 Implemented technical capabilities include:
 
 * UI automation with Playwright
 * test execution with Pytest
 * Page Object Model
+* shared authenticated-page behavior through `AppPage`
+* reusable product assertion helpers
 * reusable pytest fixtures
-* centralized test data
+* centralized login and product test data
 * parametrized tests
 * marker-based test organization
+* local quality checks
 * CI validation
 * HTML reporting
 * screenshot capture on failure

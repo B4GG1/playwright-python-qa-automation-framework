@@ -7,23 +7,24 @@ The goal of this document is to define login-related test scenarios before and a
 
 ## Test Case Overview And Automation Coverage
 
-| Test Case ID                                                                            | Scenario                                                 | Type                       | Priority | Automation Status | Automated In                         |
-|-----------------------------------------------------------------------------------------|----------------------------------------------------------| -------------------------- | -------- | ----------------- | ------------------------------------ |
-| [TC-LOGIN-001](#tc-login-001--successful-login-with-valid-credentials)                  | Successful login with valid credentials                  | Smoke / Positive           | High     | Automated         | `tests/test_login_positive.py`       |
-| [TC-LOGIN-002](#tc-login-002--login-with-invalid-username)                              | Login with invalid username                              | Regression / Negative      | Medium   | Automated         | `tests/test_login_negative.py`       |
-| [TC-LOGIN-003](#tc-login-003--login-with-invalid-password)                              | Login with invalid password                              | Regression / Negative      | Medium   | Automated         | `tests/test_login_negative.py`       |
-| [TC-LOGIN-004](#tc-login-004--login-with-empty-username)                                | Login with empty username                                | Regression / Negative      | Medium   | Automated         | `tests/test_login_negative.py`       |
-| [TC-LOGIN-005](#tc-login-005--login-with-empty-password)                                | Login with empty password                                | Regression / Negative      | Medium   | Automated         | `tests/test_login_negative.py`       |
-| [TC-LOGIN-006](#tc-login-006--login-with-empty-credentials)                             | Login with empty credentials                             | Regression / Negative      | Medium   | Automated         | `tests/test_login_negative.py`       |
-| [TC-LOGIN-007](#tc-login-007--locked-out-user-login-attempt)                            | Locked out user login attempt                            | Regression / Negative      | Medium   | Automated         | `tests/test_login_negative.py`       |
-| [TC-LOGIN-008](#tc-login-008--login-with-invalid-username-and-invalid-password)         | Login with invalid username and invalid password         | Regression / Negative      | Medium   | Automated         | `tests/test_login_negative.py`       |
-| [TC-LOGIN-009](#tc-login-009--error-message-can-be-closed-after-failed-login)           | Error message can be closed after failed login           | UI / Regression            | Medium   | Automated         | `tests/test_login_ui.py`             |
-| [TC-LOGIN-010](#tc-login-010--login-page-elements-are-visible)                          | Login page elements are visible                          | Smoke / UI                 | High     | Automated         | `tests/test_login_ui.py`             |
-| [TC-LOGIN-011](#tc-login-011--password-field-masks-entered-characters)                  | Password field masks entered characters                  | UI / Regression            | Medium   | Automated         | `tests/test_login_ui.py`             |
-| [TC-LOGIN-012](#tc-login-012--login-form-can-be-submitted-with-enter-key)               | Login form can be submitted with Enter key               | UI / Positive / Regression | Medium   | Automated         | `tests/test_login_positive.py`       |
-| [TC-LOGIN-013](#tc-login-013--direct-access-to-inventory-page-without-login-is-blocked) | Direct access to inventory page without login is blocked | Regression / Security      | High     | Automated         | `tests/test_login_access_control.py` |
-| [TC-LOGIN-014](#tc-login-014--direct-access-to-cart-page-without-login-is-blocked)      | Direct access to cart page without login is blocked      | Regression / Security      | High     | Automated         | `tests/test_login_access_control.py` |
-| [TC-LOGIN-015](#tc-login-015--direct-access-to-item-page-without-login-is-blocked)      | Direct access to item page without login is blocked      | Regression / Security      | High     | Automated         | `tests/test_login_access_control.py` |
+| Test Case ID                                                                            | Scenario                                                 | Type                       | Priority | Automation Status | Automated In               |
+|-----------------------------------------------------------------------------------------|----------------------------------------------------------|----------------------------|----------|-------------------|----------------------------|
+| [TC-LOGIN-001](#tc-login-001--successful-login-with-valid-credentials)                  | Successful login with valid credentials                  | Smoke / Positive           | High     | Automated         | `tests/test_login_page.py` |
+| [TC-LOGIN-002](#tc-login-002--login-with-invalid-username)                              | Login with invalid username                              | Regression / Negative      | Medium   | Automated         | `tests/test_login_page.py` |
+| [TC-LOGIN-003](#tc-login-003--login-with-invalid-password)                              | Login with invalid password                              | Regression / Negative      | Medium   | Automated         | `tests/test_login_page.py` |
+| [TC-LOGIN-004](#tc-login-004--login-with-empty-username)                                | Login with empty username                                | Regression / Negative      | Medium   | Automated         | `tests/test_login_page.py` |
+| [TC-LOGIN-005](#tc-login-005--login-with-empty-password)                                | Login with empty password                                | Regression / Negative      | Medium   | Automated         | `tests/test_login_page.py` |
+| [TC-LOGIN-006](#tc-login-006--login-with-empty-credentials)                             | Login with empty credentials                             | Regression / Negative      | Medium   | Automated         | `tests/test_login_page.py` |
+| [TC-LOGIN-007](#tc-login-007--locked-out-user-login-attempt)                            | Locked out user login attempt                            | Regression / Negative      | Medium   | Automated         | `tests/test_login_page.py` |
+| [TC-LOGIN-008](#tc-login-008--login-with-invalid-username-and-invalid-password)         | Login with invalid username and invalid password         | Regression / Negative      | Medium   | Automated         | `tests/test_login_page.py` |
+| [TC-LOGIN-009](#tc-login-009--error-message-can-be-closed-after-failed-login)           | Error message can be closed after failed login           | UI / Regression            | Medium   | Automated         | `tests/test_login_page.py` |
+| [TC-LOGIN-010](#tc-login-010--login-page-elements-are-visible)                          | Login page elements are visible                          | Smoke / UI                 | High     | Automated         | `tests/test_login_page.py` |
+| [TC-LOGIN-011](#tc-login-011--password-field-masks-entered-characters)                  | Password field masks entered characters                  | UI / Regression            | Medium   | Automated         | `tests/test_login_page.py` |
+| [TC-LOGIN-012](#tc-login-012--login-form-can-be-submitted-with-enter-key)               | Login form can be submitted with Enter key               | UI / Positive / Regression | Medium   | Automated         | `tests/test_login_page.py` |
+| [TC-LOGIN-013](#tc-login-013--direct-access-to-inventory-page-without-login-is-blocked) | Direct access to inventory page without login is blocked | Regression / Security      | High     | Automated         | `tests/test_login_page.py` |
+| [TC-LOGIN-014](#tc-login-014--direct-access-to-cart-page-without-login-is-blocked)      | Direct access to cart page without login is blocked      | Regression / Security      | High     | Automated         | `tests/test_login_page.py` |
+| [TC-LOGIN-015](#tc-login-015--direct-access-to-item-page-without-login-is-blocked)      | Direct access to item page without login is blocked      | Regression / Security      | High     | Automated         | `tests/test_login_page.py` |
+| [TC-LOGIN-016](#tc-login-016--input-error-icons-are-displayed-after-failed-login)       | Input error icons are displayed after failed login       | UI / Regression            | Medium   | Automated         | `tests/test_login_page.py` |
 
 ---
 
@@ -31,11 +32,11 @@ The goal of this document is to define login-related test scenarios before and a
 
 ### TC-LOGIN-001 — Successful login with valid credentials
 
-**Type:** Smoke / Positive\
-**Priority:** High\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
-**Automated In:** `tests/test_login_positive.py`
+**Type:** Smoke / Positive
+**Priority:** High
+**Automation Candidate:** Yes
+**Automation Status:** Automated
+**Automated In:** `tests/test_login_page.py`
 
 **Preconditions:**
 
@@ -65,11 +66,11 @@ The goal of this document is to define login-related test scenarios before and a
 
 ### TC-LOGIN-002 — Login with invalid username
 
-**Type:** Regression / Negative\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
-**Automated In:** `tests/test_login_negative.py`
+**Type:** Regression / Negative
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
+**Automated In:** `tests/test_login_page.py`
 
 **Preconditions:**
 
@@ -89,7 +90,6 @@ The goal of this document is to define login-related test scenarios before and a
 **Expected Result:**
 
 * User remains on the login page.
-* Red, closable error message is displayed under the login form.
 * Login and password fields are visually marked as invalid.
 
 **Expected Error Message:**
@@ -106,11 +106,11 @@ Epic sadface: Username and password do not match any user in this service
 
 ### TC-LOGIN-003 — Login with invalid password
 
-**Type:** Regression / Negative\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
-**Automated In:** `tests/test_login_negative.py`
+**Type:** Regression / Negative
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
+**Automated In:** `tests/test_login_page.py`
 
 **Preconditions:**
 
@@ -147,11 +147,11 @@ Epic sadface: Username and password do not match any user in this service
 
 ### TC-LOGIN-004 — Login with empty username
 
-**Type:** Regression / Negative\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
-**Automated In:** `tests/test_login_negative.py`
+**Type:** Regression / Negative
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
+**Automated In:** `tests/test_login_page.py`
 
 **Preconditions:**
 
@@ -188,11 +188,11 @@ Epic sadface: Username is required
 
 ### TC-LOGIN-005 — Login with empty password
 
-**Type:** Regression / Negative\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
-**Automated In:** `tests/test_login_negative.py`
+**Type:** Regression / Negative
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
+**Automated In:** `tests/test_login_page.py`
 
 **Preconditions:**
 
@@ -229,11 +229,11 @@ Epic sadface: Password is required
 
 ### TC-LOGIN-006 — Login with empty credentials
 
-**Type:** Regression / Negative\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
-**Automated In:** `tests/test_login_negative.py`
+**Type:** Regression / Negative
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
+**Automated In:** `tests/test_login_page.py`
 
 **Preconditions:**
 
@@ -270,11 +270,11 @@ Epic sadface: Username is required
 
 ### TC-LOGIN-007 — Locked out user login attempt
 
-**Type:** Regression / Negative\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
-**Automated In:** `tests/test_login_negative.py`
+**Type:** Regression / Negative
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
+**Automated In:** `tests/test_login_page.py`
 
 **Preconditions:**
 
@@ -311,11 +311,11 @@ Epic sadface: Sorry, this user has been locked out.
 
 ### TC-LOGIN-008 — Login with invalid username and invalid password
 
-**Type:** Regression / Negative\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
-**Automated In:** `tests/test_login_negative.py`
+**Type:** Regression / Negative
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
+**Automated In:** `tests/test_login_page.py`
 
 **Preconditions:**
 
@@ -352,11 +352,11 @@ Epic sadface: Username and password do not match any user in this service
 
 ### TC-LOGIN-009 — Error message can be closed after failed login
 
-**Type:** UI / Regression\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
-**Automated In:** `tests/test_login_ui.py`
+**Type:** UI / Regression
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
+**Automated In:** `tests/test_login_page.py`
 
 **Preconditions:**
 
@@ -391,11 +391,11 @@ Epic sadface: Username and password do not match any user in this service
 
 ### TC-LOGIN-010 — Login page elements are visible
 
-**Type:** Smoke / UI\
-**Priority:** High\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
-**Automated In:** `tests/test_login_ui.py`
+**Type:** Smoke / UI
+**Priority:** High
+**Automation Candidate:** Yes
+**Automation Status:** Automated
+**Automated In:** `tests/test_login_page.py`
 
 **Preconditions:**
 
@@ -426,11 +426,11 @@ Epic sadface: Username and password do not match any user in this service
 
 ### TC-LOGIN-011 — Password field masks entered characters
 
-**Type:** UI / Regression\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
-**Automated In:** `tests/test_login_ui.py`
+**Type:** UI / Regression
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
+**Automated In:** `tests/test_login_page.py`
 
 **Preconditions:**
 
@@ -462,11 +462,11 @@ Epic sadface: Username and password do not match any user in this service
 
 ### TC-LOGIN-012 — Login form can be submitted with Enter key
 
-**Type:** UI / Positive / Regression\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
-**Automated In:** `tests/test_login_positive.py`
+**Type:** UI / Positive / Regression
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
+**Automated In:** `tests/test_login_page.py`
 
 **Preconditions:**
 
@@ -498,11 +498,11 @@ Epic sadface: Username and password do not match any user in this service
 
 ### TC-LOGIN-013 — Direct access to inventory page without login is blocked
 
-**Type:** Regression / Security\
-**Priority:** High\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
-**Automated In:** `tests/test_login_access_control.py`
+**Type:** Regression / Security
+**Priority:** High
+**Automation Candidate:** Yes
+**Automation Status:** Automated
+**Automated In:** `tests/test_login_page.py`
 
 **Preconditions:**
 
@@ -540,11 +540,11 @@ Epic sadface: You can only access '/inventory.html' when you are logged in.
 
 ### TC-LOGIN-014 — Direct access to cart page without login is blocked
 
-**Type:** Regression / Security\
-**Priority:** High\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
-**Automated In:** `tests/test_login_access_control.py`
+**Type:** Regression / Security
+**Priority:** High
+**Automation Candidate:** Yes
+**Automation Status:** Automated
+**Automated In:** `tests/test_login_page.py`
 
 **Preconditions:**
 
@@ -582,11 +582,11 @@ Epic sadface: You can only access '/cart.html' when you are logged in.
 
 ### TC-LOGIN-015 — Direct access to item page without login is blocked
 
-**Type:** Regression / Security\
-**Priority:** High\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
-**Automated In:** `tests/test_login_access_control.py`
+**Type:** Regression / Security
+**Priority:** High
+**Automation Candidate:** Yes
+**Automation Status:** Automated
+**Automated In:** `tests/test_login_page.py`
 
 **Preconditions:**
 
@@ -620,3 +620,43 @@ Epic sadface: You can only access '/inventory-item.html' when you are logged in.
 
 * This scenario validates basic access control for protected application pages.
 * The automated test uses a fresh browser context provided by Playwright, so no additional session cleanup is required in the current setup.
+
+---
+
+### TC-LOGIN-016 — Input error icons are displayed after failed login
+
+**Type:** UI / Regression
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
+**Automated In:** `tests/test_login_page.py`
+
+**Preconditions:**
+
+* User is on the login page.
+
+**Test Data:**
+
+* Username: `invalid_user`
+* Password: `invalid_sauce`
+
+**Steps:**
+
+1. Enter invalid username.
+2. Enter invalid password.
+3. Click the Login button.
+4. Observe the username input field.
+5. Observe the password input field.
+
+**Expected Result:**
+
+* User remains on the login page.
+* Username input field displays an error icon.
+* Password input field displays an error icon.
+* Both input error icons use the expected error icon styling.
+
+**Notes:**
+
+* This scenario validates visual invalid-state indicators for login inputs after a failed login attempt.
+* Current Page Object support exists through `LoginPage.get_input_error_icon()`.
+* Automation should verify that two input error icons are visible after failed login.
