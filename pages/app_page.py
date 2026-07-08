@@ -101,5 +101,9 @@ class AppPage(BasePage):
         return product_item.get_by_role("button", name="Add to cart")
 
     @staticmethod
+    def get_product_quantity_from_item(product_item: Locator) -> Locator:
+        return product_item.locator('[data-test="item-quantity"]')
+
+    @staticmethod
     def get_remove_button_from_item(product_item: Locator) -> Locator:
         return product_item.get_by_role("button", name="Remove")
