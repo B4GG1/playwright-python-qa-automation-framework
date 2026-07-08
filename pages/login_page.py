@@ -13,7 +13,7 @@ class LoginPage(BasePage):
 
     @staticmethod
     def get_input_error_icon(input_container: Locator) -> Locator:
-        return input_container.locator("[data-icon='times-circle']")
+        return input_container.locator("[data-icon='circle-xmark']")
 
     def get_error_message(self) -> Locator:
         return self.page.locator('[data-test="error"]')
