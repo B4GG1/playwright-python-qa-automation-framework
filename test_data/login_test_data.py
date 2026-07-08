@@ -7,7 +7,7 @@ CART_URL_SUFFIX = "cart.html"
 ITEM_URL_SUFFIX = "inventory-item.html"
 CHECKOUT_STEP_ONE_URL_SUFFIX = "checkout-step-one.html"
 CHECKOUT_STEP_TWO_URL_SUFFIX = "checkout-step-two.html"
-CHECKOUT_COMPLETE_URL_SUFFIX = "checkout-complete.html'"
+CHECKOUT_COMPLETE_URL_SUFFIX = "checkout-complete.html"
 
 INVALID_CREDENTIALS_ERROR = (
     "Epic sadface: Username and password do not match any user in this service"
