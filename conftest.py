@@ -5,8 +5,10 @@ import pytest
 from playwright.sync_api import Page
 
 from pages.cart_page import CartPage
+from pages.checkout_page import CheckoutInformationPage, CheckoutOverviewPage
 from pages.inventory_page import InventoryPage
 from pages.login_page import LoginPage
+from test_data.checkout_test_data import VALID_CHECKOUT_CUSTOMER
 from test_data.login_test_data import VALID_USER_CASES
 from test_data.product_test_data import LIST_OF_PRODUCTS
 
@@ -76,3 +78,26 @@ def cart_page_with_one_product(
     inventory_page, product = inventory_page_with_one_product_in_cart
     cart_page = inventory_page.open_cart()
     return cart_page, product
+
+
+@pytest.fixture()
+def checkout_step_one_page_with_one_product(
+    cart_page_with_one_product: tuple[CartPage, dict[str, str]],
+) -> tuple[CheckoutInformationPage, dict[str, str]]:
+    cart_page, product = cart_page_with_one_product
+    checkout_page = cart_page.checkout()
+    return checkout_page, product
+
+
+@pytest.fixture()
+def checkout_step_two_page_with_one_product(
+    checkout_step_one_page_with_one_product: tuple[CheckoutInformationPage, dict[str, str]],
+) -> tuple[CheckoutOverviewPage, dict[str, str]]:
+    checkout_step_one, product = checkout_step_one_page_with_one_product
+    checkout_step_one.fill_checkout_info_form(
+        VALID_CHECKOUT_CUSTOMER["first_name"],
+        VALID_CHECKOUT_CUSTOMER["last_name"],
+        VALID_CHECKOUT_CUSTOMER["postal_code"],
+    )
+    checkout_step_two = checkout_step_one.continue_checkout()
+    return checkout_step_two, product

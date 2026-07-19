@@ -1,5 +1,7 @@
 VALID_CHECKOUT_CUSTOMER = {"first_name": "Standard", "last_name": "User", "postal_code": "12345"}
 
+CHECKOUT_STEP_ONE_TITLE = "Checkout: Your Information"
+
 CHECKOUT_REQUIRED_FIRST_NAME_ERROR = "Error: First Name is required"
 
 CHECKOUT_REQUIRED_LAST_NAME_ERROR = "Error: Last Name is required"

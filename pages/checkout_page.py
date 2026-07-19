@@ -103,6 +103,9 @@ class CheckoutInformationPage(AppPage):
     def get_first_name_input(self) -> Locator:
         return self.page.locator('[data-test="firstName"]')
 
+    def get_title(self) -> Locator:
+        return self.page.locator('[data-test="title"]')
+
     def get_last_name_input(self) -> Locator:
         return self.page.locator('[data-test="lastName"]')
 
@@ -118,9 +121,9 @@ class CheckoutInformationPage(AppPage):
     def get_continue_button(self) -> Locator:
         return self.page.locator('[data-test="continue"]')
 
-    @staticmethod
-    def get_input_error_icon(input_container: Locator) -> Locator:
-        return input_container.locator("[data-icon='circle-xmark']")
+    def get_input_error_icon(self, input_container: Locator) -> Locator:
+        parent_input = self.page.locator(".form_group").filter(has=input_container)
+        return parent_input.locator("[data-icon='circle-xmark']")
 
     def get_error_message(self) -> Locator:
         return self.page.locator('[data-test="error"]')
