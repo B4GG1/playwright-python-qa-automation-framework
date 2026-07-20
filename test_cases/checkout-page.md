@@ -20,9 +20,6 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 
 ## Test Case Overview And Automation Coverage
 
-**Type:** Regression / Navigation / UI\
-**Priority:** Medium\
-
 | Test Case ID                                                                                                         | Scenario                                                                        | Checkout Area     | Type                          | Priority | Automation Status | Automated In                  |
 |----------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------|-------------------|-------------------------------|----------|-------------------|-------------------------------|
 | [TC-CHECKOUT-001](#tc-checkout-001--checkout-information-form-displays-required-customer-fields)                     | Checkout information form displays required customer fields                     | Checkout Step One | Smoke / UI                    | High     | Automated         | `tests/test_checkout_page.py` |
