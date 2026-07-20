@@ -26,9 +26,6 @@ class AppPage(BasePage):
     def get_shopping_cart_badge(self) -> Locator:
         return self.page.locator('[data-test="shopping-cart-badge"]')
 
-    def get_cart_badge_count(self) -> int:
-        return int(self.get_shopping_cart_badge().inner_text())
-
     def get_burger_menu_button(self) -> Locator:
         return self.page.get_by_role("button", name="Open Menu")
 

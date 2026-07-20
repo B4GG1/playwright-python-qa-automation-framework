@@ -1,8 +1,14 @@
 import pytest
 from playwright.sync_api import expect
 
+from framework.assertions.product_assertions import (
+    assert_checkout_overview_price_summary_displays_expected_info,
+    assert_checkout_product_item_displays_expected_product,
+    assert_product_details_page_displays_expected_product,
+)
 from pages.cart_page import CartPage
-from pages.checkout_page import CheckoutInformationPage, CheckoutOverviewPage
+from pages.checkout_page import CheckoutCompletePage, CheckoutInformationPage, CheckoutOverviewPage
+from pages.inventory_page import InventoryPage
 from test_data.checkout_test_data import (
     CHECKOUT_REQUIRED_FIRST_NAME_ERROR,
     CHECKOUT_REQUIRED_LAST_NAME_ERROR,
@@ -10,6 +16,10 @@ from test_data.checkout_test_data import (
     CHECKOUT_STEP_ONE_TITLE,
     VALID_CHECKOUT_CUSTOMER,
 )
+from test_data.product_test_data import LIST_OF_PRODUCTS
+
+FIRST_EXAMPLE_PRODUCT = LIST_OF_PRODUCTS[0]
+SECOND_EXAMPLE_PRODUCT = LIST_OF_PRODUCTS[1]
 
 
 @pytest.mark.smoke
@@ -191,3 +201,194 @@ def test_checkout_information_cancel_returns_to_cart_and_preserves_cart_item(
     expect(cart_page.page).to_have_url(CartPage.URL)
     expect(cart_page.get_product_item_by_name(product["product_name"])).to_be_visible()
     expect(checkout_step_one.get_checkout_info_block()).not_to_be_visible()
+
+
+@pytest.mark.smoke
+@pytest.mark.ui
+@pytest.mark.parametrize(
+    "_case_id",
+    ["TC-CHECKOUT-009"],
+    ids=["TC-CHECKOUT-009"],
+)
+def test_checkout_overview_displays_selected_product(
+    checkout_step_two_page_with_one_product: tuple[CheckoutOverviewPage, dict[str, str]],
+    _case_id: str,
+):
+    checkout_page_two, product = checkout_step_two_page_with_one_product
+    expect(checkout_page_two.get_checkout_summary_container()).to_be_visible()
+    product_item = checkout_page_two.get_product_item_by_name(product["product_name"])
+    expect(checkout_page_two.get_product_name_from_item(product_item)).to_be_visible()
+    expect(checkout_page_two.get_product_description_from_item(product_item)).to_be_visible()
+    expect(checkout_page_two.get_product_price_from_item(product_item)).to_be_visible()
+    expect(checkout_page_two.get_product_quantity_from_item(product_item)).to_be_visible()
+    expect(checkout_page_two.get_product_quantity_from_item(product_item)).to_have_text("1")
+
+
+@pytest.mark.regression
+@pytest.mark.ui
+@pytest.mark.parametrize(
+    "product",
+    LIST_OF_PRODUCTS,
+    ids=[f"TC-CHECKOUT-010-{product['product_id']}" for product in LIST_OF_PRODUCTS],
+)
+def test_checkout_overview_displays_each_selected_product(
+    logged_in_inventory_page: InventoryPage, product
+):
+    logged_in_inventory_page.add_product_to_cart(product["product_name"])
+    cart_page = logged_in_inventory_page.open_cart()
+    checkout_step_one = cart_page.checkout()
+    checkout_step_one.fill_checkout_info_form(
+        VALID_CHECKOUT_CUSTOMER["first_name"],
+        VALID_CHECKOUT_CUSTOMER["last_name"],
+        VALID_CHECKOUT_CUSTOMER["postal_code"],
+    )
+    checkout_step_two = checkout_step_one.continue_checkout()
+
+    assert_checkout_product_item_displays_expected_product(
+        checkout_overview_page=checkout_step_two, product=product, expected_quantity="1"
+    )
+
+
+@pytest.mark.smoke
+@pytest.mark.ui
+@pytest.mark.parametrize(
+    "_case_id",
+    ["TC-CHECKOUT-011"],
+    ids=["TC-CHECKOUT-011"],
+)
+def test_checkout_overview_price_summary_is_correct_for_one_product(
+    checkout_step_two_page_with_one_product: tuple[CheckoutOverviewPage, dict[str, str]],
+    _case_id: str,
+):
+    checkout_step_two, product = checkout_step_two_page_with_one_product
+    assert_checkout_overview_price_summary_displays_expected_info(checkout_step_two, product)
+
+
+@pytest.mark.smoke
+@pytest.mark.ui
+@pytest.mark.parametrize(
+    "_case_id",
+    ["TC-CHECKOUT-012"],
+    ids=["TC-CHECKOUT-012"],
+)
+def test_checkout_overview_price_summary_is_correct_for_multiple_products(
+    logged_in_inventory_page: InventoryPage, _case_id: str
+):
+    logged_in_inventory_page.add_product_to_cart(FIRST_EXAMPLE_PRODUCT["product_name"])
+    logged_in_inventory_page.add_product_to_cart(SECOND_EXAMPLE_PRODUCT["product_name"])
+    cart_page = logged_in_inventory_page.open_cart()
+    checkout_step_one = cart_page.checkout()
+    checkout_step_one.fill_checkout_info_form(
+        VALID_CHECKOUT_CUSTOMER["first_name"],
+        VALID_CHECKOUT_CUSTOMER["last_name"],
+        VALID_CHECKOUT_CUSTOMER["postal_code"],
+    )
+    checkout_step_two = checkout_step_one.continue_checkout()
+    assert_checkout_product_item_displays_expected_product(
+        checkout_overview_page=checkout_step_two,
+        product=FIRST_EXAMPLE_PRODUCT,
+        expected_quantity="1",
+    )
+
+    assert_checkout_product_item_displays_expected_product(
+        checkout_overview_page=checkout_step_two,
+        product=SECOND_EXAMPLE_PRODUCT,
+        expected_quantity="1",
+    )
+    assert_checkout_overview_price_summary_displays_expected_info(
+        checkout_step_two, FIRST_EXAMPLE_PRODUCT, SECOND_EXAMPLE_PRODUCT
+    )
+
+
+@pytest.mark.regression
+@pytest.mark.ui
+@pytest.mark.navigation
+@pytest.mark.parametrize(
+    "_case_id",
+    ["TC-CHECKOUT-013"],
+    ids=["TC-CHECKOUT-013"],
+)
+def test_checkout_overview_cancel_returns_to_inventory_page(
+    checkout_step_two_page_with_one_product: tuple[CheckoutOverviewPage, dict[str, str]],
+    _case_id: str,
+):
+    checkout_step_two, product = checkout_step_two_page_with_one_product
+    inventory_page = checkout_step_two.cancel_checkout()
+    expect(inventory_page.page).to_have_url(InventoryPage.URL)
+    expect(inventory_page.get_inventory_container()).to_be_visible()
+    expect(checkout_step_two.get_checkout_summary_container()).not_to_be_visible()
+    product_item = inventory_page.get_product_item_by_name(product["product_name"])
+    expect(inventory_page.get_remove_button_from_item(product_item)).to_be_visible()
+    expect(inventory_page.get_shopping_cart_badge()).to_be_visible()
+    expect(inventory_page.get_shopping_cart_badge()).to_have_text("1")
+
+
+@pytest.mark.smoke
+@pytest.mark.ui
+@pytest.mark.navigation
+@pytest.mark.parametrize(
+    "_case_id",
+    ["TC-CHECKOUT-014"],
+    ids=["TC-CHECKOUT-014"],
+)
+def test_product_details_can_be_opened_from_checkout_overview_item_name(
+    checkout_step_two_page_with_one_product: tuple[CheckoutOverviewPage, dict[str, str]],
+    _case_id: str,
+):
+    checkout_step_two, product = checkout_step_two_page_with_one_product
+    product_details_page = checkout_step_two.open_product_details_by_name(product["product_name"])
+    expect(checkout_step_two.get_checkout_summary_container()).not_to_be_visible()
+    expect(product_details_page.get_shopping_cart_badge()).to_be_visible()
+    expect(product_details_page.get_shopping_cart_badge()).to_have_text("1")
+    assert_product_details_page_displays_expected_product(
+        product_details_page, product, is_added=True
+    )
+
+
+@pytest.mark.regression
+@pytest.mark.ui
+@pytest.mark.navigation
+@pytest.mark.parametrize(
+    "product",
+    LIST_OF_PRODUCTS,
+    ids=[f"TC-CHECKOUT-015-{product['product_id']}" for product in LIST_OF_PRODUCTS],
+)
+def test_product_details_can_be_opened_from_checkout_overview_item_name_for_each_product(
+    logged_in_inventory_page: InventoryPage, product
+):
+    logged_in_inventory_page.add_product_to_cart(product["product_name"])
+    cart_page = logged_in_inventory_page.open_cart()
+    checkout_step_one = cart_page.checkout()
+    checkout_step_one.fill_checkout_info_form(
+        VALID_CHECKOUT_CUSTOMER["first_name"],
+        VALID_CHECKOUT_CUSTOMER["last_name"],
+        VALID_CHECKOUT_CUSTOMER["postal_code"],
+    )
+    checkout_step_two = checkout_step_one.continue_checkout()
+    product_details_page = checkout_step_two.open_product_details_by_name(product["product_name"])
+    expect(checkout_step_two.get_checkout_summary_container()).not_to_be_visible()
+    expect(product_details_page.get_shopping_cart_badge()).to_be_visible()
+    expect(product_details_page.get_shopping_cart_badge()).to_have_text("1")
+    assert_product_details_page_displays_expected_product(
+        product_details_page, product, is_added=True
+    )
+
+
+@pytest.mark.smoke
+@pytest.mark.positive
+@pytest.mark.e2e
+@pytest.mark.parametrize(
+    "_case_id",
+    ["TC-CHECKOUT-016"],
+    ids=["TC-CHECKOUT-016"],
+)
+def test_finish_button_completes_checkout_and_opens_order_confirmation_page(
+    checkout_step_two_page_with_one_product: tuple[CheckoutOverviewPage, dict[str, str]],
+    _case_id: str,
+):
+    checkout_step_two, product = checkout_step_two_page_with_one_product
+    checkout_last_step = checkout_step_two.finish_checkout()
+    expect(checkout_last_step.page).to_have_url(CheckoutCompletePage.URL)
+    expect(checkout_last_step.get_checkout_complete_header()).to_be_visible()
+    expect(checkout_last_step.get_checkout_complete_text()).to_be_visible()
+    expect(checkout_last_step.get_back_home_button()).to_be_visible()
