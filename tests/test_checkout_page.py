@@ -4,12 +4,15 @@ from playwright.sync_api import expect
 from framework.assertions.product_assertions import (
     assert_checkout_overview_price_summary_displays_expected_info,
     assert_checkout_product_item_displays_expected_product,
+    assert_inventory_product_item_displays_expected_product,
     assert_product_details_page_displays_expected_product,
 )
 from pages.cart_page import CartPage
 from pages.checkout_page import CheckoutCompletePage, CheckoutInformationPage, CheckoutOverviewPage
 from pages.inventory_page import InventoryPage
 from test_data.checkout_test_data import (
+    CHECKOUT_COMPLETE_HEADER,
+    CHECKOUT_COMPLETE_MESSAGE,
     CHECKOUT_REQUIRED_FIRST_NAME_ERROR,
     CHECKOUT_REQUIRED_LAST_NAME_ERROR,
     CHECKOUT_REQUIRED_POSTAL_CODE_ERROR,
@@ -317,8 +320,7 @@ def test_checkout_overview_cancel_returns_to_inventory_page(
     expect(inventory_page.page).to_have_url(InventoryPage.URL)
     expect(inventory_page.get_inventory_container()).to_be_visible()
     expect(checkout_step_two.get_checkout_summary_container()).not_to_be_visible()
-    product_item = inventory_page.get_product_item_by_name(product["product_name"])
-    expect(inventory_page.get_remove_button_from_item(product_item)).to_be_visible()
+    assert_inventory_product_item_displays_expected_product(inventory_page, product, True)
     expect(inventory_page.get_shopping_cart_badge()).to_be_visible()
     expect(inventory_page.get_shopping_cart_badge()).to_have_text("1")
 
@@ -392,3 +394,50 @@ def test_finish_button_completes_checkout_and_opens_order_confirmation_page(
     expect(checkout_last_step.get_checkout_complete_header()).to_be_visible()
     expect(checkout_last_step.get_checkout_complete_text()).to_be_visible()
     expect(checkout_last_step.get_back_home_button()).to_be_visible()
+
+
+@pytest.mark.regression
+@pytest.mark.ui
+@pytest.mark.parametrize(
+    "_case_id",
+    ["TC-CHECKOUT-017"],
+    ids=["TC-CHECKOUT-017"],
+)
+def test_checkout_complete_page_displays_order_confirmation_message(
+    checkout_last_step_page_with_one_product: tuple[CheckoutCompletePage, dict[str, str]],
+    _case_id: str,
+):
+    checkout_last_step_page = checkout_last_step_page_with_one_product[0]
+    expect(checkout_last_step_page.get_checkout_complete_container()).to_be_visible()
+    expect(checkout_last_step_page.get_pony_express_img()).to_be_visible()
+
+    expect(checkout_last_step_page.get_checkout_complete_header()).to_be_visible()
+    expect(checkout_last_step_page.get_checkout_complete_header()).to_have_text(
+        CHECKOUT_COMPLETE_HEADER
+    )
+
+    expect(checkout_last_step_page.get_checkout_complete_text()).to_be_visible()
+    expect(checkout_last_step_page.get_checkout_complete_text()).to_have_text(
+        CHECKOUT_COMPLETE_MESSAGE
+    )
+
+    expect(checkout_last_step_page.get_back_home_button()).to_be_visible()
+
+
+@pytest.mark.regression
+@pytest.mark.ui
+@pytest.mark.parametrize(
+    "_case_id",
+    ["TC-CHECKOUT-018"],
+    ids=["TC-CHECKOUT-018"],
+)
+def test_back_home_returns_to_inventory_page_after_order_completion(
+    checkout_last_step_page_with_one_product: tuple[CheckoutCompletePage, dict[str, str]],
+    _case_id: str,
+):
+    checkout_last_step_page, product = checkout_last_step_page_with_one_product
+    inventory_page = checkout_last_step_page.back_home()
+    expect(inventory_page.page).to_have_url(InventoryPage.URL)
+    expect(checkout_last_step_page.get_checkout_complete_container()).not_to_be_visible()
+    expect(inventory_page.get_inventory_container()).to_be_visible()
+    assert_inventory_product_item_displays_expected_product(inventory_page, product, False)

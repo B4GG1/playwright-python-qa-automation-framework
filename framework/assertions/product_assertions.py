@@ -59,6 +59,7 @@ def assert_catalog_product_item_displays_expected_product(
 def assert_inventory_product_item_displays_expected_product(
     inventory_page,
     product: dict[str, str],
+    is_added: bool = False,
 ) -> None:
     product_item = inventory_page.get_product_item_by_name(product["product_name"])
 
@@ -68,6 +69,7 @@ def assert_inventory_product_item_displays_expected_product(
         page_object=inventory_page,
         product_item=product_item,
         product=product,
+        is_added=is_added,
     )
 
 

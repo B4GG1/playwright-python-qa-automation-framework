@@ -38,8 +38,8 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 | [TC-CHECKOUT-014](#tc-checkout-014--product-details-can-be-opened-from-checkout-overview-item-name)                  | Product details can be opened from checkout overview item name                  | Checkout Step Two | Smoke / Navigation / UI       | Medium   | Automated         | `tests/test_checkout_page.py` |
 | [TC-CHECKOUT-015](#tc-checkout-015--product-details-can-be-opened-from-checkout-overview-item-name-for-each-product) | Product details can be opened from checkout overview item name for each product | Checkout Step Two | Regression / Navigation / UI  | Medium   | Automated         | `tests/test_checkout_page.py` |
 | [TC-CHECKOUT-016](#tc-checkout-016--finish-button-completes-checkout-and-opens-order-confirmation-page)              | Finish button completes checkout and opens order confirmation page              | Checkout Step Two | Smoke / Positive / E2E        | High     | Automated         | `tests/test_checkout_page.py` |
-| [TC-CHECKOUT-017](#tc-checkout-017--checkout-complete-page-displays-order-confirmation-message)                      | Checkout complete page displays order confirmation message                      | Checkout Complete | Regression / UI               | High     | Planned           | TBD                           |
-| [TC-CHECKOUT-018](#tc-checkout-018--back-home-returns-to-inventory-page-after-order-completion)                      | Back Home returns to inventory page after order completion                      | Checkout Complete | Regression / Navigation / UI  | Medium   | Planned           | TBD                           |
+| [TC-CHECKOUT-017](#tc-checkout-017--checkout-complete-page-displays-order-confirmation-message)                      | Checkout complete page displays order confirmation message                      | Checkout Complete | Regression / UI               | High     | Automated         | `tests/test_checkout_page.py` |
+| [TC-CHECKOUT-018](#tc-checkout-018--back-home-returns-to-inventory-page-after-order-completion)                      | Back Home returns to inventory page after order completion                      | Checkout Complete | Regression / Navigation / UI  | Medium   | Automated         | `tests/test_checkout_page.py` |
 
 ---
 
@@ -777,11 +777,11 @@ Error: Postal Code is required
 
 #### TC-CHECKOUT-017 — Checkout complete page displays order confirmation message
 
-**Type:** Regression / UI
-**Priority:** High
-**Automation Candidate:** Yes
-**Automation Status:** Planned
-**Automated In:** TBD
+**Type:** Regression / UI\
+**Priority:** High\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
+**Automated In:** `tests/test_checkout_page.py`
 
 **Preconditions:**
 
@@ -829,11 +829,11 @@ Your order has been dispatched, and will arrive just as fast as the pony can get
 
 #### TC-CHECKOUT-018 — Back Home returns to inventory page after order completion
 
-**Type:** Regression / Navigation / UI
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Planned
-**Automated In:** TBD
+**Type:** Regression / Navigation / UI\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
+**Automated In:** `tests/test_checkout_page.py`
 
 **Preconditions:**
 
@@ -858,6 +858,7 @@ Your order has been dispatched, and will arrive just as fast as the pony can get
 * User is redirected to the inventory page.
 * Inventory product list is visible.
 * Checkout complete page is no longer displayed.
+* Added product is no longer displayed in the cart
 
 **Notes:**
 

@@ -5,7 +5,7 @@ import pytest
 from playwright.sync_api import Page
 
 from pages.cart_page import CartPage
-from pages.checkout_page import CheckoutInformationPage, CheckoutOverviewPage
+from pages.checkout_page import CheckoutCompletePage, CheckoutInformationPage, CheckoutOverviewPage
 from pages.inventory_page import InventoryPage
 from pages.login_page import LoginPage
 from test_data.checkout_test_data import VALID_CHECKOUT_CUSTOMER
@@ -101,3 +101,12 @@ def checkout_step_two_page_with_one_product(
     )
     checkout_step_two = checkout_step_one.continue_checkout()
     return checkout_step_two, product
+
+
+@pytest.fixture()
+def checkout_last_step_page_with_one_product(
+    checkout_step_two_page_with_one_product: tuple[CheckoutOverviewPage, dict[str, str]],
+) -> tuple[CheckoutCompletePage, dict[str, str]]:
+    checkout_step_two, product = checkout_step_two_page_with_one_product
+    checkout_last_step = checkout_step_two.finish_checkout()
+    return checkout_last_step, product
