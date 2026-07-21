@@ -4,12 +4,16 @@ import pytest
 from playwright.sync_api import Page, expect
 
 from pages.cart_page import CartPage
+from pages.checkout_page import CheckoutCompletePage, CheckoutInformationPage, CheckoutOverviewPage
 from pages.inventory_page import InventoryPage
 from pages.login_page import LoginPage
 from pages.product_details_page import ProductDetailsPage
 from test_data.login_test_data import (
     ACCESS_DENIED_TEMPLATE_ERROR,
     CART_URL_SUFFIX,
+    CHECKOUT_COMPLETE_URL_SUFFIX,
+    CHECKOUT_STEP_ONE_URL_SUFFIX,
+    CHECKOUT_STEP_TWO_URL_SUFFIX,
     EMPTY_LOGIN_CASES,
     INVALID_LOGIN_CASES,
     INVENTORY_URL_SUFFIX,
@@ -48,7 +52,7 @@ def test_login_with_invalid_credentials(opened_login_page: LoginPage, case):
     opened_login_page.login(case["username"], case["password"])
 
     expect(opened_login_page.page).not_to_have_url(re.compile(rf".*{INVENTORY_URL_SUFFIX}"))
-    assert opened_login_page.get_error_message_text() == case["expected_error"]
+    expect(opened_login_page.get_error_message()).to_have_text(case["expected_error"])
 
 
 @pytest.mark.regression
@@ -60,7 +64,7 @@ def test_login_with_empty_credentials(opened_login_page: LoginPage, case):
     opened_login_page.login(case["username"], case["password"])
 
     expect(opened_login_page.page).not_to_have_url(re.compile(rf".*{INVENTORY_URL_SUFFIX}"))
-    assert opened_login_page.get_error_message_text() == case["expected_error"]
+    expect(opened_login_page.get_error_message()).to_have_text(case["expected_error"])
 
 
 @pytest.mark.regression
@@ -72,7 +76,7 @@ def test_login_for_locked_out_user(opened_login_page: LoginPage, case):
     opened_login_page.login(case["username"], case["password"])
 
     expect(opened_login_page.page).not_to_have_url(re.compile(rf".*{INVENTORY_URL_SUFFIX}"))
-    assert opened_login_page.get_error_message_text() == case["expected_error"]
+    expect(opened_login_page.get_error_message()).to_have_text(case["expected_error"])
 
 
 @pytest.mark.ui
@@ -163,8 +167,8 @@ def test_direct_inventory_access_without_login_is_blocked(page: Page, _case_id: 
 
     expect(page).to_have_url(login_page.URL)
     expect(inventory_page.get_inventory_container()).not_to_be_visible()
-    assert login_page.get_error_message_text() == ACCESS_DENIED_TEMPLATE_ERROR.format(
-        url_suffix=INVENTORY_URL_SUFFIX
+    expect(login_page.get_error_message()).to_have_text(
+        ACCESS_DENIED_TEMPLATE_ERROR.format(url_suffix=INVENTORY_URL_SUFFIX)
     )
 
 
@@ -183,8 +187,8 @@ def test_direct_cart_access_without_login_is_blocked(page: Page, _case_id: str):
 
     expect(page).to_have_url(login_page.URL)
     expect(cart_page.get_cart_contents_container()).not_to_be_visible()
-    assert login_page.get_error_message_text() == ACCESS_DENIED_TEMPLATE_ERROR.format(
-        url_suffix=CART_URL_SUFFIX
+    expect(login_page.get_error_message()).to_have_text(
+        ACCESS_DENIED_TEMPLATE_ERROR.format(url_suffix=CART_URL_SUFFIX)
     )
 
 
@@ -204,8 +208,8 @@ def test_direct_item_page_access_without_login_is_blocked(page: Page, _case_id: 
 
     expect(page).to_have_url(login_page.URL)
     expect(item_page.get_product_item_or_items()).not_to_be_visible()
-    assert login_page.get_error_message_text() == ACCESS_DENIED_TEMPLATE_ERROR.format(
-        url_suffix=ITEM_URL_SUFFIX
+    expect(login_page.get_error_message()).to_have_text(
+        ACCESS_DENIED_TEMPLATE_ERROR.format(url_suffix=ITEM_URL_SUFFIX)
     )
 
 
@@ -236,3 +240,69 @@ def test_input_error_icons_are_displayed_after_failed_login(
     expect(opened_login_page.page).to_have_url(LoginPage.URL)
     expect(opened_login_page.get_input_error_icon(username_input_parent)).to_be_visible()
     expect(opened_login_page.get_input_error_icon(password_input_parent)).to_be_visible()
+
+
+@pytest.mark.regression
+@pytest.mark.security
+@pytest.mark.parametrize(
+    "_case_id",
+    ["TC-LOGIN-017"],
+    ids=["TC-LOGIN-017"],
+)
+def test_direct_access_to_check_out_information_page_without_login_is_blocked(
+    page: Page, _case_id: str
+):
+    login_page = LoginPage(page)
+    checkout_step_one = CheckoutInformationPage(page)
+
+    checkout_step_one.open()
+
+    expect(page).to_have_url(login_page.URL)
+    expect(checkout_step_one.get_checkout_info_block()).not_to_be_visible()
+    expect(login_page.get_error_message()).to_have_text(
+        ACCESS_DENIED_TEMPLATE_ERROR.format(url_suffix=CHECKOUT_STEP_ONE_URL_SUFFIX)
+    )
+
+
+@pytest.mark.regression
+@pytest.mark.security
+@pytest.mark.parametrize(
+    "_case_id",
+    ["TC-LOGIN-018"],
+    ids=["TC-LOGIN-018"],
+)
+def test_direct_access_to_check_out_overview_page_without_login_is_blocked(
+    page: Page, _case_id: str
+):
+    login_page = LoginPage(page)
+    checkout_step_two = CheckoutOverviewPage(page)
+
+    checkout_step_two.open()
+
+    expect(page).to_have_url(login_page.URL)
+    expect(checkout_step_two.get_checkout_summary_container()).not_to_be_visible()
+    expect(login_page.get_error_message()).to_have_text(
+        ACCESS_DENIED_TEMPLATE_ERROR.format(url_suffix=CHECKOUT_STEP_TWO_URL_SUFFIX)
+    )
+
+
+@pytest.mark.regression
+@pytest.mark.security
+@pytest.mark.parametrize(
+    "_case_id",
+    ["TC-LOGIN-019"],
+    ids=["TC-LOGIN-019"],
+)
+def test_direct_access_to_check_out_complete_page_without_login_is_blocked(
+    page: Page, _case_id: str
+):
+    login_page = LoginPage(page)
+    checkout_last_step = CheckoutCompletePage(page)
+
+    checkout_last_step.open()
+
+    expect(page).to_have_url(login_page.URL)
+    expect(checkout_last_step.get_checkout_complete_container()).not_to_be_visible()
+    expect(login_page.get_error_message()).to_have_text(
+        ACCESS_DENIED_TEMPLATE_ERROR.format(url_suffix=CHECKOUT_COMPLETE_URL_SUFFIX)
+    )

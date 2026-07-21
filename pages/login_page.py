@@ -18,9 +18,6 @@ class LoginPage(BasePage):
     def get_error_message(self) -> Locator:
         return self.page.locator('[data-test="error"]')
 
-    def get_error_message_text(self) -> str:
-        return self.get_error_message().inner_text()
-
     def get_close_error_message_button(self) -> Locator:
         return self.page.locator('[data-test="error-button"]')
 

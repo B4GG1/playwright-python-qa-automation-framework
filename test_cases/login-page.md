@@ -25,9 +25,9 @@ The goal of this document is to define login-related test scenarios before and a
 | [TC-LOGIN-014](#tc-login-014--direct-access-to-cart-page-without-login-is-blocked)                  | Direct access to cart page without login is blocked                 | Regression / Security      | High     | Automated         | `tests/test_login_page.py` |
 | [TC-LOGIN-015](#tc-login-015--direct-access-to-item-page-without-login-is-blocked)                  | Direct access to item page without login is blocked                 | Regression / Security      | High     | Automated         | `tests/test_login_page.py` |
 | [TC-LOGIN-016](#tc-login-016--input-error-icons-are-displayed-after-failed-login)                   | Input error icons are displayed after failed login                  | UI / Regression            | Medium   | Automated         | `tests/test_login_page.py` |
-| [TC-LOGIN-017](#tc-login-017--direct-access-to-check-out-information-page-without-login-is-blocked) | Direct access to checkout information page without login is blocked | Regression / Security      | High     | Planned           | TBD                        |
-| [TC-LOGIN-018](#tc-login-018--direct-access-to-check-out-overview-page-without-login-is-blocked)    | Direct access to checkout overview page without login is blocked    | Regression / Security      | High     | Planned           | TBD                        |
-| [TC-LOGIN-019](#tc-login-019--direct-access-to-check-out-complete-page-without-login-is-blocked)    | Direct access to checkout complete page without login is blocked    | Regression / Security      | High     | Planned           | TBD                        |
+| [TC-LOGIN-017](#tc-login-017--direct-access-to-check-out-information-page-without-login-is-blocked) | Direct access to checkout information page without login is blocked | Regression / Security      | High     | Automated         | `tests/test_login_page.py` |
+| [TC-LOGIN-018](#tc-login-018--direct-access-to-check-out-overview-page-without-login-is-blocked)    | Direct access to checkout overview page without login is blocked    | Regression / Security      | High     | Automated         | `tests/test_login_page.py` |
+| [TC-LOGIN-019](#tc-login-019--direct-access-to-check-out-complete-page-without-login-is-blocked)    | Direct access to checkout complete page without login is blocked    | Regression / Security      | High     | Automated         | `tests/test_login_page.py` |
 
 ---
 
@@ -35,10 +35,10 @@ The goal of this document is to define login-related test scenarios before and a
 
 ### TC-LOGIN-001 — Successful login with valid credentials
 
-**Type:** Smoke / Positive
-**Priority:** High
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Smoke / Positive\
+**Priority:** High\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_login_page.py`
 
 **Preconditions:**
@@ -69,10 +69,10 @@ The goal of this document is to define login-related test scenarios before and a
 
 ### TC-LOGIN-002 — Login with invalid username
 
-**Type:** Regression / Negative
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / Negative\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_login_page.py`
 
 **Preconditions:**
@@ -109,10 +109,10 @@ Epic sadface: Username and password do not match any user in this service
 
 ### TC-LOGIN-003 — Login with invalid password
 
-**Type:** Regression / Negative
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / Negative\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_login_page.py`
 
 **Preconditions:**
@@ -150,10 +150,10 @@ Epic sadface: Username and password do not match any user in this service
 
 ### TC-LOGIN-004 — Login with empty username
 
-**Type:** Regression / Negative
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / Negative\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_login_page.py`
 
 **Preconditions:**
@@ -191,10 +191,10 @@ Epic sadface: Username is required
 
 ### TC-LOGIN-005 — Login with empty password
 
-**Type:** Regression / Negative
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / Negative\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_login_page.py`
 
 **Preconditions:**
@@ -232,10 +232,10 @@ Epic sadface: Password is required
 
 ### TC-LOGIN-006 — Login with empty credentials
 
-**Type:** Regression / Negative
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / Negative\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_login_page.py`
 
 **Preconditions:**
@@ -273,10 +273,10 @@ Epic sadface: Username is required
 
 ### TC-LOGIN-007 — Locked out user login attempt
 
-**Type:** Regression / Negative
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / Negative\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_login_page.py`
 
 **Preconditions:**
@@ -314,10 +314,10 @@ Epic sadface: Sorry, this user has been locked out.
 
 ### TC-LOGIN-008 — Login with invalid username and invalid password
 
-**Type:** Regression / Negative
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / Negative\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_login_page.py`
 
 **Preconditions:**
@@ -355,10 +355,10 @@ Epic sadface: Username and password do not match any user in this service
 
 ### TC-LOGIN-009 — Error message can be closed after failed login
 
-**Type:** UI / Regression
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** UI / Regression\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_login_page.py`
 
 **Preconditions:**
@@ -394,10 +394,10 @@ Epic sadface: Username and password do not match any user in this service
 
 ### TC-LOGIN-010 — Login page elements are visible
 
-**Type:** Smoke / UI
-**Priority:** High
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Smoke / UI\
+**Priority:** High\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_login_page.py`
 
 **Preconditions:**
@@ -429,10 +429,10 @@ Epic sadface: Username and password do not match any user in this service
 
 ### TC-LOGIN-011 — Password field masks entered characters
 
-**Type:** UI / Regression
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** UI / Regression\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_login_page.py`
 
 **Preconditions:**
@@ -465,10 +465,10 @@ Epic sadface: Username and password do not match any user in this service
 
 ### TC-LOGIN-012 — Login form can be submitted with Enter key
 
-**Type:** UI / Positive / Regression
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** UI / Positive / Regression\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_login_page.py`
 
 **Preconditions:**
@@ -501,10 +501,10 @@ Epic sadface: Username and password do not match any user in this service
 
 ### TC-LOGIN-013 — Direct access to inventory page without login is blocked
 
-**Type:** Regression / Security
-**Priority:** High
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / Security\
+**Priority:** High\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_login_page.py`
 
 **Preconditions:**
@@ -543,10 +543,10 @@ Epic sadface: You can only access '/inventory.html' when you are logged in.
 
 ### TC-LOGIN-014 — Direct access to cart page without login is blocked
 
-**Type:** Regression / Security
-**Priority:** High
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / Security\
+**Priority:** High\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_login_page.py`
 
 **Preconditions:**
@@ -585,10 +585,10 @@ Epic sadface: You can only access '/cart.html' when you are logged in.
 
 ### TC-LOGIN-015 — Direct access to item page without login is blocked
 
-**Type:** Regression / Security
-**Priority:** High
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / Security\
+**Priority:** High\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_login_page.py`
 
 **Preconditions:**
@@ -628,10 +628,10 @@ Epic sadface: You can only access '/inventory-item.html' when you are logged in.
 
 ### TC-LOGIN-016 — Input error icons are displayed after failed login
 
-**Type:** UI / Regression
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** UI / Regression\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_login_page.py`
 
 **Preconditions:**
@@ -668,11 +668,11 @@ Epic sadface: You can only access '/inventory-item.html' when you are logged in.
 
 ### TC-LOGIN-017 — Direct access to check out information page without login is blocked
 
-**Type:** Regression / Security
-**Priority:** High
-**Automation Candidate:** Yes
-**Automation Status:** Planned
-**Automated In:** TBD
+**Type:** Regression / Security\
+**Priority:** High\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
+**Automated In:** `tests/test_login_page.py`
 
 **Preconditions:**
 
@@ -711,11 +711,11 @@ Epic sadface: You can only access '/checkout-step-one.html' when you are logged 
 
 ### TC-LOGIN-018 — Direct access to check out overview page without login is blocked
 
-**Type:** Regression / Security
-**Priority:** High
-**Automation Candidate:** Yes
-**Automation Status:** Planned
-**Automated In:** TBD
+**Type:** Regression / Security\
+**Priority:** High\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
+**Automated In:** `tests/test_login_page.py`
 
 **Preconditions:**
 
@@ -754,11 +754,11 @@ Epic sadface: You can only access '/checkout-step-two.html' when you are logged 
 
 ### TC-LOGIN-019 — Direct access to check out complete page without login is blocked
 
-**Type:** Regression / Security
-**Priority:** High
-**Automation Candidate:** Yes
-**Automation Status:** Planned
-**Automated In:** TBD
+**Type:** Regression / Security\
+**Priority:** High\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
+**Automated In:** `tests/test_login_page.py`
 
 **Preconditions:**
 

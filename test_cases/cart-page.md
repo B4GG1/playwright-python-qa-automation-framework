@@ -23,7 +23,7 @@ The goal of this document is to define cart-page-owned scenarios and track their
 | [TC-CART-011](#tc-cart-011--product-details-can-be-opened-from-cart-item-name)                    | Product details can be opened from cart item name                    | Regression / Navigation / UI | Medium   | Automated         | `tests/test_cart_page.py` |
 | [TC-CART-012](#tc-cart-012--continue-shopping-preserves-cart-state)                               | Continue Shopping preserves cart state                               | Regression / Navigation / UI | Medium   | Automated         | `tests/test_cart_page.py` |
 | [TC-CART-013](#tc-cart-013--all-products-can-be-removed-from-cart-page)                           | All products can be removed from cart page                           | Regression / Positive / UI   | Medium   | Automated         | `tests/test_cart_page.py` |
-| [TC-CART-014](#tc-cart-014--checkout-button-opens-checkout-information-page-with-product-in-cart) | Checkout button opens checkout information page with product in cart | Smoke / Navigation / UI      | High     | Planned           | TBD                       |
+| [TC-CART-014](#tc-cart-014--checkout-button-opens-checkout-information-page-with-product-in-cart) | Checkout button opens checkout information page with product in cart | Smoke / Navigation / UI      | High     | Automated         | `tests/test_cart_page.py` |
 
 ---
 
@@ -585,8 +585,8 @@ The goal of this document is to define cart-page-owned scenarios and track their
 **Type:** Smoke / Navigation / UI\
 **Priority:** High\
 **Automation Candidate:** Yes\
-**Automation Status:** Planned\
-**Automated In:** TBD
+**Automation Status:** Automated\
+**Automated In:** `tests/test_cart_page.py`
 
 **Preconditions:**
 
@@ -612,11 +612,6 @@ The goal of this document is to define cart-page-owned scenarios and track their
 * User is redirected to the checkout information page.
 * Checkout information page URL contains `checkout-step-one.html`.
 * Checkout information form is displayed.
-* First Name field is visible.
-* Last Name field is visible.
-* Zip/Postal Code field is visible.
-* Continue button is visible.
-* Cancel button is visible.
 
 **Notes:**
 

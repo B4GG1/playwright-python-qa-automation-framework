@@ -5,6 +5,7 @@ from framework.assertions.product_assertions import (
     assert_cart_product_item_displays_expected_product,
 )
 from pages.cart_page import CartPage
+from pages.checkout_page import CheckoutInformationPage
 from pages.inventory_page import InventoryPage
 from pages.product_details_page import ProductDetailsPage
 from test_data.product_test_data import LIST_OF_PRODUCTS
@@ -331,3 +332,22 @@ def test_all_products_can_be_removed_from_cart(logged_in_inventory_page: Invento
 
     expect(cart_page.get_shopping_cart_badge()).to_have_text((str(len(LIST_OF_PRODUCTS) - 1)))
     expect(cart_page.get_product_item_by_name(product["product_name"])).not_to_be_visible()
+
+
+@pytest.mark.smoke
+@pytest.mark.navigation
+@pytest.mark.ui
+@pytest.mark.parametrize(
+    "_case_id",
+    ["TC-CART-014"],
+    ids=["TC-CART-014"],
+)
+def test_checkout_button_opens_checkout_information_page_with_product_in_cart(
+    cart_page_with_one_product: tuple[CartPage, dict[str, str]],
+    _case_id: str,
+):
+    cart_page = cart_page_with_one_product[0]
+    checkout_step_one = cart_page.checkout()
+    expect(checkout_step_one.page).to_have_url(CheckoutInformationPage.URL)
+    expect(checkout_step_one.get_checkout_info_block()).to_be_visible()
+    expect(cart_page.get_cart_contents_container()).not_to_be_visible()
