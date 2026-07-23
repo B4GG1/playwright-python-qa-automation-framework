@@ -26,7 +26,7 @@ Current test automation stack:
 * pytest-playwright for Playwright and Pytest integration
 * Page Object Model for page interaction abstraction
 * shared authenticated-page behavior through `AppPage`
-* reusable assertion helpers for repeated product-related validations
+* reusable assertion helpers for repeated product-related and checkout-related validations
 * pytest fixtures for reusable test setup
 * pytest parametrization for data-driven test scenarios
 * pytest markers for test categorization
@@ -44,6 +44,9 @@ Current automated UI coverage:
 * protected inventory route access validation
 * protected cart route access validation
 * protected item details route access validation
+* protected checkout information route access validation
+* protected checkout overview route access validation
+* protected checkout complete route access validation
 * inventory page validation
 * product list validation
 * product card content validation
@@ -60,6 +63,17 @@ Current automated UI coverage:
 * remove-from-cart validation from inventory, product details, and cart pages
 * continue shopping navigation validation
 * cart state persistence after logout and re-login
+* cart-owned checkout step one navigation validation
+* checkout information form validation
+* checkout required field validation
+* checkout information error handling
+* checkout overview product summary validation
+* checkout overview price summary validation
+* checkout overview cancellation validation
+* product details navigation from checkout overview
+* checkout finish action validation
+* checkout complete page confirmation validation
+* Back Home navigation after order completion
 
 Planned browser execution:
 
@@ -77,6 +91,9 @@ Currently implemented:
 * `InventoryPage`
 * `ProductDetailsPage`
 * `CartPage`
+* `CheckoutInformationPage`
+* `CheckoutOverviewPage`
+* `CheckoutCompletePage`
 
 Current Page Object responsibilities:
 
@@ -106,12 +123,24 @@ Current Page Object responsibilities:
 * cart product removal
 * product details navigation from cart item name
 * continue shopping navigation
-* checkout button locator exposure without checkout behavior validation in the current scope
+* checkout button access and cart-owned checkout step one navigation
+* checkout information form field access
+* checkout information form submission
+* checkout information validation error access
+* checkout information input error icon access
+* checkout information error close interaction
+* checkout information cancellation back to cart
+* checkout overview product item access
+* checkout overview price summary access
+* checkout overview cancellation back to inventory
+* product details navigation from checkout overview item name
+* checkout finish action
+* checkout complete confirmation access
+* Back Home navigation after checkout completion
 
 Planned Page Object expansion:
 
-* `CheckoutPage`
-* additional page objects as application coverage grows
+* additional page objects only when future application areas require dedicated page-level ownership
 
 ## Reusable Assertions
 
@@ -124,7 +153,10 @@ Current reusable assertion helper responsibilities:
 * inventory product card content validation
 * product details content validation
 * cart item content validation
-* price string conversion for numeric sorting assertions
+* checkout overview product item content validation
+* checkout overview price summary validation
+* inventory product state validation after checkout-related navigation
+* price string conversion for numeric sorting and checkout summary assertions
 
 Reusable assertion helpers are used when the same validation logic is shared across multiple page areas. They should remain focused on assertions and should not own navigation, setup, or Page Object responsibilities.
 
@@ -134,6 +166,7 @@ Currently implemented:
 
 * centralized login test data
 * centralized product test data
+* centralized checkout test data
 * valid user cases
 * invalid login cases
 * empty credential cases
@@ -145,21 +178,27 @@ Currently implemented:
 * product descriptions
 * product prices
 * product image paths
-* deterministic product data reused by inventory, product details, and cart tests
+* valid checkout customer information
+* checkout required field error messages
+* checkout page title expectations
+* checkout overview summary label expectations
+* checkout completion header and message expectations
+* deterministic product data reused by inventory, product details, cart, and checkout tests
 * test case IDs used in parametrized pytest output where practical
 
 Current test data location:
 
-```
+```text
 test_data/login_test_data.py
 test_data/product_test_data.py
+test_data/checkout_test_data.py
 ```
 
 Planned test data expansion:
 
-* checkout form data
 * API test data
 * environment-specific test data if needed
+* additional UI test data only when future approved scope requires it
 
 ## Code Quality And Development Tooling
 
@@ -174,7 +213,7 @@ These tools are used to maintain consistent code style, reduce formatting-relate
 
 Tool configuration is stored in:
 
-```
+```text
 pyproject.toml
 .pre-commit-config.yaml
 pytest.ini
@@ -335,7 +374,7 @@ Future planned integrations include:
 
 ## Current Stack Status
 
-The current stack is sufficient to support completed page-level automation coverage for Login, Inventory, Product Details, and Cart areas.
+The current stack is sufficient to support completed page-level automation coverage for Login, Inventory, Product Details, Cart, and Checkout areas.
 
 Implemented technical capabilities include:
 
@@ -343,9 +382,9 @@ Implemented technical capabilities include:
 * test execution with Pytest
 * Page Object Model
 * shared authenticated-page behavior through `AppPage`
-* reusable product assertion helpers
+* reusable product and checkout assertion helpers
 * reusable pytest fixtures
-* centralized login and product test data
+* centralized login, product, and checkout test data
 * parametrized tests
 * marker-based test organization
 * local quality checks
@@ -354,4 +393,4 @@ Implemented technical capabilities include:
 * screenshot capture on failure
 * technical documentation
 
-The next stack expansion will focus on additional Page Object support and test coverage for checkout flows.
+The next stack expansion should focus on framework maturity, reporting, CI optimization, API testing, cross-browser execution, or other future approved workstreams rather than additional checkout foundation work.

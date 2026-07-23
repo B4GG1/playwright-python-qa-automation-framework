@@ -7,6 +7,7 @@ from playwright.sync_api import Locator
 from pages.app_page import AppPage
 
 if TYPE_CHECKING:
+    from pages.checkout_page import CheckoutInformationPage
     from pages.inventory_page import InventoryPage
     from pages.product_details_page import ProductDetailsPage
 
@@ -20,15 +21,8 @@ class CartPage(AppPage):
     def get_cart_list(self) -> Locator:
         return self.page.locator("[data-test='cart-list']")
 
-    def get_product_item_or_items(self) -> Locator:
-        return self.page.locator("[data-test='inventory-item']")
-
     def get_product_item_by_name(self, product_name: str) -> Locator:
         return self.get_product_item_or_items().filter(has_text=product_name)
-
-    @staticmethod
-    def get_product_quantity_from_item(product_item: Locator) -> Locator:
-        return product_item.locator('[data-test="item-quantity"]')
 
     def remove_product_from_cart(self, product_name: str) -> None:
         product_item = self.get_product_item_by_name(product_name)
@@ -53,5 +47,8 @@ class CartPage(AppPage):
     def get_checkout_button(self) -> Locator:
         return self.page.locator("[data-test='checkout']")
 
-    def checkout(self) -> None:
+    def checkout(self) -> CheckoutInformationPage:
+        from pages.checkout_page import CheckoutInformationPage
+
         self.get_checkout_button().click()
+        return CheckoutInformationPage(self.page)

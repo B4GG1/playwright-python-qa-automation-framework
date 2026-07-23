@@ -14,6 +14,7 @@ The purpose of this file is to provide a quick overview of what the framework al
 * Regression test execution support
 * Sorting test execution support
 * Navigation test execution support
+* End-to-end test marker support
 * Marker-based selective test execution
 * Centralized pytest configuration
 * Playwright Chromium execution in CI
@@ -27,26 +28,42 @@ The purpose of this file is to provide a quick overview of what the framework al
 * Inventory Page Object implemented
 * Product Details Page Object implemented
 * Cart Page Object implemented
+* Checkout Page Objects implemented
 * Centralized login page locators
 * Centralized authenticated-page shared locators
 * Centralized inventory page locators
 * Centralized product details page locators
 * Centralized cart page locators
+* Centralized checkout information page locators
+* Centralized checkout overview page locators
+* Centralized checkout complete page locators
 * Reusable login page actions
 * Reusable authenticated-page actions
 * Reusable inventory page actions
 * Reusable product details page actions
 * Reusable cart page actions
+* Reusable checkout information page actions
+* Reusable checkout overview page actions
+* Reusable checkout complete page actions
 * Error message interaction support
 * Login page UI element access methods
 * Input error icon access methods
 * Inventory product list and product card access methods
 * Product details page element access methods
 * Cart item and cart content access methods
+* Checkout information form access methods
+* Checkout overview product item access methods
+* Checkout overview price summary access methods
+* Checkout complete confirmation access methods
 * Cart badge access methods
 * Continue Shopping interaction support
 * Add-to-cart interaction support
 * Remove-from-cart interaction support
+* Checkout navigation support from cart page
+* Checkout information form submission support
+* Checkout cancellation support
+* Checkout finish action support
+* Back Home navigation support after checkout completion
 * Logout interaction support from authenticated pages
 * Application menu interaction support
 * Lightweight navigation between Page Objects
@@ -57,12 +74,16 @@ The purpose of this file is to provide a quick overview of what the framework al
 * Inventory product card content validation helper
 * Product details content validation helper
 * Cart item content validation helper
-* Product price conversion helper for numeric sorting assertions
+* Checkout overview product item content validation helper
+* Checkout overview price summary validation helper
+* Inventory product item validation helper after checkout-related navigation
+* Product price conversion helper for numeric sorting and checkout summary assertions
 
 ### Test Data Management
 
 * Centralized login test data
 * Centralized product test data
+* Centralized checkout test data
 * Valid user test data
 * Invalid login test data
 * Empty credentials test data
@@ -70,14 +91,25 @@ The purpose of this file is to provide a quick overview of what the framework al
 * Expected login error messages
 * Protected route URL suffixes for access-control validation
 * Product IDs, names, descriptions, prices, and image paths
-* Deterministic product data reused by inventory, product details, and cart tests
+* Valid checkout customer information
+* Checkout required field error messages
+* Checkout page title expectations
+* Checkout overview summary label expectations
+* Checkout completion header and message expectations
+* Deterministic product data reused by inventory, product details, cart, and checkout tests
 * Test case IDs mapped to automated test data where practical
 
 ### Login Page Test Coverage
 
 The framework currently includes automated coverage for the Sauce Demo login and authentication area.
 
-Implemented login scenarios:
+Implemented, and checkout tests
+
+* Test case IDs mapped to automated test data where practical
+
+### Login Page Test Coverage
+
+The framework currently includes automated coverage for the login scenarios:
 
 * successful login with valid credentials
 * login with invalid username
@@ -94,6 +126,9 @@ Implemented login scenarios:
 * direct inventory page access without login
 * direct cart page access without login
 * direct item page access without login
+* direct checkout information page access without login
+* direct checkout overview page access without login
+* direct checkout complete page access without login
 * input error icons displayed after failed login
 
 ### Inventory Page Test Coverage
@@ -165,26 +200,54 @@ Implemented cart scenarios:
 * product details can be opened from cart item name
 * Continue Shopping preserves cart state
 * all products can be removed from cart page
+* checkout button opens checkout information page with product in cart
 
-Checkout behavior remains intentionally excluded from inventory, product details, and cart coverage and is planned for a separate checkout workstream.
+Cart Page coverage owns the user action that starts on the cart page and opens checkout step one. Detailed checkout information, overview, and completion behavior is owned by Checkout Page coverage.
+
+### Checkout Page Test Coverage
+
+The framework currently includes automated coverage for the Sauce Demo checkout flow.
+
+Implemented checkout scenarios:
+
+* checkout information form displays required customer fields
+* checkout information form requires first name
+* checkout information form requires last name
+* checkout information form requires postal code
+* input error icons are displayed after failed checkout information submission
+* checkout information error message can be closed after validation failure
+* checkout information form continues to overview when valid data is provided
+* checkout information cancel returns to cart and preserves cart item
+* checkout overview displays selected product
+* checkout overview displays each selected product
+* checkout overview price summary is correct for one product
+* checkout overview price summary is correct for multiple products
+* checkout overview cancel returns to inventory page
+* product details can be opened from checkout overview item name
+* product details can be opened from checkout overview item name for each product
+* finish button completes checkout and opens order confirmation page
+* checkout complete page displays order confirmation message
+* Back Home returns to inventory page after order completion
 
 ### Test Organization
 
 * One automated test module per covered page area
 * One manual test case file per covered page area
 * Pytest marker-based test categorization
-* Smoke, regression, UI, positive, negative, sorting, and navigation markers
+* Smoke, regression, UI, positive, negative, sorting, navigation, and e2e markers
 * Parametrized negative login scenarios
 * Parametrized protected route access scenarios
 * Parametrized inventory product scenarios
 * Parametrized product details scenarios
 * Parametrized cart scenarios using manual test case IDs
+* Parametrized checkout scenarios using manual test case IDs where practical
 * Parametrized test output with manual test case IDs
 * Manual test case documentation under `test_cases/`
 * Login test case coverage mapped to automated tests
 * Inventory test case coverage mapped to automated tests
 * Product Details test case coverage mapped to automated tests
 * Cart test case coverage mapped to automated tests
+* Checkout test case coverage mapped to automated tests
 
 ### Fixtures And Reusable Setup
 
@@ -193,10 +256,14 @@ Checkout behavior remains intentionally excluded from inventory, product details
 * Shared pytest fixture for logged-in inventory page
 * Shared pytest fixture for inventory page with one product in cart
 * Shared pytest fixture for cart page with one product
+* Shared pytest fixture for checkout step one page with one product
+* Shared pytest fixture for checkout step two page with one product
+* Shared pytest fixture for checkout complete page with one product
 * Reusable setup for login page tests
 * Reusable setup for inventory tests
 * Reusable setup for product details tests
 * Reusable setup for cart tests
+* Reusable setup for checkout tests
 * Screenshot capture hook on test failure
 
 ### Code Quality
@@ -240,11 +307,13 @@ Checkout behavior remains intentionally excluded from inventory, product details
 * Inventory page manual test cases documented in Markdown
 * Product Details page manual test cases documented in Markdown
 * Cart page manual test cases documented in Markdown
+* Checkout page manual test cases documented in Markdown
 * Login page automation coverage documented and mapped to test files
 * Inventory page automation coverage documented and mapped to test files
 * Product Details page automation coverage documented and mapped to test files
 * Cart page automation coverage documented and mapped to test files
-* Phase 3C structure cleanup and documentation sync support
+* Checkout page automation coverage documented and mapped to test files
+* Checkout workstream final validation and documentation sync support
 
 ## Planned Features
 
@@ -254,19 +323,17 @@ Checkout behavior remains intentionally excluded from inventory, product details
 * Environment-based configuration management
 * Improved configuration structure for base URLs and execution settings
 * Additional reusable framework utilities when repeated framework logic appears
-* Additional Page Object classes for future application areas
+* Additional Page Object classes for future application areas only when new page-level scope requires them
 
 ### Test Coverage
 
-Planned next automation areas:
+Planned future automation areas:
 
-* checkout flow tests
-* checkout information form validation
-* checkout overview validation
-* complete order flow
-* order completion validation
+* broader multipage user journey tests
 * broader session and logout validation if required by future scope
 * cross-browser UI execution
+* API-level test coverage
+* additional edge-case or known-defect coverage if approved during planning
 
 ### Test Organization
 

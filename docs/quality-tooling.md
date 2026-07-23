@@ -30,19 +30,19 @@ Current responsibilities:
 
 Run Ruff locally:
 
-```bash
+```bash id="ykwisx"
 ruff check .
 ```
 
 Ruff configuration is stored in:
 
-```text
+```text id="wd1cqu"
 pyproject.toml
 ```
 
 Current Ruff configuration:
 
-```toml
+```toml id="3aubux"
 [tool.ruff]
 line-length = 200
 target-version = "py312"
@@ -62,25 +62,25 @@ It enforces a consistent formatting style across the project.
 
 Check formatting without modifying files:
 
-```bash
+```bash id="zxyo0m"
 black --check .
 ```
 
 Format files locally:
 
-```bash
+```bash id="3wypxz"
 black .
 ```
 
 Black configuration is stored in:
 
-```text
+```text id="loy1bb"
 pyproject.toml
 ```
 
 Current Black configuration:
 
-```toml
+```toml id="wmxn6w"
 [tool.black]
 line-length = 100
 target-version = ['py312']
@@ -94,25 +94,25 @@ The project uses Black-compatible isort configuration.
 
 Check import sorting without modifying files:
 
-```bash
+```bash id="ai3xqo"
 isort . --check-only
 ```
 
 Sort imports locally:
 
-```bash
+```bash id="aubco2"
 isort .
 ```
 
 isort configuration is stored in:
 
-```text
+```text id="33j8da"
 pyproject.toml
 ```
 
 Current isort configuration:
 
-```toml
+```toml id="s3t1vv"
 [tool.isort]
 profile = "black"
 line_length = 100
@@ -130,13 +130,13 @@ Current pre-commit hooks include:
 
 Install hooks locally:
 
-```bash
+```bash id="1pah99"
 pre-commit install
 ```
 
 Run all hooks manually:
 
-```bash
+```bash id="af4loy"
 pre-commit run --all-files
 ```
 
@@ -163,19 +163,20 @@ Current responsibilities:
 
 Run the full test suite:
 
-```bash
+```bash id="ldzjrf"
 pytest -v
 ```
 
 Run selected marker groups:
 
-```bash
+```bash id="bcgo5g"
 pytest -m smoke -v
 pytest -m regression -v
 pytest -m positive -v
 pytest -m negative -v
 pytest -m sorting -v
 pytest -m navigation -v
+pytest -m e2e -v
 pytest -m "ui and smoke" -v
 pytest -m "ui and regression" -v
 pytest -m "ui and sorting" -v
@@ -184,7 +185,7 @@ pytest -m "ui and navigation" -v
 
 Marker definitions are stored in:
 
-```text
+```text id="8r08co"
 pytest.ini
 ```
 
@@ -225,16 +226,25 @@ Examples of current assertion usage include:
 * checking cart item content
 * checking Add to cart and Remove button states
 * checking cart state after logout and re-login
+* checking checkout information form visibility
+* checking checkout required field error messages
+* checking checkout input error icon visibility
+* checking checkout overview visibility
+* checking checkout overview product item content
+* checking checkout overview price summary content
+* checking checkout complete page visibility
+* checking checkout completion header and message
+* checking Back Home navigation after order completion
 
 Playwright assertions should be preferred for browser and UI state validation because they include built-in waiting behavior.
 
-Plain Python assertions are used when comparing extracted values such as product names, product prices, sorted lists, expected error message strings, or other already-read data.
+Plain Python assertions are used when comparing extracted values such as product names, product prices, sorted lists, expected error message strings, checkout summary values, or other already-read data.
 
 ## Local Quality Workflow
 
 Before pushing changes, the recommended local validation workflow is:
 
-```bash
+```bash id="oa2h2r"
 ruff check .
 black --check .
 isort . --check-only
@@ -243,14 +253,14 @@ pytest -v
 
 If formatting changes are needed, run:
 
-```bash
+```bash id="fahgw6"
 black .
 isort .
 ```
 
 Then run validation again:
 
-```bash
+```bash id="qvqldy"
 ruff check .
 black --check .
 isort . --check-only
@@ -259,7 +269,7 @@ pytest -v
 
 For login-related changes, these commands may also be useful:
 
-```bash
+```bash id="rdk5y1"
 pytest -v tests/test_login_page.py
 pytest -m smoke -v
 pytest -m regression -v
@@ -270,7 +280,7 @@ pytest -m "ui and smoke" -v
 
 For inventory-related changes, these commands may also be useful:
 
-```bash
+```bash id="ox6ed5"
 pytest -v tests/test_inventory_page.py
 pytest -m sorting -v
 pytest -m "ui and sorting" -v
@@ -278,7 +288,7 @@ pytest -m "ui and sorting" -v
 
 For product-details-related changes, these commands may also be useful:
 
-```bash
+```bash id="0tcv0i"
 pytest -v tests/test_product_details_page.py
 pytest -m navigation -v
 pytest -m "ui and navigation" -v
@@ -287,20 +297,31 @@ pytest -m "ui and regression" -v
 
 For cart-related changes, these commands may also be useful:
 
-```bash
+```bash id="jeldgr"
 pytest -v tests/test_cart_page.py
 pytest -m navigation -v
 pytest -m "ui and navigation" -v
 pytest -m "ui and regression" -v
 ```
 
+For checkout-related changes, these commands may also be useful:
+
+```bash id="mmqozo"
+pytest -v tests/test_checkout_page.py
+pytest -m e2e -v
+pytest -m navigation -v
+pytest -m "ui and regression" -v
+pytest -m "ui and navigation" -v
+```
+
 For checkpoint or stabilization tasks, run relevant scoped modules and full validation when possible:
 
-```bash
+```bash id="e53cve"
 pytest -v tests/test_login_page.py
 pytest -v tests/test_inventory_page.py
 pytest -v tests/test_product_details_page.py
 pytest -v tests/test_cart_page.py
+pytest -v tests/test_checkout_page.py
 pytest -v
 ```
 
@@ -319,7 +340,7 @@ Current CI checks include:
 
 Current CI quality commands include:
 
-```bash
+```bash id="o50fuj"
 ruff check .
 black --check .
 isort . --check-only
@@ -345,7 +366,7 @@ The project uses quality gates at multiple levels.
 
 Before commit or push:
 
-```bash
+```bash id="xg4knf"
 ruff check .
 black --check .
 isort . --check-only
@@ -356,7 +377,7 @@ pytest -v
 
 Before creating commits, or manually before final validation:
 
-```bash
+```bash id="xz3hof"
 pre-commit run --all-files
 ```
 
@@ -364,11 +385,12 @@ pre-commit run --all-files
 
 For workstream-specific review or stabilization tasks:
 
-```bash
+```bash id="b5beae"
 pytest -v tests/test_login_page.py
 pytest -v tests/test_inventory_page.py
 pytest -v tests/test_product_details_page.py
 pytest -v tests/test_cart_page.py
+pytest -v tests/test_checkout_page.py
 ```
 
 The scoped command should be followed by full-suite validation before the workstream is considered ready for merge unless a scoped validation exception is explicitly accepted.
@@ -384,7 +406,7 @@ Before merging Pull Requests:
 
 ## Current Quality Status
 
-The current quality tooling supports completed page-level automation coverage for Login, Inventory, Product Details, and Cart areas.
+The current quality tooling supports completed page-level automation coverage for Login, Inventory, Product Details, Cart, and Checkout areas.
 
 The project currently includes:
 
@@ -392,20 +414,27 @@ The project currently includes:
 * Page Object Model implementation for inventory page
 * Page Object Model implementation for product details page
 * Page Object Model implementation for cart page
+* Page Object Model implementation for checkout pages
 * shared authenticated-page behavior through `AppPage`
 * reusable product assertion helpers
+* reusable checkout overview assertion helpers
 * reusable pytest fixture for opened login page
 * reusable pytest fixture for standard user credentials
 * reusable pytest fixture for logged-in inventory page
 * reusable pytest fixture for inventory page with one product in cart
 * reusable pytest fixture for cart page with one product
+* reusable pytest fixture for checkout step one page with one product
+* reusable pytest fixture for checkout step two page with one product
+* reusable pytest fixture for checkout complete page with one product
 * centralized login test data
 * centralized product test data
+* centralized checkout test data
 * parametrized login tests
 * parametrized protected route access tests
 * parametrized inventory product tests
 * parametrized product details tests
 * parametrized cart tests
+* parametrized checkout tests where practical
 * marker-based test categorization
 * screenshot capture on test failure
 * local and CI validation workflow

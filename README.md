@@ -44,14 +44,21 @@ The long-term goal of the project is to evolve into a production-style automatio
 
 Current project phase:
 
-```text
-Phase 3C final validation — Structure Cleanup, Coverage Completion, And Documentation Sync
+```
+Phase 3D final validation — Checkout Automation Workstream
+```
+
+Current validation task:
+
+```
+AQA-0082 — Checkout Workstream Final Validation And Documentation Sync
 ```
 
 The project currently includes completed or implemented automation coverage for:
 
 * login page and authentication behavior
 * protected route access validation
+* protected checkout route access validation
 * inventory page visibility and product listing behavior
 * product card content validation
 * inventory-side product details navigation
@@ -64,6 +71,16 @@ The project currently includes completed or implemented automation coverage for:
 * remove-from-cart behavior from inventory, product details, and cart pages
 * Continue Shopping navigation
 * cart state persistence after logout and re-login
+* cart-owned checkout step one navigation
+* checkout information form validation
+* checkout information required field validation
+* checkout information error handling
+* checkout overview validation
+* checkout overview price summary validation
+* product details navigation from checkout overview
+* checkout finish action
+* checkout complete page confirmation validation
+* Back Home navigation after order completion
 
 Completed login automation workstream includes:
 
@@ -77,6 +94,9 @@ Completed login automation workstream includes:
 * protected inventory route access validation
 * protected cart route access validation
 * protected item details route access validation
+* protected checkout information route access validation
+* protected checkout overview route access validation
+* protected checkout complete route access validation
 * input error icon validation after failed login
 * pytest parametrization
 * pytest markers
@@ -123,28 +143,47 @@ Completed cart automation workstream includes:
 * Continue Shopping navigation validation
 * Continue Shopping cart state preservation
 * product details navigation from cart item name
+* checkout information page navigation from the cart page with product in cart
 * cart state persistence validation after logout and re-login
 * all-products cart visibility and remove-from-cart coverage
 
-Current Phase 3C cleanup includes:
+Completed checkout automation workstream includes:
+
+* manual checkout test cases
+* checkout Page Objects
+* centralized checkout test data
+* reusable checkout setup fixtures
+* checkout information form visibility validation
+* checkout required customer field validation
+* checkout information error message validation
+* checkout information input error icon validation
+* checkout information error close behavior
+* checkout information form submission with valid data
+* checkout information cancel navigation back to cart
+* checkout overview selected product validation
+* checkout overview all-products validation
+* checkout overview price summary validation
+* checkout overview cancel navigation back to inventory
+* product details navigation from checkout overview item name
+* all-products product details navigation from checkout overview
+* checkout finish action validation
+* checkout complete page confirmation validation
+* Back Home navigation after order completion
+
+Current checkout workstream final validation includes:
 
 * one automated test module per covered page area
 * one manual test case file per covered page area
 * `BasePage` and `AppPage` structure alignment
 * shared authenticated-page behavior ownership through `AppPage`
-* reusable product assertion helpers
+* reusable product and checkout assertion helpers
 * fixture naming and reuse review
 * navigation return type review
 * test case metadata cleanup
 * documentation synchronization
-
-The next planned functional workstream will expand automation coverage into:
-
-* checkout information form validation
-* checkout error handling
-* checkout overview validation
-* complete order flow
-* order confirmation validation
+* final local quality validation
+* final full pytest validation
+* branch readiness check before Pull Request
 
 ## System Under Test
 
@@ -166,22 +205,23 @@ This makes it suitable for demonstrating end-to-end test automation scenarios an
 
 ## Implemented Coverage
 
-Current automated coverage includes Login, Inventory, Product Details, and Cart-related behavior.
+Current automated coverage includes Login, Inventory, Product Details, Cart, and Checkout-related behavior.
 
 Detailed test case definitions are stored in dedicated files under the `test_cases/` directory. The README provides only a high-level coverage overview to keep the project entry point readable and maintainable.
 
-| Workstream                      | Status    | Covered Areas                                                                                                                                                        | Test Case Documentation                                               |
-|---------------------------------|-----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------|
-| Login Page Automation           | Completed | positive login, negative login, UI validation, protected route access, input error icons                                                                             | [Login Page Test Cases](test_cases/login-page.md)                     |
-| Inventory Page Automation       | Completed | inventory page visibility, product list validation, product card content, sorting, product details navigation, inventory-side cart actions                           | [Inventory Page Test Cases](test_cases/inventory-page.md)             |
-| Product Details Page Automation | Completed | product details content, return navigation, product-details-side cart actions, cart badge behavior, cart navigation                                                  | [Product Details Page Test Cases](test_cases/product-details-page.md) |
-| Cart Page Automation            | Completed | empty cart, added product visibility, cart content, remove from cart, cart badge behavior, Continue Shopping, cart persistence, product details navigation from cart | [Cart Page Test Cases](test_cases/cart-page.md)                       |
-| Checkout Flow Automation        | Planned   | checkout information, checkout overview, order completion, validation scenarios                                                                                      | Planned                                                               |
+| Workstream                      | Status    | Covered Areas                                                                                                                                                 | Test Case Documentation                                               |
+|---------------------------------|-----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------|
+| Login Page Automation           | Completed | positive login, negative login, UI validation, protected route access, protected checkout route access, input error icons                                     | [Login Page Test Cases](test_cases/login-page.md)                     |
+| Inventory Page Automation       | Completed | inventory page visibility, product list validation, product card content, sorting, product details navigation, inventory-side cart actions                    | [Inventory Page Test Cases](test_cases/inventory-page.md)             |
+| Product Details Page Automation | Completed | product details content, return navigation, product-details-side cart actions, cart badge behavior, cart navigation                                           | [Product Details Page Test Cases](test_cases/product-details-page.md) |
+| Cart Page Automation            | Completed | empty cart, added product visibility, cart content, remove from cart, cart badge behavior, Continue Shopping, cart persistence, checkout entry navigation     | [Cart Page Test Cases](test_cases/cart-page.md)                       |
+| Checkout Flow Automation        | Completed | checkout information form, required field validation, checkout overview, price summary validation, product details navigation from overview, order completion | [Checkout Page Test Cases](test_cases/checkout-page.md)               |
 
 Current automated test areas:
 
 * login and authentication tests
 * protected route access tests
+* protected checkout route access tests
 * inventory page tests
 * product details tests
 * product sorting tests
@@ -189,14 +229,18 @@ Current automated test areas:
 * cart badge tests
 * cart item content tests
 * cart persistence tests
+* checkout information form tests
+* checkout overview tests
+* checkout price summary tests
+* checkout completion tests
 * shared page-level behavior validation through reusable Page Objects
 
 Future automated test areas:
 
-* checkout flow tests
-* complete purchase flow tests
 * broader multipage user journey tests
 * API-level tests
+* cross-browser UI tests
+* additional approved edge-case or known-defect coverage
 
 ## Technology Stack
 
@@ -248,14 +292,14 @@ Before setting up the framework, ensure the following tools are installed:
 
 ### 1. Clone Repository
 
-```bash
+```
 git clone git@github.com:B4GG1/playwright-python-qa-automation-framework.git
 cd playwright-python-qa-automation-framework
 ```
 
 ### 2. Create Virtual Environment
 
-```bash
+```
 python3 -m venv .venv
 source .venv/bin/activate
 ```
@@ -264,13 +308,13 @@ source .venv/bin/activate
 
 Recommended installation from locked dependency versions:
 
-```bash
+```
 pip install -r requirements-lock.txt
 ```
 
 Alternative installation from main dependency list:
 
-```bash
+```
 pip install -r requirements.txt
 ```
 
@@ -278,13 +322,13 @@ pip install -r requirements.txt
 
 For local Linux or WSL2 setup:
 
-```bash
+```
 playwright install --with-deps chromium
 ```
 
 If system dependencies are already installed, Chromium-only installation is also sufficient:
 
-```bash
+```
 playwright install chromium
 ```
 
@@ -292,101 +336,114 @@ playwright install chromium
 
 Run all tests:
 
-```bash
+```
 pytest -v
 ```
 
 Run smoke tests:
 
-```bash
+```
 pytest -m smoke -v
 ```
 
 Run regression tests:
 
-```bash
+```
 pytest -m regression -v
 ```
 
 Run positive tests:
 
-```bash
+```
 pytest -m positive -v
 ```
 
 Run negative tests:
 
-```bash
+```
 pytest -m negative -v
 ```
 
 Run sorting tests:
 
-```bash
+```
 pytest -m sorting -v
 ```
 
 Run navigation tests:
 
-```bash
+```
 pytest -m navigation -v
+```
+
+Run end-to-end tests:
+
+```
+pytest -m e2e -v
 ```
 
 Run UI smoke tests:
 
-```bash
+```
 pytest -m "ui and smoke" -v
 ```
 
 Run UI regression tests:
 
-```bash
+```
 pytest -m "ui and regression" -v
 ```
 
 Run UI sorting tests:
 
-```bash
+```
 pytest -m "ui and sorting" -v
 ```
 
 Run UI navigation tests:
 
-```bash
+```
 pytest -m "ui and navigation" -v
 ```
 
 Run login tests:
 
-```bash
+```
 pytest tests/test_login_page.py -v
 ```
 
 Run inventory tests:
 
-```bash
+```
 pytest tests/test_inventory_page.py -v
 ```
 
 Run product details tests:
 
-```bash
+```
 pytest tests/test_product_details_page.py -v
 ```
 
 Run cart tests:
 
-```bash
+```
 pytest tests/test_cart_page.py -v
 ```
 
-For Phase 3C final scoped validation, run:
+Run checkout tests:
 
-```bash
+```
+pytest tests/test_checkout_page.py -v
+```
+
+For checkout workstream final scoped validation, run:
+
+```
 pytest -v tests/test_login_page.py
 pytest -v tests/test_inventory_page.py
 pytest -v tests/test_product_details_page.py
 pytest -v tests/test_cart_page.py
+pytest -v tests/test_checkout_page.py
 pytest -v
 ```
 
@@ -394,25 +451,25 @@ pytest -v
 
 Run Ruff linting:
 
-```bash
+```
 ruff check .
 ```
 
 Check formatting with Black:
 
-```bash
+```
 black --check .
 ```
 
 Check import sorting with isort:
 
-```bash
+```
 isort . --check-only
 ```
 
 Run all main local validation checks:
 
-```bash
+```
 ruff check .
 black --check .
 isort . --check-only
@@ -421,20 +478,20 @@ pytest -v
 
 If formatting changes are needed:
 
-```bash
+```
 black .
 isort .
 ```
 
 Run pre-commit hooks manually:
 
-```bash
+```
 pre-commit run --all-files
 ```
 
 Install pre-commit hooks:
 
-```bash
+```
 pre-commit install
 ```
 
@@ -449,7 +506,7 @@ The framework generates runtime test outputs such as:
 
 Local report output is stored under:
 
-```text
+```
 reports/
 ```
 
@@ -511,6 +568,9 @@ All extended project documentation is stored in the `docs/` directory to keep th
 * [Cart Page Test Cases](test_cases/cart-page.md)
   Manual cart test cases mapped to automated test coverage.
 
+* [Checkout Page Test Cases](test_cases/checkout-page.md)
+  Manual checkout test cases mapped to automated test coverage.
+
 ## Roadmap
 
 Current roadmap direction:
@@ -520,15 +580,14 @@ Current roadmap direction:
 * **Phase 2 Checkpoint:** Documentation review and Phase 3 preparation — completed
 * **Phase 3A:** Inventory And Products Automation Workstream — completed
 * **Phase 3B:** Cart Automation Workstream — completed
-* **Phase 3C:** Structure Cleanup, Coverage Completion, And Documentation Sync — in final validation
-* **Next Phase 3 Workstream:** Checkout Flow Automation — planned
+* **Phase 3C:** Structure Cleanup, Coverage Completion, And Documentation Sync — completed
+* **Phase 3D:** Checkout Automation Workstream — in final validation
+* **Phase 3 Checkpoint:** Planned after checkout workstream validation
 * **Phase 4:** Framework Maturity — planned
 * **Phase 5:** Advanced Extensions — future
 
 Future planned areas include:
 
-* checkout flow automation
-* complete purchase flow tests
 * broader multipage user journey tests
 * API testing layer
 * Allure reporting
@@ -536,6 +595,8 @@ Future planned areas include:
 * Docker-based execution environment
 * Selenium comparison module
 * Jenkins pipeline integration
+* CI optimization
+* framework maturity improvements
 
 ## Navigation Notes
 

@@ -135,7 +135,7 @@ The pipeline validates code quality using:
 * Black for formatting validation
 * isort for import sorting validation
 
-Current, quality commands:
+Current quality commands:
 
 ```bash
 ruff check .
@@ -176,6 +176,7 @@ The current automated test suite includes:
 * negative login scenarios
 * login UI behavior checks
 * protected route access validation
+* protected checkout route access validation
 * inventory page validation
 * product list and product card validation
 * inventory-side product details navigation validation
@@ -192,6 +193,18 @@ The current automated test suite includes:
 * remove-from-cart validation
 * Continue Shopping navigation validation
 * cart state persistence after logout and re-login
+* cart-owned navigation to checkout step one
+* checkout information form validation
+* checkout information required field validation
+* checkout information error state validation
+* checkout information cancel navigation validation
+* checkout overview product summary validation
+* checkout overview price summary validation
+* checkout overview cancel navigation validation
+* product details navigation from checkout overview
+* checkout finish action validation
+* checkout complete page confirmation validation
+* Back Home navigation after order completion
 
 ### 7. Artifact Upload
 
@@ -310,11 +323,12 @@ pytest -m "ui and smoke" -v
 pytest -m "ui and regression" -v
 pytest -m "ui and sorting" -v
 pytest -m "ui and navigation" -v
+pytest -m e2e -v
 ```
 
 The main CI pipeline currently executes the full test suite rather than a marker-filtered subset.
 
-Future CI improvements may include separate jobs for smoke, regression, API, sorting, navigation, and cross-browser test execution.
+Future CI improvements may include separate jobs for smoke, regression, API, sorting, navigation, end-to-end, and cross-browser test execution.
 
 ## Branch Protection Strategy
 
@@ -380,7 +394,7 @@ The current CI setup provides:
 
 ## Current CI Status
 
-The CI pipeline is operational and supports the completed page-level automation coverage for Login, Inventory, Product Details, and Cart areas.
+The CI pipeline is operational and supports the completed page-level automation coverage for Login, Inventory, Product Details, Cart, and Checkout areas.
 
 The pipeline validates:
 
@@ -390,7 +404,7 @@ The pipeline validates:
 * generated HTML report
 * CI artifacts
 
-It is ready to support Phase 3C final validation, PR readiness checks, and future framework expansion into checkout, API testing, reporting improvements, and additional CI optimization.
+It is ready to support checkout workstream final validation, PR readiness checks, and future framework expansion into API testing, reporting improvements, additional CI optimization, and later framework maturity work.
 
 ## Future Improvements
 

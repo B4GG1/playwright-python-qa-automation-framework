@@ -37,7 +37,7 @@ Test cases should be documented before or alongside automation work.
 
 Recommended location:
 
-```text
+```
 test_cases/
 ```
 
@@ -57,11 +57,12 @@ Each test case should include:
 
 Current implemented test case documentation:
 
-```text
+```
 test_cases/login-page.md
 test_cases/inventory-page.md
 test_cases/product-details-page.md
 test_cases/cart-page.md
+test_cases/checkout-page.md
 ```
 
 Current test case identifiers include:
@@ -70,6 +71,7 @@ Current test case identifiers include:
 * `TC-INVENTORY-XXX`
 * `TC-PRODUCT-DETAILS-XXX`
 * `TC-CART-XXX`
+* `TC-CHECKOUT-XXX`
 
 These identifiers are also used in parametrized pytest output where practical.
 
@@ -77,25 +79,27 @@ These identifiers are also used in parametrized pytest output where practical.
 
 Current automated test modules follow the one test file per covered page area principle:
 
-```text
+```
 tests/test_login_page.py
 tests/test_inventory_page.py
 tests/test_product_details_page.py
 tests/test_cart_page.py
+tests/test_checkout_page.py
 ```
 
 Each automated test module maps to the corresponding manual test case file:
 
 | Automated Test Module                | Manual Test Case File                | Test Case ID Range             |
 | ------------------------------------ | ------------------------------------ | ------------------------------ |
-| `tests/test_login_page.py`           | `test_cases/login-page.md`           | `TC-LOGIN-001`–`016`           |
+| `tests/test_login_page.py`           | `test_cases/login-page.md`           | `TC-LOGIN-001`–`019`           |
 | `tests/test_inventory_page.py`       | `test_cases/inventory-page.md`       | `TC-INVENTORY-001`–`022`       |
 | `tests/test_product_details_page.py` | `test_cases/product-details-page.md` | `TC-PRODUCT-DETAILS-001`–`014` |
-| `tests/test_cart_page.py`            | `test_cases/cart-page.md`            | `TC-CART-001`–`013`            |
+| `tests/test_cart_page.py`            | `test_cases/cart-page.md`            | `TC-CART-001`–`014`            |
+| `tests/test_checkout_page.py`        | `test_cases/checkout-page.md`        | `TC-CHECKOUT-001`–`018`        |
 
 ## Current Test Coverage
 
-The current automated test coverage focuses on Sauce Demo Login, Inventory, Product Details, and Cart page behavior.
+The current automated test coverage focuses on Sauce Demo Login, Inventory, Product Details, Cart, and Checkout page behavior.
 
 Implemented login coverage includes:
 
@@ -114,6 +118,9 @@ Implemented login coverage includes:
 * direct inventory page access without login
 * direct cart page access without login
 * direct item details page access without login
+* direct checkout information page access without login
+* direct checkout overview page access without login
+* direct checkout complete page access without login
 * input error icon visibility after failed login
 
 Implemented inventory coverage includes:
@@ -173,8 +180,28 @@ Implemented cart coverage includes:
 * product details navigation from cart item name
 * Continue Shopping cart state preservation
 * all-products remove-from-cart coverage from cart page
+* checkout information page navigation from the cart page with product in cart
 
-Checkout scenarios are not implemented yet and are planned for a later workstream.
+Implemented checkout coverage includes:
+
+* checkout information form displays required customer fields
+* checkout information form requires first name
+* checkout information form requires last name
+* checkout information form requires postal code
+* input error icons are displayed after failed checkout information submission
+* checkout information error message can be closed after validation failure
+* checkout information form continues to overview when valid data is provided
+* checkout information cancel returns to cart and preserves cart item
+* checkout overview displays selected product
+* checkout overview displays each selected product
+* checkout overview price summary is correct for one product
+* checkout overview price summary is correct for multiple products
+* checkout overview cancel returns to inventory page
+* product details can be opened from checkout overview item name
+* product details can be opened from checkout overview item name for each product
+* finish button completes checkout and opens order confirmation page
+* checkout complete page displays order confirmation message
+* Back Home returns to inventory page after order completion
 
 ## Test Types
 
@@ -194,11 +221,12 @@ Current examples:
 * product details content is displayed for a selected product
 * product can be added to cart from product details page
 * product can be removed from cart from product details page
-
-Future examples:
-
-* basic checkout availability
-* order completion availability
+* checkout button opens checkout information page with product in cart
+* checkout information form displays required customer fields
+* checkout information form continues to overview when valid data is provided
+* checkout overview displays selected product
+* checkout overview price summary is correct for one product
+* finish button completes checkout and opens order confirmation page
 
 ### Regression Tests
 
@@ -211,6 +239,7 @@ Current examples:
 * locked out user validation
 * error message behavior
 * protected route access validation
+* protected checkout route access validation
 * product card content validation
 * product details navigation
 * product details content validation
@@ -222,12 +251,13 @@ Current examples:
 * add-to-cart and remove-from-cart behavior from cart page
 * cart state persistence after logout and re-login
 * Continue Shopping cart state preservation
-
-Future examples:
-
-* checkout validation
-* checkout overview behavior
-* full purchase flow
+* checkout information required field validation
+* checkout information error message close behavior
+* checkout overview product summary validation
+* checkout overview price summary validation
+* checkout overview cancellation behavior
+* checkout complete page confirmation validation
+* Back Home navigation after order completion
 
 ### UI Tests
 
@@ -250,6 +280,12 @@ Current examples:
 * cart badge visibility
 * Add to cart and Remove button visibility
 * Continue Shopping navigation behavior
+* checkout information form visibility
+* checkout information field validation messages
+* checkout information input error icon visibility
+* checkout overview product item visibility
+* checkout overview price summary visibility
+* checkout complete page confirmation visibility
 
 ### Positive Tests
 
@@ -266,6 +302,9 @@ Current examples:
 * user can remove products from the cart
 * user can open the cart page from authenticated pages
 * cart state persists after logout and re-login
+* user can continue from checkout information to checkout overview with valid customer data
+* user can complete checkout from checkout overview
+* user can return home after order completion
 
 ### Negative Tests
 
@@ -274,9 +313,10 @@ Negative tests validate error handling and invalid user behavior.
 Current examples:
 
 * invalid login
-* empty required fields
+* empty required login fields
 * locked out user access
 * direct protected route access without login
+* empty required checkout information fields
 
 ### Access Control Tests
 
@@ -287,6 +327,9 @@ Current examples:
 * unauthenticated user cannot directly access the inventory page
 * unauthenticated user cannot directly access the cart page
 * unauthenticated user cannot directly access an item details page
+* unauthenticated user cannot directly access the checkout information page
+* unauthenticated user cannot directly access the checkout overview page
+* unauthenticated user cannot directly access the checkout complete page
 
 ### Sorting Tests
 
@@ -312,18 +355,18 @@ Current examples:
 * product details can be opened from inventory product names
 * product details can be opened from inventory product images
 * product details can be opened from cart item names
+* product details can be opened from checkout overview item names
 * user can return from product details page to inventory page
 * user can return from cart page to inventory page
 * Continue Shopping returns the user from the cart page to the inventory page while preserving cart state
+* Checkout button opens checkout information page from the cart page with product in cart
+* checkout information Cancel button returns the user to the cart page while preserving cart state
+* checkout overview Cancel button returns the user to the inventory page while preserving cart state
+* Back Home returns the user to the inventory page after order completion
 
 ### End-to-End Tests
 
 End-to-end tests validate complete user journeys across multiple pages.
-
-Current status:
-
-* partial multipage UI flows are implemented
-* complete purchase flow is not implemented yet
 
 Current examples:
 
@@ -331,11 +374,8 @@ Current examples:
 * log in, open product details, add product to cart, and verify cart state
 * add product to cart, log out, log in again, and verify cart state is preserved
 * add multiple products, remove one product, and verify badge/cart state
-
-Planned examples:
-
-* complete checkout flow
-* verify order completion
+* add product to cart, open checkout, submit customer information, finish checkout, and verify order completion
+* complete checkout and return to inventory page with Back Home
 
 ## Test Design Principles
 
@@ -361,13 +401,14 @@ Page Object Model is used to separate test logic from page interaction logic.
 
 Current implementation:
 
-```text
+```
 pages/base_page.py
 pages/app_page.py
 pages/login_page.py
 pages/inventory_page.py
 pages/product_details_page.py
 pages/cart_page.py
+pages/checkout_page.py
 ```
 
 The `BasePage` object is responsible for:
@@ -435,21 +476,50 @@ The `CartPage` object is responsible for:
 * opening product details from cart item name
 * exposing Continue Shopping button
 * returning from cart page to inventory page
-* exposing Checkout button locators without testing checkout behavior in the current cart scope
+* exposing Checkout button locators
+* opening checkout step one from the cart page
 
-Future Page Objects may include:
+The `CheckoutInformationPage` object is responsible for:
 
-* CheckoutPage
+* opening the checkout information page where direct navigation is required
+* exposing checkout information form locators
+* exposing First Name, Last Name, and Postal Code inputs
+* exposing Continue and Cancel buttons
+* filling customer information
+* submitting checkout information
+* exposing validation error message locators
+* closing checkout information validation errors
+* exposing input error icon locators
+* returning from checkout information page to the cart page
+
+The `CheckoutOverviewPage` object is responsible for:
+
+* exposing checkout overview page locators
+* accessing checkout overview product item cards
+* locating checkout overview items by product name
+* accessing checkout overview item name, description, price, and quantity
+* exposing payment, shipping, item total, tax, and total summary locators
+* exposing Cancel and Finish buttons
+* returning from checkout overview page to inventory page
+* opening product details from checkout overview item name
+* completing checkout
+
+The `CheckoutCompletePage` object is responsible for:
+
+* exposing checkout complete page locators
+* exposing completion header and message locators
+* exposing Back Home button locators
+* returning from checkout complete page to inventory page
 
 Page Objects should be introduced when they reduce duplication and improve readability.
 
 ## Reusable Assertion Strategy
 
-Reusable assertions are used when the same product-related validation appears across multiple page areas.
+Reusable assertions are used when the same product-related or checkout-related validation appears across multiple page areas.
 
 Current reusable assertion helper location:
 
-```text
+```
 framework/assertions/product_assertions.py
 ```
 
@@ -458,7 +528,10 @@ Current reusable product assertions support:
 * inventory product card content validation
 * product details content validation
 * cart product item content validation
-* price string conversion for numeric sorting assertions
+* checkout overview product item content validation
+* checkout overview price summary validation
+* inventory product state validation after checkout-related navigation
+* price string conversion for numeric sorting and checkout summary assertions
 
 Reusable assertion helpers should stay focused on shared validation logic. They should not contain navigation logic, test setup logic, or Page Object responsibilities.
 
@@ -468,12 +541,15 @@ Fixtures are used to prepare reusable test setup.
 
 Current fixtures:
 
-```text
+```
 opened_login_page
 standard_user
 logged_in_inventory_page
 inventory_page_with_one_product_in_cart
 cart_page_with_one_product
+checkout_step_one_page_with_one_product
+checkout_step_two_page_with_one_product
+checkout_last_step_page_with_one_product
 ```
 
 The `opened_login_page` fixture:
@@ -504,6 +580,24 @@ The `cart_page_with_one_product` fixture:
 * opens the cart page
 * returns the cart page and selected product data
 
+The `checkout_step_one_page_with_one_product` fixture:
+
+* starts from a cart page with one product already in the cart
+* opens the checkout information page
+* returns the checkout information page and selected product data
+
+The `checkout_step_two_page_with_one_product` fixture:
+
+* starts from checkout step one with one product already in the cart
+* submits valid checkout customer information
+* returns the checkout overview page and selected product data
+
+The `checkout_last_step_page_with_one_product` fixture:
+
+* starts from checkout overview with one product already in the cart
+* finishes checkout
+* returns the checkout complete page and selected product data
+
 Fixtures should be added when setup logic becomes repeated across multiple tests.
 
 Avoid creating too many fixtures too early. Fixture growth should follow real framework needs.
@@ -514,9 +608,10 @@ Test data should be separated from test logic when it improves readability, main
 
 Current test data location:
 
-```text
+```
 test_data/login_test_data.py
 test_data/product_test_data.py
+test_data/checkout_test_data.py
 ```
 
 Current login test data includes:
@@ -536,12 +631,22 @@ Current product test data includes:
 * product prices
 * product image paths
 
-Inventory, product details, and cart tests reuse:
+Current checkout test data includes:
+
+* valid checkout customer information
+* checkout required field error messages
+* checkout page title expectations
+* checkout overview summary label expectations
+* checkout completion header and message expectations
+
+Inventory, product details, cart, and checkout tests reuse:
 
 * valid user data from login test data
 * deterministic product data from product test data
 
 A separate cart test data module is not needed at the current stage because cart tests reuse existing product and user data without introducing unique cart-only datasets.
+
+A separate checkout test data module is used because checkout introduces checkout-specific customer data, required field messages, page title expectations, summary labels, and completion text.
 
 Test data should support:
 
@@ -560,18 +665,20 @@ Current parametrized areas:
 * empty credential scenarios
 * locked out user scenario
 * positive login user case
-* protected route access scenarios
+* protected route access scenarios, including checkout protected routes
 * inventory product card validation
 * product details navigation from inventory product name
 * product details navigation from inventory product image
 * product details content validation for all products
 * add-to-cart and remove-from-cart checks across all products
 * cart item content validation across all products
+* checkout overview item validation across product data
+* checkout overview product details navigation across product data
 * selected single-case tests where test case ID visibility in `pytest -v` is desired
 
 Parametrized test IDs should use manual test case IDs where practical, for example:
 
-```text
+```
 TC-LOGIN-002
 TC-LOGIN-003
 TC-LOGIN-004
@@ -583,6 +690,8 @@ TC-PRODUCT-DETAILS-014
 TC-CART-001
 TC-CART-009
 TC-CART-013
+TC-CHECKOUT-010
+TC-CHECKOUT-015
 ```
 
 This improves traceability between:
@@ -611,13 +720,14 @@ Current markers:
 
 Example marker commands:
 
-```bash
+```
 pytest -m smoke -v
 pytest -m regression -v
 pytest -m positive -v
 pytest -m negative -v
 pytest -m sorting -v
 pytest -m navigation -v
+pytest -m e2e -v
 pytest -m "ui and smoke" -v
 pytest -m "ui and regression" -v
 pytest -m "ui and sorting" -v
@@ -653,12 +763,20 @@ Current assertion examples:
 * Add to cart button changes to Remove
 * Remove button changes cart state
 * cart state remains visible after logout and re-login
+* checkout information form is visible
+* checkout required field error message matches expected value
+* checkout information input error icons are visible
+* checkout overview product content matches expected product data
+* checkout overview item total matches selected product prices
+* checkout overview total equals item total plus tax
+* checkout complete header matches expected confirmation text
+* checkout complete message matches expected confirmation text
 
 Use Playwright assertions for UI/browser state when possible because they include built-in waiting behavior.
 
-Use plain Python assertions when comparing simple values, such as extracted text, product names, converted prices, expected error message strings, or sorted lists.
+Use plain Python assertions when comparing simple values, such as extracted text, product names, converted prices, expected error message strings, checkout summary values, or sorted lists.
 
-Use reusable assertion helpers when the same product-content assertions are shared across test modules.
+Use reusable assertion helpers when the same product-content or checkout-summary assertions are shared across test modules.
 
 ## Automation Priority
 
@@ -686,14 +804,16 @@ Current page-level automation boundaries:
 * inventory behavior is included
 * product details behavior is included
 * cart behavior is included
-* checkout behavior is excluded
+* checkout behavior is included as dedicated Checkout Page coverage
+* cart-owned checkout entry behavior is included in Cart Page coverage
+* checkout protected route access validation is included in Login Page coverage
 * browser restart persistence is excluded
 * storage clearing is excluded
 * cross-user cart persistence is excluded
 * multi-user cart behavior is excluded
 * logout from multiple page locations is excluded unless explicitly scoped
 
-Checkout behavior should be implemented in a separate checkout workstream.
+Cart Page coverage should not own detailed checkout information form behavior, checkout overview validation, or checkout completion validation. These scenarios belong to Checkout Page coverage.
 
 ## Reporting And Debugging
 
@@ -716,7 +836,7 @@ They should be used as:
 
 Recommended full local validation:
 
-```bash
+```
 ruff check .
 black --check .
 isort . --check-only
@@ -725,7 +845,7 @@ pytest -v
 
 Recommended validation when login tests are changed:
 
-```bash
+```
 pytest -v tests/test_login_page.py
 pytest -m negative -v
 pytest -m "ui and smoke" -v
@@ -733,7 +853,7 @@ pytest -m "ui and smoke" -v
 
 Recommended validation when inventory tests are changed:
 
-```bash
+```
 pytest -v tests/test_inventory_page.py
 pytest -m sorting -v
 pytest -m "ui and sorting" -v
@@ -741,7 +861,7 @@ pytest -m "ui and sorting" -v
 
 Recommended validation when product details tests are changed:
 
-```bash
+```
 pytest -v tests/test_product_details_page.py
 pytest -m navigation -v
 pytest -m "ui and regression" -v
@@ -749,20 +869,31 @@ pytest -m "ui and regression" -v
 
 Recommended validation when cart tests are changed:
 
-```bash
+```
 pytest -v tests/test_cart_page.py
 pytest -m navigation -v
 pytest -m "ui and navigation" -v
 pytest -m "ui and regression" -v
 ```
 
+Recommended validation when checkout tests are changed:
+
+```
+pytest -v tests/test_checkout_page.py
+pytest -m e2e -v
+pytest -m navigation -v
+pytest -m "ui and regression" -v
+pytest -m "ui and navigation" -v
+```
+
 For checkpoint or stabilization tasks, run relevant scoped modules and full validation when possible:
 
-```bash
+```
 pytest -v tests/test_login_page.py
 pytest -v tests/test_inventory_page.py
 pytest -v tests/test_product_details_page.py
 pytest -v tests/test_cart_page.py
+pytest -v tests/test_checkout_page.py
 pytest -v
 ```
 
@@ -795,7 +926,6 @@ Failing tests or quality checks should block merging.
 
 Planned improvements:
 
-* checkout flow automation
 * broader end-to-end scenarios
 * API testing layer
 * multi-browser execution

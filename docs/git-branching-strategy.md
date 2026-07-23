@@ -60,7 +60,7 @@ feature/login-page
 feature/inventory-products
 feature/cart-page
 feature/structure-cleanup
-feature/checkout-flow
+feature/checkout
 feature/api-client
 ```
 
@@ -82,6 +82,7 @@ feature/login-page
 feature/inventory-products
 feature/cart-page
 feature/structure-cleanup
+feature/checkout
 ```
 
 These branches can be used for complete functional automation, structure cleanup, documentation synchronization, or stabilization workstreams when the tasks are tightly related and easier to validate together.
@@ -161,6 +162,10 @@ test(AQA-0038): add protected inventory route access test
 test(AQA-0057): add product to cart test
 chore(AQA-0064): review and stabilize cart workstream
 chore(AQA-0073): finalize phase 3c structure cleanup
+test(AQA-0078): add checkout information page tests
+test(AQA-0079): add checkout overview tests
+test(AQA-0080): add checkout completion tests
+chore(AQA-0082): finalize checkout automation workstream
 ```
 
 Common commit types:
@@ -183,6 +188,7 @@ feature/login-page
 feature/inventory-products
 feature/cart-page
 feature/structure-cleanup
+feature/checkout
 ```
 
 In this approach:
@@ -198,6 +204,8 @@ In this approach:
 This approach is acceptable when tasks are tightly connected and reviewing them together makes sense.
 
 The `feature/structure-cleanup` branch is an example of a workstream branch used for structural cleanup, coverage synchronization, final validation, and documentation sync after page-level Login, Inventory, Product Details, and Cart automation coverage.
+
+The `feature/checkout` branch is an example of a functional workstream branch used for checkout automation, checkout-related cart and login coverage gaps, final validation, and documentation synchronization before Pull Request readiness.
 
 ## Merge Strategy
 
@@ -228,6 +236,7 @@ For documentation-only, cleanup, or checkpoint-only changes, the squash commit m
 chore(AQA-0064): review and stabilize cart workstream
 docs(AQA-0064): update project documentation after cart workstream
 chore(AQA-0073): finalize phase 3c structure cleanup
+chore(AQA-0082): finalize checkout automation workstream
 ```
 
 ## Direct Push Policy
@@ -317,6 +326,7 @@ pytest -m positive -v
 pytest -m negative -v
 pytest -m sorting -v
 pytest -m navigation -v
+pytest -m e2e -v
 pytest -m "ui and smoke" -v
 pytest -m "ui and regression" -v
 pytest -m "ui and sorting" -v
@@ -332,6 +342,7 @@ pytest -v tests/test_login_page.py
 pytest -v tests/test_inventory_page.py
 pytest -v tests/test_product_details_page.py
 pytest -v tests/test_cart_page.py
+pytest -v tests/test_checkout_page.py
 pytest -v
 ```
 
@@ -340,7 +351,7 @@ For a single-page task, running the relevant module before the full suite is usu
 Example:
 
 ```bash
-pytest -v tests/test_cart_page.py
+pytest -v tests/test_checkout_page.py
 pytest -v
 ```
 
@@ -360,7 +371,8 @@ Before merging a Pull Request, verify:
 * shared authenticated-page behavior remains owned by the correct abstraction
 * reusable assertion helpers remain focused on shared validation logic
 * test data remains centralized where practical
-* checkout behavior is not mixed into inventory, product details, or cart scope
+* cart-owned checkout entry behavior is separated from detailed checkout page behavior
+* checkout information form, checkout overview, and checkout completion behavior remain owned by checkout tests
 * commit message for squash merge is clear
 * target branch is correct
 
@@ -416,6 +428,7 @@ Example checkpoint tasks:
 AQA-0041 — Review Phase 2 And Prepare Phase 3 Scope
 AQA-0064 — Review And Stabilize Cart Workstream
 AQA-0073 — Phase 3C Final Validation And Documentation Sync
+AQA-0082 — Checkout Workstream Final Validation And Documentation Sync
 ```
 
 ## Summary

@@ -10,12 +10,12 @@ The current framework includes:
 
 * Pytest-based test execution
 * Playwright browser automation
-* Page Object Model for Login, Inventory, Product Details, and Cart pages
+* Page Object Model for Login, Inventory, Product Details, Cart, and Checkout pages
 * shared `BasePage` abstraction
 * shared authenticated-page behavior through `AppPage`
-* reusable product assertion helpers
+* reusable product and checkout assertion helpers
 * reusable pytest fixtures
-* centralized login and product test data
+* centralized login, product, and checkout test data
 * marker-based test categorization
 * parametrized test execution with manual test case IDs where practical
 * CI execution with GitHub Actions
@@ -29,7 +29,7 @@ The current framework includes:
 The current automated coverage focuses on:
 
 * Sauce Demo login page and authentication behavior
-* protected route access validation
+* protected route access validation, including checkout protected routes
 * inventory page availability
 * product list and product card validation
 * inventory-side product details navigation
@@ -43,8 +43,20 @@ The current automated coverage focuses on:
 * remove-from-cart behavior from inventory, product details, and cart pages
 * Continue Shopping navigation
 * cart state persistence after logout and re-login
+* cart-owned navigation from cart page to checkout step one
+* checkout information form availability
+* checkout information required field validation
+* checkout information error state validation
+* checkout information cancel navigation
+* checkout overview product summary validation
+* checkout overview price summary validation
+* checkout overview cancel navigation
+* product details navigation from checkout overview
+* checkout finish action
+* checkout complete page confirmation validation
+* Back Home navigation after order completion
 
-Checkout coverage is intentionally excluded from the current page-level Login, Inventory, Product Details, and Cart scope and is planned for a later workstream.
+Checkout behavior is implemented as a dedicated page-level workstream. Cart coverage owns the entry point from the cart page to checkout step one, while detailed checkout information, overview, and completion behavior is owned by Checkout Page coverage.
 
 ## Project Layers
 
@@ -61,6 +73,7 @@ tests/test_login_page.py
 tests/test_inventory_page.py
 tests/test_product_details_page.py
 tests/test_cart_page.py
+tests/test_checkout_page.py
 ```
 
 Current responsibilities:
@@ -69,7 +82,7 @@ Current responsibilities:
 * tests use Page Objects for interactions
 * tests use Playwright assertions for UI/browser state
 * tests use plain Python assertions for already extracted data comparisons
-* tests use reusable assertion helpers when the same product-content validation is shared across page areas
+* tests use reusable assertion helpers when the same product-content or checkout-summary validation is shared across page areas
 * tests use centralized test data instead of hardcoded repeated data
 * tests keep traceability to manual test cases where practical
 
@@ -88,6 +101,7 @@ pages/login_page.py
 pages/inventory_page.py
 pages/product_details_page.py
 pages/cart_page.py
+pages/checkout_page.py
 ```
 
 The Page Object layer is responsible for:
@@ -131,7 +145,7 @@ Current responsibilities:
 * About link access
 * shared product-like item locators used by authenticated page areas
 
-`AppPage` is the correct owner for behavior that is shared by authenticated pages such as Inventory, Product Details, and Cart.
+`AppPage` is the correct owner for behavior that is shared by authenticated pages such as Inventory, Product Details, Cart, and Checkout pages.
 
 ### `LoginPage`
 
@@ -194,11 +208,57 @@ Current responsibilities:
 * opening product details from a cart item name
 * accessing Continue Shopping button
 * returning from the cart page to the inventory page
-* exposing Checkout button locators without validating checkout behavior in the current cart scope
+* accessing the Checkout button
+* opening checkout step one from the cart page
 
 `CartPage` inherits shared authenticated behavior through `AppPage`.
 
-Checkout-related locators may exist in `CartPage`, but checkout behavior remains outside the current cart workstream test scope.
+Cart Page coverage owns the user action that starts on the cart page and opens checkout step one. Detailed checkout form, overview, and completion behavior is owned by Checkout Page coverage.
+
+### `CheckoutInformationPage`
+
+`CheckoutInformationPage` centralizes checkout step one interactions such as:
+
+* opening the checkout information page directly where required
+* accessing checkout customer information form fields
+* accessing the checkout step title
+* accessing Continue and Cancel buttons
+* filling checkout customer information
+* continuing from checkout step one to checkout overview
+* cancelling checkout step one and returning to the cart page
+* accessing checkout information validation errors
+* accessing checkout information input error icons
+* closing checkout information validation errors
+
+`CheckoutInformationPage` inherits shared authenticated behavior through `AppPage`.
+
+### `CheckoutOverviewPage`
+
+`CheckoutOverviewPage` centralizes checkout step two interactions such as:
+
+* accessing the checkout summary container
+* accessing checkout product items
+* locating checkout overview product items by product name
+* accessing payment, shipping, subtotal, tax, and total information
+* accessing Cancel and Finish buttons
+* cancelling checkout overview and returning to the inventory page
+* finishing checkout and opening the checkout complete page
+* opening product details from a checkout overview item name
+
+`CheckoutOverviewPage` inherits shared authenticated behavior through `AppPage`.
+
+### `CheckoutCompletePage`
+
+`CheckoutCompletePage` centralizes checkout completion interactions such as:
+
+* accessing the checkout complete container
+* accessing the completion image
+* accessing the completion header
+* accessing the completion message
+* accessing the Back Home button
+* returning to the inventory page after order completion
+
+`CheckoutCompletePage` inherits shared authenticated behavior through `AppPage`.
 
 ## `framework/`
 
@@ -216,7 +276,10 @@ Current responsibilities:
 * inventory product card content validation
 * product details content validation
 * cart item content validation
-* price string conversion for numeric sorting assertions
+* checkout overview product item content validation
+* checkout overview price summary validation
+* inventory product state validation after checkout-related navigation
+* price string conversion for numeric sorting and checkout summary assertions
 
 Reusable assertion helpers should stay focused on shared validation logic. They should not contain page navigation, test setup, or Page Object responsibilities.
 
@@ -229,6 +292,7 @@ Current implementation:
 ```text
 test_data/login_test_data.py
 test_data/product_test_data.py
+test_data/checkout_test_data.py
 ```
 
 Current login test data includes:
@@ -237,7 +301,7 @@ Current login test data includes:
 * invalid login cases
 * empty credential cases
 * locked out user cases
-* expected error messages
+* expected login error messages
 * protected route URL suffixes used in login-related assertions
 
 Current product test data includes:
@@ -248,9 +312,19 @@ Current product test data includes:
 * product prices
 * product image paths
 
-Inventory, Product Details, and Cart tests intentionally reuse centralized product test data instead of introducing page-specific product datasets too early.
+Current checkout test data includes:
+
+* valid checkout customer information
+* checkout information required field error messages
+* checkout step title expectations
+* checkout overview summary label expectations
+* checkout completion header and message expectations
+
+Inventory, Product Details, Cart, and Checkout tests intentionally reuse centralized product data instead of introducing page-specific product datasets unnecessarily.
 
 Cart tests intentionally reuse existing login and product test data instead of introducing a separate cart-specific test data file. This keeps cart scenarios deterministic while avoiding unnecessary duplication.
+
+Checkout tests use dedicated checkout test data only for checkout-specific customer information, validation messages, summary labels, and completion text. Product-related checkout assertions continue to reuse centralized product test data.
 
 The goal of this layer is to keep test data separate from test logic and support pytest parametrization.
 
@@ -266,6 +340,9 @@ Current responsibilities:
 * reusable `logged_in_inventory_page` fixture
 * reusable `inventory_page_with_one_product_in_cart` fixture
 * reusable `cart_page_with_one_product` fixture
+* reusable `checkout_step_one_page_with_one_product` fixture
+* reusable `checkout_step_two_page_with_one_product` fixture
+* reusable `checkout_last_step_page_with_one_product` fixture
 
 The `opened_login_page` fixture prepares a ready-to-use `LoginPage` instance with the login page already opened.
 
@@ -276,6 +353,12 @@ The `logged_in_inventory_page` fixture logs in with a valid user and returns a r
 The `inventory_page_with_one_product_in_cart` fixture starts from a logged-in inventory page, adds one deterministic product to the cart, and returns the inventory page with selected product data.
 
 The `cart_page_with_one_product` fixture starts from an inventory page with one product already in the cart, opens the cart page, and returns the cart page with selected product data.
+
+The `checkout_step_one_page_with_one_product` fixture starts from a cart page with one product already in the cart, opens the checkout information page, and returns the checkout information page with selected product data.
+
+The `checkout_step_two_page_with_one_product` fixture starts from checkout step one with one product already in the cart, submits valid checkout customer information, and returns the checkout overview page with selected product data.
+
+The `checkout_last_step_page_with_one_product` fixture starts from checkout overview with one product already in the cart, finishes checkout, and returns the checkout complete page with selected product data.
 
 Fixtures should be added when setup logic becomes repeated across multiple tests. Fixture growth should follow real framework needs.
 
@@ -317,6 +400,7 @@ test_cases/login-page.md
 test_cases/inventory-page.md
 test_cases/product-details-page.md
 test_cases/cart-page.md
+test_cases/checkout-page.md
 ```
 
 Manual test cases are mapped to automated tests through identifiers such as:
@@ -325,6 +409,7 @@ Manual test cases are mapped to automated tests through identifiers such as:
 * `TC-INVENTORY-XXX`
 * `TC-PRODUCT-DETAILS-XXX`
 * `TC-CART-XXX`
+* `TC-CHECKOUT-XXX`
 
 These identifiers are also used in parametrized pytest output where practical.
 
@@ -383,6 +468,9 @@ The login automation area covers:
 * protected inventory route access
 * protected cart route access
 * protected item details route access
+* protected checkout information route access
+* protected checkout overview route access
+* protected checkout complete route access
 * input error icon visibility after failed login
 
 Protected route validation currently includes direct access checks for:
@@ -390,6 +478,9 @@ Protected route validation currently includes direct access checks for:
 * inventory page
 * cart page
 * item details page
+* checkout information page
+* checkout overview page
+* checkout complete page
 
 ### Login Test Data
 
@@ -406,7 +497,7 @@ This supports:
 
 ### Login Parametrization
 
-Negative login scenarios and protected route scenarios use pytest parametrization to execute the same test logic against multiple data cases.
+Negative login scenarios and selected protected route scenarios use pytest parametrization to execute the same test logic against multiple data cases.
 
 Parametrized IDs are based on manual test case IDs where practical, such as:
 
@@ -539,7 +630,7 @@ Manual cart test cases
         ↓
 Centralized login and product test data
         ↓
-InventoryPage, ProductDetailsPage, and CartPage Page Objects
+InventoryPage, ProductDetailsPage, CartPage, and CheckoutInformationPage Page Objects
         ↓
 Reusable logged-in inventory and cart setup fixtures
         ↓
@@ -566,7 +657,8 @@ CI execution and reports
 * opening product details from a cart item name
 * accessing Continue Shopping button
 * returning from the cart page to the inventory page
-* accessing Checkout button
+* accessing the Checkout button
+* opening checkout step one from the cart page
 
 ### InventoryPage And ProductDetailsPage In Cart Scenarios
 
@@ -584,6 +676,17 @@ Cart tests reuse `InventoryPage` and `ProductDetailsPage` for cart-related actio
 
 * reaching cart-related states from product details flows where required
 * preserving page-level navigation ownership between Product Details and Cart areas
+
+### CheckoutInformationPage In Cart Scenarios
+
+Cart tests use `CheckoutInformationPage` only to validate the cart-owned checkout entry point.
+
+`CheckoutInformationPage` is used for:
+
+* confirming that clicking Checkout from the cart page opens checkout step one
+* confirming that the checkout information form is displayed after cart-owned navigation
+
+Detailed checkout information form validation remains owned by Checkout Page tests.
 
 ### Cart Coverage
 
@@ -603,6 +706,7 @@ The cart automation area covers:
 * product details navigation from cart item name
 * Continue Shopping cart state preservation
 * all-products remove-from-cart coverage from cart page
+* checkout information page navigation from the cart page with product in cart
 
 ### Cart Test Data
 
@@ -627,17 +731,110 @@ The current cart scope covers:
 * navigation between cart and inventory page
 * cart state persistence after logout and re-login
 * product details navigation from cart item name
+* cart-owned navigation to checkout step one
 
 The current cart scope does not cover:
 
-* checkout flow
+* checkout information form validation
+* checkout overview validation
+* order completion confirmation
 * browser restart persistence
 * storage clearing
 * cross-user cart persistence
 * multi-user cart behavior
 * logout from multiple page locations
 
-These exclusions keep the cart workstream focused and prevent it from expanding into checkout or session-management scope that belongs to later tasks.
+These exclusions keep the cart workstream focused and prevent it from expanding into checkout form, checkout overview, order completion, or session-management scope that belongs to dedicated task areas.
+
+## Current Checkout Test Architecture
+
+The checkout test suite is built around the following structure:
+
+```text
+Manual checkout test cases
+        ↓
+Centralized checkout and product test data
+        ↓
+CheckoutInformationPage, CheckoutOverviewPage, and CheckoutCompletePage Page Objects
+        ↓
+Reusable checkout setup fixtures
+        ↓
+Reusable product and checkout assertions
+        ↓
+Pytest checkout test module
+        ↓
+Markers and parametrization
+        ↓
+CI execution and reports
+```
+
+### CheckoutInformationPage
+
+`CheckoutInformationPage` supports checkout step one scenarios such as:
+
+* checkout information form visibility
+* required customer field access
+* required field validation
+* checkout information input error icon validation
+* checkout information error message close behavior
+* continuing to checkout overview with valid customer data
+* cancelling checkout step one and returning to the cart page
+
+### CheckoutOverviewPage
+
+`CheckoutOverviewPage` supports checkout step two scenarios such as:
+
+* checkout overview product summary visibility
+* checkout overview product summary validation for each product
+* checkout overview price summary validation for one product
+* checkout overview price summary validation for multiple products
+* checkout overview cancellation back to inventory page
+* product details navigation from checkout overview item name
+* finishing checkout and opening checkout complete page
+
+### CheckoutCompletePage
+
+`CheckoutCompletePage` supports checkout completion scenarios such as:
+
+* checkout complete page visibility
+* order confirmation header validation
+* order confirmation message validation
+* Back Home navigation to inventory page after order completion
+
+### Checkout Coverage
+
+The checkout automation area covers:
+
+* checkout information form displays required customer fields
+* checkout information form requires first name
+* checkout information form requires last name
+* checkout information form requires postal code
+* input error icons are displayed after failed checkout information submission
+* checkout information error message can be closed after validation failure
+* checkout information form continues to overview when valid data is provided
+* checkout information cancel returns to cart and preserves cart item
+* checkout overview displays selected product
+* checkout overview displays each selected product
+* checkout overview price summary is correct for one product
+* checkout overview price summary is correct for multiple products
+* checkout overview cancel returns to inventory page
+* product details can be opened from checkout overview item name
+* product details can be opened from checkout overview item name for each product
+* finish button completes checkout and opens order confirmation page
+* checkout complete page displays order confirmation message
+* Back Home returns to inventory page after order completion
+
+### Checkout Test Data
+
+Checkout tests use:
+
+* valid customer information from `test_data/checkout_test_data.py`
+* checkout required field error messages from `test_data/checkout_test_data.py`
+* checkout overview summary label expectations from `test_data/checkout_test_data.py`
+* checkout completion header and message expectations from `test_data/checkout_test_data.py`
+* deterministic product data from `test_data/product_test_data.py`
+
+Checkout product-related assertions reuse centralized product data to avoid duplicating product names, descriptions, prices, and image paths in checkout-specific data.
 
 ## Markers
 
@@ -650,6 +847,7 @@ Tests are categorized using pytest markers such as:
 * `negative`
 * `sorting`
 * `navigation`
+* `e2e`
 
 Markers allow selective test execution for different validation needs.
 
@@ -671,10 +869,9 @@ The framework follows a modular architecture where:
 
 Near-term architecture direction includes:
 
-* completing final validation and documentation sync for Phase 3C
-* keeping the current Login, Inventory, Product Details, and Cart structure stable before PR
-* extending automation coverage into checkout in a separate workstream
-* keeping checkout scope separate from cart scope
+* completing final validation and documentation sync for the checkout workstream
+* keeping the current Login, Inventory, Product Details, Cart, and Checkout structure stable before PR
+* keeping cart-owned checkout entry behavior separate from detailed checkout page behavior
 * improving fixture organization only when the number of reusable setup flows grows
 * enhancing reporting and diagnostics incrementally
 * expanding API testing in a later project phase
@@ -698,7 +895,7 @@ The project should avoid:
 * unnecessary helper layers
 * duplicated selectors in tests when a Page Object method already exists
 * test data duplication across workstreams
-* mixing checkout behavior into cart tests
+* mixing detailed checkout form, overview, or completion behavior into cart tests
 * expanding a workstream beyond its approved scope only because it is technically possible
 * moving page-specific interactions into generic helpers too early
 * moving shared authenticated behavior back into individual page classes when it belongs in `AppPage`
@@ -711,14 +908,15 @@ The architecture is no longer only a setup foundation. It now contains completed
 * Inventory Page
 * Product Details Page
 * Cart Page
+* Checkout Page
 
 The current architecture includes:
 
 * `BasePage` for minimal shared page foundation
 * `AppPage` for authenticated shared behavior
-* Page Objects for Login, Inventory, Product Details, and Cart areas
-* reusable product assertion helpers
-* centralized login and product test data
+* Page Objects for Login, Inventory, Product Details, Cart, and Checkout areas
+* reusable product and checkout assertion helpers
+* centralized login, product, and checkout test data
 * reusable pytest fixtures
 * one automated test module per covered page area
 * one manual test case file per covered page area
@@ -727,6 +925,6 @@ The current architecture includes:
 * CI quality and full test validation
 * HTML reporting and screenshot capture on failure
 
-The current branch is undergoing Phase 3C final validation and documentation sync before PR readiness.
+The current branch is undergoing checkout workstream final validation and documentation sync before PR readiness.
 
-The next architecture step is to extend the same principles to check out coverage while avoiding unnecessary scope expansion and keeping checkout scenarios separated from cart behavior.
+The next architecture step is to keep the completed page-level coverage stable while preparing the branch for Pull Request review and merge into `develop`.
