@@ -102,13 +102,13 @@ This checkpoint allowed the project to move from login-only automation into broa
 
 ## Phase 3: Products, Cart, And Checkout Coverage
 
-**Status:** In Final Validation
+**Status:** Completed
 
-Phase 3 expands automation coverage beyond login into broader Sauce Demo application behavior.
+Phase 3 expanded automation coverage beyond login into broader Sauce Demo application behavior.
 
-The phase is split into smaller workstreams to keep the scope controlled and reviewable.
+The phase was split into smaller workstreams to keep the scope controlled and reviewable.
 
-Completed and in-final-validation work:
+Completed work:
 
 * inventory page Page Object Model
 * product details Page Object Model
@@ -140,8 +140,9 @@ Completed and in-final-validation work:
 * manual test cases for login, inventory, product details, cart, and checkout areas
 * test data expansion for product and checkout scenarios
 * documentation synchronization after checkout workstream
+* PR review, CI validation, and squash merge into `develop`
 
-Main learning goals:
+Main learning goals completed:
 
 * multi-page flows
 * stateful UI testing
@@ -154,7 +155,7 @@ Main learning goals:
 * scope control between cart and checkout behavior
 * documentation synchronization after structural refactors and workstream completion
 
-Phase 3 should be considered complete after checkout workstream final validation passes, documentation sync is committed, Git status is clean, CI passes, and the branch is ready for PR or merge.
+Phase 3 is complete after the checkout workstream was validated, synchronized, reviewed in PR #6, passed CI, and was squash-merged into `develop`.
 
 ---
 
@@ -283,17 +284,17 @@ Phase 3C prepared the framework structure for the dedicated checkout automation 
 
 ## Phase 3D: Checkout Automation Workstream
 
-**Status:** In Final Validation
+**Status:** Completed and merged into `develop`
 
-Phase 3D focuses on checkout-related behavior after inventory, product details, and cart coverage.
+Phase 3D focused on checkout-related behavior after inventory, product details, and cart coverage.
 
-The goal of this workstream is to implement checkout automation while keeping responsibility boundaries clear:
+The goal of this workstream was to implement checkout automation while keeping responsibility boundaries clear:
 
 * Cart Page coverage owns navigation from the cart page to checkout step one.
 * Checkout Page coverage owns checkout information form behavior, checkout overview behavior, and checkout completion behavior.
 * Login Page coverage owns protected checkout route access validation.
 
-Completed and in-final-validation areas:
+Completed areas:
 
 * checkout-related manual test cases
 * checkout Page Objects
@@ -321,39 +322,35 @@ Completed and in-final-validation areas:
 * checkout fixtures
 * checkout test case coverage mapping
 * documentation synchronization after checkout implementation
+* PR creation from `feature/checkout` into `develop`
+* CI validation on PR #6
+* squash merge into `develop`
 
-Current Phase 3D validation scope:
-
-* review checkout tests, checkout Page Objects, fixtures, test data, and test case documentation
-* confirm cart-owned checkout entry behavior remains separate from detailed checkout behavior
-* confirm login protected route coverage includes checkout routes
-* confirm documentation reflects implemented checkout coverage
-* confirm no stale “planned checkout” notes remain
-* confirm full pytest suite and quality checks pass
-* confirm branch readiness for Pull Request
-
-Phase 3D should be considered complete after AQA-0082 final validation passes, documentation sync is committed, Git status is clean, CI passes, and the branch is ready for PR.
+Phase 3D is complete after AQA-0082 final validation and documentation sync, AQA-0083 PR review, successful CI, and squash merge into `develop`.
 
 ---
 
-## Phase 3 Checkpoint
+## Phase 3 Completion Review
 
-**Status:** Planned
+**Status:** Completed through AQA-0082 and AQA-0083
 
-After Phase 3 implementation, a checkpoint task will be required before moving to Phase 4.
+A separate large Phase 3 checkpoint task is not required after the checkout merge because the practical checkpoint scope was already covered by:
 
-Checkpoint scope:
+* AQA-0082 — checkout workstream final validation and documentation sync
+* AQA-0083 — PR creation, PR diff review, CI verification, squash merge into `develop`, local update, and branch cleanup
 
-* review completed Phase 3 scope
-* validate test coverage
-* run full local test suite
-* run marker-based test groups
-* verify CI status
-* review documentation updates
-* review Git status and cleanup needs
-* confirm readiness for Phase 4
+Covered completion scope:
 
-This checkpoint should happen after checkout coverage is completed, stabilized, documented, committed, pushed, and validated.
+* reviewed completed Phase 3 checkout scope
+* validated checkout test coverage
+* confirmed full local test suite before PR
+* confirmed quality checks before PR
+* verified CI status on PR #6
+* reviewed and synchronized documentation updates
+* reviewed Git status and cleanup needs
+* confirmed readiness to move toward Phase 4 planning
+
+The next project direction is Phase 4 Framework Maturity.
 
 ---
 
@@ -489,11 +486,11 @@ Recommended use:
 * demonstration of form validation, overview validation, and order completion checks
 * demonstration of clear Page Object boundaries across multipage workflows
 * demonstration of documentation synchronization after feature workstream completion
-* preparation for Phase 3 checkpoint and PR review
+* preparation for Phase 4 Framework Maturity planning
 
 ### After Phase 3
 
-The project should be strong enough for regular job applications because it includes multipage UI flows, cart behavior, checkout behavior, and more realistic application coverage.
+The project is strong enough for regular job applications because it includes multipage UI flows, cart behavior, checkout behavior, and more realistic application coverage.
 
 Recommended use:
 
