@@ -45,16 +45,16 @@ The long-term goal of the project is to evolve into a production-style automatio
 Current project phase:
 
 ```
-Phase 3D final validation — Checkout Automation Workstream
+Phase 3 completed — Products, Cart, And Checkout Coverage
 ```
 
-Current validation task:
+Latest completed integration:
 
 ```
-AQA-0082 — Checkout Workstream Final Validation And Documentation Sync
+AQA-0083 — Checkout Automation Workstream merged into develop in PR #6
 ```
 
-The project currently includes completed or implemented automation coverage for:
+The project currently includes completed automation coverage for:
 
 * login page and authentication behavior
 * protected route access validation
@@ -170,7 +170,7 @@ Completed checkout automation workstream includes:
 * checkout complete page confirmation validation
 * Back Home navigation after order completion
 
-Current checkout workstream final validation includes:
+Completed Phase 3 finalization includes:
 
 * one automated test module per covered page area
 * one manual test case file per covered page area
@@ -183,7 +183,9 @@ Current checkout workstream final validation includes:
 * documentation synchronization
 * final local quality validation
 * final full pytest validation
-* branch readiness check before Pull Request
+* PR review, CI validation, and squash merge into `develop`
+
+The next project direction is Phase 4 Framework Maturity.
 
 ## System Under Test
 
@@ -436,7 +438,7 @@ Run checkout tests:
 pytest tests/test_checkout_page.py -v
 ```
 
-For checkout workstream final scoped validation, run:
+For Phase 3 completed coverage validation, run:
 
 ```
 pytest -v tests/test_login_page.py
@@ -581,15 +583,15 @@ Current roadmap direction:
 * **Phase 3A:** Inventory And Products Automation Workstream — completed
 * **Phase 3B:** Cart Automation Workstream — completed
 * **Phase 3C:** Structure Cleanup, Coverage Completion, And Documentation Sync — completed
-* **Phase 3D:** Checkout Automation Workstream — in final validation
-* **Phase 3 Checkpoint:** Planned after checkout workstream validation
+* **Phase 3D:** Checkout Automation Workstream — completed and merged into `develop`
+* **Phase 3 Completion Review:** covered by AQA-0082 and AQA-0083
 * **Phase 4:** Framework Maturity — planned
 * **Phase 5:** Advanced Extensions — future
 
 Future planned areas include:
 
 * broader multipage user journey tests
-* API testing layer
+* API-level tests
 * Allure reporting
 * cross-browser execution
 * Docker-based execution environment
