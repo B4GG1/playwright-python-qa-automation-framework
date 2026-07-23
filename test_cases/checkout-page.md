@@ -4,11 +4,11 @@
 
 This document contains manual test cases for the Sauce Demo checkout flow.
 
-The goal of this document is to define checkout-related scenarios before automation implementation begins. Scenarios are documented here when the main action or validation happens on the checkout information page, checkout overview page, or checkout complete page.
+The goal of this document is to define checkout-related scenarios and track their automation coverage. Scenarios are documented here when the main action or validation happens on the checkout information page, checkout overview page, or checkout complete page.
 
-Checkout automation is not implemented yet. All checkout scenarios in this file are currently planned for future automation.
+Checkout automation is implemented for all checkout scenarios currently documented in this file. Automated coverage is mapped to `tests/test_checkout_page.py`.
 
-Navigation from the cart page to check out step one is owned by Cart Page coverage and is documented in `test_cases/cart-page.md`.
+Navigation from the cart page to checkout step one is owned by Cart Page coverage and is documented in `test_cases/cart-page.md`.
 
 ## Known SUT Behavior Notes
 
@@ -84,7 +84,7 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 **Notes:**
 
 * This scenario validates basic checkout step one UI availability.
-* Navigation from the cart page to check out step one is documented in `test_cases/cart-page.md`.
+* Navigation from the cart page to checkout step one is documented in `test_cases/cart-page.md`.
 * Required field validation behavior is covered by separate negative scenarios.
 
 ---
@@ -123,11 +123,7 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 * Error message is displayed.
 * First Name validation error indicates that first name is required.
 
-**Expected Error Message:**
-
-```text
-Error: First Name is required
-```
+**Expected Error Message:** `Error: First Name is required`
 
 **Notes:**
 
@@ -170,11 +166,7 @@ Error: First Name is required
 * Error message is displayed.
 * Last Name validation error indicates that last name is required.
 
-**Expected Error Message:**
-
-```text
-Error: Last Name is required
-```
+**Expected Error Message:** `Error: Last Name is required`
 
 **Notes:**
 
@@ -217,11 +209,7 @@ Error: Last Name is required
 * Error message is displayed.
 * Postal Code validation error indicates that postal code is required.
 
-**Expected Error Message:**
-
-```text
-Error: Postal Code is required
-```
+**Expected Error Message:** `Error: Postal Code is required`
 
 **Notes:**
 
@@ -353,7 +341,7 @@ Error: Postal Code is required
 **Notes:**
 
 * This is the main positive checkout information form scenario.
-* This scenario belongs to check out step one because the main action is submitting the customer information form.
+* This scenario belongs to checkout step one because the main action is submitting the customer information form.
 * Detailed overview content validation is covered by separate checkout overview scenarios.
 
 ---
@@ -626,13 +614,13 @@ Error: Postal Code is required
 * User is redirected to the inventory page.
 * Inventory product list is visible.
 * Checkout overview page is no longer displayed.
-* Product is still presented in the cart (remove button is visible)
-* Cart badge still indicates that the product is in the shopping cart 
+* Product is still presented in the cart because the Remove button is visible.
+* Cart badge still indicates that the product is in the shopping cart.
 
 **Notes:**
 
 * This scenario validates cancellation from checkout step two.
-* Cart state behavior after checkout overview cancellation can be verified in a later automation task if required.
+* Cart state is preserved after checkout overview cancellation.
 
 ---
 
@@ -671,8 +659,8 @@ Error: Postal Code is required
 * Product details page displays the selected product.
 * Product name matches the product clicked from checkout overview.
 * Product details content is visible.
-* Product is still presented in the cart (remove button is visible).
-* Cart badge still indicates that the product is in the shopping cart. 
+* Product is still presented in the cart because the Remove button is visible.
+* Cart badge still indicates that the product is in the shopping cart.
 
 **Notes:**
 
@@ -718,7 +706,7 @@ Error: Postal Code is required
 * Product details page displays the correct product.
 * Product name matches the product clicked from checkout overview.
 * Product details content matches expected product data.
-* Product is still presented in the cart (remove button is visible).
+* Product is still presented in the cart because the Remove button is visible.
 * Cart badge still indicates that the product is in the shopping cart.
 
 **Notes:**
@@ -768,7 +756,7 @@ Error: Postal Code is required
 
 **Notes:**
 
-* This scenario belongs to check out step two because the main action is clicking Finish on the checkout overview page.
+* This scenario belongs to checkout step two because the main action is clicking Finish on the checkout overview page.
 * Detailed confirmation message validation is covered separately in TC-CHECKOUT-017.
 
 ---
@@ -808,17 +796,9 @@ Error: Postal Code is required
 * Completion message is visible.
 * Back Home button is visible.
 
-**Expected Completion Header:**
+**Expected Completion Header:** `Thank you for your order!`
 
-```text
-Thank you for your order!
-```
-
-**Expected Completion Message:**
-
-```text
-Your order has been dispatched, and will arrive just as fast as the pony can get there!
-```
+**Expected Completion Message:** `Your order has been dispatched, and will arrive just as fast as the pony can get there!`
 
 **Notes:**
 
@@ -858,7 +838,7 @@ Your order has been dispatched, and will arrive just as fast as the pony can get
 * User is redirected to the inventory page.
 * Inventory product list is visible.
 * Checkout complete page is no longer displayed.
-* Added product is no longer displayed in the cart
+* Added product is no longer displayed in the cart.
 
 **Notes:**
 

@@ -39,10 +39,10 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-001 — Inventory page is visible after successful login
 
-**Type:** Smoke / Positive / UI
-**Priority:** High
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Smoke / Positive / UI\
+**Priority:** High\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -78,10 +78,10 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-002 — Product list is displayed
 
-**Type:** Smoke / UI
-**Priority:** High
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Smoke / UI\
+**Priority:** High\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -114,10 +114,10 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-003 — Product cards contain name, description, price, and image
 
-**Type:** Regression / UI
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / UI\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -155,10 +155,10 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-004 — Cart page can be opened from inventory page
 
-**Type:** Smoke / Navigation / UI
-**Priority:** High
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Smoke / Navigation / UI\
+**Priority:** High\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -192,10 +192,10 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-005 — Product can be added to cart from inventory page
 
-**Type:** Smoke / Positive / UI
-**Priority:** High
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Smoke / Positive / UI\
+**Priority:** High\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -233,10 +233,10 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-006 — Add to cart button changes to Remove after adding product from inventory
 
-**Type:** Regression / UI
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / UI\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -273,10 +273,10 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-007 — Cart badge is displayed after adding one product
 
-**Type:** Regression / UI
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / UI\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -311,10 +311,10 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-008 — Cart badge count updates after adding multiple products
 
-**Type:** Regression / UI
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / UI\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -353,10 +353,10 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-009 — Products can be sorted by name A to Z
 
-**Type:** Regression / Sorting / UI
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / Sorting / UI\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -391,10 +391,10 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-010 — Products can be sorted by name Z to A
 
-**Type:** Regression / Sorting / UI
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / Sorting / UI\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -429,10 +429,10 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-011 — Products can be sorted by price low to high
 
-**Type:** Regression / Sorting / UI
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / Sorting / UI\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -469,10 +469,10 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-012 — Products can be sorted by price high to low
 
-**Type:** Regression / Sorting / UI
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / Sorting / UI\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -509,10 +509,10 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-013 — Product details can be opened for all products by product name on inventory page
 
-**Type:** Regression / Navigation / UI
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / Navigation / UI\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -550,10 +550,10 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-014 — Product details can be opened for all products by product image on inventory page
 
-**Type:** Regression / Navigation / UI
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / Navigation / UI\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -591,10 +591,10 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-015 — All products can be added to cart from inventory page
 
-**Type:** Regression / Positive / UI
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / Positive / UI\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -632,10 +632,10 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-016 — Product can be removed from cart from inventory page
 
-**Type:** Smoke / Positive / UI
-**Priority:** High
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Smoke / Positive / UI\
+**Priority:** High\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -675,10 +675,10 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-017 — Remove button changes back to Add to cart after removing product from inventory
 
-**Type:** Regression / UI
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / UI\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -717,10 +717,10 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-018 — Cart badge count updates after removing one of multiple products from inventory page
 
-**Type:** Regression / UI
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / UI\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -760,10 +760,10 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-019 — Cart badge disappears after removing last product from inventory page
 
-**Type:** Regression / UI
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / UI\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -800,10 +800,10 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-020 — All products can be removed from cart from inventory page
 
-**Type:** Regression / Positive / UI
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / Positive / UI\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -843,10 +843,10 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-021 — Product details can be opened from product name for example product
 
-**Type:** Smoke / Navigation / UI
-**Priority:** High
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Smoke / Navigation / UI\
+**Priority:** High\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**
@@ -883,10 +883,10 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-022 — Product details can be opened from product image for example product
 
-**Type:** Smoke / Navigation / UI
-**Priority:** High
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Smoke / Navigation / UI\
+**Priority:** High\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_inventory_page.py`
 
 **Preconditions:**

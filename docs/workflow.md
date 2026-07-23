@@ -57,6 +57,7 @@ feature/login-page
 feature/inventory-products
 feature/cart-page
 feature/structure-cleanup
+feature/checkout
 ```
 
 In this workflow:
@@ -71,7 +72,7 @@ In this workflow:
 8. Validate CI.
 9. Squash merge the complete workstream into `develop`.
 
-This approach is used for complete functional automation, refactor, documentation sync, and stabilization workstreams such as Login Page Automation, Cart Automation, and Phase 3C Structure Cleanup.
+This approach is used for complete functional automation, refactor, documentation sync, and stabilization workstreams such as Login Page Automation, Cart Automation, Phase 3C Structure Cleanup, and Checkout Automation.
 
 It is useful when tasks are connected and reviewing them together makes more sense than creating many small Pull Requests.
 
@@ -94,7 +95,7 @@ Other examples:
 
 ```bash
 git checkout -b feature/inventory-products
-git checkout -b feature/checkout-flow
+git checkout -b feature/checkout
 git checkout -b feature/structure-cleanup
 git checkout -b fix/screenshot-hook
 git checkout -b docs/update-testing-strategy
@@ -158,6 +159,7 @@ pytest -m positive -v
 pytest -m negative -v
 pytest -m sorting -v
 pytest -m navigation -v
+pytest -m e2e -v
 pytest -m "ui and smoke" -v
 pytest -m "ui and regression" -v
 pytest -m "ui and sorting" -v
@@ -171,6 +173,7 @@ Examples:
 ```bash
 pytest -v tests/test_inventory_page.py
 pytest -v tests/test_cart_page.py
+pytest -v tests/test_checkout_page.py
 ```
 
 The full test suite should still pass before a workstream is considered ready for merge unless a scoped validation exception is explicitly accepted.
@@ -195,6 +198,10 @@ git commit -m "test(AQA-0038): add protected inventory route access test"
 git commit -m "test(AQA-0057): add product to cart test"
 git commit -m "chore(AQA-0064): review and stabilize cart workstream"
 git commit -m "chore(AQA-0073): finalize phase 3c structure cleanup"
+git commit -m "test(AQA-0078): add checkout information page tests"
+git commit -m "test(AQA-0079): add checkout overview tests"
+git commit -m "test(AQA-0080): add checkout completion tests"
+git commit -m "chore(AQA-0082): finalize checkout automation workstream"
 ```
 
 Common commit types:
@@ -235,9 +242,12 @@ Before opening a Pull Request, verify:
 * relevant scoped test module passed when applicable
 * full test suite passed
 * documentation is updated if needed
+* test case documentation is aligned with automated coverage
 * no generated reports or screenshots are tracked
 * no cache files or virtual environment files are tracked
 * branch target is correct
+* cart-owned checkout entry behavior remains separated from detailed checkout behavior
+* checkout information form, checkout overview, and checkout completion behavior remain owned by checkout tests
 
 Recommended pre-PR commands:
 
@@ -251,10 +261,15 @@ pytest -v
 
 For a workstream checkpoint, also run the relevant scoped test module.
 
-Example:
+Examples:
 
 ```bash
 pytest -v tests/test_cart_page.py
+pytest -v
+```
+
+```bash
+pytest -v tests/test_checkout_page.py
 pytest -v
 ```
 
@@ -305,6 +320,7 @@ For checkpoint-only or documentation-heavy stabilization tasks, a `chore` or `do
 chore(AQA-0064): review and stabilize cart workstream
 docs(AQA-0064): update project documentation after cart workstream
 chore(AQA-0073): finalize phase 3c structure cleanup
+chore(AQA-0082): finalize checkout automation workstream
 ```
 
 ## Post-Merge Workflow
@@ -364,6 +380,7 @@ Example checkpoints:
 AQA-0041 — Review Phase 2 And Prepare Phase 3 Scope
 AQA-0064 — Review And Stabilize Cart Workstream
 AQA-0073 — Phase 3C Final Validation And Documentation Sync
+AQA-0082 — Checkout Workstream Final Validation And Documentation Sync
 ```
 
 No new functional work should start before the relevant checkpoint is completed.
@@ -386,6 +403,8 @@ Documentation should be updated when changes affect:
 Documentation changes may be committed as part of the relevant task or as a separate documentation cleanup or stabilization task.
 
 For automation work that implements a documented manual test case, update the related test case metadata in the same task when required.
+
+For workstream final validation tasks, documentation should be checked for stale future-facing wording such as planned coverage that has already been implemented.
 
 ## Summary
 

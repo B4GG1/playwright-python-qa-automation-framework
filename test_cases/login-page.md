@@ -95,11 +95,7 @@ The goal of this document is to define login-related test scenarios before and a
 * User remains on the login page.
 * Login and password fields are visually marked as invalid.
 
-**Expected Error Message:**
-
-```text
-Epic sadface: Username and password do not match any user in this service
-```
+**Expected Error Message:** `Epic sadface: Username and password do not match any user in this service`
 
 **Notes:**
 
@@ -136,11 +132,7 @@ Epic sadface: Username and password do not match any user in this service
 * Red, closable error message is displayed under the login form.
 * Login and password fields are visually marked as invalid.
 
-**Expected Error Message:**
-
-```text
-Epic sadface: Username and password do not match any user in this service
-```
+**Expected Error Message:** `Epic sadface: Username and password do not match any user in this service`
 
 **Notes:**
 
@@ -177,11 +169,7 @@ Epic sadface: Username and password do not match any user in this service
 * Red, closable error message is displayed under the login form.
 * Login and password fields are visually marked as invalid.
 
-**Expected Error Message:**
-
-```text
-Epic sadface: Username is required
-```
+**Expected Error Message:** `Epic sadface: Username is required`
 
 **Notes:**
 
@@ -218,11 +206,7 @@ Epic sadface: Username is required
 * Red, closable error message is displayed under the login form.
 * Login and password fields are visually marked as invalid.
 
-**Expected Error Message:**
-
-```text
-Epic sadface: Password is required
-```
+**Expected Error Message:** `Epic sadface: Password is required`
 
 **Notes:**
 
@@ -259,11 +243,7 @@ Epic sadface: Password is required
 * Red, closable error message is displayed under the login form.
 * Login and password fields are visually marked as invalid.
 
-**Expected Error Message:**
-
-```text
-Epic sadface: Username is required
-```
+**Expected Error Message:** `Epic sadface: Username is required`
 
 **Notes:**
 
@@ -300,11 +280,7 @@ Epic sadface: Username is required
 * Red, closable error message is displayed under the login form.
 * Login and password fields are visually marked as invalid.
 
-**Expected Error Message:**
-
-```text
-Epic sadface: Sorry, this user has been locked out.
-```
+**Expected Error Message:** `Epic sadface: Sorry, this user has been locked out.`
 
 **Notes:**
 
@@ -341,11 +317,7 @@ Epic sadface: Sorry, this user has been locked out.
 * Red, closable error message is displayed under the login form.
 * Login and password fields are visually marked as invalid.
 
-**Expected Error Message:**
-
-```text
-Epic sadface: Username and password do not match any user in this service
-```
+**Expected Error Message:** `Epic sadface: Username and password do not match any user in this service`
 
 **Notes:**
 
@@ -528,11 +500,7 @@ Epic sadface: Username and password do not match any user in this service
 * Inventory page is not accessible.
 * Error message informs the user that login is required.
 
-**Expected Error Message:**
-
-```text
-Epic sadface: You can only access '/inventory.html' when you are logged in.
-```
+**Expected Error Message:** `Epic sadface: You can only access '/inventory.html' when you are logged in.`
 
 **Notes:**
 
@@ -570,11 +538,7 @@ Epic sadface: You can only access '/inventory.html' when you are logged in.
 * Cart page is not accessible.
 * Error message informs the user that login is required.
 
-**Expected Error Message:**
-
-```text
-Epic sadface: You can only access '/cart.html' when you are logged in.
-```
+**Expected Error Message:** `Epic sadface: You can only access '/cart.html' when you are logged in.`
 
 **Notes:**
 
@@ -613,11 +577,7 @@ Epic sadface: You can only access '/cart.html' when you are logged in.
 * Item page is not accessible.
 * Error message informs the user that login is required.
 
-**Expected Error Message:**
-
-```text
-Epic sadface: You can only access '/inventory-item.html' when you are logged in.
-```
+**Expected Error Message:** `Epic sadface: You can only access '/inventory-item.html' when you are logged in.`
 
 **Notes:**
 
@@ -662,7 +622,7 @@ Epic sadface: You can only access '/inventory-item.html' when you are logged in.
 
 * This scenario validates visual invalid-state indicators for login inputs after a failed login attempt.
 * Current Page Object support exists through `LoginPage.get_input_error_icon()`.
-* Automation should verify that two input error icons are visible after failed login.
+* The automated test verifies that two input error icons are visible after failed login.
 
 ---
 
@@ -695,17 +655,12 @@ Epic sadface: You can only access '/inventory-item.html' when you are logged in.
 * Checkout information page is not accessible.
 * Error message informs the user that login is required.
 
-**Expected Error Message:**
-
-```text
-Epic sadface: You can only access '/checkout-step-one.html' when you are logged in.
-```
+**Expected Error Message:** `Epic sadface: You can only access '/checkout-step-one.html' when you are logged in.`
 
 **Notes:**
 
 * This scenario validates access control for checkout step one.
-* This scenario is planned for automation in AQA-0081.
-* The automated test should use a fresh browser context so no active authenticated state is present.
+* The automated test uses a fresh browser context so no active authenticated state is present.
 
 ---
 
@@ -738,17 +693,12 @@ Epic sadface: You can only access '/checkout-step-one.html' when you are logged 
 * Checkout overview page is not accessible.
 * Error message informs the user that login is required.
 
-**Expected Error Message:**
-
-```text
-Epic sadface: You can only access '/checkout-step-two.html' when you are logged in.
-```
+**Expected Error Message:** `Epic sadface: You can only access '/checkout-step-two.html' when you are logged in.`
 
 **Notes:**
 
 * This scenario validates access control for checkout step two.
-* This scenario is planned for automation in AQA-0081.
-* The automated test should use a fresh browser context so no active authenticated state is present.
+* The automated test uses a fresh browser context so no active authenticated state is present.
 
 ---
 
@@ -781,14 +731,9 @@ Epic sadface: You can only access '/checkout-step-two.html' when you are logged 
 * Checkout complete page is not accessible.
 * Error message informs the user that login is required.
 
-**Expected Error Message:**
-
-```text
-Epic sadface: You can only access '/checkout-complete.html' when you are logged in.
-```
+**Expected Error Message:** `Epic sadface: You can only access '/checkout-complete.html' when you are logged in.`
 
 **Notes:**
 
 * This scenario validates access control for checkout complete page.
-* This scenario is planned for automation in AQA-0081.
-* The automated test should use a fresh browser context so no active authenticated state is present.
+* The automated test uses a fresh browser context so no active authenticated state is present.
