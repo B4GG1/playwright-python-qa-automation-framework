@@ -486,11 +486,10 @@ Recommended use:
 * demonstration of form validation, overview validation, and order completion checks
 * demonstration of clear Page Object boundaries across multipage workflows
 * demonstration of documentation synchronization after feature workstream completion
-* preparation for Phase 4 Framework Maturity planning
 
 ### After Phase 3
 
-The project is strong enough for regular job applications because it includes multipage UI flows, cart behavior, checkout behavior, and more realistic application coverage.
+The project should be strong enough for regular job applications because it includes multipage UI flows, cart behavior, checkout behavior, and more realistic application coverage.
 
 Recommended use:
 
