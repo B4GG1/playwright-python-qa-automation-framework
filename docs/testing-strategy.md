@@ -90,7 +90,7 @@ tests/test_checkout_page.py
 Each automated test module maps to the corresponding manual test case file:
 
 | Automated Test Module                | Manual Test Case File                | Test Case ID Range             |
-| ------------------------------------ | ------------------------------------ | ------------------------------ |
+|--------------------------------------|--------------------------------------|--------------------------------|
 | `tests/test_login_page.py`           | `test_cases/login-page.md`           | `TC-LOGIN-001`–`019`           |
 | `tests/test_inventory_page.py`       | `test_cases/inventory-page.md`       | `TC-INVENTORY-001`–`022`       |
 | `tests/test_product_details_page.py` | `test_cases/product-details-page.md` | `TC-PRODUCT-DETAILS-001`–`014` |
