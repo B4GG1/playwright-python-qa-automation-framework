@@ -21,7 +21,7 @@ This repository contains a QA Automation Framework built primarily with Playwrig
 
 The project serves as both a practical automation engineering playground and a portfolio-oriented framework designed to showcase modern test automation practices, framework architecture, tooling integration, and quality engineering workflows.
 
-The framework currently focuses on Playwright-based UI automation and is being developed with a strong emphasis on:
+The framework currently focuses on Playwright-based UI automation and is developed with a strong emphasis on:
 
 * maintainable framework architecture
 * readable test organization
@@ -53,6 +53,14 @@ Latest completed integration:
 ```
 AQA-0083 — Checkout Automation Workstream merged into develop in PR #6
 ```
+
+Stable portfolio snapshot:
+
+```
+Completed Phase 3 state promoted to main as the current portfolio version
+```
+
+The `main` branch represents the polished portfolio version of the completed Phase 3 project state. The `develop` branch remains the integration branch and may contain newer work after this README is read from `main`.
 
 The project currently includes completed automation coverage for:
 
@@ -184,6 +192,7 @@ Completed Phase 3 finalization includes:
 * final local quality validation
 * final full pytest validation
 * PR review, CI validation, and squash merge into `develop`
+* stable Phase 3 portfolio promotion to `main`
 
 The next project direction is Phase 4 Framework Maturity.
 
@@ -212,7 +221,7 @@ Current automated coverage includes Login, Inventory, Product Details, Cart, and
 Detailed test case definitions are stored in dedicated files under the `test_cases/` directory. The README provides only a high-level coverage overview to keep the project entry point readable and maintainable.
 
 | Workstream                      | Status    | Covered Areas                                                                                                                                                 | Test Case Documentation                                               |
-|---------------------------------|-----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------|
+| ------------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
 | Login Page Automation           | Completed | positive login, negative login, UI validation, protected route access, protected checkout route access, input error icons                                     | [Login Page Test Cases](test_cases/login-page.md)                     |
 | Inventory Page Automation       | Completed | inventory page visibility, product list validation, product card content, sorting, product details navigation, inventory-side cart actions                    | [Inventory Page Test Cases](test_cases/inventory-page.md)             |
 | Product Details Page Automation | Completed | product details content, return navigation, product-details-side cart actions, cart badge behavior, cart navigation                                           | [Product Details Page Test Cases](test_cases/product-details-page.md) |
@@ -279,6 +288,8 @@ Installed for future expansion:
 * requests
 * allure-pytest
 * pytest-xdist
+
+The currently implemented framework focuses on Playwright-based UI automation. API testing, advanced Allure reporting, parallel execution with pytest-xdist, Docker-based execution, Jenkins integration, Selenium comparison, and cross-browser execution are planned future extensions and are not part of the implemented framework scope yet.
 
 ## Getting Started
 
@@ -585,6 +596,7 @@ Current roadmap direction:
 * **Phase 3C:** Structure Cleanup, Coverage Completion, And Documentation Sync — completed
 * **Phase 3D:** Checkout Automation Workstream — completed and merged into `develop`
 * **Phase 3 Completion Review:** covered by AQA-0082 and AQA-0083
+* **Phase 3 Portfolio Promotion:** completed Phase 3 state promoted to `main`
 * **Phase 4:** Framework Maturity — planned
 * **Phase 5:** Advanced Extensions — future
 
