@@ -29,6 +29,8 @@ The current CI pipeline supports:
 
 The pipeline is designed to act as a quality gate before changes are merged into stable branches.
 
+The `main` branch represents the stable portfolio version of the project. The `develop` branch remains the integration branch and may contain newer validated work before it is promoted to `main`.
+
 ## CI Trigger Strategy
 
 The pipeline is executed automatically on:
@@ -46,6 +48,7 @@ This trigger strategy ensures that:
 * stable branches are continuously validated
 * pull requests are checked before merge
 * completed feature workstreams are validated before integration
+* portfolio promotion from `develop` to `main` is validated before merge
 * manual debugging runs are possible when needed
 * both `develop` and `main` can be protected by automated checks
 
@@ -119,7 +122,7 @@ Current browser installation command:
 playwright install --with-deps chromium
 ```
 
-Currently, installed browser:
+Currently installed browser:
 
 * Chromium
 
@@ -355,7 +358,10 @@ For a solo portfolio project, full enforcement can be introduced gradually. Howe
 
 ```text
 feature branch → Pull Request → CI validation → Squash merge → develop
+develop → Pull Request → CI validation → Squash merge → main
 ```
+
+This keeps `develop` as the main integration branch and `main` as the polished portfolio branch.
 
 ## Workflow Security Notes
 
@@ -388,6 +394,7 @@ The current CI setup provides:
 * early detection of linting and formatting issues
 * automated UI test execution
 * confidence before merging feature workstreams
+* validation before promoting stable portfolio snapshots to `main`
 * downloadable reports and artifacts
 * support for professional Pull Request workflow
 * foundation for future CI/CD improvements
@@ -403,8 +410,11 @@ The pipeline validates:
 * full automated test execution
 * generated HTML report
 * CI artifacts
+* Pull Requests targeting `develop`
+* Pull Requests targeting `main`
+* stable portfolio branch promotion from `develop` to `main`
 
-It is ready to support checkout workstream final validation, PR readiness checks, and future framework expansion into API testing, reporting improvements, additional CI optimization, and later framework maturity work.
+It is ready to support stable portfolio branch validation, future framework maturity work, API testing, reporting improvements, CI optimization, and later advanced framework extensions.
 
 ## Future Improvements
 

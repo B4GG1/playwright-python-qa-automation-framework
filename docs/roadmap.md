@@ -4,6 +4,8 @@ This document outlines the planned evolution of the QA automation framework.
 
 The roadmap is organized into project phases to keep development focused, realistic, and aligned with portfolio goals.
 
+The roadmap described below treats `main` as the stable portfolio branch and `develop` as the integration branch. When this document is read from `main`, the `develop` branch may already contain newer integration work that has not yet been promoted to the stable portfolio version.
+
 ## Phase 1: Foundation
 
 **Status:** Completed
@@ -102,7 +104,7 @@ This checkpoint allowed the project to move from login-only automation into broa
 
 ## Phase 3: Products, Cart, And Checkout Coverage
 
-**Status:** Completed
+**Status:** Completed and promoted to `main` as stable portfolio snapshot
 
 Phase 3 expanded automation coverage beyond login into broader Sauce Demo application behavior.
 
@@ -141,6 +143,7 @@ Completed work:
 * test data expansion for product and checkout scenarios
 * documentation synchronization after checkout workstream
 * PR review, CI validation, and squash merge into `develop`
+* promotion of the completed Phase 3 state to `main` as the stable portfolio snapshot
 
 Main learning goals completed:
 
@@ -154,8 +157,9 @@ Main learning goals completed:
 * clearer smoke/regression separation
 * scope control between cart and checkout behavior
 * documentation synchronization after structural refactors and workstream completion
+* stable portfolio promotion workflow from `develop` to `main`
 
-Phase 3 is complete after the checkout workstream was validated, synchronized, reviewed in PR #6, passed CI, and was squash-merged into `develop`.
+Phase 3 is complete after the checkout workstream was validated, synchronized, reviewed in PR #6, passed CI, squash-merged into `develop`, and promoted to `main` as the stable Phase 3 portfolio snapshot.
 
 ---
 
@@ -349,8 +353,31 @@ Covered completion scope:
 * reviewed and synchronized documentation updates
 * reviewed Git status and cleanup needs
 * confirmed readiness to move toward Phase 4 planning
+* confirmed readiness for stable Phase 3 portfolio promotion to `main`
 
 The next project direction is Phase 4 Framework Maturity.
+
+---
+
+## Phase 3 Portfolio Promotion
+
+**Status:** Completed
+
+Phase 3 portfolio promotion moves the completed and validated Phase 3 project state from `develop` to `main`.
+
+The purpose of this promotion is to make `main` the polished portfolio branch suitable for recruiters, technical reviewers, and CV/GitHub profile links.
+
+Promotion scope:
+
+* confirm that Phase 3 page-level automation coverage is complete
+* confirm that Login, Inventory, Product Details, Cart, and Checkout documentation is synchronized
+* confirm that implemented features are not mixed with planned future features
+* confirm that stale checkout-finalization or PR-readiness wording has been removed
+* confirm that generated reports, screenshots, cache files, and virtual environment files are not tracked
+* validate the promotion Pull Request through CI
+* squash-merge the stable Phase 3 snapshot into `main`
+
+After this promotion, future implementation and framework maturity work continues from `develop`. The `develop` branch may contain newer work after this roadmap is read from `main`.
 
 ---
 
@@ -487,15 +514,17 @@ Recommended use:
 * demonstration of clear Page Object boundaries across multipage workflows
 * demonstration of documentation synchronization after feature workstream completion
 
-### After Phase 3
+### After Phase 3 Portfolio Promotion
 
-The project should be strong enough for regular job applications because it includes multipage UI flows, cart behavior, checkout behavior, and more realistic application coverage.
+The project has a stable Phase 3 portfolio snapshot available on `main`.
 
 Recommended use:
 
 * regular QA Automation applications
 * GitHub portfolio presentation
 * CV project section update
+* GitHub Profile README project link
+* recruiter-facing repository link
 
 ### After Phase 4
 
@@ -523,4 +552,5 @@ The long-term objective is to evolve this repository into a scalable, portfolio-
 * ability to organize test data and parametrized tests
 * ability to keep scope controlled across workstreams
 * ability to maintain documentation alongside automation
+* stable Git and Pull Request workflow
 * readiness for junior and junior+/mid QA automation roles

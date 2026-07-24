@@ -4,6 +4,8 @@ This document defines the testing approach for the QA automation framework.
 
 The current focus is UI automation testing for the Sauce Demo application using Playwright and Pytest. The project follows an iterative testing strategy: manual test design is created before or alongside automation, selected scenarios are automated, and repeated interactions are gradually refactored into reusable framework components.
 
+The testing strategy described below represents the stable Phase 3 portfolio snapshot. The `main` branch should contain the polished portfolio version of this snapshot, while `develop` remains the integration branch and may contain newer work after this document is read from `main`.
+
 ## System Under Test
 
 * Application: Sauce Demo
@@ -28,6 +30,7 @@ The project follows a progressive testing approach:
 11. Categorize tests with pytest markers.
 12. Validate tests locally and in CI.
 13. Update documentation when test coverage changes.
+14. Promote stable validated snapshots from `develop` to `main` when they are ready for portfolio presentation.
 
 This approach supports both QA thinking and automation engineering practice.
 
@@ -90,7 +93,7 @@ tests/test_checkout_page.py
 Each automated test module maps to the corresponding manual test case file:
 
 | Automated Test Module                | Manual Test Case File                | Test Case ID Range             |
-|--------------------------------------|--------------------------------------|--------------------------------|
+| ------------------------------------ | ------------------------------------ | ------------------------------ |
 | `tests/test_login_page.py`           | `test_cases/login-page.md`           | `TC-LOGIN-001`–`019`           |
 | `tests/test_inventory_page.py`       | `test_cases/inventory-page.md`       | `TC-INVENTORY-001`–`022`       |
 | `tests/test_product_details_page.py` | `test_cases/product-details-page.md` | `TC-PRODUCT-DETAILS-001`–`014` |
@@ -202,6 +205,8 @@ Implemented checkout coverage includes:
 * finish button completes checkout and opens order confirmation page
 * checkout complete page displays order confirmation message
 * Back Home returns to inventory page after order completion
+
+Phase 3 page-level automation coverage has been completed, reviewed, validated, squash-merged into `develop`, and promoted to `main` as the stable Phase 3 portfolio snapshot.
 
 ## Test Types
 
@@ -377,6 +382,16 @@ Current examples:
 * add product to cart, open checkout, submit customer information, finish checkout, and verify order completion
 * complete checkout and return to inventory page with Back Home
 
+### API Tests
+
+The `api` marker is registered for future API testing scope.
+
+Current status:
+
+* API tests are not implemented yet.
+* The current automated test suite focuses on UI coverage.
+* API testing is planned for a future approved project phase.
+
 ## Test Design Principles
 
 Automated tests should follow:
@@ -523,7 +538,7 @@ Current reusable assertion helper location:
 framework/assertions/product_assertions.py
 ```
 
-Current reusable product assertions support:
+Current reusable product and checkout assertions support:
 
 * inventory product card content validation
 * product details content validation
@@ -718,6 +733,8 @@ Current markers:
 * `sorting`
 * `navigation`
 
+The current implemented automated test suite focuses on UI coverage. The `api` marker is registered for future API testing scope and does not mean that API tests are implemented yet.
+
 Example marker commands:
 
 ```
@@ -886,7 +903,7 @@ pytest -m "ui and regression" -v
 pytest -m "ui and navigation" -v
 ```
 
-For checkpoint or stabilization tasks, run relevant scoped modules and full validation when possible:
+For checkpoint, stabilization, or portfolio promotion tasks, run relevant scoped modules and full validation when possible:
 
 ```
 pytest -v tests/test_login_page.py
@@ -921,6 +938,20 @@ The CI pipeline should validate:
 * artifact upload
 
 Failing tests or quality checks should block merging.
+
+## Portfolio Promotion Validation
+
+Before promoting `develop` to `main`, validate that:
+
+* the full test suite passes locally when possible
+* CI on the promotion Pull Request passes
+* implemented test coverage is accurately described
+* future planned coverage is not described as implemented
+* test case documentation remains aligned with automated test modules
+* generated reports, screenshots, cache files, and virtual environment files are not tracked
+* the promoted state is suitable as a stable portfolio snapshot
+
+After promotion, `main` should represent the polished portfolio version of the project. Future implementation work should continue from `develop`.
 
 ## Future Improvements
 

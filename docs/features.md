@@ -4,6 +4,10 @@ This document lists the currently implemented and planned features of the QA aut
 
 The purpose of this file is to provide a quick overview of what the framework already supports and what will be developed in future phases.
 
+The implemented feature set described below represents the stable Phase 3 portfolio snapshot. The `main` branch should contain the polished portfolio version of this snapshot, while `develop` remains the integration branch and may contain newer work after this document is read from `main`.
+
+The current implemented scope focuses on UI automation with Playwright and Pytest. API testing, Selenium comparison, Docker-based execution, Jenkins integration, cross-browser execution, and advanced reporting are planned extensions and are not part of the implemented feature set yet.
+
 ## Currently Implemented
 
 ### Test Execution
@@ -14,7 +18,7 @@ The purpose of this file is to provide a quick overview of what the framework al
 * Regression test execution support
 * Sorting test execution support
 * Navigation test execution support
-* End-to-end test marker support
+* End-to-end marker support
 * Marker-based selective test execution
 * Centralized pytest configuration
 * Playwright Chromium execution in CI
@@ -97,14 +101,6 @@ The purpose of this file is to provide a quick overview of what the framework al
 * Checkout overview summary label expectations
 * Checkout completion header and message expectations
 * Deterministic product data reused by inventory, product details, cart, and checkout tests
-* Test case IDs mapped to automated test data where practical
-
-### Login Page Test Coverage
-
-The framework currently includes automated coverage for the Sauce Demo login and authentication area.
-
-Implemented, and checkout tests
-
 * Test case IDs mapped to automated test data where practical
 
 ### Login Page Test Coverage
@@ -234,7 +230,7 @@ Implemented checkout scenarios:
 * One automated test module per covered page area
 * One manual test case file per covered page area
 * Pytest marker-based test categorization
-* Smoke, regression, UI, positive, negative, sorting, navigation, and e2e markers
+* Registered smoke, regression, UI, positive, negative, sorting, navigation, API, and e2e markers
 * Parametrized negative login scenarios
 * Parametrized protected route access scenarios
 * Parametrized inventory product scenarios
@@ -286,6 +282,8 @@ Implemented checkout scenarios:
 * Minimal workflow permissions using `contents: read`
 * CI artifacts upload for reports and debugging outputs
 * Explicit artifact retention configuration
+* Stable portfolio branch validation for `main`
+* Integration branch validation for `develop`
 
 ### Reporting And Debugging
 
@@ -313,7 +311,7 @@ Implemented checkout scenarios:
 * Product Details page automation coverage documented and mapped to test files
 * Cart page automation coverage documented and mapped to test files
 * Checkout page automation coverage documented and mapped to test files
-* Checkout workstream final validation and documentation sync support
+* Stable Phase 3 portfolio baseline documentation
 
 ## Planned Features
 

@@ -4,9 +4,11 @@ This document describes the repository structure and the responsibility of each 
 
 The framework is structured to support scalable UI automation, Page Object Model components, shared framework utilities, test data management, reporting, documentation, CI execution, and future framework expansion while maintaining readability and modularity.
 
+The structure described below represents the stable Phase 3 portfolio snapshot. The `main` branch should contain the polished portfolio version of this snapshot, while `develop` remains the integration branch and may contain newer work after this document is read from `main`.
+
 ## Current Project Structure
 
-```text
+```
 playwright-python-qa-automation-framework/
 │
 ├── .github/
@@ -49,6 +51,8 @@ Current responsibility:
 * test execution
 * HTML report generation
 * artifact upload
+* validation for `develop`
+* validation for `main`
 
 ### `config/`
 
@@ -80,13 +84,15 @@ Examples:
 * technology stack documentation
 * feature overview documentation
 
+Documentation should describe the current stable framework state and clearly separate implemented functionality from future planned extensions.
+
 ### `framework/`
 
 Contains shared framework-level utilities, reusable assertions, and common framework logic that is not owned by a specific Page Object.
 
 Current implementation:
 
-```text
+```
 framework/assertions/product_assertions.py
 ```
 
@@ -110,7 +116,7 @@ Contains Page Object Model classes.
 
 Current implementation:
 
-```text
+```
 pages/base_page.py
 pages/app_page.py
 pages/login_page.py
@@ -175,7 +181,7 @@ Contains manual test cases and test design notes.
 
 Current implementation:
 
-```text
+```
 test_cases/login-page.md
 test_cases/inventory-page.md
 test_cases/product-details-page.md
@@ -208,7 +214,7 @@ Contains externalized test data.
 
 Current implementation:
 
-```text
+```
 test_data/login_test_data.py
 test_data/product_test_data.py
 test_data/checkout_test_data.py
@@ -237,7 +243,7 @@ Current responsibility:
 
 This directory keeps test data separate from test logic and supports pytest parametrization.
 
-Inventory, Product Details, Cart, and Checkout tests intentionally reuse centralized product data instead of introducing page-specific product datasets too early.
+Inventory, Product Details, Cart, and Checkout tests intentionally reuse centralized product data instead of introducing page-specific product datasets unnecessarily.
 
 A separate cart test data module is not needed at the current stage because cart tests reuse existing product and user data without introducing unique cart-only datasets.
 
@@ -249,7 +255,7 @@ Contains automated test suites.
 
 Current test modules follow the one test file per covered page area principle:
 
-```text
+```
 tests/test_login_page.py
 tests/test_inventory_page.py
 tests/test_product_details_page.py
@@ -270,6 +276,8 @@ Planned future test modules may include:
 * API tests
 * broader regression suites
 * cross-browser execution suites if needed
+
+The currently implemented automated tests focus on UI coverage. API tests, broader regression suites, and cross-browser execution suites are planned future extensions and are not part of the current implemented test module structure.
 
 ## Root Configuration Files
 
@@ -328,6 +336,8 @@ Current markers include:
 * `sorting`
 * `navigation`
 
+The `api` marker is registered for future API testing scope. The current implemented automated test suite focuses on UI coverage.
+
 ### `pyproject.toml`
 
 Contains tool configuration.
@@ -364,7 +374,7 @@ This file supports reproducible local and CI dependency installation.
 
 The current page-level automation structure is organized around one manual test case file and one automated test module per covered page area.
 
-```text
+```
 test_cases/login-page.md
         ↓
 test_data/login_test_data.py
@@ -376,9 +386,7 @@ tests/test_login_page.py
 pytest markers and parametrized output
         ↓
 GitHub Actions CI validation
-```
 
-```text
 test_cases/inventory-page.md
         ↓
 test_data/product_test_data.py
@@ -392,9 +400,7 @@ tests/test_inventory_page.py
 pytest markers and parametrized output
         ↓
 GitHub Actions CI validation
-```
 
-```text
 test_cases/product-details-page.md
         ↓
 test_data/product_test_data.py
@@ -408,9 +414,7 @@ tests/test_product_details_page.py
 pytest markers and parametrized output
         ↓
 GitHub Actions CI validation
-```
 
-```text
 test_cases/cart-page.md
         ↓
 test_data/login_test_data.py
@@ -428,9 +432,7 @@ tests/test_cart_page.py
 pytest markers and parametrized output
         ↓
 GitHub Actions CI validation
-```
 
-```text
 test_cases/checkout-page.md
         ↓
 test_data/login_test_data.py
@@ -593,7 +595,8 @@ The project structure is designed to support:
 * CI/CD-ready development workflow
 * readable and consistent test structure
 * traceability between manual test cases and automated tests
-* future UI and API automation expansion
+* stable portfolio branch promotion through `main`
+* future UI and API automation expansion after the current UI foundation
 
 ## Structure Evolution
 
@@ -647,10 +650,15 @@ Implemented structure currently includes:
 * screenshot capture on test failure
 * local and CI quality checks
 
-Future improvements will include:
+Phase 3 page-level automation coverage has been completed, reviewed, validated, squash-merged into `develop`, and promoted to `main` as the stable Phase 3 portfolio snapshot.
+
+The `main` branch represents the polished portfolio version of the project. The `develop` branch remains the integration branch and may contain newer work after this document is read from `main`.
+
+Future improvements may include:
 
 * expanded fixture organization when setup flows grow
 * reporting utilities
+* CI execution improvements
 * API testing structure
 * Selenium comparison module
 * additional test suites for future application areas

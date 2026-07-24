@@ -2,7 +2,7 @@
 
 This document describes the current architecture of the QA automation framework.
 
-The project follows a lightweight, modular architecture focused on readability, maintainability, traceability, and incremental framework growth. The architecture is intentionally practical: it includes Page Object Model, shared authenticated-page behavior, reusable product assertions, reusable pytest fixtures, centralized test data, marker-based test organization, CI execution, reporting support, screenshot capture, and technical documentation.
+The project follows a lightweight, modular architecture focused on readability, maintainability, traceability, and incremental framework growth. The architecture is intentionally practical: it includes Page Object Model, shared authenticated-page behavior, reusable product and checkout assertions, reusable pytest fixtures, centralized test data, marker-based test organization, CI execution, reporting support, screenshot capture, and technical documentation.
 
 ## Current Architecture Scope
 
@@ -121,9 +121,9 @@ The Page Object layer should remain focused on page interaction logic. It should
 
 Current responsibilities:
 
-* store the Playwright `Page` instance
-* provide shared URL metadata through `URL`
-* provide shared `open()` behavior for pages with direct URL navigation
+* stores the Playwright `Page` instance
+* provides shared URL metadata through `URL`
+* provides shared `open()` behavior for pages with direct URL navigation
 
 `BasePage` should stay intentionally small. It should not become a dumping ground for unrelated helpers.
 
@@ -843,11 +843,12 @@ Tests are categorized using pytest markers such as:
 * `smoke`
 * `regression`
 * `ui`
+* `api`
+* `e2e`
 * `positive`
 * `negative`
 * `sorting`
 * `navigation`
-* `e2e`
 
 Markers allow selective test execution for different validation needs.
 
@@ -869,12 +870,12 @@ The framework follows a modular architecture where:
 
 Near-term architecture direction includes:
 
-* completing final validation and documentation sync for the checkout workstream
-* keeping the current Login, Inventory, Product Details, Cart, and Checkout structure stable before PR
-* keeping cart-owned checkout entry behavior separate from detailed checkout page behavior
+* keeping the completed Login, Inventory, Product Details, Cart, and Checkout architecture stable as the Phase 3 portfolio baseline
+* maintaining clear responsibility boundaries between cart-owned checkout entry behavior and detailed checkout page behavior
 * improving fixture organization only when the number of reusable setup flows grows
 * enhancing reporting and diagnostics incrementally
-* expanding API testing in a later project phase
+* improving CI execution strategy in Phase 4
+* expanding API testing in a later approved project phase
 * adding a future Selenium comparison module only after the Playwright framework is mature enough
 
 ## Architecture Principles
@@ -902,7 +903,7 @@ The project should avoid:
 
 ## Current Architecture Status
 
-The architecture is no longer only a setup foundation. It now contains completed page-level automation coverage for:
+The architecture now contains completed page-level automation coverage for:
 
 * Login Page
 * Inventory Page
@@ -925,6 +926,8 @@ The current architecture includes:
 * CI quality and full test validation
 * HTML reporting and screenshot capture on failure
 
-The current branch is undergoing checkout workstream final validation and documentation sync before PR readiness.
+Phase 3 page-level automation coverage has been completed, reviewed, validated, squash-merged into `develop`, and promoted to `main` as the stable Phase 3 portfolio snapshot.
 
-The next architecture step is to keep the completed page-level coverage stable while preparing the branch for Pull Request review and merge into `develop`.
+The `main` branch represents the polished portfolio version of the project. The `develop` branch remains the integration branch and may contain newer work after this document is read from `main`.
+
+The next architecture direction is Phase 4 Framework Maturity, focused on improving scalability, diagnostics, reporting, CI execution strategy, and maintainability of the existing framework.

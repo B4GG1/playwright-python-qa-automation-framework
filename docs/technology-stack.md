@@ -4,6 +4,8 @@ This document describes the technologies, tools, and planned integrations used i
 
 The stack is divided into implemented technologies, installed but not fully integrated tools, and planned future extensions.
 
+The technology stack described below represents the stable Phase 3 portfolio snapshot. The `main` branch should contain the polished portfolio version of this snapshot, while `develop` remains the integration branch and may contain newer work after this document is read from `main`.
+
 ## Core Technologies
 
 The project is currently built with:
@@ -17,9 +19,11 @@ The project is currently built with:
 * GitHub Actions
 * WSL2 with Ubuntu Linux
 
+These technologies form the current implemented UI automation foundation.
+
 ## Test Automation
 
-Current test automation stack:
+Current implemented test automation stack:
 
 * Playwright for browser automation
 * Pytest as the test runner
@@ -80,6 +84,8 @@ Planned browser execution:
 * Firefox
 * WebKit
 * cross-browser test execution strategy
+
+Firefox, WebKit, and cross-browser execution are planned future extensions. The current implemented browser execution uses Chromium.
 
 ## Page Object Model
 
@@ -188,7 +194,7 @@ Currently implemented:
 
 Current test data location:
 
-```text
+```
 test_data/login_test_data.py
 test_data/product_test_data.py
 test_data/checkout_test_data.py
@@ -213,7 +219,7 @@ These tools are used to maintain consistent code style, reduce formatting-relate
 
 Tool configuration is stored in:
 
-```text
+```
 pyproject.toml
 .pre-commit-config.yaml
 pytest.ini
@@ -230,7 +236,7 @@ Current CI responsibilities:
 * repository checkout
 * Python setup
 * dependency installation
-* Playwright browser installation
+* Playwright Chromium browser installation
 * linting with Ruff
 * formatting validation with Black
 * import sorting validation with isort
@@ -245,6 +251,8 @@ Current CI targets:
 * pull requests targeting `main`
 * pull requests targeting `develop`
 * manual workflow execution using `workflow_dispatch`
+
+The `main` branch represents the stable portfolio branch. The `develop` branch represents the integration branch for completed and validated work before promotion to `main`.
 
 Planned CI/CD improvements:
 
@@ -271,6 +279,13 @@ Installed but not fully integrated:
 
 * allure-pytest
 
+Current reporting status:
+
+* pytest-html is the implemented reporting solution
+* screenshots on failure are implemented through the pytest hook
+* CI artifacts are implemented through GitHub Actions
+* Allure is planned as an advanced reporting integration and is not fully integrated yet
+
 Planned reporting improvements:
 
 * advanced Allure reporting
@@ -296,6 +311,8 @@ Planned usage:
 * hybrid UI and API test scenarios
 * test data setup or validation through API calls where appropriate
 
+The presence of `requests` in the dependency list prepares the project for future API testing, but API tests are not part of the current implemented automation scope.
+
 ## Test Execution Optimization
 
 Currently installed:
@@ -305,6 +322,7 @@ Currently installed:
 Current status:
 
 * parallel test execution is not optimized yet
+* pytest-xdist is not part of the default local or CI execution workflow yet
 
 Planned usage:
 
@@ -326,7 +344,7 @@ Current usage:
 * `requirements.txt` provides a readable list of main project dependencies
 * `requirements-lock.txt` provides locked dependency versions for reproducible setup and CI execution
 
-Main project dependencies include:
+Main installed dependencies include:
 
 * `pytest`
 * `playwright`
@@ -339,6 +357,11 @@ Main project dependencies include:
 * `black`
 * `isort`
 * `pre-commit`
+
+Some installed dependencies support current functionality, while others prepare the project for future extensions:
+
+* `pytest`, `playwright`, `pytest-playwright`, `pytest-html`, `ruff`, `black`, `isort`, and `pre-commit` support the current implemented framework.
+* `requests`, `allure-pytest`, and `pytest-xdist` are installed for planned future expansion and are not fully integrated into the implemented framework scope yet.
 
 Planned improvements:
 
@@ -372,6 +395,8 @@ Future planned integrations include:
 * API testing layer
 * framework packaging as a reusable automation template
 
+These integrations are planned future extensions and should not be described as implemented until they are added, validated, and documented in the relevant workstream.
+
 ## Current Stack Status
 
 The current stack is sufficient to support completed page-level automation coverage for Login, Inventory, Product Details, Cart, and Checkout areas.
@@ -379,6 +404,7 @@ The current stack is sufficient to support completed page-level automation cover
 Implemented technical capabilities include:
 
 * UI automation with Playwright
+* Chromium browser execution
 * test execution with Pytest
 * Page Object Model
 * shared authenticated-page behavior through `AppPage`
@@ -392,5 +418,9 @@ Implemented technical capabilities include:
 * HTML reporting
 * screenshot capture on failure
 * technical documentation
+
+Phase 3 page-level automation coverage has been completed, reviewed, validated, squash-merged into `develop`, and promoted to `main` as the stable Phase 3 portfolio snapshot.
+
+The `main` branch represents the polished portfolio version of the project. The `develop` branch remains the integration branch and may contain newer work after this document is read from `main`.
 
 The next stack expansion should focus on framework maturity, reporting, CI optimization, API testing, cross-browser execution, or other future approved workstreams rather than additional checkout foundation work.

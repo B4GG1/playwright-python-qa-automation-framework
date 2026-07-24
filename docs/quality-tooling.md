@@ -4,6 +4,8 @@ This document describes the code quality tooling used in the QA automation frame
 
 The goal of quality tooling is to keep the codebase readable, consistent, maintainable, and safe to extend as the framework grows.
 
+The quality tooling described below supports the stable Phase 3 portfolio snapshot. The `main` branch should contain the polished portfolio version of this snapshot, while `develop` remains the integration branch and may contain newer work after this document is read from `main`.
+
 ## Tooling Overview
 
 The project currently uses:
@@ -30,19 +32,19 @@ Current responsibilities:
 
 Run Ruff locally:
 
-```bash id="ykwisx"
+```
 ruff check .
 ```
 
 Ruff configuration is stored in:
 
-```text id="wd1cqu"
+```
 pyproject.toml
 ```
 
 Current Ruff configuration:
 
-```toml id="3aubux"
+```
 [tool.ruff]
 line-length = 200
 target-version = "py312"
@@ -62,25 +64,25 @@ It enforces a consistent formatting style across the project.
 
 Check formatting without modifying files:
 
-```bash id="zxyo0m"
+```
 black --check .
 ```
 
 Format files locally:
 
-```bash id="3wypxz"
+```
 black .
 ```
 
 Black configuration is stored in:
 
-```text id="loy1bb"
+```
 pyproject.toml
 ```
 
 Current Black configuration:
 
-```toml id="wmxn6w"
+```
 [tool.black]
 line-length = 100
 target-version = ['py312']
@@ -94,25 +96,25 @@ The project uses Black-compatible isort configuration.
 
 Check import sorting without modifying files:
 
-```bash id="ai3xqo"
+```
 isort . --check-only
 ```
 
 Sort imports locally:
 
-```bash id="aubco2"
+```
 isort .
 ```
 
 isort configuration is stored in:
 
-```text id="33j8da"
+```
 pyproject.toml
 ```
 
 Current isort configuration:
 
-```toml id="s3t1vv"
+```
 [tool.isort]
 profile = "black"
 line_length = 100
@@ -130,13 +132,13 @@ Current pre-commit hooks include:
 
 Install hooks locally:
 
-```bash id="1pah99"
+```
 pre-commit install
 ```
 
 Run all hooks manually:
 
-```bash id="af4loy"
+```
 pre-commit run --all-files
 ```
 
@@ -163,13 +165,13 @@ Current responsibilities:
 
 Run the full test suite:
 
-```bash id="ldzjrf"
+```
 pytest -v
 ```
 
 Run selected marker groups:
 
-```bash id="bcgo5g"
+```
 pytest -m smoke -v
 pytest -m regression -v
 pytest -m positive -v
@@ -185,7 +187,7 @@ pytest -m "ui and navigation" -v
 
 Marker definitions are stored in:
 
-```text id="8r08co"
+```
 pytest.ini
 ```
 
@@ -202,6 +204,8 @@ Current marker categories include:
 * `navigation`
 
 The project uses strict marker validation, so markers used in tests should be registered in `pytest.ini`.
+
+The current implemented automated test suite focuses on UI coverage. The `api` marker is registered for future API testing scope and does not mean that API tests are implemented yet.
 
 ## Playwright Assertions
 
@@ -244,7 +248,7 @@ Plain Python assertions are used when comparing extracted values such as product
 
 Before pushing changes, the recommended local validation workflow is:
 
-```bash id="oa2h2r"
+```
 ruff check .
 black --check .
 isort . --check-only
@@ -253,14 +257,14 @@ pytest -v
 
 If formatting changes are needed, run:
 
-```bash id="fahgw6"
+```
 black .
 isort .
 ```
 
 Then run validation again:
 
-```bash id="qvqldy"
+```
 ruff check .
 black --check .
 isort . --check-only
@@ -269,7 +273,7 @@ pytest -v
 
 For login-related changes, these commands may also be useful:
 
-```bash id="rdk5y1"
+```
 pytest -v tests/test_login_page.py
 pytest -m smoke -v
 pytest -m regression -v
@@ -280,7 +284,7 @@ pytest -m "ui and smoke" -v
 
 For inventory-related changes, these commands may also be useful:
 
-```bash id="ox6ed5"
+```
 pytest -v tests/test_inventory_page.py
 pytest -m sorting -v
 pytest -m "ui and sorting" -v
@@ -288,7 +292,7 @@ pytest -m "ui and sorting" -v
 
 For product-details-related changes, these commands may also be useful:
 
-```bash id="0tcv0i"
+```
 pytest -v tests/test_product_details_page.py
 pytest -m navigation -v
 pytest -m "ui and navigation" -v
@@ -297,7 +301,7 @@ pytest -m "ui and regression" -v
 
 For cart-related changes, these commands may also be useful:
 
-```bash id="jeldgr"
+```
 pytest -v tests/test_cart_page.py
 pytest -m navigation -v
 pytest -m "ui and navigation" -v
@@ -306,7 +310,7 @@ pytest -m "ui and regression" -v
 
 For checkout-related changes, these commands may also be useful:
 
-```bash id="mmqozo"
+```
 pytest -v tests/test_checkout_page.py
 pytest -m e2e -v
 pytest -m navigation -v
@@ -314,9 +318,9 @@ pytest -m "ui and regression" -v
 pytest -m "ui and navigation" -v
 ```
 
-For checkpoint or stabilization tasks, run relevant scoped modules and full validation when possible:
+For checkpoint, stabilization, or portfolio promotion tasks, run relevant scoped modules and full validation when possible:
 
-```bash id="e53cve"
+```
 pytest -v tests/test_login_page.py
 pytest -v tests/test_inventory_page.py
 pytest -v tests/test_product_details_page.py
@@ -340,7 +344,7 @@ Current CI checks include:
 
 Current CI quality commands include:
 
-```bash id="o50fuj"
+```
 ruff check .
 black --check .
 isort . --check-only
@@ -362,30 +366,30 @@ Generated reports and screenshots should be uploaded as artifacts instead of bei
 
 The project uses quality gates at multiple levels.
 
-### Local quality gate
+### Local Quality Gate
 
 Before commit or push:
 
-```bash id="xg4knf"
+```
 ruff check .
 black --check .
 isort . --check-only
 pytest -v
 ```
 
-### Pre-commit quality gate
+### Pre-commit Quality Gate
 
 Before creating commits, or manually before final validation:
 
-```bash id="xz3hof"
+```
 pre-commit run --all-files
 ```
 
-### Scoped workstream quality gate
+### Scoped Workstream Quality Gate
 
 For workstream-specific review or stabilization tasks:
 
-```bash id="b5beae"
+```
 pytest -v tests/test_login_page.py
 pytest -v tests/test_inventory_page.py
 pytest -v tests/test_product_details_page.py
@@ -395,7 +399,7 @@ pytest -v tests/test_checkout_page.py
 
 The scoped command should be followed by full-suite validation before the workstream is considered ready for merge unless a scoped validation exception is explicitly accepted.
 
-### CI quality gate
+### CI Quality Gate
 
 Before merging Pull Requests:
 
@@ -403,6 +407,16 @@ Before merging Pull Requests:
 * tests must pass
 * quality checks must pass
 * generated artifacts should be available for review when needed
+
+### Portfolio Promotion Quality Gate
+
+Before promoting `develop` to `main`:
+
+* full local validation should pass when possible
+* CI on the promotion Pull Request should pass
+* documentation should not describe unfinished future work as implemented
+* generated reports, screenshots, cache files, and virtual environment files should not be tracked
+* the promoted state should be suitable as a stable portfolio snapshot
 
 ## Current Quality Status
 
@@ -442,6 +456,10 @@ The project currently includes:
 * CI artifact upload
 * full-suite CI validation
 
+Phase 3 page-level automation coverage has been completed, reviewed, validated, squash-merged into `develop`, and promoted to `main` as the stable Phase 3 portfolio snapshot.
+
+The `main` branch represents the polished portfolio version of the project. The `develop` branch remains the integration branch and may contain newer work after this document is read from `main`.
+
 ## Quality Goals
 
 The project quality tooling supports:
@@ -456,7 +474,7 @@ The project quality tooling supports:
 * scalable development workflow
 * professional Pull Request workflow
 * traceability between test cases and automated coverage
-* safe checkpoint validation before workstream merge preparation
+* safe checkpoint validation before workstream merge or portfolio promotion
 
 ## Future Improvements
 
