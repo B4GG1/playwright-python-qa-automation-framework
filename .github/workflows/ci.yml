@@ -11,6 +11,9 @@ on:
       - main
       - develop
 
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -27,7 +30,7 @@ jobs:
       - name: Install project dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r requirements-lock.txt
 
       - name: Install Playwright browsers
         run: playwright install --with-deps chromium
@@ -41,11 +44,10 @@ jobs:
       - name: Run isort import validation
         run: isort . --check-only
 
-      - name: Run pytest test suite (with HTML report)
+      - name: Run pytest test suite with HTML report
         run: |
           mkdir -p reports
           pytest -v --html=reports/report.html --self-contained-html
-        continue-on-error: true
 
       - name: Upload pytest HTML report
         if: always()
@@ -53,10 +55,14 @@ jobs:
         with:
           name: pytest-html-report
           path: reports/report.html
+          if-no-files-found: warn
+          retention-days: 7
 
-      - name: Upload reports directory (screenshots, logs, etc.)
+      - name: Upload reports directory
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-artifacts
           path: reports/
+          if-no-files-found: warn
+          retention-days: 7

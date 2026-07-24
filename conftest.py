@@ -1,11 +1,22 @@
 import os
-from datetime import datetime
+from datetime import UTC, datetime
 
 import pytest
+from playwright.sync_api import Page
+
+from pages.cart_page import CartPage
+from pages.checkout_page import CheckoutCompletePage, CheckoutInformationPage, CheckoutOverviewPage
+from pages.inventory_page import InventoryPage
+from pages.login_page import LoginPage
+from test_data.checkout_test_data import VALID_CHECKOUT_CUSTOMER
+from test_data.login_test_data import VALID_USER_CASES
+from test_data.product_test_data import LIST_OF_PRODUCTS
 
 
 @pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item, call):
+    _ = call
+
     outcome = yield
     report = outcome.get_result()
 
@@ -19,7 +30,7 @@ def pytest_runtest_makereport(item, call):
     reports_dir = os.path.join("reports", "screenshots")
     os.makedirs(reports_dir, exist_ok=True)
 
-    timestamp = datetime.utcnow().strftime("%Y-%m-%d_%H-%M-%S")
+    timestamp = datetime.now(UTC).strftime("%Y-%m-%d_%H-%M-%S")
     test_name = item.name.replace("/", "_").replace("::", "_")
 
     file_path = os.path.join(reports_dir, f"{test_name}_{timestamp}.png")
@@ -28,3 +39,74 @@ def pytest_runtest_makereport(item, call):
         page.screenshot(path=file_path, full_page=True)
     except Exception as e:
         print(f"[screenshot-error] {test_name}: {e}")
+
+
+@pytest.fixture()
+def opened_login_page(page: Page) -> LoginPage:
+    login_page = LoginPage(page)
+    login_page.open()
+    return login_page
+
+
+@pytest.fixture()
+def standard_user() -> dict[str, str]:
+    return VALID_USER_CASES[0]
+
+
+@pytest.fixture()
+def logged_in_inventory_page(
+    opened_login_page: LoginPage,
+    standard_user: dict[str, str],
+) -> InventoryPage:
+    opened_login_page.login(standard_user["username"], standard_user["password"])
+    return InventoryPage(opened_login_page.page)
+
+
+@pytest.fixture()
+def inventory_page_with_one_product_in_cart(
+    logged_in_inventory_page: InventoryPage,
+) -> tuple[InventoryPage, dict[str, str]]:
+    product = LIST_OF_PRODUCTS[0]
+    logged_in_inventory_page.add_product_to_cart(product["product_name"])
+    return logged_in_inventory_page, product
+
+
+@pytest.fixture()
+def cart_page_with_one_product(
+    inventory_page_with_one_product_in_cart: tuple[InventoryPage, dict[str, str]],
+) -> tuple[CartPage, dict[str, str]]:
+    inventory_page, product = inventory_page_with_one_product_in_cart
+    cart_page = inventory_page.open_cart()
+    return cart_page, product
+
+
+@pytest.fixture()
+def checkout_step_one_page_with_one_product(
+    cart_page_with_one_product: tuple[CartPage, dict[str, str]],
+) -> tuple[CheckoutInformationPage, dict[str, str]]:
+    cart_page, product = cart_page_with_one_product
+    checkout_page = cart_page.checkout()
+    return checkout_page, product
+
+
+@pytest.fixture()
+def checkout_step_two_page_with_one_product(
+    checkout_step_one_page_with_one_product: tuple[CheckoutInformationPage, dict[str, str]],
+) -> tuple[CheckoutOverviewPage, dict[str, str]]:
+    checkout_step_one, product = checkout_step_one_page_with_one_product
+    checkout_step_one.fill_checkout_info_form(
+        VALID_CHECKOUT_CUSTOMER["first_name"],
+        VALID_CHECKOUT_CUSTOMER["last_name"],
+        VALID_CHECKOUT_CUSTOMER["postal_code"],
+    )
+    checkout_step_two = checkout_step_one.continue_checkout()
+    return checkout_step_two, product
+
+
+@pytest.fixture()
+def checkout_last_step_page_with_one_product(
+    checkout_step_two_page_with_one_product: tuple[CheckoutOverviewPage, dict[str, str]],
+) -> tuple[CheckoutCompletePage, dict[str, str]]:
+    checkout_step_two, product = checkout_step_two_page_with_one_product
+    checkout_last_step = checkout_step_two.finish_checkout()
+    return checkout_last_step, product
