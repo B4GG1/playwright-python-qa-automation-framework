@@ -8,22 +8,23 @@ The goal of this document is to define product-details-page-owned scenarios and 
 
 ## Test Case Overview And Automation Coverage
 
-| Test Case ID                                                                                                                          | Scenario                                                                           | Type                         | Priority | Automation Status | Automated In                         |
-|---------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------|------------------------------|----------|-------------------|--------------------------------------|
-| [TC-PRODUCT-DETAILS-001](#tc-product-details-001--product-details-content-is-displayed-for-selected-product)                          | Product details content is displayed for selected product                          | Smoke / UI                   | High     | Automated         | `tests/test_product_details_page.py` |
-| [TC-PRODUCT-DETAILS-002](#tc-product-details-002--product-details-content-matches-product-data-for-each-product)                      | Product details content matches product data for each product                      | Regression / UI              | Medium   | Automated         | `tests/test_product_details_page.py` |
-| [TC-PRODUCT-DETAILS-003](#tc-product-details-003--user-can-return-from-product-details-to-inventory-page)                             | User can return from product details to inventory page                             | Regression / Navigation / UI | Medium   | Automated         | `tests/test_product_details_page.py` |
-| [TC-PRODUCT-DETAILS-004](#tc-product-details-004--add-to-cart-button-changes-to-remove-after-adding-product-from-details-page)        | Add to cart button changes to Remove after adding product from details page        | Regression / UI              | Medium   | Automated         | `tests/test_product_details_page.py` |
-| [TC-PRODUCT-DETAILS-005](#tc-product-details-005--product-can-be-added-to-cart-from-product-details-page)                             | Product can be added to cart from product details page                             | Smoke / Positive / UI        | High     | Automated         | `tests/test_product_details_page.py` |
-| [TC-PRODUCT-DETAILS-006](#tc-product-details-006--all-products-can-be-added-to-cart-from-product-details-page)                        | All products can be added to cart from product details page                        | Regression / Positive / UI   | Medium   | Automated         | `tests/test_product_details_page.py` |
-| [TC-PRODUCT-DETAILS-007](#tc-product-details-007--product-can-be-removed-from-cart-from-product-details-page)                         | Product can be removed from cart from product details page                         | Smoke / Positive / UI        | High     | Automated         | `tests/test_product_details_page.py` |
-| [TC-PRODUCT-DETAILS-008](#tc-product-details-008--remove-button-changes-back-to-add-to-cart-after-removing-product-from-details-page) | Remove button changes back to Add to cart after removing product from details page | Regression / UI              | Medium   | Automated         | `tests/test_product_details_page.py` |
-| [TC-PRODUCT-DETAILS-009](#tc-product-details-009--cart-badge-is-displayed-after-adding-product-from-product-details-page)             | Cart badge is displayed after adding product from product details page             | Regression / UI              | Medium   | Automated         | `tests/test_product_details_page.py` |
-| [TC-PRODUCT-DETAILS-010](#tc-product-details-010--cart-badge-count-updates-after-adding-product-from-details-when-cart-is-not-empty)  | Cart badge count updates after adding product from details when cart is not empty  | Regression / UI              | Medium   | Automated         | `tests/test_product_details_page.py` |
-| [TC-PRODUCT-DETAILS-011](#tc-product-details-011--cart-badge-count-updates-after-removing-one-of-multiple-products-from-details-page) | Cart badge count updates after removing one of multiple products from details page | Regression / UI              | Medium   | Automated         | `tests/test_product_details_page.py` |
-| [TC-PRODUCT-DETAILS-012](#tc-product-details-012--cart-badge-disappears-after-removing-last-product-from-product-details-page)        | Cart badge disappears after removing last product from product details page        | Regression / UI              | Medium   | Automated         | `tests/test_product_details_page.py` |
-| [TC-PRODUCT-DETAILS-013](#tc-product-details-013--cart-page-can-be-opened-from-product-details-page)                                  | Cart page can be opened from product details page                                  | Regression / Navigation / UI | Medium   | Automated         | `tests/test_product_details_page.py` |
-| [TC-PRODUCT-DETAILS-014](#tc-product-details-014--all-products-can-be-removed-from-cart-from-product-details-page)                    | All products can be removed from cart from product details page                    | Regression / Positive / UI   | Medium   | Automated         | `tests/test_product_details_page.py` |
+| Test Case ID                                                                                                                          | Scenario                                                                           | Type                    | Priority | Automation Status | Automated In                         |
+|---------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------|-------------------------|----------|-------------------|--------------------------------------|
+| [TC-PRODUCT-DETAILS-001](#tc-product-details-001--product-details-content-is-displayed-for-selected-product)                          | Product details content is displayed for selected product                          | Smoke / UI              | High     | Automated         | `tests/test_product_details_page.py` |
+| [TC-PRODUCT-DETAILS-002](#tc-product-details-002--product-details-content-matches-product-data-for-each-product)                      | Product details content matches product data for each product                      | Regression / UI         | Medium   | Automated         | `tests/test_product_details_page.py` |
+| [TC-PRODUCT-DETAILS-003](#tc-product-details-003--user-can-return-from-product-details-to-inventory-page)                             | User can return from product details to inventory page                             | Navigation              | Medium   | Automated         | `tests/test_product_details_page.py` |
+| [TC-PRODUCT-DETAILS-004](#tc-product-details-004--add-to-cart-button-changes-to-remove-after-adding-product-from-details-page)        | Add to cart button changes to Remove after adding product from details page        | Regression / UI         | Medium   | Automated         | `tests/test_product_details_page.py` |
+| [TC-PRODUCT-DETAILS-005](#tc-product-details-005--product-can-be-added-to-cart-from-product-details-page)                             | Product can be added to cart from product details page                             | Smoke                   | High     | Automated         | `tests/test_product_details_page.py` |
+| [TC-PRODUCT-DETAILS-006](#tc-product-details-006--all-products-can-be-added-to-cart-from-product-details-page)                        | All products can be added to cart from product details page                        | Regression              | Medium   | Automated         | `tests/test_product_details_page.py` |
+| [TC-PRODUCT-DETAILS-007](#tc-product-details-007--product-can-be-removed-from-cart-from-product-details-page)                         | Product can be removed from cart from product details page                         | Smoke                   | High     | Automated         | `tests/test_product_details_page.py` |
+| [TC-PRODUCT-DETAILS-008](#tc-product-details-008--remove-button-changes-back-to-add-to-cart-after-removing-product-from-details-page) | Remove button changes back to Add to cart after removing product from details page | Regression / UI         | Medium   | Automated         | `tests/test_product_details_page.py` |
+| [TC-PRODUCT-DETAILS-009](#tc-product-details-009--cart-badge-is-displayed-after-adding-product-from-product-details-page)             | Cart badge is displayed after adding product from product details page             | Smoke / UI              | Medium   | Automated         | `tests/test_product_details_page.py` |
+| [TC-PRODUCT-DETAILS-010](#tc-product-details-010--cart-badge-count-updates-after-adding-product-from-details-when-cart-is-not-empty)  | Cart badge count updates after adding product from details when cart is not empty  | Regression / UI         | Medium   | Automated         | `tests/test_product_details_page.py` |
+| [TC-PRODUCT-DETAILS-011](#tc-product-details-011--cart-badge-count-updates-after-removing-one-of-multiple-products-from-details-page) | Cart badge count updates after removing one of multiple products from details page | Regression / UI         | Medium   | Automated         | `tests/test_product_details_page.py` |
+| [TC-PRODUCT-DETAILS-012](#tc-product-details-012--cart-badge-disappears-after-removing-last-product-from-product-details-page)        | Cart badge disappears after removing last product from product details page        | Smoke / UI              | Medium   | Automated         | `tests/test_product_details_page.py` |
+| [TC-PRODUCT-DETAILS-013](#tc-product-details-013--cart-page-can-be-opened-from-product-details-page)                                  | Cart page can be opened from product details page                                  | Smoke / Navigation      | Medium   | Automated         | `tests/test_product_details_page.py` |
+| [TC-PRODUCT-DETAILS-014](#tc-product-details-014--all-products-can-be-removed-from-cart-from-product-details-page)                    | All products can be removed from cart from product details page                    | Regression              | Medium   | Automated         | `tests/test_product_details_page.py` |
+| [TC-PRODUCT-DETAILS-015](#tc-product-details-015--cart-page-can-be-opened-from-product-details-page-for-each-product)                 | Cart page can be opened from product details page for each product                 | Regression / Navigation | Medium   | Planned           | TBD                                  |
 
 ---
 
@@ -40,7 +41,7 @@ The goal of this document is to define product-details-page-owned scenarios and 
 **Preconditions:**
 
 * User is logged in.
-* User has opened a product details page.
+* User can open a product details page.
 
 **Test Data:**
 
@@ -55,16 +56,19 @@ The goal of this document is to define product-details-page-owned scenarios and 
 
 **Expected Result:**
 
-* Product details page item details container is visible.
+* Product details page displays the selected product.
 * Product name is visible.
 * Product description is visible.
 * Product price is visible.
 * Product image is visible.
-* Add to cart button is visible when the product has not been added to cart.
+* Add to cart button is visible when the product has not been added to the cart.
+* Back to products button is visible.
 
 **Notes:**
 
-* This scenario validates product details content visibility for one representative product.
+* This is the representative smoke UI validation for product details content.
+* Navigation from inventory to product details is covered separately by Inventory Page test cases and is not the classification target of this scenario.
+* Full all-products content validation is covered by TC-PRODUCT-DETAILS-002.
 
 ---
 
@@ -79,7 +83,7 @@ The goal of this document is to define product-details-page-owned scenarios and 
 **Preconditions:**
 
 * User is logged in.
-* User can open product details pages for products from the product test data set.
+* Product details pages are available for products from the centralized product test data set.
 
 **Test Data:**
 
@@ -89,28 +93,30 @@ The goal of this document is to define product-details-page-owned scenarios and 
 **Steps:**
 
 1. Log in with valid credentials.
-2. For each product from the product test data set, open the product details page.
-3. Observe the product details page content.
+2. Open the product details page for each product in an isolated test iteration.
+3. Observe the displayed product content.
 
 **Expected Result:**
 
-* Product details page displays the selected product name.
-* Product details page displays the selected product description.
-* Product details page displays the selected product price.
-* Product details page displays the selected product image.
-* Product details page displays the Add to cart button when the product has not been added to cart.
-* Product details content matches centralized product test data.
+* Product details page displays the expected product.
+* Product name matches centralized product test data.
+* Product description matches centralized product test data.
+* Product price matches centralized product test data.
+* Product image matches centralized product test data.
+* Add to cart button is visible for a product that has not been added to the cart.
+* Back to products button is visible.
 
 **Notes:**
 
 * This is the full regression variant of TC-PRODUCT-DETAILS-001.
-* This scenario should remain focused on product details page content, not cart behavior.
+* The scenario validates product-details content for the complete applicable product data set.
+* Navigation into product details is setup for this scenario and is covered separately under Inventory Page ownership.
 
 ---
 
 ### TC-PRODUCT-DETAILS-003 — User can return from product details to inventory page
 
-**Type:** Regression / Navigation / UI\
+**Type:** Navigation\
 **Priority:** Medium\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
@@ -128,22 +134,21 @@ The goal of this document is to define product-details-page-owned scenarios and 
 
 **Steps:**
 
-1. Log in with valid credentials.
-2. Open product details from the inventory page.
+1. Open the selected product details page.
+2. Verify that the expected product details page is open.
 3. Click the Back to products button.
 
 **Expected Result:**
 
 * User is returned to the inventory page.
-* Inventory page URL contains `inventory.html`.
+* Inventory page URL is displayed.
 * Inventory container is visible.
 * Product list is visible.
 
 **Notes:**
 
-* This scenario validates navigation back from product details to the inventory page.
-* This test should not validate cart behavior.
-* One representative product is enough because product details entry paths are tracked separately under Inventory Page ownership.
+* The primary purpose of this scenario is Product Details → Inventory navigation.
+* Product details content and cart behavior are outside the main classification of this test case.
 
 ---
 
@@ -159,7 +164,7 @@ The goal of this document is to define product-details-page-owned scenarios and 
 
 * User is logged in.
 * User is on the product details page.
-* Product details page displays the selected product.
+* Selected product has not been added to the cart.
 
 **Test Data:**
 
@@ -168,30 +173,28 @@ The goal of this document is to define product-details-page-owned scenarios and 
 
 **Steps:**
 
-1. Log in with valid credentials.
-2. Find the selected product on the inventory page.
-3. Open the product details page.
-4. Click the Add to cart button.
-5. Observe the button on the product details page.
+1. Open the selected product details page.
+2. Verify that Add to cart is visible.
+3. Verify that Remove is hidden.
+4. Click Add to cart.
+5. Observe the product controls.
 
 **Expected Result:**
 
-* Product is added to the cart.
-* Product details page remains open.
-* Add to cart button changes to Remove for the tested product.
-* Remove button is visible on the product details page.
+* Remove button becomes visible.
+* Add to cart button becomes hidden.
+* Product details page remains open for the selected product.
 
 **Notes:**
 
-* This scenario validates product-details-side UI feedback after adding a product to the cart.
-* Core add-to-cart behavior from product details page is tracked separately in TC-PRODUCT-DETAILS-005.
-* Cart badge behavior is tracked separately in TC-PRODUCT-DETAILS-009 and TC-PRODUCT-DETAILS-010.
+* This scenario validates detailed UI state change after adding a product.
+* Core add-to-cart functionality is covered by TC-PRODUCT-DETAILS-005 and TC-PRODUCT-DETAILS-006.
 
 ---
 
 ### TC-PRODUCT-DETAILS-005 — Product can be added to cart from product details page
 
-**Type:** Smoke / Positive / UI\
+**Type:** Smoke\
 **Priority:** High\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
@@ -200,8 +203,7 @@ The goal of this document is to define product-details-page-owned scenarios and 
 **Preconditions:**
 
 * User is logged in.
-* User is on the product details page.
-* Selected product has not been added to cart.
+* Selected product has not been added to the cart.
 
 **Test Data:**
 
@@ -210,30 +212,29 @@ The goal of this document is to define product-details-page-owned scenarios and 
 
 **Steps:**
 
-1. Log in with valid credentials.
-2. Open the selected product details page.
-3. Click the Add to cart button on the product details page.
-4. Observe the product details page.
+1. Open the selected product details page.
+2. Add the product to the cart.
+3. Verify the updated cart state.
+4. Open the cart page to verify the result.
 
 **Expected Result:**
 
-* Product is added to the cart from the product details page.
-* Product details page remains open.
-* No error is displayed.
-* Product details page reflects the updated cart state for the selected product.
+* Product can be added to the cart from the product details page.
+* Cart badge displays `1`.
+* Selected product is present in the cart.
+* No error occurs during the operation.
 
 **Notes:**
 
-* This scenario validates the core add-to-cart action initiated from the product details page for one representative product.
-* Button state is covered separately in TC-PRODUCT-DETAILS-004.
-* Cart badge behavior is covered separately in TC-PRODUCT-DETAILS-009 and TC-PRODUCT-DETAILS-010.
-* Cart page item validation remains owned by `cart-page.md`.
+* This is the representative smoke validation of product-details-side add-to-cart functionality.
+* Opening the cart is used to verify the business result and is not the navigation focus of this scenario.
+* Full product coverage is provided by TC-PRODUCT-DETAILS-006.
 
 ---
 
 ### TC-PRODUCT-DETAILS-006 — All products can be added to cart from product details page
 
-**Type:** Regression / Positive / UI\
+**Type:** Regression\
 **Priority:** Medium\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
@@ -242,8 +243,8 @@ The goal of this document is to define product-details-page-owned scenarios and 
 **Preconditions:**
 
 * User is logged in.
-* User can open product details pages for products from the product test data set.
-* Cart is empty at the start of each product check.
+* Cart starts empty for each independent product iteration.
+* Product details pages are available for all products from centralized test data.
 
 **Test Data:**
 
@@ -252,24 +253,30 @@ The goal of this document is to define product-details-page-owned scenarios and 
 
 **Steps:**
 
-1. Log in with valid credentials.
-2. For each product from the product test data set, open that product details page in an isolated test iteration.
-3. Click the Add to cart button on the product details page.
-4. Observe the product details page, cart badge, and cart page item list.
+1. Open the tested product details page.
+2. Add the tested product to the cart.
+3. Verify that the product details page remains open.
+4. Verify the cart badge.
+5. Open the cart page.
+6. Verify the tested product is present.
+7. Repeat independently for every applicable product.
 
 **Expected Result:**
 
-* The tested product can be added to the cart from its product details page.
-* Add to cart action does not display an error.
-* Product details page remains open after adding the product.
-* Cart badge displays `1` for the tested product iteration.
-* The tested product is visible on the cart page.
+* Every tested product can be added to the cart from its product details page.
+* Cart badge displays `1` for each isolated iteration.
+* Cart page contains the tested product.
+
+**Notes:**
+
+* This is the full regression variant of TC-PRODUCT-DETAILS-005.
+* Cart navigation performed during result verification is not the primary classification of this scenario.
 
 ---
 
 ### TC-PRODUCT-DETAILS-007 — Product can be removed from cart from product details page
 
-**Type:** Smoke / Positive / UI\
+**Type:** Smoke\
 **Priority:** High\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
@@ -278,36 +285,31 @@ The goal of this document is to define product-details-page-owned scenarios and 
 **Preconditions:**
 
 * User is logged in.
-* User is on the product details page.
-* Selected product has already been added to cart.
+* One representative product has already been added to the cart.
 
 **Test Data:**
 
 * User: `standard_user`
-* Example product: `Sauce Labs Backpack`
+* Example product: representative product from centralized test data
 
 **Steps:**
 
-1. Log in with valid credentials.
-2. Open the selected product details page.
-3. Add the selected product to the cart if it is not already added.
-4. Click the Remove button on the product details page.
-5. Observe the product details page.
+1. Open the product details page for the product currently in the cart.
+2. Click Remove.
+3. Verify the updated cart state.
+4. Open the cart page to verify the result.
 
 **Expected Result:**
 
-* Product is removed from the cart from the product details page.
-* Product details page remains open.
-* No error is displayed.
-* Product details page reflects the updated cart state for the selected product.
+* Product is removed from the cart.
+* Cart badge is no longer visible when the removed product was the only cart item.
+* Removed product is not present on the cart page.
 
 **Notes:**
 
-* This scenario validates the core remove-from-cart action initiated from the product details page for one representative product.
-* Full all-products remove-from-cart regression coverage is tracked separately in TC-PRODUCT-DETAILS-014.
-* Button state after removal is covered separately in TC-PRODUCT-DETAILS-008.
-* Cart badge behavior after removal is covered separately in TC-PRODUCT-DETAILS-011 and TC-PRODUCT-DETAILS-012.
-* Cart page item validation remains owned by `cart-page.md`.
+* This is the representative smoke validation of product-details-side remove-from-cart functionality.
+* Opening the cart is used only to verify the removal result.
+* Full product regression coverage is provided by TC-PRODUCT-DETAILS-014.
 
 ---
 
@@ -323,7 +325,7 @@ The goal of this document is to define product-details-page-owned scenarios and 
 
 * User is logged in.
 * User is on the product details page.
-* Selected product has already been added to cart.
+* Selected product can be added to the cart.
 
 **Test Data:**
 
@@ -332,30 +334,28 @@ The goal of this document is to define product-details-page-owned scenarios and 
 
 **Steps:**
 
-1. Log in with valid credentials.
-2. Open the selected product details page.
-3. Add the selected product to the cart if it is not already added.
-4. Verify that the Remove button is visible.
-5. Click the Remove button.
-6. Observe the button on the product details page.
+1. Add the selected product to the cart.
+2. Verify that Remove is visible.
+3. Verify that Add to cart is hidden.
+4. Remove the product.
+5. Observe the product controls.
 
 **Expected Result:**
 
-* Product is removed from the cart.
-* Remove button becomes hidden for the selected product.
-* Add to cart button becomes visible again for the selected product.
-* Product details page remains open.
+* Remove button becomes hidden.
+* Add to cart button becomes visible again.
+* Product details page remains open for the selected product.
 
 **Notes:**
 
-* This scenario validates product-details-side UI feedback after removing a product from the cart.
-* This scenario is the reverse-state counterpart to TC-PRODUCT-DETAILS-004.
+* This scenario validates detailed UI feedback after removing a product.
+* It is the reverse-state counterpart of TC-PRODUCT-DETAILS-004.
 
 ---
 
 ### TC-PRODUCT-DETAILS-009 — Cart badge is displayed after adding product from product details page
 
-**Type:** Regression / UI\
+**Type:** Smoke / UI\
 **Priority:** Medium\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
@@ -364,9 +364,8 @@ The goal of this document is to define product-details-page-owned scenarios and 
 **Preconditions:**
 
 * User is logged in.
-* User is on the product details page.
-* Cart is empty at the start of the test.
-* Selected product has not been added to cart.
+* Cart is empty.
+* Selected product has not been added to the cart.
 
 **Test Data:**
 
@@ -375,20 +374,20 @@ The goal of this document is to define product-details-page-owned scenarios and 
 
 **Steps:**
 
-1. Log in with valid credentials.
-2. Open the selected product details page.
-3. Click the Add to cart button.
-4. Observe the cart badge in the product details page header.
+1. Open the selected product details page.
+2. Verify that the cart badge is not visible.
+3. Add the product to the cart.
+4. Observe the cart badge.
 
 **Expected Result:**
 
-* Cart badge is visible.
+* Cart badge becomes visible.
 * Cart badge displays `1`.
-* Cart badge count matches the number of products currently in the cart.
 
 **Notes:**
 
-* This scenario validates cart badge visibility from a product-details-side add-to-cart action when the cart starts empty.
+* This is the representative smoke UI validation of the cart badge after a product-details-side add action.
+* Broader badge-count behavior is covered by TC-PRODUCT-DETAILS-010.
 
 ---
 
@@ -403,34 +402,35 @@ The goal of this document is to define product-details-page-owned scenarios and 
 **Preconditions:**
 
 * User is logged in.
-* User is on the product details page.
-* One product is already present in the cart.
-* Selected product has not been added to cart.
+* Cart starts empty.
+* At least two products are available.
 
 **Test Data:**
 
 * User: `standard_user`
-* Existing cart product: `Sauce Labs Backpack`
-* Product added from details page: `Sauce Labs Bolt T-Shirt`
+* First example product: first product from centralized product test data
+* Second example product: second product from centralized product test data
 
 **Steps:**
 
-1. Log in with valid credentials.
-2. Add the first selected product to the cart.
-3. Open the second selected product details page.
-4. Click the Add to cart button on the product details page.
-5. Observe the cart badge in the product details page header.
+1. Open the first product details page.
+2. Add the first product to the cart.
+3. Verify that the cart badge displays `1`.
+4. Return to the inventory page.
+5. Open the second product details page.
+6. Add the second product to the cart.
+7. Observe the cart badge.
 
 **Expected Result:**
 
-* Second product is added to the cart.
-* Cart badge remains visible.
-* Cart badge count updates from `1` to `2`.
+* Cart badge displays `1` after adding the first product.
+* Cart badge updates to `2` after adding the second product.
 * Badge count matches the number of products currently in the cart.
 
 **Notes:**
 
-* This scenario validates cart badge count update from a product-details-side add-to-cart action when the cart already contains another product.
+* This is the broader regression variant of cart badge add-state behavior.
+* Intermediate page transitions are setup actions required to test multiple products and are not the classification target.
 
 ---
 
@@ -445,43 +445,36 @@ The goal of this document is to define product-details-page-owned scenarios and 
 **Preconditions:**
 
 * User is logged in.
-* User is on the product details page.
-* At least two products are present in the cart.
-* Selected product displayed on the product details page is already in the cart.
+* Two products have been added to the cart.
 
 **Test Data:**
 
 * User: `standard_user`
-* Example products:
-
-  * `Sauce Labs Backpack`
-  * `Sauce Labs Bolt T-Shirt`
+* First example product: first product from centralized product test data
+* Second example product: second product from centralized product test data
 
 **Steps:**
 
-1. Log in with valid credentials.
-2. Add two selected products to the cart.
-3. Open the product details page for one of the added products.
-4. Verify that the cart badge displays `2`.
-5. Click the Remove button on the product details page.
-6. Observe the cart badge.
+1. Add two products to the cart.
+2. Open the product details page for one of the added products.
+3. Verify that the cart badge displays `2`.
+4. Remove the selected product.
+5. Observe the cart badge.
 
 **Expected Result:**
 
-* Selected product is removed from the cart.
-* One product remains in the cart.
 * Cart badge count decreases from `2` to `1`.
-* Badge count matches the number of products currently in the cart.
+* Badge count matches the number of products remaining in the cart.
 
 **Notes:**
 
-* This scenario validates cart badge count update from a product-details-side remove action when another product remains in the cart.
+* This scenario validates detailed cart badge state after removing one of multiple products.
 
 ---
 
 ### TC-PRODUCT-DETAILS-012 — Cart badge disappears after removing last product from product details page
 
-**Type:** Regression / UI\
+**Type:** Smoke / UI\
 **Priority:** Medium\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
@@ -490,9 +483,7 @@ The goal of this document is to define product-details-page-owned scenarios and 
 **Preconditions:**
 
 * User is logged in.
-* User is on the product details page.
-* Exactly one product has been added to cart.
-* Selected product displayed on the product details page is the only product in the cart.
+* Cart starts empty.
 
 **Test Data:**
 
@@ -501,28 +492,29 @@ The goal of this document is to define product-details-page-owned scenarios and 
 
 **Steps:**
 
-1. Log in with valid credentials.
-2. Open the selected product details page.
-3. Add the selected product to the cart.
-4. Verify that the cart badge displays `1`.
-5. Click the Remove button.
-6. Observe the cart badge in the product details page header.
+1. Open the selected product details page.
+2. Verify that the cart badge is hidden.
+3. Add the product to the cart.
+4. Verify that the cart badge is visible and displays `1`.
+5. Remove the product.
+6. Observe the cart badge.
 
 **Expected Result:**
 
-* Product is removed from the cart.
-* Cart badge is no longer displayed after removing the last product.
-* Badge state matches the empty cart state.
+* Cart badge appears after adding the product.
+* Cart badge displays `1`.
+* Cart badge disappears after removing the last product.
 
 **Notes:**
 
-* This scenario validates complete cart badge disappearance after product-details-side removal of the last product.
+* This is the representative smoke UI validation of the empty-cart badge state after removal.
+* Partial decrement behavior with multiple products is covered by TC-PRODUCT-DETAILS-011.
 
 ---
 
 ### TC-PRODUCT-DETAILS-013 — Cart page can be opened from product details page
 
-**Type:** Regression / Navigation / UI\
+**Type:** Smoke / Navigation\
 **Priority:** Medium\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
@@ -531,7 +523,7 @@ The goal of this document is to define product-details-page-owned scenarios and 
 **Preconditions:**
 
 * User is logged in.
-* User is on a product details page.
+* User can open a product details page.
 
 **Test Data:**
 
@@ -540,28 +532,27 @@ The goal of this document is to define product-details-page-owned scenarios and 
 
 **Steps:**
 
-1. Log in with valid credentials.
-2. Open the selected product details page.
-3. Click the cart icon in the product details page header.
-4. Observe the cart page.
+1. Open the selected product details page.
+2. Click the cart link.
+3. Observe the cart page.
 
 **Expected Result:**
 
 * Cart page is opened.
-* Cart page URL contains `cart.html`.
-* Cart page container is visible.
-* No error is displayed.
+* Cart page URL is displayed.
+* Cart contents container is visible.
 
 **Notes:**
 
-* This scenario validates cart navigation from the product details page header.
-* This test should not validate checkout behavior.
+* This is the representative smoke navigation scenario for Product Details → Cart.
+* The scenario validates navigation itself rather than cart contents.
+* Full all-products navigation coverage is defined by TC-PRODUCT-DETAILS-015.
 
 ---
 
 ### TC-PRODUCT-DETAILS-014 — All products can be removed from cart from product details page
 
-**Type:** Regression / Positive / UI\
+**Type:** Regression\
 **Priority:** Medium\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
@@ -570,8 +561,7 @@ The goal of this document is to define product-details-page-owned scenarios and 
 **Preconditions:**
 
 * User is logged in.
-* User can open product details pages for products from the product test data set.
-* All products from the product test data set have been added to the cart before each product removal check.
+* All products from the centralized product data set can be added to the cart.
 
 **Test Data:**
 
@@ -580,17 +570,63 @@ The goal of this document is to define product-details-page-owned scenarios and 
 
 **Steps:**
 
-1. Log in with valid credentials.
-2. Add all products from the product test data set to the cart.
-3. For each product from the product test data set, open that product details page in an isolated test iteration.
-4. Click the Remove button on the product details page.
-5. Observe the product details page, cart badge, and cart page item list.
+1. Add all applicable products to the cart.
+2. Open the tested product details page.
+3. Remove that product from the cart.
+4. Verify that the cart badge count decreases by one.
+5. Open the cart page.
+6. Verify that the removed product is absent.
+7. Repeat independently for every applicable product.
 
 **Expected Result:**
 
-* The tested product can be removed from the cart from its product details page.
-* Remove action does not display an error.
-* Product details page remains open after removing the tested product.
-* Cart badge count decreases by one after removing the tested product.
-* The tested product is no longer visible on the cart page.
-* Other products that were previously added to the cart are not negatively affected by removing the tested product.
+* Every tested product can be removed from the cart from its product details page.
+* Cart badge count decreases by one.
+* Removed product is not present on the cart page.
+* Remaining cart products are not removed by the tested action.
+
+**Notes:**
+
+* This is the full regression variant of TC-PRODUCT-DETAILS-007.
+* Opening the cart is used to validate the removal result and is not the navigation focus of this scenario.
+
+---
+
+### TC-PRODUCT-DETAILS-015 — Cart page can be opened from product details page for each product
+
+**Type:** Regression / Navigation\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Planned\
+**Automated In:** TBD
+
+**Preconditions:**
+
+* User is logged in.
+* Product details pages are available for all products from the centralized product test data set.
+
+**Test Data:**
+
+* User: `standard_user`
+* Products: all products from the product test data set
+
+**Steps:**
+
+1. Open the product details page for the tested product.
+2. Click the cart link.
+3. Observe the cart page.
+4. Repeat the scenario independently for every product from the product test data set.
+
+**Expected Result:**
+
+* Cart page can be opened from every tested product details page.
+* Cart page URL is displayed after each transition.
+* Cart contents container is visible after each transition.
+* Navigation behavior is consistent regardless of which product details page is used as the starting point.
+
+**Notes:**
+
+* This is the full regression navigation counterpart of TC-PRODUCT-DETAILS-013.
+* The automated implementation should use parametrized product data so every applicable product details page is covered.
+* The scenario validates Product Details → Cart navigation only.
+* Product add-to-cart, remove-from-cart, and cart content behavior are covered by separate test cases.
