@@ -1,5 +1,6 @@
 from playwright.sync_api import expect
 
+from pages.login_page import LoginPage
 from test_data.checkout_test_data import (
     CHECKOUT_OVERVIEW_PAYMENT_INFO,
     CHECKOUT_OVERVIEW_SHIPPING_INFO,
@@ -8,6 +9,20 @@ from test_data.checkout_test_data import (
     TAX_PREFIX,
     TOTAL_PREFIX,
 )
+
+
+def assert_failed_login_input_error_icons_are_displayed(
+    login_page: LoginPage,
+) -> None:
+    username_input = login_page.get_username_input()
+    password_input = login_page.get_password_input()
+
+    username_input_parent = login_page.page.locator("div .form_group").filter(has=username_input)
+    password_input_parent = login_page.page.locator("div .form_group").filter(has=password_input)
+
+    expect(login_page.page).to_have_url(LoginPage.URL)
+    expect(login_page.get_input_error_icon(username_input_parent)).to_be_visible()
+    expect(login_page.get_input_error_icon(password_input_parent)).to_be_visible()
 
 
 def assert_product_text_content_is_displayed(
