@@ -8,30 +8,30 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ## Test Case Overview And Automation Coverage
 
-| Test Case ID                                                                                                                | Scenario                                                                             | Type                         | Priority | Automation Status | Automated In                   |
-|-----------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------|------------------------------|----------|-------------------|--------------------------------|
-| [TC-INVENTORY-001](#tc-inventory-001--inventory-page-is-visible-after-successful-login)                                     | Inventory page is visible after successful login                                     | Smoke / Positive / UI        | High     | Automated         | `tests/test_inventory_page.py` |
-| [TC-INVENTORY-002](#tc-inventory-002--product-list-is-displayed)                                                            | Product list is displayed                                                            | Smoke / UI                   | High     | Automated         | `tests/test_inventory_page.py` |
-| [TC-INVENTORY-003](#tc-inventory-003--product-cards-contain-name-description-price-and-image)                               | Product cards contain name, description, price, and image                            | Regression / UI              | Medium   | Automated         | `tests/test_inventory_page.py` |
-| [TC-INVENTORY-004](#tc-inventory-004--cart-page-can-be-opened-from-inventory-page)                                          | Cart page can be opened from inventory page                                          | Smoke / Navigation / UI      | High     | Automated         | `tests/test_inventory_page.py` |
-| [TC-INVENTORY-005](#tc-inventory-005--product-can-be-added-to-cart-from-inventory-page)                                     | Product can be added to cart from inventory page                                     | Smoke / Positive / UI        | High     | Automated         | `tests/test_inventory_page.py` |
-| [TC-INVENTORY-006](#tc-inventory-006--add-to-cart-button-changes-to-remove-after-adding-product-from-inventory)             | Add to cart button changes to Remove after adding product from inventory             | Regression / UI              | Medium   | Automated         | `tests/test_inventory_page.py` |
-| [TC-INVENTORY-007](#tc-inventory-007--cart-badge-is-displayed-after-adding-one-product)                                     | Cart badge is displayed after adding one product                                     | Regression / UI              | Medium   | Automated         | `tests/test_inventory_page.py` |
-| [TC-INVENTORY-008](#tc-inventory-008--cart-badge-count-updates-after-adding-multiple-products)                              | Cart badge count updates after adding multiple products                              | Regression / UI              | Medium   | Automated         | `tests/test_inventory_page.py` |
-| [TC-INVENTORY-009](#tc-inventory-009--products-can-be-sorted-by-name-a-to-z)                                                | Products can be sorted by name A to Z                                                | Regression / Sorting / UI    | Medium   | Automated         | `tests/test_inventory_page.py` |
-| [TC-INVENTORY-010](#tc-inventory-010--products-can-be-sorted-by-name-z-to-a)                                                | Products can be sorted by name Z to A                                                | Regression / Sorting / UI    | Medium   | Automated         | `tests/test_inventory_page.py` |
-| [TC-INVENTORY-011](#tc-inventory-011--products-can-be-sorted-by-price-low-to-high)                                          | Products can be sorted by price low to high                                          | Regression / Sorting / UI    | Medium   | Automated         | `tests/test_inventory_page.py` |
-| [TC-INVENTORY-012](#tc-inventory-012--products-can-be-sorted-by-price-high-to-low)                                          | Products can be sorted by price high to low                                          | Regression / Sorting / UI    | Medium   | Automated         | `tests/test_inventory_page.py` |
-| [TC-INVENTORY-013](#tc-inventory-013--product-details-can-be-opened-for-all-products-by-product-name-on-inventory-page)     | Product details can be opened for all products by product name on inventory page     | Regression / Navigation / UI | Medium   | Automated         | `tests/test_inventory_page.py` |
-| [TC-INVENTORY-014](#tc-inventory-014--product-details-can-be-opened-for-all-products-by-product-image-on-inventory-page)    | Product details can be opened for all products by product image on inventory page    | Regression / Navigation / UI | Medium   | Automated         | `tests/test_inventory_page.py` |
-| [TC-INVENTORY-015](#tc-inventory-015--all-products-can-be-added-to-cart-from-inventory-page)                                | All products can be added to cart from inventory page                                | Regression / Positive / UI   | Medium   | Automated         | `tests/test_inventory_page.py` |
-| [TC-INVENTORY-016](#tc-inventory-016--product-can-be-removed-from-cart-from-inventory-page)                                 | Product can be removed from cart from inventory page                                 | Smoke / Positive / UI        | High     | Automated         | `tests/test_inventory_page.py` |
-| [TC-INVENTORY-017](#tc-inventory-017--remove-button-changes-back-to-add-to-cart-after-removing-product-from-inventory)      | Remove button changes back to Add to cart after removing product from inventory      | Regression / UI              | Medium   | Automated         | `tests/test_inventory_page.py` |
-| [TC-INVENTORY-018](#tc-inventory-018--cart-badge-count-updates-after-removing-one-of-multiple-products-from-inventory-page) | Cart badge count updates after removing one of multiple products from inventory page | Regression / UI              | Medium   | Automated         | `tests/test_inventory_page.py` |
-| [TC-INVENTORY-019](#tc-inventory-019--cart-badge-disappears-after-removing-last-product-from-inventory-page)                | Cart badge disappears after removing last product from inventory page                | Regression / UI              | Medium   | Automated         | `tests/test_inventory_page.py` |
-| [TC-INVENTORY-020](#tc-inventory-020--all-products-can-be-removed-from-cart-from-inventory-page)                            | All products can be removed from cart from inventory page                            | Regression / Positive / UI   | Medium   | Automated         | `tests/test_inventory_page.py` |
-| [TC-INVENTORY-021](#tc-inventory-021--product-details-can-be-opened-from-product-name-for-example-product)                  | Product details can be opened from product name for example product                  | Smoke / Navigation / UI      | High     | Automated         | `tests/test_inventory_page.py` |
-| [TC-INVENTORY-022](#tc-inventory-022--product-details-can-be-opened-from-product-image-for-example-product)                 | Product details can be opened from product image for example product                 | Smoke / Navigation / UI      | High     | Automated         | `tests/test_inventory_page.py` |
+| Test Case ID                                                                                                                | Scenario                                                                             | Type                    | Priority | Automation Status | Automated In                   |
+|-----------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------|-------------------------|----------|-------------------|--------------------------------|
+| [TC-INVENTORY-001](#tc-inventory-001--inventory-page-is-visible-after-successful-login)                                     | Inventory page is visible after successful login                                     | Smoke / UI              | High     | Automated         | `tests/test_inventory_page.py` |
+| [TC-INVENTORY-002](#tc-inventory-002--product-list-is-displayed)                                                            | Product list is displayed                                                            | Regression / UI         | High     | Automated         | `tests/test_inventory_page.py` |
+| [TC-INVENTORY-003](#tc-inventory-003--product-cards-contain-name-description-price-and-image)                               | Product cards contain name, description, price, and image                            | Regression / UI         | Medium   | Automated         | `tests/test_inventory_page.py` |
+| [TC-INVENTORY-004](#tc-inventory-004--cart-page-can-be-opened-from-inventory-page)                                          | Cart page can be opened from inventory page                                          | Smoke / Navigation      | High     | Automated         | `tests/test_inventory_page.py` |
+| [TC-INVENTORY-005](#tc-inventory-005--product-can-be-added-to-cart-from-inventory-page)                                     | Product can be added to cart from inventory page                                     | Smoke / Navigation      | High     | Automated         | `tests/test_inventory_page.py` |
+| [TC-INVENTORY-006](#tc-inventory-006--add-to-cart-button-changes-to-remove-after-adding-product-from-inventory)             | Add to cart button changes to Remove after adding product from inventory             | Regression / UI         | Medium   | Automated         | `tests/test_inventory_page.py` |
+| [TC-INVENTORY-007](#tc-inventory-007--cart-badge-is-displayed-after-adding-one-product)                                     | Cart badge is displayed after adding one product                                     | Smoke / UI              | Medium   | Automated         | `tests/test_inventory_page.py` |
+| [TC-INVENTORY-008](#tc-inventory-008--cart-badge-count-updates-after-adding-multiple-products)                              | Cart badge count updates after adding multiple products                              | Regression / UI         | Medium   | Automated         | `tests/test_inventory_page.py` |
+| [TC-INVENTORY-009](#tc-inventory-009--products-can-be-sorted-by-name-a-to-z)                                                | Products can be sorted by name A to Z                                                | Sorting                 | Medium   | Automated         | `tests/test_inventory_page.py` |
+| [TC-INVENTORY-010](#tc-inventory-010--products-can-be-sorted-by-name-z-to-a)                                                | Products can be sorted by name Z to A                                                | Sorting                 | Medium   | Automated         | `tests/test_inventory_page.py` |
+| [TC-INVENTORY-011](#tc-inventory-011--products-can-be-sorted-by-price-low-to-high)                                          | Products can be sorted by price low to high                                          | Sorting                 | Medium   | Automated         | `tests/test_inventory_page.py` |
+| [TC-INVENTORY-012](#tc-inventory-012--products-can-be-sorted-by-price-high-to-low)                                          | Products can be sorted by price high to low                                          | Sorting                 | Medium   | Automated         | `tests/test_inventory_page.py` |
+| [TC-INVENTORY-013](#tc-inventory-013--product-details-can-be-opened-for-all-products-by-product-name-on-inventory-page)     | Product details can be opened for all products by product name on inventory page     | Regression / Navigation | Medium   | Automated         | `tests/test_inventory_page.py` |
+| [TC-INVENTORY-014](#tc-inventory-014--product-details-can-be-opened-for-all-products-by-product-image-on-inventory-page)    | Product details can be opened for all products by product image on inventory page    | Regression / Navigation | Medium   | Automated         | `tests/test_inventory_page.py` |
+| [TC-INVENTORY-015](#tc-inventory-015--all-products-can-be-added-to-cart-from-inventory-page)                                | All products can be added to cart from inventory page                                | Regression / Navigation | Medium   | Automated         | `tests/test_inventory_page.py` |
+| [TC-INVENTORY-016](#tc-inventory-016--product-can-be-removed-from-cart-from-inventory-page)                                 | Product can be removed from cart from inventory page                                 | Smoke / Navigation      | High     | Automated         | `tests/test_inventory_page.py` |
+| [TC-INVENTORY-017](#tc-inventory-017--remove-button-changes-back-to-add-to-cart-after-removing-product-from-inventory)      | Remove button changes back to Add to cart after removing product from inventory      | Regression / UI         | Medium   | Automated         | `tests/test_inventory_page.py` |
+| [TC-INVENTORY-018](#tc-inventory-018--cart-badge-count-updates-after-removing-one-of-multiple-products-from-inventory-page) | Cart badge count updates after removing one of multiple products from inventory page | Regression / UI         | Medium   | Automated         | `tests/test_inventory_page.py` |
+| [TC-INVENTORY-019](#tc-inventory-019--cart-badge-disappears-after-removing-last-product-from-inventory-page)                | Cart badge disappears after removing last product from inventory page                | Smoke / UI              | Medium   | Automated         | `tests/test_inventory_page.py` |
+| [TC-INVENTORY-020](#tc-inventory-020--all-products-can-be-removed-from-cart-from-inventory-page)                            | All products can be removed from cart from inventory page                            | Regression / Navigation | Medium   | Automated         | `tests/test_inventory_page.py` |
+| [TC-INVENTORY-021](#tc-inventory-021--product-details-can-be-opened-from-product-name-for-example-product)                  | Product details can be opened from product name for example product                  | Smoke / Navigation      | High     | Automated         | `tests/test_inventory_page.py` |
+| [TC-INVENTORY-022](#tc-inventory-022--product-details-can-be-opened-from-product-image-for-example-product)                 | Product details can be opened from product image for example product                 | Smoke / Navigation      | High     | Automated         | `tests/test_inventory_page.py` |
 
 ---
 
@@ -39,7 +39,7 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 ### TC-INVENTORY-001 — Inventory page is visible after successful login
 
-**Type:** Smoke / Positive / UI\
+**Type:** Smoke / UI\
 **Priority:** High\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
@@ -71,14 +71,14 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 **Notes:**
 
-* This is the main smoke validation for inventory page availability after successful login.
-* This scenario verifies that login leads to the expected authenticated area.
+* This is the representative smoke validation for general inventory page availability.
+* Detailed validation of the product list and individual product cards is covered by regression scenarios.
 
 ---
 
 ### TC-INVENTORY-002 — Product list is displayed
 
-**Type:** Smoke / UI\
+**Type:** Regression / UI\
 **Priority:** High\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
@@ -92,6 +92,7 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 **Test Data:**
 
 * User: `standard_user`
+* Products: all products from the centralized product test data set
 
 **Steps:**
 
@@ -102,13 +103,13 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 **Expected Result:**
 
 * Product list is visible.
-* Product list contains product items.
 * Expected number of products is displayed.
+* Displayed product names match the centralized product test data.
 
 **Notes:**
 
-* Sauce Demo usually displays 6 products on the inventory page.
-* This scenario validates that the inventory page is not empty and product data is rendered.
+* This scenario extends the general inventory smoke validation with detailed product-list verification.
+* Individual product card content is validated separately in TC-INVENTORY-003.
 
 ---
 
@@ -148,14 +149,14 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 **Notes:**
 
-* This scenario validates that product cards contain the minimum user-facing information required to understand and select a product.
+* This scenario performs detailed UI validation of all product cards.
 * Exact product data is stored in centralized product test data.
 
 ---
 
 ### TC-INVENTORY-004 — Cart page can be opened from inventory page
 
-**Type:** Smoke / Navigation / UI\
+**Type:** Smoke / Navigation\
 **Priority:** High\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
@@ -181,18 +182,17 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 * Cart page is opened.
 * Cart page URL contains `cart.html`.
 * Cart page container is visible.
-* Cart page displays the expected cart layout.
 
 **Notes:**
 
-* This scenario validates inventory-page header navigation to the cart page.
-* This scenario should not validate product content or checkout behavior.
+* This scenario validates the primary Inventory → Cart page transition.
+* UI is used to perform the transition but is not the primary subject of the scenario.
 
 ---
 
 ### TC-INVENTORY-005 — Product can be added to cart from inventory page
 
-**Type:** Smoke / Positive / UI\
+**Type:** Smoke / Navigation\
 **Priority:** High\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
@@ -225,9 +225,9 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 **Notes:**
 
-* This scenario validates the primary inventory-page add-to-cart flow for one representative product.
-* Full all-products add-to-cart regression coverage is tracked separately in TC-INVENTORY-015.
-* Detailed cart item content validation belongs to `cart-page.md`.
+* This is the representative smoke validation of inventory-side add-to-cart behavior.
+* Full all-products regression coverage is tracked in TC-INVENTORY-015.
+* Navigation is included because the automated scenario opens the cart page to verify the result.
 
 ---
 
@@ -254,26 +254,26 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 1. Log in with valid credentials.
 2. Find the selected product on the inventory page.
-3. Click the Add to cart button for the selected product.
-4. Observe the button for the same product.
+3. Verify the initial Add to cart button state.
+4. Click the Add to cart button for the selected product.
+5. Observe the button for the same product and an unaffected product.
 
 **Expected Result:**
 
-* Product is added to the cart.
-* Add to cart button changes to Remove for the selected product.
-* Remove button is visible for the selected product.
-* Other products remain unchanged.
+* Add to cart button becomes hidden for the selected product.
+* Remove button becomes visible for the selected product.
+* Other product controls remain unchanged.
 
 **Notes:**
 
-* This scenario validates inventory-side UI feedback after adding a product to the cart.
-* Reverse button state after inventory-side removal is tracked separately in TC-INVENTORY-017.
+* This scenario validates detailed inventory-side UI state after adding a product.
+* Reverse button state after removal is covered by TC-INVENTORY-017.
 
 ---
 
 ### TC-INVENTORY-007 — Cart badge is displayed after adding one product
 
-**Type:** Regression / UI\
+**Type:** Smoke / UI\
 **Priority:** Medium\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
@@ -300,12 +300,11 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 * Cart badge is visible.
 * Cart badge displays `1`.
-* Cart badge is displayed near the cart icon.
 
 **Notes:**
 
-* This scenario validates inventory-page header badge visibility after adding one product.
-* During automation, badge text should be read from the UI and compared with the expected count.
+* This is the representative smoke validation of cart badge visibility and state.
+* Multi-product badge behavior is covered by TC-INVENTORY-008.
 
 ---
 
@@ -327,7 +326,6 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 * User: `standard_user`
 * Example products:
-
   * `Sauce Labs Backpack`
   * `Sauce Labs Bolt T-Shirt`
 
@@ -346,14 +344,13 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 **Notes:**
 
-* This scenario validates cart badge count updates from inventory-side add-to-cart actions.
-* Badge count update and disappearance after inventory-side remove actions are tracked separately in TC-INVENTORY-018 and TC-INVENTORY-019.
+* This is the broader regression variant of the cart badge add-to-cart state covered by TC-INVENTORY-007.
 
 ---
 
 ### TC-INVENTORY-009 — Products can be sorted by name A to Z
 
-**Type:** Regression / Sorting / UI\
+**Type:** Sorting\
 **Priority:** Medium\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
@@ -383,15 +380,14 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 **Notes:**
 
-* During automation, product names are read from the UI and compared with an ascending sorted list.
-* Product card content validation is covered by TC-INVENTORY-003.
-* Avoid hardcoded sleeps.
+* Product names are read from the UI and compared with an independently sorted ascending list.
+* This scenario belongs to the dedicated Sorting execution category.
 
 ---
 
 ### TC-INVENTORY-010 — Products can be sorted by name Z to A
 
-**Type:** Regression / Sorting / UI\
+**Type:** Sorting\
 **Priority:** Medium\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
@@ -421,15 +417,14 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 **Notes:**
 
-* During automation, product names are read from the UI and compared with a descending sorted list.
-* Product card content validation is covered by TC-INVENTORY-003.
-* Avoid hardcoded sleeps.
+* Product names are read from the UI and compared with an independently sorted descending list.
+* This scenario belongs to the dedicated Sorting execution category.
 
 ---
 
 ### TC-INVENTORY-011 — Products can be sorted by price low to high
 
-**Type:** Regression / Sorting / UI\
+**Type:** Sorting\
 **Priority:** Medium\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
@@ -459,17 +454,14 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 **Notes:**
 
-* During automation, product prices are read from the UI.
-* Price values are converted from strings to numeric values before comparison.
-* Product card content validation is covered by TC-INVENTORY-003.
-* Do not compare prices as raw strings.
-* Avoid hardcoded sleeps.
+* Product prices are read from the UI and converted to numeric values before comparison.
+* This scenario belongs to the dedicated Sorting execution category.
 
 ---
 
 ### TC-INVENTORY-012 — Products can be sorted by price high to low
 
-**Type:** Regression / Sorting / UI\
+**Type:** Sorting\
 **Priority:** Medium\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
@@ -499,17 +491,14 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 **Notes:**
 
-* During automation, product prices are read from the UI.
-* Price values are converted from strings to numeric values before comparison.
-* Product card content validation is covered by TC-INVENTORY-003.
-* Do not compare prices as raw strings.
-* Avoid hardcoded sleeps.
+* Product prices are read from the UI and converted to numeric values before comparison.
+* This scenario belongs to the dedicated Sorting execution category.
 
 ---
 
 ### TC-INVENTORY-013 — Product details can be opened for all products by product name on inventory page
 
-**Type:** Regression / Navigation / UI\
+**Type:** Regression / Navigation\
 **Priority:** Medium\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
@@ -536,21 +525,19 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 * Product details page is opened for each selected product.
 * Product details page URL contains the selected product ID.
-* Product details page item details container is visible.
 * Product details page belongs to the selected product.
 * Product details content matches centralized product test data.
 
 **Notes:**
 
 * This is the full regression variant of TC-INVENTORY-021.
-* This scenario is documented under Inventory Page because the user action starts from the inventory product name.
-* This scenario should validate all products from the product test data set.
+* Navigation is the relevant execution category because each scenario performs Inventory → Product Details transition.
 
 ---
 
 ### TC-INVENTORY-014 — Product details can be opened for all products by product image on inventory page
 
-**Type:** Regression / Navigation / UI\
+**Type:** Regression / Navigation\
 **Priority:** Medium\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
@@ -577,21 +564,19 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 * Product details page is opened for each selected product.
 * Product details page URL contains the selected product ID.
-* Product details page item details container is visible.
 * Product details page belongs to the selected product.
 * Product details content matches centralized product test data.
 
 **Notes:**
 
 * This is the full regression variant of TC-INVENTORY-022.
-* This scenario is documented under Inventory Page because the user action starts from the inventory product image.
-* This scenario should validate all products from the product test data set.
+* Navigation is the relevant execution category because each scenario performs Inventory → Product Details transition.
 
 ---
 
 ### TC-INVENTORY-015 — All products can be added to cart from inventory page
 
-**Type:** Regression / Positive / UI\
+**Type:** Regression / Navigation\
 **Priority:** Medium\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
@@ -612,27 +597,26 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 **Steps:**
 
 1. Log in with valid credentials.
-2. For each product from the product test data set, click the Add to cart button on the inventory product card in an isolated test iteration.
+2. Add the tested product to the cart from the inventory page.
 3. Open the cart page.
 4. Observe the cart item list.
+5. Repeat the scenario independently for every product from the test data set.
 
 **Expected Result:**
 
-* The tested product can be added to the cart from the inventory page.
+* Every tested product can be added to the cart from the inventory page.
 * Cart page displays the tested product.
-* No error is displayed.
 
 **Notes:**
 
 * This is the full regression variant of TC-INVENTORY-005.
-* This scenario should use parametrized or loop-based product data.
-* Detailed cart content validation remains owned by `cart-page.md`.
+* Navigation is included because the cart page is opened to verify the result.
 
 ---
 
 ### TC-INVENTORY-016 — Product can be removed from cart from inventory page
 
-**Type:** Smoke / Positive / UI\
+**Type:** Smoke / Navigation\
 **Priority:** High\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
@@ -642,34 +626,34 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 * User is logged in.
 * User is on the inventory page.
-* Product list is visible.
-* Selected product has been added to the cart from the inventory page.
+* Selected product has been added to the cart.
 
 **Test Data:**
 
 * User: `standard_user`
-* Example product: `Sauce Labs Backpack`
+* Example product: representative product from centralized product test data
 
 **Steps:**
 
-1. Log in with valid credentials.
-2. Add the selected product to the cart from the inventory page.
-3. Click the Remove button for the same product on the inventory page.
-4. Open the cart page.
-5. Observe the cart item list.
+1. Open the cart page.
+2. Verify that the selected product is present.
+3. Use Continue Shopping to return to the inventory page.
+4. Remove the selected product from the inventory page.
+5. Open the cart page again.
+6. Observe the cart item list.
 
 **Expected Result:**
 
-* Selected product is removed from the cart.
+* Product is initially present in the cart.
+* User can return to the inventory page.
+* Selected product can be removed from the inventory page.
 * Removed product is no longer displayed on the cart page.
-* Cart page remains available.
-* No error is displayed.
 
 **Notes:**
 
-* This scenario validates inventory-side remove-from-cart behavior for one representative product.
-* Full all-products remove-from-cart regression coverage is tracked separately in TC-INVENTORY-020.
-* This scenario should not validate checkout behavior.
+* This is the representative smoke validation of inventory-side remove-from-cart behavior.
+* Full all-products regression coverage is tracked in TC-INVENTORY-020.
+* Navigation is included because the scenario performs Cart → Inventory and Inventory → Cart transitions.
 
 ---
 
@@ -685,33 +669,29 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 * User is logged in.
 * User is on the inventory page.
-* Product list is visible.
-* Selected product has been added to the cart from the inventory page.
+* Selected product has been added to the cart.
 
 **Test Data:**
 
 * User: `standard_user`
-* Example product: `Sauce Labs Backpack`
+* Example product: representative product from centralized product test data
 
 **Steps:**
 
-1. Log in with valid credentials.
-2. Add the selected product to the cart from the inventory page.
-3. Verify that the selected product displays the Remove button.
-4. Click the Remove button for the selected product.
-5. Observe the button for the same product.
+1. Verify that the selected product displays the Remove button.
+2. Verify that Add to cart is not displayed for that product.
+3. Remove the product.
+4. Observe the controls for the same product.
 
 **Expected Result:**
 
-* Product is removed from the cart.
-* Remove button becomes hidden for the selected product.
-* Add to cart button becomes visible again for the selected product.
-* Other product cards remain unchanged.
+* Remove button becomes hidden.
+* Add to cart button becomes visible again.
 
 **Notes:**
 
-* This scenario validates inventory-side button state after removing a product from the cart.
-* This scenario is the reverse-state counterpart to TC-INVENTORY-006.
+* This scenario validates detailed inventory-side button state after removing a product.
+* It is the reverse-state counterpart of TC-INVENTORY-006.
 
 ---
 
@@ -727,40 +707,36 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 * User is logged in.
 * User is on the inventory page.
-* Product list is visible.
-* At least two products have been added to the cart from the inventory page.
+* At least two products are available for cart operations.
 
 **Test Data:**
 
 * User: `standard_user`
 * Example products:
-
   * `Sauce Labs Backpack`
   * `Sauce Labs Bolt T-Shirt`
 
 **Steps:**
 
-1. Log in with valid credentials.
-2. Add the first selected product to the cart.
-3. Add the second selected product to the cart.
-4. Verify that the cart badge displays `2`.
-5. Remove one selected product from the inventory page.
-6. Observe the cart badge in the inventory page header.
+1. Add two selected products to the cart.
+2. Verify that the cart badge displays `2`.
+3. Remove one selected product.
+4. Observe the cart badge.
 
 **Expected Result:**
 
 * Cart badge count decreases from `2` to `1`.
-* Badge count matches the number of products currently in the cart.
+* Badge count matches the number of products remaining in the cart.
 
 **Notes:**
 
-* This scenario validates inventory-side cart badge count update after removing one product while another product remains in the cart.
+* This scenario performs detailed cart badge state validation when one of multiple products is removed.
 
 ---
 
 ### TC-INVENTORY-019 — Cart badge disappears after removing last product from inventory page
 
-**Type:** Regression / UI\
+**Type:** Smoke / UI\
 **Priority:** Medium\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
@@ -770,37 +746,33 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 * User is logged in.
 * User is on the inventory page.
-* Product list is visible.
-* Exactly one product has been added to the cart from the inventory page.
+* Exactly one product is present in the cart.
 
 **Test Data:**
 
 * User: `standard_user`
-* Example product: `Sauce Labs Backpack`
+* Example product: representative product from centralized product test data
 
 **Steps:**
 
-1. Log in with valid credentials.
-2. Add one selected product to the cart.
-3. Verify that the cart badge displays `1`.
-4. Remove the selected product from the inventory page.
-5. Observe the cart badge in the inventory page header.
+1. Verify that the cart badge is visible and displays `1`.
+2. Remove the last product from the inventory page.
+3. Observe the cart badge.
 
 **Expected Result:**
 
-* Product is removed from the cart.
-* Cart badge is no longer displayed after removing the last product.
-* Badge state matches the empty cart state.
+* Cart badge disappears after the final product is removed.
 
 **Notes:**
 
-* This scenario validates complete cart badge disappearance after inventory-side removal of the last product.
+* This is the representative smoke validation for the empty-cart badge state.
+* The more detailed multi-product decrement scenario is covered by TC-INVENTORY-018.
 
 ---
 
 ### TC-INVENTORY-020 — All products can be removed from cart from inventory page
 
-**Type:** Regression / Positive / UI\
+**Type:** Regression / Navigation\
 **Priority:** Medium\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
@@ -810,8 +782,7 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 * User is logged in.
 * User is on the inventory page.
-* Product list is visible.
-* All products from the product test data set have been added to the cart from the inventory page before each product removal check.
+* All products from the product test data set are available.
 
 **Test Data:**
 
@@ -820,30 +791,30 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 
 **Steps:**
 
-1. Log in with valid credentials.
-2. Add all products from the product test data set to the cart from the inventory page.
-3. For each product from the product test data set, remove the tested product from the inventory product card in an isolated test iteration.
-4. Observe the inventory page header.
+1. Add all products from the product test data set to the cart.
+2. Verify that the cart badge matches the number of added products.
+3. Remove the tested product from the inventory page.
+4. Verify that the badge count decreases by one.
 5. Open the cart page.
-6. Observe the cart item list.
+6. Verify that the removed product is not displayed.
+7. Repeat independently for every product from the test data set.
 
 **Expected Result:**
 
-* The tested product can be removed from the cart from the inventory page.
-* Cart badge count decreases by one after removing the tested product.
-* Cart page does not display the removed product.
-* Other products that were previously added to the cart are not negatively affected by removing the tested product.
-* No error is displayed.
+* Every tested product can be removed from the cart from the inventory page.
+* Cart badge count decreases correctly.
+* Cart page does not contain the removed product.
 
 **Notes:**
 
 * This is the full regression variant of TC-INVENTORY-016.
+* Navigation is included because the cart page is opened to verify the removal result.
 
 ---
 
 ### TC-INVENTORY-021 — Product details can be opened from product name for example product
 
-**Type:** Smoke / Navigation / UI\
+**Type:** Smoke / Navigation\
 **Priority:** High\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
@@ -858,32 +829,29 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 **Test Data:**
 
 * User: `standard_user`
-* Example product: `Sauce Labs Backpack`
+* Example product: first representative product from centralized product test data
 
 **Steps:**
 
-1. Log in with valid credentials.
-2. Click the product name for the example product on the inventory page.
-3. Observe the product details page.
+1. Click the product name for the example product.
+2. Observe the product details page.
 
 **Expected Result:**
 
 * Product details page is opened for the example product.
-* Product details page URL contains the example product ID.
-* Product details page item details container is visible.
-* Product details page belongs to the example product.
+* Product details page URL contains the expected product ID.
+* Displayed product details match the selected product.
 
 **Notes:**
 
-* This is the smoke variant for opening product details from the inventory product name.
-* Full all-products regression coverage for this path is tracked in TC-INVENTORY-013.
-* This scenario is documented under Inventory Page because the user action starts from the inventory product name.
+* This is the representative smoke variant of navigation through a product name.
+* Full all-products regression coverage is tracked in TC-INVENTORY-013.
 
 ---
 
 ### TC-INVENTORY-022 — Product details can be opened from product image for example product
 
-**Type:** Smoke / Navigation / UI\
+**Type:** Smoke / Navigation\
 **Priority:** High\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
@@ -898,23 +866,20 @@ The goal of this document is to define inventory-page-owned scenarios and track 
 **Test Data:**
 
 * User: `standard_user`
-* Example product: `Sauce Labs Backpack`
+* Example product: first representative product from centralized product test data
 
 **Steps:**
 
-1. Log in with valid credentials.
-2. Click the product image for the example product on the inventory page.
-3. Observe the product details page.
+1. Click the product image for the example product.
+2. Observe the product details page.
 
 **Expected Result:**
 
 * Product details page is opened for the example product.
-* Product details page URL contains the example product ID.
-* Product details page item details container is visible.
-* Product details page belongs to the example product.
+* Product details page URL contains the expected product ID.
+* Displayed product details match the selected product.
 
 **Notes:**
 
-* This is the smoke variant for opening product details from the inventory product image.
-* Full all-products regression coverage for this path is tracked in TC-INVENTORY-014.
-* This scenario is documented under Inventory Page because the user action starts from the inventory product image.
+* This is the representative smoke variant of navigation through a product image.
+* Full all-products regression coverage is tracked in TC-INVENTORY-014.
