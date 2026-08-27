@@ -8,22 +8,20 @@ The goal of this document is to define cart-page-owned scenarios and track their
 
 ## Test Case Overview And Automation Coverage
 
-| Test Case ID                                                                                      | Scenario                                                             | Type                         | Priority | Automation Status | Automated In              |
-|---------------------------------------------------------------------------------------------------|----------------------------------------------------------------------|------------------------------|----------|-------------------|---------------------------|
-| [TC-CART-001](#tc-cart-001--cart-is-empty-before-adding-products)                                 | Cart is empty before adding products                                 | Smoke / UI                   | Medium   | Automated         | `tests/test_cart_page.py` |
-| [TC-CART-002](#tc-cart-002--added-product-is-displayed-on-cart-page)                              | Added product is displayed on cart page                              | Smoke / Positive / UI        | High     | Automated         | `tests/test_cart_page.py` |
-| [TC-CART-003](#tc-cart-003--cart-product-content-matches-added-product-data)                      | Cart product content matches added product data                      | Regression / UI              | Medium   | Automated         | `tests/test_cart_page.py` |
-| [TC-CART-004](#tc-cart-004--product-can-be-removed-from-cart-page)                                | Product can be removed from cart page                                | Smoke / Positive / UI        | High     | Automated         | `tests/test_cart_page.py` |
-| [TC-CART-005](#tc-cart-005--cart-badge-is-removed-after-removing-last-product)                    | Cart badge is removed after removing last product                    | Regression / UI              | Medium   | Automated         | `tests/test_cart_page.py` |
-| [TC-CART-006](#tc-cart-006--user-can-return-from-cart-page-to-inventory-page)                     | User can return from cart page to inventory page                     | Regression / Navigation / UI | Medium   | Automated         | `tests/test_cart_page.py` |
-| [TC-CART-007](#tc-cart-007--cart-state-persists-after-logout-and-re-login)                        | Cart state persists after logout and re-login                        | Regression / Positive / UI   | Medium   | Automated         | `tests/test_cart_page.py` |
-| [TC-CART-008](#tc-cart-008--all-added-products-are-displayed-on-cart-page)                        | All added products are displayed on cart page                        | Regression / Positive / UI   | Medium   | Automated         | `tests/test_cart_page.py` |
-| [TC-CART-009](#tc-cart-009--cart-product-content-matches-added-product-data-for-each-product)     | Cart product content matches added product data for each product     | Regression / UI              | Medium   | Automated         | `tests/test_cart_page.py` |
-| [TC-CART-010](#tc-cart-010--cart-badge-decrements-after-removing-one-of-multiple-products)        | Cart badge decrements after removing one of multiple products        | Regression / UI              | Medium   | Automated         | `tests/test_cart_page.py` |
-| [TC-CART-011](#tc-cart-011--product-details-can-be-opened-from-cart-item-name)                    | Product details can be opened from cart item name                    | Regression / Navigation / UI | Medium   | Automated         | `tests/test_cart_page.py` |
-| [TC-CART-012](#tc-cart-012--continue-shopping-preserves-cart-state)                               | Continue Shopping preserves cart state                               | Regression / Navigation / UI | Medium   | Automated         | `tests/test_cart_page.py` |
-| [TC-CART-013](#tc-cart-013--all-products-can-be-removed-from-cart-page)                           | All products can be removed from cart page                           | Regression / Positive / UI   | Medium   | Automated         | `tests/test_cart_page.py` |
-| [TC-CART-014](#tc-cart-014--checkout-button-opens-checkout-information-page-with-product-in-cart) | Checkout button opens checkout information page with product in cart | Smoke / Navigation / UI      | High     | Automated         | `tests/test_cart_page.py` |
+| Test Case ID                                                                                      | Scenario                                                                    | Type                     | Priority | Automation Status | Automated In              |
+|---------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------|--------------------------|----------|-------------------|---------------------------|
+| [TC-CART-001](#tc-cart-001--cart-is-empty-before-adding-products)                                 | Cart is empty before adding products                                        | Smoke                    | Medium   | Automated         | `tests/test_cart_page.py` |
+| [TC-CART-002](#tc-cart-002--added-product-is-displayed-with-correct-content-on-cart-page)         | Added product is displayed with correct content on cart page                | Smoke / UI / E2E         | High     | Automated         | `tests/test_cart_page.py` |
+| [TC-CART-003](#tc-cart-003--product-can-be-removed-from-cart-page)                                | Product can be removed from cart page                                       | Smoke                    | High     | Automated         | `tests/test_cart_page.py` |
+| [TC-CART-004](#tc-cart-004--cart-badge-is-removed-after-removing-last-product)                    | Cart badge is removed after removing last product                           | Regression / UI          | Medium   | Automated         | `tests/test_cart_page.py` |
+| [TC-CART-005](#tc-cart-005--user-can-continue-shopping-from-cart-page)                            | User can continue shopping from cart page                                   | Navigation               | Medium   | Automated         | `tests/test_cart_page.py` |
+| [TC-CART-006](#tc-cart-006--cart-state-persists-after-logout-and-re-login)                        | Cart state persists after logout and re-login                               | Regression               | Medium   | Automated         | `tests/test_cart_page.py` |
+| [TC-CART-007](#tc-cart-007--all-added-products-are-displayed-with-correct-content-on-cart-page)   | All added products are displayed with correct content on cart page          | Regression / UI          | Medium   | Automated         | `tests/test_cart_page.py` |
+| [TC-CART-008](#tc-cart-008--cart-badge-decrements-after-removing-one-of-multiple-products)        | Cart badge decrements after removing one of multiple products               | Regression / UI          | Medium   | Automated         | `tests/test_cart_page.py` |
+| [TC-CART-009](#tc-cart-009--product-details-can-be-opened-from-cart-item-name)                    | Product details can be opened from cart item name                           | Navigation               | Medium   | Automated         | `tests/test_cart_page.py` |
+| [TC-CART-010](#tc-cart-010--continue-shopping-preserves-cart-state)                               | Continue Shopping preserves cart state                                      | Regression / UI          | Medium   | Automated         | `tests/test_cart_page.py` |
+| [TC-CART-011](#tc-cart-011--all-products-can-be-removed-from-cart-page)                           | All products can be removed from cart page                                  | Regression               | Medium   | Automated         | `tests/test_cart_page.py` |
+| [TC-CART-012](#tc-cart-012--checkout-button-opens-checkout-information-page-with-product-in-cart) | Checkout button opens checkout information page with product in cart        | Smoke / Navigation / E2E | High     | Automated         | `tests/test_cart_page.py` |
 
 ---
 
@@ -31,7 +29,7 @@ The goal of this document is to define cart-page-owned scenarios and track their
 
 ### TC-CART-001 — Cart is empty before adding products
 
-**Type:** Smoke / UI\
+**Type:** Smoke\
 **Priority:** Medium\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
@@ -40,7 +38,6 @@ The goal of this document is to define cart-page-owned scenarios and track their
 **Preconditions:**
 
 * User is logged in.
-* User is on the inventory page.
 * No products have been added to the cart in the current session.
 
 **Test Data:**
@@ -50,111 +47,26 @@ The goal of this document is to define cart-page-owned scenarios and track their
 **Steps:**
 
 1. Log in with valid credentials.
-2. Open the cart page.
-3. Observe the cart item list.
-
-**Expected Result:**
-
-* Cart page is opened.
-* No cart items are displayed.
-* Cart badge is not displayed on the inventory/cart header.
-* Cart page remains available and does not display an error.
-
-**Notes:**
-
-* Sauce Demo does not display a dedicated empty cart message.
-* During automation, this scenario should verify that the cart item list does not contain product items.
-
----
-
-### TC-CART-002 — Added product is displayed on cart page
-
-**Type:** Smoke / Positive / UI\
-**Priority:** High\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
-**Automated In:** `tests/test_cart_page.py`
-
-**Preconditions:**
-
-* User is logged in.
-* User is on the inventory page.
-* Product list is visible.
-* Selected product has been added to the cart.
-
-**Test Data:**
-
-* User: `standard_user`
-* Example product: `Sauce Labs Backpack`
-
-**Steps:**
-
-1. Log in with valid credentials.
-2. Add the selected product to the cart.
+2. Verify that no cart badge is displayed before adding products.
 3. Open the cart page.
 4. Observe the cart item list.
 
 **Expected Result:**
 
-* Cart page is opened.
-* Selected product is visible on the cart page.
-* Cart item list contains the selected product.
+* Cart page opens successfully.
+* No cart badge is displayed.
+* Cart contains zero product items.
 
 **Notes:**
 
-* This scenario validates that an added product is displayed in the cart.
-* This is treated as a smoke scenario because it validates the primary cart visibility flow for one representative product.
-* Full all-products cart visibility regression coverage is tracked separately in TC-CART-008.
+* This scenario validates the initial empty-cart state.
+* The scenario focuses on cart state rather than general cart-page UI presentation.
 
 ---
 
-### TC-CART-003 — Cart product content matches added product data
+### TC-CART-002 — Added product is displayed with correct content on cart page
 
-**Type:** Regression / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
-**Automated In:** `tests/test_cart_page.py`
-
-**Preconditions:**
-
-* User is logged in.
-* User is on the inventory page.
-* Product list is visible.
-* Selected product has been added to the cart.
-
-**Test Data:**
-
-* User: `standard_user`
-* Example product: `Sauce Labs Backpack`
-
-**Steps:**
-
-1. Log in with valid credentials.
-2. Add the selected product to the cart.
-3. Open the cart page.
-4. Observe the cart item content.
-
-**Expected Result:**
-
-* Cart item name matches the selected product name.
-* Cart item description matches the selected product description.
-* Cart item price matches the selected product price.
-* Cart item quantity is visible.
-* Cart item quantity displays `1`.
-* Remove button is visible for the cart item.
-
-**Notes:**
-
-* This scenario validates cart item content consistency for one representative product.
-* During automation, expected product data should come from centralized product test data.
-* Full all-products cart content regression coverage is tracked separately in TC-CART-009.
-
----
-
-### TC-CART-004 — Product can be removed from cart page
-
-**Type:** Smoke / Positive / UI\
+**Type:** Smoke / UI / E2E\
 **Priority:** High\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
@@ -163,38 +75,77 @@ The goal of this document is to define cart-page-owned scenarios and track their
 **Preconditions:**
 
 * User is logged in.
-* User is on the inventory page.
-* Selected product has been added to the cart.
+* One representative product has been added to the cart.
 
 **Test Data:**
 
 * User: `standard_user`
-* Example product: `Sauce Labs Backpack`
+* Example product: representative product from centralized product test data
 
 **Steps:**
 
 1. Log in with valid credentials.
-2. Add the selected product to the cart.
+2. Add one representative product to the cart.
 3. Open the cart page.
-4. Click the Remove button for the selected product.
-5. Observe the cart item list.
+4. Locate the added product.
+5. Verify the product content displayed in the cart.
+
+**Expected Result:**
+
+* Added product is visible on the cart page.
+* Product name matches the expected product data.
+* Product description matches the expected product data.
+* Product price matches the expected product data.
+* Product quantity displays `1`.
+* Remove button is available for the product.
+
+**Notes:**
+
+* This is the representative smoke validation of cart contents.
+* This test is part of the primary E2E purchase flow.
+* Full all-products cart content coverage is provided by TC-CART-007.
+
+---
+
+### TC-CART-003 — Product can be removed from cart page
+
+**Type:** Smoke\
+**Priority:** High\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
+**Automated In:** `tests/test_cart_page.py`
+
+**Preconditions:**
+
+* User is logged in.
+* One representative product has been added to the cart.
+* User is on the cart page.
+
+**Test Data:**
+
+* User: `standard_user`
+* Example product: representative product from centralized product test data
+
+**Steps:**
+
+1. Open the cart containing one product.
+2. Verify that the selected product is visible.
+3. Click Remove for the selected product.
+4. Observe the cart item list.
 
 **Expected Result:**
 
 * Selected product is removed from the cart.
 * Removed product is no longer visible on the cart page.
-* Cart page remains available.
-* No error is displayed.
 
 **Notes:**
 
-* This scenario validates remove-from-cart behavior on the cart page for one representative product.
-* Full all-products remove-from-cart regression coverage is tracked separately in TC-CART-013.
-* This test should not validate checkout behavior.
+* This is the representative smoke validation of remove-from-cart behavior.
+* Full all-products removal coverage is provided by TC-CART-011.
 
 ---
 
-### TC-CART-005 — Cart badge is removed after removing last product
+### TC-CART-004 — Cart badge is removed after removing last product
 
 **Type:** Regression / UI\
 **Priority:** Medium\
@@ -205,38 +156,37 @@ The goal of this document is to define cart-page-owned scenarios and track their
 **Preconditions:**
 
 * User is logged in.
-* User is on the inventory page.
 * Exactly one product has been added to the cart.
+* User is on the cart page.
 
 **Test Data:**
 
 * User: `standard_user`
-* Example product: `Sauce Labs Backpack`
+* Example product: representative product from centralized product test data
 
 **Steps:**
 
-1. Log in with valid credentials.
-2. Add one selected product to the cart.
-3. Open the cart page.
-4. Remove the selected product from the cart.
-5. Observe the cart badge.
+1. Open the cart containing one product.
+2. Verify that the cart badge is visible and displays `1`.
+3. Verify that the product is visible.
+4. Remove the product.
+5. Observe the cart badge and cart item.
 
 **Expected Result:**
 
-* Selected product is removed from the cart.
-* Cart badge is no longer displayed after removing the last product.
-* Cart item list no longer contains the removed product.
+* Cart badge disappears after removing the last product.
+* Removed product is no longer visible in the cart.
 
 **Notes:**
 
-* This scenario validates cart badge update after removing the last product.
-* During automation, this scenario may be combined with remove-from-cart validation if it remains readable.
+* This scenario validates detailed cart badge state after the cart becomes empty.
+* Cart badge behavior is shared authenticated-page behavior and may be reorganized into dedicated shared-header coverage in a future approved task.
 
 ---
 
-### TC-CART-006 — User can return from cart page to inventory page
+### TC-CART-005 — User can continue shopping from cart page
 
-**Type:** Regression / Navigation / UI\
+**Type:** Navigation\
 **Priority:** Medium\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
@@ -253,29 +203,26 @@ The goal of this document is to define cart-page-owned scenarios and track their
 
 **Steps:**
 
-1. Log in with valid credentials.
-2. Open the cart page.
-3. Click the Continue Shopping button.
-4. Observe the inventory page.
+1. Open the cart page.
+2. Click Continue Shopping.
+3. Observe the destination page.
 
 **Expected Result:**
 
 * User is returned to the inventory page.
-* Inventory page URL contains `inventory.html`.
-* Inventory page container is visible.
+* Inventory page URL is displayed.
 * Product list is visible.
 
 **Notes:**
 
-* This scenario validates basic navigation from the cart page back to the inventory page.
-* Cart state after Continue Shopping is tracked separately in TC-CART-012.
-* This test should not validate checkout behavior.
+* The primary purpose of this scenario is Cart → Inventory navigation.
+* Cart-state preservation after Continue Shopping is covered separately by TC-CART-010.
 
 ---
 
-### TC-CART-007 — Cart state persists after logout and re-login
+### TC-CART-006 — Cart state persists after logout and re-login
 
-**Type:** Regression / Positive / UI\
+**Type:** Regression\
 **Priority:** Medium\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
@@ -284,45 +231,42 @@ The goal of this document is to define cart-page-owned scenarios and track their
 **Preconditions:**
 
 * User is logged in.
-* User is on the inventory page.
-* Product list is visible.
+* One representative product has been added to the cart.
 
 **Test Data:**
 
 * User: `standard_user`
-* Example product: `Sauce Labs Backpack`
+* Example product: representative product from centralized product test data
 
 **Steps:**
 
-1. Log in with valid credentials.
-2. Add the selected product to the cart.
-3. Log out from the application.
-4. Log in again with the same valid user.
-5. Open the cart page.
-6. Observe the cart item list.
+1. Add one product to the cart.
+2. Verify that the product is marked as added.
+3. Open the cart and verify that the product is present.
+4. Return to the inventory page.
+5. Log out.
+6. Log in again using the same user.
+7. Verify the cart state after re-login.
+8. Open the cart again.
 
 **Expected Result:**
 
-* User is successfully logged in again.
-* Inventory page is opened after re-login.
-* Previously added product is still visible in the cart.
-* Cart item list contains the previously added product.
-* No error is displayed.
+* User can log in again successfully.
+* Previously added product remains in the cart after re-login.
+* Cart badge displays `1`.
+* Product state remains consistent on the inventory page.
+* Product is still visible on the cart page.
 
 **Notes:**
 
-* This scenario validates cart state persistence after logout and re-login.
-* This test should use one deterministic product from centralized product test data.
-* This test should use the same user before and after logout.
-* This test should not validate checkout behavior.
-* This test should not validate browser restart, storage clearing, cross-user cart behavior, or persistence across different users.
-* This test should not cover multiple logout locations unless a future task explicitly expands the scope.
+* This scenario validates cart-state persistence across logout and re-login for the same user.
+* The test does not cover browser restart, storage clearing, cross-user behavior, or different-user persistence.
 
 ---
 
-### TC-CART-008 — All added products are displayed on cart page
+### TC-CART-007 — All added products are displayed with correct content on cart page
 
-**Type:** Regression / Positive / UI\
+**Type:** Regression / UI\
 **Priority:** Medium\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
@@ -331,9 +275,8 @@ The goal of this document is to define cart-page-owned scenarios and track their
 **Preconditions:**
 
 * User is logged in.
-* User is on the inventory page.
-* Product list is visible.
 * Cart is empty at the start of the test.
+* All products from centralized product test data are available.
 
 **Test Data:**
 
@@ -342,27 +285,29 @@ The goal of this document is to define cart-page-owned scenarios and track their
 
 **Steps:**
 
-1. Log in with valid credentials.
-2. Add all products from the product test data set to the cart.
-3. Open the cart page.
-4. Observe the cart item list.
+1. Add all products from the product test data set to the cart.
+2. Open the cart page.
+3. Verify the number of displayed cart items.
+4. For each product, verify its cart item content.
 
 **Expected Result:**
 
-* Cart page is opened.
 * Cart item count matches the number of added products.
-* Every added product is displayed on the cart page.
-* No unexpected product is displayed.
-* No error is displayed.
+* Every added product is visible in the cart.
+* Every product name matches centralized product data.
+* Every product description matches centralized product data.
+* Every product price matches centralized product data.
+* Every product quantity displays `1`.
+* Every product has an available Remove button.
 
 **Notes:**
 
-* This is the full regression variant of TC-CART-002.
-* This scenario may use a loop or parametrized product data.
+* This is the full regression counterpart of TC-CART-002.
+* This scenario combines previous all-products visibility and all-products content-validation coverage into one test case.
 
 ---
 
-### TC-CART-009 — Cart product content matches added product data for each product
+### TC-CART-008 — Cart badge decrements after removing one of multiple products
 
 **Type:** Regression / UI\
 **Priority:** Medium\
@@ -373,39 +318,73 @@ The goal of this document is to define cart-page-owned scenarios and track their
 **Preconditions:**
 
 * User is logged in.
-* User is on the inventory page.
-* Product list is visible.
-* Cart is empty at the start of each product check.
+* At least two products are available.
 
 **Test Data:**
 
 * User: `standard_user`
-* Products: all products from the product test data set
+* First example product: first product from centralized product test data
+* Second example product: second product from centralized product test data
 
 **Steps:**
 
-1. Log in with valid credentials.
-2. For each product from the product test data set, add the tested product to the cart in an isolated test iteration.
-3. Open the cart page.
-4. Observe the cart item content for the tested product.
+1. Add two products to the cart.
+2. Open the cart page.
+3. Verify that the cart badge displays `2`.
+4. Remove one of the products.
+5. Observe the cart badge and cart contents.
 
 **Expected Result:**
 
-* Tested cart item name matches the expected product name.
-* Tested cart item description matches the expected product description.
-* Tested cart item price matches the expected product price.
-* Tested cart item quantity is visible.
-* Tested cart item quantity displays `1`.
-* Tested cart item has a visible Remove button.
+* Cart badge decreases from `2` to `1`.
+* Removed product is no longer visible.
+* Remaining product is still visible.
 
 **Notes:**
 
-* This is the full regression variant of TC-CART-003.
-* Expected product data should come from centralized product test data.
+* This scenario validates detailed cart badge behavior when removing one item from a non-empty cart.
 
 ---
 
-### TC-CART-010 — Cart badge decrements after removing one of multiple products
+### TC-CART-009 — Product details can be opened from cart item name
+
+**Type:** Navigation\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
+**Automated In:** `tests/test_cart_page.py`
+
+**Preconditions:**
+
+* User is logged in.
+* One product has been added to the cart.
+* User is on the cart page.
+
+**Test Data:**
+
+* User: `standard_user`
+* Example product: representative product from centralized product test data
+
+**Steps:**
+
+1. Open the cart page containing the selected product.
+2. Click the product name.
+3. Observe the product details page.
+
+**Expected Result:**
+
+* Product details page opens for the selected product.
+* Product details page URL contains the expected product ID.
+* Product details item is visible.
+* Back to products button is visible.
+
+**Notes:**
+
+* The primary purpose of this scenario is Cart → Product Details navigation.
+
+---
+
+### TC-CART-010 — Continue Shopping preserves cart state
 
 **Type:** Regression / UI\
 **Priority:** Medium\
@@ -416,43 +395,45 @@ The goal of this document is to define cart-page-owned scenarios and track their
 **Preconditions:**
 
 * User is logged in.
-* User is on the inventory page.
-* At least two products have been added to the cart.
-* User is on the cart page.
+* One product has been added to the cart.
+* At least one additional product is available.
 
 **Test Data:**
 
 * User: `standard_user`
-* Example products:
-
-  * `Sauce Labs Backpack`
-  * `Sauce Labs Bolt T-Shirt`
+* Added product: representative product from centralized product test data
+* Optional product: second representative product from centralized product test data
 
 **Steps:**
 
-1. Log in with valid credentials.
-2. Add two selected products to the cart.
-3. Open the cart page.
-4. Verify that the cart badge displays `2`.
-5. Remove one selected product from the cart page.
-6. Observe the cart badge.
+1. Add one product to the cart.
+2. Open the cart page.
+3. Click Continue Shopping.
+4. Observe the inventory page.
+5. Verify the cart badge.
+6. Verify the state of the previously added product.
+7. Verify the state of a product that was not added.
 
 **Expected Result:**
 
-* Removed product is no longer displayed on the cart page.
-* Remaining product is still displayed on the cart page.
-* Cart badge count changes from `2` to `1`.
-* Cart badge count matches the number of products still in the cart.
+* User returns to the inventory page.
+* Inventory page remains available.
+* Cart badge still displays `1`.
+* Previously added product displays Remove.
+* Previously added product does not display Add to cart.
+* Product not added to the cart displays Add to cart.
+* Product not added to the cart does not display Remove.
 
 **Notes:**
 
-* This scenario validates cart badge decrement after removing one product while another product remains in the cart.
+* The scenario validates preservation of cart-related UI state after Continue Shopping.
+* Navigation is required to perform the scenario but cart-state preservation is the primary validation target.
 
 ---
 
-### TC-CART-011 — Product details can be opened from cart item name
+### TC-CART-011 — All products can be removed from cart page
 
-**Type:** Regression / Navigation / UI\
+**Type:** Regression\
 **Priority:** Medium\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
@@ -461,97 +442,7 @@ The goal of this document is to define cart-page-owned scenarios and track their
 **Preconditions:**
 
 * User is logged in.
-* Selected product has been added to the cart.
-* User is on the cart page.
-* Cart item name is visible.
-
-**Test Data:**
-
-* User: `standard_user`
-* Example product: `Sauce Labs Backpack`
-
-**Steps:**
-
-1. Log in with valid credentials.
-2. Add the selected product to the cart.
-3. Open the cart page.
-4. Click the cart item product name.
-5. Observe the product details page.
-
-**Expected Result:**
-
-* Product details page is opened for the selected product.
-* Product details page URL contains the selected product ID.
-* Product details page item details container is visible.
-* Product details page belongs to the selected product.
-
-**Notes:**
-
-* This scenario is owned by Cart Page because the user action starts from `cart.html`.
-
----
-
-### TC-CART-012 — Continue Shopping preserves cart state
-
-**Type:** Regression / Navigation / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
-**Automated In:** `tests/test_cart_page.py`
-
-**Preconditions:**
-
-* User is logged in.
-* User is on the inventory page.
-* Selected product has been added to the cart.
-
-**Test Data:**
-
-* User: `standard_user`
-* Example product: `Sauce Labs Backpack`
-* Optional second product: `Sauce Labs Bolt T-Shirt`
-
-**Steps:**
-
-1. Log in with valid credentials.
-2. Add the selected product to the cart.
-3. Open the cart page.
-4. Click the Continue Shopping button.
-5. Observe the inventory page.
-6. Observe the cart badge.
-7. Observe the product card for the selected product.
-
-**Expected Result:**
-
-* User is returned to the inventory page.
-* Inventory page URL contains `inventory.html`.
-* Inventory page container is visible.
-* Product list is visible.
-* Cart badge still displays the expected number of products.
-* Previously added product still displays the Remove button.
-* Product not added to cart still displays the Add to cart button.
-
-**Notes:**
-
-* This scenario validates that navigation from cart back to inventory does not reset cart state.
-* Basic Continue Shopping navigation is already covered by TC-CART-006.
-
----
-
-### TC-CART-013 — All products can be removed from cart page
-
-**Type:** Regression / Positive / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
-**Automated In:** `tests/test_cart_page.py`
-
-**Preconditions:**
-
-* User is logged in.
-* User is on the inventory page.
-* All products from the product test data set have been added to the cart before each product removal check.
-* User is on the cart page.
+* All products from centralized product test data can be added to the cart.
 
 **Test Data:**
 
@@ -560,29 +451,30 @@ The goal of this document is to define cart-page-owned scenarios and track their
 
 **Steps:**
 
-1. Log in with valid credentials.
-2. Add all products from the product test data set to the cart.
-3. Open the cart page.
-4. For each product from the product test data set, remove the tested product from the cart page in an isolated test iteration.
-5. Observe the cart item list and cart badge.
+1. Add all products from the product test data set to the cart.
+2. Open the cart page.
+3. Verify the initial cart badge count.
+4. Remove the tested product.
+5. Verify the updated cart badge count.
+6. Verify that the tested product is no longer visible.
+7. Repeat independently for every applicable product.
 
 **Expected Result:**
 
-* The tested product can be removed from the cart page.
-* Removed product is no longer displayed on the cart page.
-* Cart badge count decreases by one after removing the tested product.
-* Other products that were previously added to the cart are not negatively affected by removing the tested product.
-* No error is displayed.
+* Every tested product can be removed from the cart.
+* Cart badge decreases by one after each isolated removal check.
+* Removed product is no longer visible on the cart page.
 
 **Notes:**
 
-* This is the full regression variant of TC-CART-004.
+* This is the full regression counterpart of TC-CART-003.
+* The automated implementation uses parametrized product data to cover every applicable product.
 
 ---
 
-### TC-CART-014 — Checkout button opens checkout information page with product in cart
+### TC-CART-012 — Checkout button opens checkout information page with product in cart
 
-**Type:** Smoke / Navigation / UI\
+**Type:** Smoke / Navigation / E2E\
 **Priority:** High\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
@@ -591,30 +483,29 @@ The goal of this document is to define cart-page-owned scenarios and track their
 **Preconditions:**
 
 * User is logged in.
-* User is on the inventory page.
-* Selected product has been added to the cart.
+* One representative product has been added to the cart.
 * User is on the cart page.
 
 **Test Data:**
 
 * User: `standard_user`
-* Example product: `Sauce Labs Backpack`
+* Example product: representative product from centralized product test data
 
 **Steps:**
 
-1. Log in with valid credentials.
-2. Add the selected product to the cart.
-3. Open the cart page.
-4. Click the Checkout button.
+1. Open the cart containing the selected product.
+2. Click Checkout.
+3. Observe the checkout information page.
 
 **Expected Result:**
 
-* User is redirected to the checkout information page.
-* Checkout information page URL contains `checkout-step-one.html`.
-* Checkout information form is displayed.
+* Checkout information page opens successfully.
+* Checkout information page URL is displayed.
+* Checkout information form container is visible.
+* Cart contents container is no longer visible.
 
 **Notes:**
 
-* This scenario is owned by Cart Page because the user action starts from the cart page.
-* Checkout information form field behavior is documented in `test_cases/checkout-page.md`.
-* Sauce Demo currently allows opening checkout step one from an empty cart, but this scenario uses the realistic checkout precondition: a product is present in the cart.
+* The primary purpose of this scenario is Cart → Checkout Information navigation.
+* This scenario is a required checkpoint in the primary E2E purchase flow.
+* Product presence and content in the cart are validated earlier in TC-CART-002.
