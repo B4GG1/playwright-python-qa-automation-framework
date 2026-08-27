@@ -83,6 +83,7 @@ def test_open_cart_page_from_inventory(logged_in_inventory_page: InventoryPage, 
 
 
 @pytest.mark.smoke
+@pytest.mark.e2e
 @pytest.mark.navigation
 @pytest.mark.parametrize(
     "_case_id",

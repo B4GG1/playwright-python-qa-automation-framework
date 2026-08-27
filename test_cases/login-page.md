@@ -9,7 +9,7 @@ The goal of this document is to define login-related test scenarios before and a
 
 | Test Case ID                                                                                        | Scenario                                                            | Type            | Priority | Automation Status | Automated In               |
 |-----------------------------------------------------------------------------------------------------|---------------------------------------------------------------------|-----------------|----------|-------------------|----------------------------|
-| [TC-LOGIN-001](#tc-login-001--successful-login-with-valid-credentials)                              | Successful login with valid credentials                             | Smoke           | High     | Automated         | `tests/test_login_page.py` |
+| [TC-LOGIN-001](#tc-login-001--successful-login-with-valid-credentials)                              | Successful login with valid credentials                             | Smoke / E2E     | High     | Automated         | `tests/test_login_page.py` |
 | [TC-LOGIN-002](#tc-login-002--login-with-invalid-username)                                          | Login with invalid username                                         | Smoke / UI      | Medium   | Automated         | `tests/test_login_page.py` |
 | [TC-LOGIN-003](#tc-login-003--login-with-invalid-password)                                          | Login with invalid password                                         | Regression / UI | Medium   | Automated         | `tests/test_login_page.py` |
 | [TC-LOGIN-004](#tc-login-004--login-with-empty-username)                                            | Login with empty username                                           | Regression / UI | Medium   | Automated         | `tests/test_login_page.py` |
@@ -35,7 +35,7 @@ The goal of this document is to define login-related test scenarios before and a
 
 ### TC-LOGIN-001 — Successful login with valid credentials
 
-**Type:** Smoke\
+**Type:** Smoke / E2E\
 **Priority:** High\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\

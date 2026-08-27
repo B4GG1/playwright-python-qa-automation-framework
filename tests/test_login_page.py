@@ -32,7 +32,6 @@ from test_data.product_test_data import LIST_OF_PRODUCTS
 
 
 @pytest.mark.smoke
-@pytest.mark.ui
 @pytest.mark.parametrize("_case_id", ["SMOKE"], ids=["SMOKE"])
 def test_sauce_demo_smoke(
     opened_login_page: LoginPage,
@@ -43,6 +42,7 @@ def test_sauce_demo_smoke(
 
 
 @pytest.mark.smoke
+@pytest.mark.e2e
 @pytest.mark.parametrize(
     "case",
     VALID_USER_CASES,
