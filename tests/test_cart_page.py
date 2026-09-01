@@ -219,6 +219,7 @@ def test_cart_badge_decrements_after_removing_one_of_multiple_products(
     ).to_be_visible()
 
 
+@pytest.mark.smoke
 @pytest.mark.navigation
 @pytest.mark.parametrize(
     "_case_id",
