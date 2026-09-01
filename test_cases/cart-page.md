@@ -30,10 +30,10 @@ The goal of this document is to define cart-page-owned scenarios and track their
 
 ### TC-CART-001 — Cart is empty before adding products
 
-**Type:** Smoke
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Smoke\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_cart_page.py`
 
 **Preconditions:**
@@ -67,10 +67,10 @@ The goal of this document is to define cart-page-owned scenarios and track their
 
 ### TC-CART-002 — Added product is displayed with correct content on cart page
 
-**Type:** Smoke / UI / E2E
-**Priority:** High
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Smoke / UI / E2E\
+**Priority:** High\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_cart_page.py`
 
 **Preconditions:**
@@ -110,10 +110,10 @@ The goal of this document is to define cart-page-owned scenarios and track their
 
 ### TC-CART-003 — Product can be removed from cart page
 
-**Type:** Smoke
-**Priority:** High
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Smoke\
+**Priority:** High\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_cart_page.py`
 
 **Preconditions:**
@@ -148,10 +148,10 @@ The goal of this document is to define cart-page-owned scenarios and track their
 
 ### TC-CART-004 — Cart badge is removed after removing last product
 
-**Type:** Regression / UI
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / UI\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_cart_page.py`
 
 **Preconditions:**
@@ -187,10 +187,10 @@ The goal of this document is to define cart-page-owned scenarios and track their
 
 ### TC-CART-005 — User can continue shopping from cart page
 
-**Type:** Navigation
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Navigation\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_cart_page.py`
 
 **Preconditions:**
@@ -223,10 +223,10 @@ The goal of this document is to define cart-page-owned scenarios and track their
 
 ### TC-CART-006 — Cart state persists after logout and re-login
 
-**Type:** Regression
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_cart_page.py`
 
 **Preconditions:**
@@ -267,10 +267,10 @@ The goal of this document is to define cart-page-owned scenarios and track their
 
 ### TC-CART-007 — All added products are displayed with correct content on cart page
 
-**Type:** Regression / UI
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / UI\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_cart_page.py`
 
 **Preconditions:**
@@ -310,10 +310,10 @@ The goal of this document is to define cart-page-owned scenarios and track their
 
 ### TC-CART-008 — Cart badge decrements after removing one of multiple products
 
-**Type:** Regression / UI
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / UI\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_cart_page.py`
 
 **Preconditions:**
@@ -349,10 +349,10 @@ The goal of this document is to define cart-page-owned scenarios and track their
 
 ### TC-CART-009 — Product details can be opened from cart item name
 
-**Type:** Smoke / Navigation
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Smoke / Navigation\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_cart_page.py`
 
 **Preconditions:**
@@ -388,10 +388,10 @@ The goal of this document is to define cart-page-owned scenarios and track their
 
 ### TC-CART-010 — Continue Shopping preserves cart state
 
-**Type:** Regression / UI
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / UI\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_cart_page.py`
 
 **Preconditions:**
@@ -435,10 +435,10 @@ The goal of this document is to define cart-page-owned scenarios and track their
 
 ### TC-CART-011 — All products can be removed from cart page
 
-**Type:** Regression
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_cart_page.py`
 
 **Preconditions:**
@@ -476,10 +476,10 @@ The goal of this document is to define cart-page-owned scenarios and track their
 
 ### TC-CART-012 — Checkout button opens checkout information page with product in cart
 
-**Type:** Smoke / Navigation / E2E
-**Priority:** High
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Smoke / Navigation / E2E\
+**Priority:** High\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_cart_page.py`
 
 **Preconditions:**
@@ -516,10 +516,10 @@ The goal of this document is to define cart-page-owned scenarios and track their
 
 ### TC-CART-013 — Product details can be opened from cart item name for each product
 
-**Type:** Regression / Navigation
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Planned
+**Type:** Regression / Navigation\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Planned\
 **Automated In:** TBD
 
 **Preconditions:**

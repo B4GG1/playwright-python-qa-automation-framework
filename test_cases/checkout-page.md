@@ -51,10 +51,10 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 
 #### TC-CHECKOUT-001 — Checkout information form displays required customer fields
 
-**Type:** Regression / UI
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / UI\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_checkout_page.py`
 
 **Preconditions:**
@@ -95,10 +95,10 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 
 #### TC-CHECKOUT-002 — Checkout information form is visible
 
-**Type:** Smoke / UI
-**Priority:** High
-**Automation Candidate:** Yes
-**Automation Status:** Planned
+**Type:** Smoke / UI\
+**Priority:** High\
+**Automation Candidate:** Yes\
+**Automation Status:** Planned\
 **Automated In:** TBD
 
 **Preconditions:**
@@ -131,10 +131,10 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 
 #### TC-CHECKOUT-003 — Checkout information form requires first name
 
-**Type:** Regression / UI
-**Priority:** High
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / UI\
+**Priority:** High\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_checkout_page.py`
 
 **Preconditions:**
@@ -174,10 +174,10 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 
 #### TC-CHECKOUT-004 — Checkout information form requires last name
 
-**Type:** Regression / UI
-**Priority:** High
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / UI\
+**Priority:** High\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_checkout_page.py`
 
 **Preconditions:**
@@ -217,10 +217,10 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 
 #### TC-CHECKOUT-005 — Checkout information form requires postal code
 
-**Type:** Regression / UI
-**Priority:** High
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / UI\
+**Priority:** High\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_checkout_page.py`
 
 **Preconditions:**
@@ -260,10 +260,10 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 
 #### TC-CHECKOUT-006 — Input error icons are displayed after failed checkout information submission
 
-**Type:** Regression / UI
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / UI\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_checkout_page.py`
 
 **Preconditions:**
@@ -302,10 +302,10 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 
 #### TC-CHECKOUT-007 — Checkout information error message can be closed after validation failure
 
-**Type:** Regression / UI
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / UI\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_checkout_page.py`
 
 **Preconditions:**
@@ -344,10 +344,10 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 
 #### TC-CHECKOUT-008 — Checkout information form continues to overview when valid data is provided
 
-**Type:** Smoke / Navigation / E2E
-**Priority:** High
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Smoke / Navigation / E2E\
+**Priority:** High\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_checkout_page.py`
 
 **Preconditions:**
@@ -388,10 +388,10 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 
 #### TC-CHECKOUT-009 — Checkout information cancel returns to cart and preserves cart item
 
-**Type:** Regression / Navigation / UI
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / Navigation / UI\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_checkout_page.py`
 
 **Preconditions:**
@@ -427,10 +427,10 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 
 #### TC-CHECKOUT-010 — Checkout overview displays selected product
 
-**Type:** Smoke / UI / E2E
-**Priority:** High
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Smoke / UI / E2E\
+**Priority:** High\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_checkout_page.py`
 
 **Preconditions:**
@@ -474,10 +474,10 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 
 #### TC-CHECKOUT-011 — Checkout overview displays each selected product
 
-**Type:** Regression / UI
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / UI\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_checkout_page.py`
 
 **Preconditions:**
@@ -526,10 +526,10 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 
 #### TC-CHECKOUT-012 — Checkout overview price summary is correct for one product
 
-**Type:** Smoke / UI / E2E
-**Priority:** High
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Smoke / UI / E2E\
+**Priority:** High\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_checkout_page.py`
 
 **Preconditions:**
@@ -571,10 +571,10 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 
 #### TC-CHECKOUT-013 — Checkout overview price summary is correct for multiple products
 
-**Type:** Regression / UI
-**Priority:** High
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / UI\
+**Priority:** High\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_checkout_page.py`
 
 **Preconditions:**
@@ -624,10 +624,10 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 
 #### TC-CHECKOUT-014 — Checkout overview cancel returns to inventory page
 
-**Type:** Regression / Navigation / UI
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / Navigation / UI\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_checkout_page.py`
 
 **Preconditions:**
@@ -668,10 +668,10 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 
 #### TC-CHECKOUT-015 — Product details can be opened from checkout overview item name
 
-**Type:** Smoke / Navigation / UI
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Smoke / Navigation / UI\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_checkout_page.py`
 
 **Preconditions:**
@@ -713,10 +713,10 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 
 #### TC-CHECKOUT-016 — Product details can be opened from checkout overview item name for each product
 
-**Type:** Regression / Navigation / UI
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / Navigation / UI\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_checkout_page.py`
 
 **Preconditions:**
@@ -762,10 +762,10 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 
 #### TC-CHECKOUT-017 — Finish button completes checkout and opens order confirmation page
 
-**Type:** Smoke / Navigation / E2E
-**Priority:** High
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Smoke / Navigation / E2E\
+**Priority:** High\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_checkout_page.py`
 
 **Preconditions:**
@@ -809,10 +809,10 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 
 #### TC-CHECKOUT-018 — Checkout complete page displays order confirmation message
 
-**Type:** Regression / UI
-**Priority:** Medium
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Regression / UI\
+**Priority:** Medium\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_checkout_page.py`
 
 **Preconditions:**
@@ -858,10 +858,10 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 
 #### TC-CHECKOUT-019 — Checkout complete page elements are visible
 
-**Type:** Smoke / UI / E2E
-**Priority:** High
-**Automation Candidate:** Yes
-**Automation Status:** Planned
+**Type:** Smoke / UI / E2E\
+**Priority:** High\
+**Automation Candidate:** Yes\
+**Automation Status:** Planned\
 **Automated In:** TBD
 
 **Preconditions:**
@@ -900,10 +900,10 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 
 #### TC-CHECKOUT-020 — Back Home returns to inventory page after order completion
 
-**Type:** Smoke / Navigation / E2E
-**Priority:** High
-**Automation Candidate:** Yes
-**Automation Status:** Automated
+**Type:** Smoke / Navigation / E2E\
+**Priority:** High\
+**Automation Candidate:** Yes\
+**Automation Status:** Automated\
 **Automated In:** `tests/test_checkout_page.py`
 
 **Preconditions:**
