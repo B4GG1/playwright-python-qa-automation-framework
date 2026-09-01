@@ -6,7 +6,7 @@ This document contains manual test cases for the Sauce Demo checkout flow.
 
 The goal of this document is to define checkout-related scenarios and track their automation coverage. Scenarios are documented here when the main action or validation happens on the checkout information page, checkout overview page, or checkout complete page.
 
-Checkout automation is implemented for all checkout scenarios currently documented in this file. Automated coverage is mapped to `tests/test_checkout_page.py`.
+Automated checkout coverage is mapped to `tests/test_checkout_page.py`. Scenarios marked as Planned are documented for later automation and are not yet represented by dedicated automated test cases.
 
 Navigation from the cart page to checkout step one is owned by Cart Page coverage and is documented in `test_cases/cart-page.md`.
 
@@ -20,26 +20,28 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 
 ## Test Case Overview And Automation Coverage
 
-| Test Case ID                                                                                                         | Scenario                                                                        | Checkout Area     | Type                          | Priority | Automation Status | Automated In                  |
-|----------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------|-------------------|-------------------------------|----------|-------------------|-------------------------------|
-| [TC-CHECKOUT-001](#tc-checkout-001--checkout-information-form-displays-required-customer-fields)                     | Checkout information form displays required customer fields                     | Checkout Step One | Smoke / UI                    | High     | Automated         | `tests/test_checkout_page.py` |
-| [TC-CHECKOUT-002](#tc-checkout-002--checkout-information-form-requires-first-name)                                   | Checkout information form requires first name                                   | Checkout Step One | Regression / Negative / UI    | High     | Automated         | `tests/test_checkout_page.py` |
-| [TC-CHECKOUT-003](#tc-checkout-003--checkout-information-form-requires-last-name)                                    | Checkout information form requires last name                                    | Checkout Step One | Regression / Negative / UI    | High     | Automated         | `tests/test_checkout_page.py` |
-| [TC-CHECKOUT-004](#tc-checkout-004--checkout-information-form-requires-postal-code)                                  | Checkout information form requires postal code                                  | Checkout Step One | Regression / Negative / UI    | High     | Automated         | `tests/test_checkout_page.py` |
-| [TC-CHECKOUT-005](#tc-checkout-005--input-error-icons-are-displayed-after-failed-checkout-information-submission)    | Input error icons are displayed after failed checkout information submission    | Checkout Step One | UI / Regression               | Medium   | Automated         | `tests/test_checkout_page.py` |
-| [TC-CHECKOUT-006](#tc-checkout-006--checkout-information-error-message-can-be-closed-after-validation-failure)       | Checkout information error message can be closed after validation failure       | Checkout Step One | UI / Regression               | Medium   | Automated         | `tests/test_checkout_page.py` |
-| [TC-CHECKOUT-007](#tc-checkout-007--checkout-information-form-continues-to-overview-when-valid-data-is-provided)     | Checkout information form continues to overview when valid data is provided     | Checkout Step One | Smoke / Positive / Navigation | High     | Automated         | `tests/test_checkout_page.py` |
-| [TC-CHECKOUT-008](#tc-checkout-008--checkout-information-cancel-returns-to-cart-and-preserves-cart-item)             | Checkout information cancel returns to cart and preserves cart item             | Checkout Step One | Regression / Navigation / UI  | Medium   | Automated         | `tests/test_checkout_page.py` |
-| [TC-CHECKOUT-009](#tc-checkout-009--checkout-overview-displays-selected-product)                                     | Checkout overview displays selected product                                     | Checkout Step Two | Smoke / UI                    | High     | Automated         | `tests/test_checkout_page.py` |
-| [TC-CHECKOUT-010](#tc-checkout-010--checkout-overview-displays-each-selected-product)                                | Checkout overview displays each selected product                                | Checkout Step Two | Regression / UI               | Medium   | Automated         | `tests/test_checkout_page.py` |
-| [TC-CHECKOUT-011](#tc-checkout-011--checkout-overview-price-summary-is-correct-for-one-product)                      | Checkout overview price summary is correct for one product                      | Checkout Step Two | Smoke / UI                    | High     | Automated         | `tests/test_checkout_page.py` |
-| [TC-CHECKOUT-012](#tc-checkout-012--checkout-overview-price-summary-is-correct-for-multiple-products)                | Checkout overview price summary is correct for multiple products                | Checkout Step Two | Regression / UI               | High     | Automated         | `tests/test_checkout_page.py` |
-| [TC-CHECKOUT-013](#tc-checkout-013--checkout-overview-cancel-returns-to-inventory-page)                              | Checkout overview cancel returns to inventory page                              | Checkout Step Two | Regression / Navigation / UI  | Medium   | Automated         | `tests/test_checkout_page.py` |
-| [TC-CHECKOUT-014](#tc-checkout-014--product-details-can-be-opened-from-checkout-overview-item-name)                  | Product details can be opened from checkout overview item name                  | Checkout Step Two | Smoke / Navigation / UI       | Medium   | Automated         | `tests/test_checkout_page.py` |
-| [TC-CHECKOUT-015](#tc-checkout-015--product-details-can-be-opened-from-checkout-overview-item-name-for-each-product) | Product details can be opened from checkout overview item name for each product | Checkout Step Two | Regression / Navigation / UI  | Medium   | Automated         | `tests/test_checkout_page.py` |
-| [TC-CHECKOUT-016](#tc-checkout-016--finish-button-completes-checkout-and-opens-order-confirmation-page)              | Finish button completes checkout and opens order confirmation page              | Checkout Step Two | Smoke / Positive / E2E        | High     | Automated         | `tests/test_checkout_page.py` |
-| [TC-CHECKOUT-017](#tc-checkout-017--checkout-complete-page-displays-order-confirmation-message)                      | Checkout complete page displays order confirmation message                      | Checkout Complete | Regression / UI               | High     | Automated         | `tests/test_checkout_page.py` |
-| [TC-CHECKOUT-018](#tc-checkout-018--back-home-returns-to-inventory-page-after-order-completion)                      | Back Home returns to inventory page after order completion                      | Checkout Complete | Regression / Navigation / UI  | Medium   | Automated         | `tests/test_checkout_page.py` |
+| Test Case ID                                                                                                         | Scenario                                                                        | Checkout Area     | Type                         | Priority | Automation Status | Automated In                  |
+| -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ----------------- | ---------------------------- | -------- | ----------------- | ----------------------------- |
+| [TC-CHECKOUT-001](#tc-checkout-001--checkout-information-form-displays-required-customer-fields)                     | Checkout information form displays required customer fields                     | Checkout Step One | Regression / UI              | Medium   | Automated         | `tests/test_checkout_page.py` |
+| [TC-CHECKOUT-002](#tc-checkout-002--checkout-information-form-is-visible)                                            | Checkout information form is visible                                            | Checkout Step One | Smoke / UI                   | High     | Planned           | TBD                           |
+| [TC-CHECKOUT-003](#tc-checkout-003--checkout-information-form-requires-first-name)                                   | Checkout information form requires first name                                   | Checkout Step One | Regression / UI              | High     | Automated         | `tests/test_checkout_page.py` |
+| [TC-CHECKOUT-004](#tc-checkout-004--checkout-information-form-requires-last-name)                                    | Checkout information form requires last name                                    | Checkout Step One | Regression / UI              | High     | Automated         | `tests/test_checkout_page.py` |
+| [TC-CHECKOUT-005](#tc-checkout-005--checkout-information-form-requires-postal-code)                                  | Checkout information form requires postal code                                  | Checkout Step One | Regression / UI              | High     | Automated         | `tests/test_checkout_page.py` |
+| [TC-CHECKOUT-006](#tc-checkout-006--input-error-icons-are-displayed-after-failed-checkout-information-submission)    | Input error icons are displayed after failed checkout information submission    | Checkout Step One | Regression / UI              | Medium   | Automated         | `tests/test_checkout_page.py` |
+| [TC-CHECKOUT-007](#tc-checkout-007--checkout-information-error-message-can-be-closed-after-validation-failure)       | Checkout information error message can be closed after validation failure       | Checkout Step One | Regression / UI              | Medium   | Automated         | `tests/test_checkout_page.py` |
+| [TC-CHECKOUT-008](#tc-checkout-008--checkout-information-form-continues-to-overview-when-valid-data-is-provided)     | Checkout information form continues to overview when valid data is provided     | Checkout Step One | Smoke / Navigation / E2E     | High     | Automated         | `tests/test_checkout_page.py` |
+| [TC-CHECKOUT-009](#tc-checkout-009--checkout-information-cancel-returns-to-cart-and-preserves-cart-item)             | Checkout information cancel returns to cart and preserves cart item             | Checkout Step One | Regression / Navigation / UI | Medium   | Automated         | `tests/test_checkout_page.py` |
+| [TC-CHECKOUT-010](#tc-checkout-010--checkout-overview-displays-selected-product)                                     | Checkout overview displays selected product                                     | Checkout Step Two | Smoke / UI / E2E             | High     | Automated         | `tests/test_checkout_page.py` |
+| [TC-CHECKOUT-011](#tc-checkout-011--checkout-overview-displays-each-selected-product)                                | Checkout overview displays each selected product                                | Checkout Step Two | Regression / UI              | Medium   | Automated         | `tests/test_checkout_page.py` |
+| [TC-CHECKOUT-012](#tc-checkout-012--checkout-overview-price-summary-is-correct-for-one-product)                      | Checkout overview price summary is correct for one product                      | Checkout Step Two | Smoke / UI / E2E             | High     | Automated         | `tests/test_checkout_page.py` |
+| [TC-CHECKOUT-013](#tc-checkout-013--checkout-overview-price-summary-is-correct-for-multiple-products)                | Checkout overview price summary is correct for multiple products                | Checkout Step Two | Regression / UI              | High     | Automated         | `tests/test_checkout_page.py` |
+| [TC-CHECKOUT-014](#tc-checkout-014--checkout-overview-cancel-returns-to-inventory-page)                              | Checkout overview cancel returns to inventory page                              | Checkout Step Two | Regression / Navigation / UI | Medium   | Automated         | `tests/test_checkout_page.py` |
+| [TC-CHECKOUT-015](#tc-checkout-015--product-details-can-be-opened-from-checkout-overview-item-name)                  | Product details can be opened from checkout overview item name                  | Checkout Step Two | Smoke / Navigation / UI      | Medium   | Automated         | `tests/test_checkout_page.py` |
+| [TC-CHECKOUT-016](#tc-checkout-016--product-details-can-be-opened-from-checkout-overview-item-name-for-each-product) | Product details can be opened from checkout overview item name for each product | Checkout Step Two | Regression / Navigation / UI | Medium   | Automated         | `tests/test_checkout_page.py` |
+| [TC-CHECKOUT-017](#tc-checkout-017--finish-button-completes-checkout-and-opens-order-confirmation-page)              | Finish button completes checkout and opens order confirmation page              | Checkout Step Two | Smoke / Navigation / E2E     | High     | Automated         | `tests/test_checkout_page.py` |
+| [TC-CHECKOUT-018](#tc-checkout-018--checkout-complete-page-displays-order-confirmation-message)                      | Checkout complete page displays order confirmation message                      | Checkout Complete | Regression / UI              | Medium   | Automated         | `tests/test_checkout_page.py` |
+| [TC-CHECKOUT-019](#tc-checkout-019--checkout-complete-page-elements-are-visible)                                     | Checkout complete page elements are visible                                     | Checkout Complete | Smoke / UI / E2E             | High     | Planned           | TBD                           |
+| [TC-CHECKOUT-020](#tc-checkout-020--back-home-returns-to-inventory-page-after-order-completion)                      | Back Home returns to inventory page after order completion                      | Checkout Complete | Smoke / Navigation / E2E     | High     | Automated         | `tests/test_checkout_page.py` |
 
 ---
 
@@ -49,10 +51,10 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 
 #### TC-CHECKOUT-001 — Checkout information form displays required customer fields
 
-**Type:** Smoke / UI\
-**Priority:** High\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_checkout_page.py`
 
 **Preconditions:**
@@ -64,7 +66,51 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 **Test Data:**
 
 * User: `standard_user`
-* Example product: `Sauce Labs Backpack`
+* Example product: representative product from centralized product test data
+
+**Steps:**
+
+1. Open the checkout information page.
+2. Observe the checkout information form.
+3. Verify the individual checkout information form elements.
+
+**Expected Result:**
+
+* Checkout information form container is visible.
+* First Name input is visible.
+* Last Name input is visible.
+* Zip/Postal Code input is visible.
+* Continue button is visible.
+* Cancel button is visible.
+* Page title displays the expected checkout information title.
+
+**Notes:**
+
+* This scenario provides detailed regression coverage of checkout information form elements.
+* Representative smoke validation of checkout information form availability is covered separately by TC-CHECKOUT-002.
+* Navigation from the cart page to checkout step one is documented in `test_cases/cart-page.md`.
+* Required field validation behavior is covered by separate regression scenarios.
+
+---
+
+#### TC-CHECKOUT-002 — Checkout information form is visible
+
+**Type:** Smoke / UI
+**Priority:** High
+**Automation Candidate:** Yes
+**Automation Status:** Planned
+**Automated In:** TBD
+
+**Preconditions:**
+
+* User is logged in.
+* Selected product has been added to the cart.
+* User has opened the checkout information page from the cart page.
+
+**Test Data:**
+
+* User: `standard_user`
+* Example product: representative product from centralized product test data
 
 **Steps:**
 
@@ -73,28 +119,22 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 
 **Expected Result:**
 
-* Checkout information form is visible.
-* First Name input is visible.
-* Last Name input is visible.
-* Zip/Postal Code input is visible.
-* Continue button is visible.
-* Cancel button is visible.
-* Page title indicates checkout information step.
+* Checkout information form container is visible.
 
 **Notes:**
 
-* This scenario validates basic checkout step one UI availability.
-* Navigation from the cart page to checkout step one is documented in `test_cases/cart-page.md`.
-* Required field validation behavior is covered by separate negative scenarios.
+* This is the representative smoke validation for checkout information form availability.
+* Detailed validation of individual form elements is covered by TC-CHECKOUT-001.
+* Dedicated automation for this smoke scenario is planned.
 
 ---
 
-#### TC-CHECKOUT-002 — Checkout information form requires first name
+#### TC-CHECKOUT-003 — Checkout information form requires first name
 
-**Type:** Regression / Negative / UI\
-**Priority:** High\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / UI
+**Priority:** High
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_checkout_page.py`
 
 **Preconditions:**
@@ -128,16 +168,16 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 **Notes:**
 
 * This scenario validates required field handling for the First Name field.
-* Input error icon visibility is covered separately in TC-CHECKOUT-005.
+* Input error icon visibility is covered separately in TC-CHECKOUT-006.
 
 ---
 
-#### TC-CHECKOUT-003 — Checkout information form requires last name
+#### TC-CHECKOUT-004 — Checkout information form requires last name
 
-**Type:** Regression / Negative / UI\
-**Priority:** High\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / UI
+**Priority:** High
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_checkout_page.py`
 
 **Preconditions:**
@@ -171,16 +211,16 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 **Notes:**
 
 * This scenario validates required field handling for the Last Name field.
-* Input error icon visibility is covered separately in TC-CHECKOUT-005.
+* Input error icon visibility is covered separately in TC-CHECKOUT-006.
 
 ---
 
-#### TC-CHECKOUT-004 — Checkout information form requires postal code
+#### TC-CHECKOUT-005 — Checkout information form requires postal code
 
-**Type:** Regression / Negative / UI\
-**Priority:** High\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / UI
+**Priority:** High
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_checkout_page.py`
 
 **Preconditions:**
@@ -214,16 +254,16 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 **Notes:**
 
 * This scenario validates required field handling for the Zip/Postal Code field.
-* Input error icon visibility is covered separately in TC-CHECKOUT-005.
+* Input error icon visibility is covered separately in TC-CHECKOUT-006.
 
 ---
 
-#### TC-CHECKOUT-005 — Input error icons are displayed after failed checkout information submission
+#### TC-CHECKOUT-006 — Input error icons are displayed after failed checkout information submission
 
-**Type:** UI / Regression\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_checkout_page.py`
 
 **Preconditions:**
@@ -260,12 +300,12 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 
 ---
 
-#### TC-CHECKOUT-006 — Checkout information error message can be closed after validation failure
+#### TC-CHECKOUT-007 — Checkout information error message can be closed after validation failure
 
-**Type:** UI / Regression\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_checkout_page.py`
 
 **Preconditions:**
@@ -302,12 +342,12 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 
 ---
 
-#### TC-CHECKOUT-007 — Checkout information form continues to overview when valid data is provided
+#### TC-CHECKOUT-008 — Checkout information form continues to overview when valid data is provided
 
-**Type:** Smoke / Positive / Navigation\
-**Priority:** High\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Smoke / Navigation / E2E
+**Priority:** High
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_checkout_page.py`
 
 **Preconditions:**
@@ -321,7 +361,7 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 * First Name: `Standard`
 * Last Name: `User`
 * Postal Code: `12345`
-* Example product: `Sauce Labs Backpack`
+* Example product: representative product from centralized product test data
 
 **Steps:**
 
@@ -340,18 +380,18 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 
 **Notes:**
 
-* This is the main positive checkout information form scenario.
-* This scenario belongs to checkout step one because the main action is submitting the customer information form.
-* Detailed overview content validation is covered by separate checkout overview scenarios.
+* This is the representative successful Checkout Information → Checkout Overview navigation scenario.
+* This scenario is part of the primary E2E purchase flow.
+* Detailed checkout overview content validation is covered by separate checkout overview scenarios.
 
 ---
 
-#### TC-CHECKOUT-008 — Checkout information cancel returns to cart and preserves cart item
+#### TC-CHECKOUT-009 — Checkout information cancel returns to cart and preserves cart item
 
-**Type:** Regression / Navigation / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / Navigation / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_checkout_page.py`
 
 **Preconditions:**
@@ -363,7 +403,7 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 **Test Data:**
 
 * User: `standard_user`
-* Example product: `Sauce Labs Backpack`
+* Example product: representative product from centralized product test data
 
 **Steps:**
 
@@ -385,12 +425,12 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 
 ### Checkout Step Two — Order Overview
 
-#### TC-CHECKOUT-009 — Checkout overview displays selected product
+#### TC-CHECKOUT-010 — Checkout overview displays selected product
 
-**Type:** Smoke / UI\
-**Priority:** High\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Smoke / UI / E2E
+**Priority:** High
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_checkout_page.py`
 
 **Preconditions:**
@@ -405,7 +445,7 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 * First Name: `Standard`
 * Last Name: `User`
 * Postal Code: `12345`
-* Example product: `Sauce Labs Backpack`
+* Example product: representative product from centralized product test data
 
 **Steps:**
 
@@ -426,17 +466,18 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 **Notes:**
 
 * This scenario validates checkout overview item summary for one representative product.
-* Full all-products checkout overview item coverage is tracked separately in TC-CHECKOUT-010.
+* This scenario is part of the primary E2E purchase flow.
+* Full all-products checkout overview item coverage is tracked separately in TC-CHECKOUT-011.
 * During automation, expected product data should come from centralized product test data.
 
 ---
 
-#### TC-CHECKOUT-010 — Checkout overview displays each selected product
+#### TC-CHECKOUT-011 — Checkout overview displays each selected product
 
-**Type:** Regression / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_checkout_page.py`
 
 **Preconditions:**
@@ -477,17 +518,18 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 **Notes:**
 
 * This scenario validates checkout overview item summary for each product.
+* This is the full regression counterpart of TC-CHECKOUT-010.
 * During automation, this scenario should be parametrized with centralized product test data.
 * Each parametrized run should start from an isolated browser/page state.
 
 ---
 
-#### TC-CHECKOUT-011 — Checkout overview price summary is correct for one product
+#### TC-CHECKOUT-012 — Checkout overview price summary is correct for one product
 
-**Type:** Smoke / UI\
-**Priority:** High\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Smoke / UI / E2E
+**Priority:** High
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_checkout_page.py`
 
 **Preconditions:**
@@ -502,7 +544,7 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 * First Name: `Standard`
 * Last Name: `User`
 * Postal Code: `12345`
-* Example product: `Sauce Labs Backpack`
+* Example product: representative product from centralized product test data
 
 **Steps:**
 
@@ -522,17 +564,17 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 
 **Notes:**
 
-* This scenario validates checkout price summary for one representative product.
-* Exact tax value should be verified during automation based on the value displayed by the application.
+* This scenario validates the price summary for the representative purchase used in the primary E2E flow.
+* Detailed multiple-product price-summary coverage is provided by TC-CHECKOUT-013.
 
 ---
 
-#### TC-CHECKOUT-012 — Checkout overview price summary is correct for multiple products
+#### TC-CHECKOUT-013 — Checkout overview price summary is correct for multiple products
 
-**Type:** Regression / UI\
-**Priority:** High\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / UI
+**Priority:** High
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_checkout_page.py`
 
 **Preconditions:**
@@ -549,8 +591,8 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 * Postal Code: `12345`
 * Example products:
 
-  * `Sauce Labs Backpack`
-  * `Sauce Labs Bike Light`
+  * first representative product from centralized product test data
+  * second representative product from centralized product test data
 
 **Steps:**
 
@@ -575,17 +617,17 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 **Notes:**
 
 * This scenario validates checkout price summary for multiple products.
+* This is the regression counterpart of TC-CHECKOUT-012.
 * During automation, expected item total should be calculated from centralized product test data.
-* Exact tax value should be verified based on the value displayed by the application.
 
 ---
 
-#### TC-CHECKOUT-013 — Checkout overview cancel returns to inventory page
+#### TC-CHECKOUT-014 — Checkout overview cancel returns to inventory page
 
-**Type:** Regression / Navigation / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / Navigation / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_checkout_page.py`
 
 **Preconditions:**
@@ -600,7 +642,7 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 * First Name: `Standard`
 * Last Name: `User`
 * Postal Code: `12345`
-* Example product: `Sauce Labs Backpack`
+* Example product: representative product from centralized product test data
 
 **Steps:**
 
@@ -624,12 +666,12 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 
 ---
 
-#### TC-CHECKOUT-014 — Product details can be opened from checkout overview item name
+#### TC-CHECKOUT-015 — Product details can be opened from checkout overview item name
 
-**Type:** Smoke / Navigation / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Smoke / Navigation / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_checkout_page.py`
 
 **Preconditions:**
@@ -644,7 +686,7 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 * First Name: `Standard`
 * Last Name: `User`
 * Postal Code: `12345`
-* Example product: `Sauce Labs Backpack`
+* Example product: representative product from centralized product test data
 
 **Steps:**
 
@@ -664,17 +706,17 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 
 **Notes:**
 
-* This scenario validates product details navigation from checkout overview for one representative product.
-* Full all-products navigation coverage is tracked separately in TC-CHECKOUT-015.
+* This scenario validates Product Details navigation from checkout overview for one representative product.
+* Full all-products navigation coverage is tracked separately in TC-CHECKOUT-016.
 
 ---
 
-#### TC-CHECKOUT-015 — Product details can be opened from checkout overview item name for each product
+#### TC-CHECKOUT-016 — Product details can be opened from checkout overview item name for each product
 
-**Type:** Regression / Navigation / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / Navigation / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_checkout_page.py`
 
 **Preconditions:**
@@ -711,18 +753,19 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 
 **Notes:**
 
-* This scenario validates product details navigation from checkout overview for each product.
+* This scenario validates Product Details navigation from checkout overview for each product.
+* This is the full regression counterpart of TC-CHECKOUT-015.
 * During automation, this scenario should be parametrized with centralized product test data.
 * Each parametrized run should start from an isolated browser/page state.
 
 ---
 
-#### TC-CHECKOUT-016 — Finish button completes checkout and opens order confirmation page
+#### TC-CHECKOUT-017 — Finish button completes checkout and opens order confirmation page
 
-**Type:** Smoke / Positive / E2E\
-**Priority:** High\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Smoke / Navigation / E2E
+**Priority:** High
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_checkout_page.py`
 
 **Preconditions:**
@@ -737,7 +780,7 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 * First Name: `Standard`
 * Last Name: `User`
 * Postal Code: `12345`
-* Example product: `Sauce Labs Backpack`
+* Example product: representative product from centralized product test data
 
 **Steps:**
 
@@ -757,18 +800,19 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 **Notes:**
 
 * This scenario belongs to checkout step two because the main action is clicking Finish on the checkout overview page.
-* Detailed confirmation message validation is covered separately in TC-CHECKOUT-017.
+* This scenario is part of the primary E2E purchase flow.
+* Detailed confirmation page content validation is covered by TC-CHECKOUT-018.
 
 ---
 
 ### Checkout Complete — Order Confirmation
 
-#### TC-CHECKOUT-017 — Checkout complete page displays order confirmation message
+#### TC-CHECKOUT-018 — Checkout complete page displays order confirmation message
 
-**Type:** Regression / UI\
-**Priority:** High\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Regression / UI
+**Priority:** Medium
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_checkout_page.py`
 
 **Preconditions:**
@@ -782,7 +826,56 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 * First Name: `Standard`
 * Last Name: `User`
 * Postal Code: `12345`
-* Example product: `Sauce Labs Backpack`
+* Example product: representative product from centralized product test data
+* Expected completion header: `Thank you for your order!`
+* Expected completion message: `Your order has been dispatched, and will arrive just as fast as the pony can get there!`
+
+**Steps:**
+
+1. Complete checkout with valid customer information.
+2. Observe the checkout complete page.
+3. Verify the checkout complete page elements.
+4. Verify the completion header text.
+5. Verify the completion message text.
+
+**Expected Result:**
+
+* Checkout complete page container is visible.
+* Order confirmation image is visible.
+* Completion header is visible.
+* Completion header displays `Thank you for your order!`.
+* Completion message is visible.
+* Completion message displays `Your order has been dispatched, and will arrive just as fast as the pony can get there!`.
+* Back Home button is visible.
+
+**Notes:**
+
+* This scenario provides detailed regression coverage of checkout complete page content.
+* Representative smoke validation of checkout complete page availability is covered separately by TC-CHECKOUT-019.
+* The Finish action and navigation to the checkout complete page are covered by TC-CHECKOUT-017.
+
+---
+
+#### TC-CHECKOUT-019 — Checkout complete page elements are visible
+
+**Type:** Smoke / UI / E2E
+**Priority:** High
+**Automation Candidate:** Yes
+**Automation Status:** Planned
+**Automated In:** TBD
+
+**Preconditions:**
+
+* User is logged in.
+* User has completed checkout with valid customer information.
+* User is on the checkout complete page.
+
+**Test Data:**
+
+* First Name: `Standard`
+* Last Name: `User`
+* Postal Code: `12345`
+* Example product: representative product from centralized product test data
 
 **Steps:**
 
@@ -791,28 +884,26 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 
 **Expected Result:**
 
-* Checkout complete page is displayed.
+* Checkout complete page container is visible.
 * Completion header is visible.
 * Completion message is visible.
 * Back Home button is visible.
 
-**Expected Completion Header:** `Thank you for your order!`
-
-**Expected Completion Message:** `Your order has been dispatched, and will arrive just as fast as the pony can get there!`
-
 **Notes:**
 
-* This scenario validates final order confirmation content.
-* The full finish action is covered by TC-CHECKOUT-016.
+* This is the representative smoke validation of checkout complete page availability.
+* This scenario is part of the primary E2E purchase flow.
+* Detailed confirmation content validation is covered by TC-CHECKOUT-018.
+* Dedicated automation for this smoke scenario is planned.
 
 ---
 
-#### TC-CHECKOUT-018 — Back Home returns to inventory page after order completion
+#### TC-CHECKOUT-020 — Back Home returns to inventory page after order completion
 
-**Type:** Regression / Navigation / UI\
-**Priority:** Medium\
-**Automation Candidate:** Yes\
-**Automation Status:** Automated\
+**Type:** Smoke / Navigation / E2E
+**Priority:** High
+**Automation Candidate:** Yes
+**Automation Status:** Automated
 **Automated In:** `tests/test_checkout_page.py`
 
 **Preconditions:**
@@ -826,7 +917,7 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 * First Name: `Standard`
 * Last Name: `User`
 * Postal Code: `12345`
-* Example product: `Sauce Labs Backpack`
+* Example product: representative product from centralized product test data
 
 **Steps:**
 
@@ -838,9 +929,9 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 * User is redirected to the inventory page.
 * Inventory product list is visible.
 * Checkout complete page is no longer displayed.
-* Added product is no longer displayed in the cart.
+* Previously purchased product is no longer present in the cart.
 
 **Notes:**
 
-* This scenario validates navigation after order completion.
-* It closes the basic checkout happy path from cart to inventory after successful order completion.
+* This scenario validates Checkout Complete → Inventory navigation after successful order completion.
+* This scenario is the final checkpoint of the primary E2E purchase flow.
