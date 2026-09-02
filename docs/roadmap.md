@@ -444,7 +444,6 @@ Current marker strategy work includes:
 * preservation of Sorting as a dedicated executable category
 * clarification of E2E execution semantics
 * removal of Positive and Negative as executable pytest markers
-* preservation of positive and negative testing as test-design concepts where applicable
 * removal of the unused API executable marker from the current UI automation suite
 * explicit marker assignment through `@pytest.mark.*` decorators
 * no dynamic marker assignment through `conftest.py`
