@@ -76,7 +76,7 @@ Current marker intent:
 
 Detailed marker semantics are documented in:
 
-```text id="d1xqwi"
+```
 docs/testing-strategy.md
 ```
 
@@ -209,7 +209,7 @@ Planned Page Object expansion:
 
 Currently implemented:
 
-```text id="bn4mql"
+```
 framework/assertions/product_assertions.py
 ```
 
@@ -260,7 +260,7 @@ Currently implemented:
 
 Current test data files:
 
-```text id="2mx4fd"
+```
 test_data/login_test_data.py
 test_data/product_test_data.py
 test_data/checkout_test_data.py
@@ -290,7 +290,7 @@ Responsibilities:
 
 Tool configuration is stored in:
 
-```text id="yy9u8y"
+```
 pyproject.toml
 .pre-commit-config.yaml
 pytest.ini
@@ -311,7 +311,7 @@ pytest -v
 
 Run the complete automated suite:
 
-```bash id="8owk2p"
+```
 pytest -v
 ```
 
@@ -319,7 +319,7 @@ pytest -v
 
 Current marker suites can be executed locally with:
 
-```bash id="ejfqx0"
+```
 pytest -m smoke -v
 pytest -m regression -v
 pytest -m ui -v
@@ -331,7 +331,7 @@ pytest -m e2e -v
 
 Useful combined selections include:
 
-```bash id="u26gxw"
+```
 pytest -m "smoke and ui" -v
 pytest -m "regression and ui" -v
 pytest -m "smoke and navigation" -v
@@ -342,7 +342,7 @@ Marker expressions may also be scoped to a test module.
 
 Example:
 
-```bash id="z0iynk"
+```
 pytest tests/test_checkout_page.py -m e2e -v
 ```
 
@@ -354,7 +354,7 @@ The current `e2e` suite represents independent checkpoints that collectively for
 
 The logical journey includes:
 
-```text id="9f9j2l"
+```
 Login
   ↓
 Inventory
@@ -383,7 +383,7 @@ E2E tests:
 
 Run the logical E2E suite with:
 
-```bash id="75juh6"
+```
 pytest -m e2e -v
 ```
 
