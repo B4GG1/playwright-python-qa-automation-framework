@@ -4,6 +4,8 @@ This document describes the day-to-day development workflow used in this project
 
 For detailed branching rules, see: [Git Branching Strategy](git-branching-strategy.md).
 
+For detailed test categorization and pytest marker semantics, see: [Testing Strategy](testing-strategy.md).
+
 The workflow described below supports two branch roles:
 
 * `develop` is the main integration branch for completed and validated work.
@@ -17,7 +19,7 @@ The project follows a professional Git-based development workflow.
 
 Regular development workflow:
 
-```
+```text
 develop
   ↓
 feature / fix / docs / refactor branch
@@ -39,7 +41,7 @@ phase or workstream checkpoint when needed
 
 Portfolio promotion workflow:
 
-```
+```text
 develop
   ↓
 final documentation and validation review
@@ -79,7 +81,7 @@ For larger tightly connected areas, the project may use one workstream branch.
 
 Examples:
 
-```
+```text
 feature/login-page
 feature/inventory-products
 feature/cart-page
@@ -107,20 +109,20 @@ It is useful when tasks are connected and reviewing them together makes more sen
 
 Start from updated `develop`:
 
-```
+```bash
 git checkout develop
 git pull origin develop
 ```
 
 Create a new branch:
 
-```
+```bash
 git checkout -b feature/cart-page
 ```
 
 Other examples:
 
-```
+```bash
 git checkout -b feature/inventory-products
 git checkout -b feature/checkout
 git checkout -b feature/structure-cleanup
@@ -132,7 +134,7 @@ git checkout -b refactor/login-fixtures
 
 For documentation cleanup before portfolio promotion, a documentation branch may be used:
 
-```
+```bash
 git checkout -b docs/phase-3-portfolio-cleanup
 ```
 
@@ -140,7 +142,7 @@ git checkout -b docs/phase-3-portfolio-cleanup
 
 Before starting work:
 
-```
+```bash
 git status
 git checkout <working-branch>
 git pull origin <working-branch>
@@ -148,7 +150,7 @@ git pull origin <working-branch>
 
 During work:
 
-```
+```bash
 git status
 git add <changed-files>
 git commit -m "<type>(<task-id>): <short description>"
@@ -161,7 +163,7 @@ For documentation-only or portfolio-promotion cleanup that is not tied to a sing
 
 Examples:
 
-```
+```bash
 git commit -m "docs: clean documentation before main promotion"
 git commit -m "chore: promote phase 3 portfolio state to main"
 ```
@@ -170,7 +172,7 @@ git commit -m "chore: promote phase 3 portfolio state to main"
 
 Before pushing or opening a Pull Request, run:
 
-```
+```bash
 ruff check .
 black --check .
 isort . --check-only
@@ -179,44 +181,82 @@ pytest -v
 
 If formatting changes are needed:
 
-```
+```bash
 black .
 isort .
 ```
 
 Then validate again:
 
-```
+```bash
 ruff check .
 black --check .
 isort . --check-only
 pytest -v
 ```
 
-For marker-based validation, use:
+### Marker-Based Validation
 
-```
+Pytest markers support selective local validation.
+
+Current executable marker suites are:
+
+```bash
 pytest -m smoke -v
 pytest -m regression -v
-pytest -m positive -v
-pytest -m negative -v
+pytest -m ui -v
+pytest -m security -v
 pytest -m sorting -v
 pytest -m navigation -v
 pytest -m e2e -v
-pytest -m "ui and smoke" -v
-pytest -m "ui and regression" -v
-pytest -m "ui and sorting" -v
-pytest -m "ui and navigation" -v
 ```
 
-For workstream-specific validation, run the relevant test module before the full suite when useful.
+Markers describe different dimensions of test intent and may be combined where useful.
+
+Common examples:
+
+```bash
+pytest -m "smoke and ui" -v
+pytest -m "regression and ui" -v
+pytest -m "smoke and navigation" -v
+pytest -m "regression and navigation" -v
+```
+
+Marker expressions can also be scoped to a specific test module.
+
+Example:
+
+```bash
+pytest tests/test_checkout_page.py -m e2e -v
+```
+
+The `e2e` suite represents independent checkpoint tests that collectively form the primary purchase journey. Tests do not depend on shared state or execution order.
+
+Detailed marker meanings and assignment rules are documented in [Testing Strategy](testing-strategy.md).
+
+### Workstream-Specific Validation
+
+Run the relevant test module before the full suite when useful.
 
 Examples:
 
-```
+```bash
+pytest -v tests/test_login_page.py
 pytest -v tests/test_inventory_page.py
+pytest -v tests/test_product_details_page.py
 pytest -v tests/test_cart_page.py
 pytest -v tests/test_checkout_page.py
+```
+
+Additional marker-based validation should be selected according to the changed behavior.
+
+Examples:
+
+```bash
+pytest -m security -v
+pytest -m sorting -v
+pytest -m navigation -v
+pytest -m e2e -v
 ```
 
 The full test suite should still pass before a workstream is considered ready for merge unless a scoped validation exception is explicitly accepted.
@@ -229,16 +269,16 @@ Commit messages should include the task ID when applicable.
 
 Recommended format:
 
-```
+```text
 <type>(<task-id>): <short description>
 ```
 
 Examples:
 
-```
+```bash
 git commit -m "docs(AQA-0026): create login page test cases"
 git commit -m "feat(AQA-0027): implement login page object model"
-git commit -m "refactor(AQA-0032): parametrize negative login scenarios"
+git commit -m "refactor(AQA-0032): parametrize login validation scenarios"
 git commit -m "test(AQA-0038): add protected inventory route access test"
 git commit -m "test(AQA-0057): add product to cart test"
 git commit -m "chore(AQA-0064): review and stabilize cart workstream"
@@ -251,7 +291,7 @@ git commit -m "chore(AQA-0082): finalize checkout automation workstream"
 
 For documentation cleanup, checkpoint, or portfolio promotion work without a dedicated task ID, these examples are acceptable:
 
-```
+```bash
 git commit -m "docs: clean documentation before main promotion"
 git commit -m "chore: promote phase 3 portfolio state to main"
 ```
@@ -269,7 +309,7 @@ Common commit types:
 
 Pull Requests for regular development should usually follow this direction:
 
-```
+```text
 feature/* -> develop
 fix/* -> develop
 docs/* -> develop
@@ -279,7 +319,7 @@ chore/* -> develop
 
 Portfolio promotion flow:
 
-```
+```text
 develop -> main
 ```
 
@@ -295,9 +335,11 @@ Before opening a Pull Request, verify:
 * relevant commits are pushed
 * local quality checks passed
 * relevant scoped test module passed when applicable
+* relevant marker suites passed when applicable
 * full test suite passed
 * documentation is updated if needed
 * test case documentation is aligned with automated coverage
+* marker documentation is aligned with current marker behavior when marker usage changes
 * no generated reports or screenshots are tracked
 * no cache files or virtual environment files are tracked
 * branch target is correct
@@ -307,7 +349,7 @@ Before opening a Pull Request, verify:
 
 Recommended pre-PR commands:
 
-```
+```bash
 git status
 ruff check .
 black --check .
@@ -315,15 +357,16 @@ isort . --check-only
 pytest -v
 ```
 
-For a workstream checkpoint, also run the relevant scoped test module.
+For a workstream checkpoint, also run the relevant scoped test module and marker suites where useful.
 
 Examples:
 
-```
+```bash
 pytest -v tests/test_cart_page.py
 pytest -v
 
 pytest -v tests/test_checkout_page.py
+pytest -m e2e -v
 pytest -v
 ```
 
@@ -349,13 +392,13 @@ Portfolio promotion should not introduce unrelated new implementation scope. It 
 
 Recommended promotion Pull Request title:
 
-```
+```text
 chore: promote phase 3 portfolio state to main
 ```
 
 Recommended promotion Pull Request body:
 
-```
+```text
 Promotes the completed Phase 3 portfolio state from develop to main.
 
 Includes:
@@ -387,9 +430,13 @@ The CI pipeline validates:
 * Ruff linting
 * Black formatting validation
 * isort import sorting validation
-* Pytest test execution
+* full Pytest test execution
 * HTML report generation
 * artifact upload
+
+The current CI pipeline executes the full pytest suite rather than separate marker-based jobs.
+
+Marker-based commands documented in this workflow are intended for selective local validation. Separate marker-based CI jobs should only be documented as implemented after the corresponding CI changes are completed.
 
 A Pull Request should not be merged if CI fails.
 
@@ -399,7 +446,7 @@ This applies both to regular Pull Requests into `develop` and portfolio promotio
 
 The project uses:
 
-```
+```text
 Squash and merge
 ```
 
@@ -409,13 +456,13 @@ This keeps `develop` and `main` history readable.
 
 Example final squash commit:
 
-```
+```text
 test(AQA-0064): complete cart automation workstream
 ```
 
 For checkpoint-only or documentation-heavy stabilization tasks, a `chore` or `docs` squash commit may also be appropriate:
 
-```
+```text
 chore(AQA-0064): review and stabilize cart workstream
 docs(AQA-0064): update project documentation after cart workstream
 chore(AQA-0073): finalize phase 3c structure cleanup
@@ -424,7 +471,7 @@ chore(AQA-0082): finalize checkout automation workstream
 
 For portfolio promotion into `main`, a `chore` squash commit may be appropriate:
 
-```
+```text
 chore: promote phase 3 portfolio state to main
 ```
 
@@ -434,32 +481,32 @@ chore: promote phase 3 portfolio state to main
 
 After a Pull Request is merged into `develop`, update local `develop`:
 
-```
+```bash
 git checkout develop
 git pull origin develop
 ```
 
 Check recent commits:
 
-```
+```bash
 git log --oneline --decorate -5
 ```
 
 Optionally delete the completed local source branch:
 
-```
+```bash
 git branch -d feature/<short-description>
 ```
 
 Clean deleted remote branch references:
 
-```
+```bash
 git fetch --prune
 ```
 
 Run final validation if needed:
 
-```
+```bash
 pytest -v
 ```
 
@@ -467,7 +514,7 @@ pytest -v
 
 After a Pull Request is merged into `main`, update local branches:
 
-```
+```bash
 git checkout main
 git pull origin main
 git checkout develop
@@ -477,7 +524,7 @@ git fetch --prune
 
 Check recent commits on `main`:
 
-```
+```bash
 git checkout main
 git log --oneline --decorate -5
 ```
@@ -494,6 +541,7 @@ A checkpoint verifies:
 * test coverage
 * local validation
 * relevant scoped test execution
+* relevant marker suite execution where applicable
 * full test suite execution or accepted scoped validation
 * CI status
 * documentation status
@@ -504,7 +552,7 @@ A checkpoint verifies:
 
 Example checkpoints:
 
-```
+```text
 AQA-0041 — Review Phase 2 And Prepare Phase 3 Scope
 AQA-0064 — Review And Stabilize Cart Workstream
 AQA-0073 — Phase 3C Final Validation And Documentation Sync
@@ -522,6 +570,7 @@ Documentation should be updated when changes affect:
 * framework architecture
 * project structure
 * testing strategy
+* marker strategy
 * CI/CD workflow
 * quality tooling
 * roadmap
@@ -535,6 +584,14 @@ Documentation changes may be committed as part of the relevant task or as a sepa
 For automation work that implements a documented manual test case, update the related test case metadata in the same task when required.
 
 For workstream final validation tasks, documentation should be checked for stale future-facing wording such as planned coverage that has already been implemented.
+
+When pytest marker behavior changes, verify that:
+
+* `pytest.ini` reflects the intended executable markers
+* automated test usage matches the registered marker definitions
+* test case metadata matches automated marker usage
+* `docs/testing-strategy.md` describes the current marker semantics
+* workflow and README commands do not reference removed markers
 
 For portfolio promotion, documentation should also be checked for:
 
@@ -563,6 +620,7 @@ It supports:
 * clean Git history
 * professional Pull Request workflow
 * reliable CI validation
+* selective local marker-based validation
 * readable project evolution
 * safe workstream integration
 * controlled portfolio promotion to `main`
