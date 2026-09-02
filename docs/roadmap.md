@@ -385,151 +385,6 @@ After promotion, future implementation and framework maturity work continues fro
 
 ## Phase 4: Framework Maturity
 
-**Status:** Planned
-
-Phase 4 will improve framework scalability and maintainability.
-
-Planned work:
-
-* smoke and regression suite separation improvements
-* CI jobs for selected test groups
-* pytest marker strategy improvements
-* parallel execution with pytest-xdist
-* improved reporting structure
-* Allure reporting integration
-* environment-based configuration
-* logging utilities
-* improved fixture organization
-* stronger diagnostics for failed tests
-
-Main learning goals:
-
-* scalable test organization
-* execution optimization
-* advanced reporting
-* maintainable framework design
-* stronger CI/test feedback loops
-
----
-
-## Phase 4 Checkpoint
-
-**Status:** Planned
-
-After Phase 4 implementation, a checkpoint task will be required before moving to advanced extensions.
-
-Checkpoint scope:
-
-* review framework maturity improvements
-* verify reporting and diagnostics
-* verify CI execution strategy
-* review documentation
-* check cleanup needs
-* confirm whether the project is ready for broader portfolio presentation or advanced extensions
-
----
-
-## Phase 5: Advanced Extensions
-
-**Status:** Future
-
-Phase 5 will introduce advanced framework extensions.
-
-Potential work:
-
-* API testing layer using Requests
-* hybrid UI + API scenarios
-* Docker-based execution environment
-* cross-browser execution strategy
-* Selenium WebDriver comparison module
-* Jenkins pipeline integration
-* test analytics and history tracking
-* framework packaging as reusable template
-
-Main learning goals:
-
-* broader QA automation tooling
-* API testing fundamentals
-* CI/CD maturity
-* cross-browser strategy
-* framework extensibility
-* portfolio differentiation
-
----
-
-## Portfolio Milestones
-
-### After Phase 2
-
-The project contains a complete Login automation workstream and can be used as an early proof of structured QA automation learning.
-
-Recommended use:
-
-* internal review
-* selective portfolio sharing
-* preparation for CV/GitHub profile updates
-
-### After Phase 3A
-
-The project contains Login coverage plus Inventory and Product validation.
-
-Recommended use:
-
-* stronger GitHub portfolio presentation
-* early QA Automation application support
-* demonstration of Page Object Model beyond a single page
-* demonstration of product data validation and Sorting tests
-
-### After Phase 3B
-
-The project contains Login, Inventory, Product Details, and Cart automation coverage.
-
-Recommended use:
-
-* stronger portfolio presentation than Login/Inventory-only state
-* demonstration of stateful UI testing
-* demonstration of multi-page Page Object interaction
-* demonstration of Cart behavior validation without mixing detailed Checkout scope
-* continued preparation for regular QA Automation applications
-
-### After Phase 3C
-
-The project contains synchronized page-level coverage, cleaned-up structure, aligned test case documentation, shared authenticated-page behavior, reusable product assertions, and final documentation synchronization after Login, Inventory, Product Details, and Cart coverage.
-
-Recommended use:
-
-* stronger portfolio presentation before Checkout automation
-* demonstration of structure cleanup and documentation discipline
-* demonstration of traceability between manual test cases and automated tests
-* demonstration of reusable framework components
-* preparation for Checkout automation
-
-### After Phase 3D
-
-The project contains Checkout automation in addition to Login, Inventory, Product Details, and Cart coverage.
-
-Recommended use:
-
-* stronger regular QA Automation application support
-* demonstration of realistic multi-step e-commerce UI automation
-* demonstration of form validation, Overview validation, and order completion checks
-* demonstration of clear Page Object boundaries across multi-page workflows
-* demonstration of documentation synchronization after feature workstream completion
-
-### After Phase 3 Portfolio Promotion
-
-The project has a stable Phase 3 portfolio snapshot available on `main`.
-
-Recommended use:
-
-* regular QA Automation applications
-* GitHub portfolio presentation
-* CV project section update
-* GitHub Profile README project link
-* recruiter-facing repository link
-
-## Phase 4: Framework Maturity
-
 **Status:** In Progress
 
 Phase 4 focuses on improving the scalability, maintainability, execution strategy, reporting, configuration, and diagnostics of the existing automation framework.
@@ -732,6 +587,120 @@ Checkpoint scope:
 * confirm readiness for broader portfolio presentation
 * confirm readiness for Phase 5 Advanced Extensions
 
+---
+
+## Phase 5: Advanced Extensions
+
+**Status:** Future
+
+Phase 5 will introduce advanced framework extensions.
+
+Potential work:
+
+* API testing layer using Requests
+* hybrid UI + API scenarios
+* Docker-based execution environment
+* cross-browser execution strategy
+* Selenium WebDriver comparison module
+* Jenkins pipeline integration
+* test analytics and history tracking
+* framework packaging as reusable template
+
+Main learning goals:
+
+* broader QA automation tooling
+* API testing fundamentals
+* CI/CD maturity
+* cross-browser strategy
+* framework extensibility
+* portfolio differentiation
+
+---
+
+## Portfolio Milestones
+
+### After Phase 2
+
+The project contains a complete Login automation workstream and can be used as an early proof of structured QA automation learning.
+
+Recommended use:
+
+* internal review
+* selective portfolio sharing
+* preparation for CV/GitHub profile updates
+
+### After Phase 3A
+
+The project contains Login coverage plus Inventory and Product validation.
+
+Recommended use:
+
+* stronger GitHub portfolio presentation
+* early QA Automation application support
+* demonstration of Page Object Model beyond a single page
+* demonstration of product data validation and Sorting tests
+
+### After Phase 3B
+
+The project contains Login, Inventory, Product Details, and Cart automation coverage.
+
+Recommended use:
+
+* stronger portfolio presentation than Login/Inventory-only state
+* demonstration of stateful UI testing
+* demonstration of multi-page Page Object interaction
+* demonstration of Cart behavior validation without mixing detailed Checkout scope
+* continued preparation for regular QA Automation applications
+
+### After Phase 3C
+
+The project contains synchronized page-level coverage, cleaned-up structure, aligned test case documentation, shared authenticated-page behavior, reusable product assertions, and final documentation synchronization after Login, Inventory, Product Details, and Cart coverage.
+
+Recommended use:
+
+* stronger portfolio presentation before Checkout automation
+* demonstration of structure cleanup and documentation discipline
+* demonstration of traceability between manual test cases and automated tests
+* demonstration of reusable framework components
+* preparation for Checkout automation
+
+### After Phase 3D
+
+The project contains Checkout automation in addition to Login, Inventory, Product Details, and Cart coverage.
+
+Recommended use:
+
+* stronger regular QA Automation application support
+* demonstration of realistic multi-step e-commerce UI automation
+* demonstration of form validation, Overview validation, and order completion checks
+* demonstration of clear Page Object boundaries across multi-page workflows
+* demonstration of documentation synchronization after feature workstream completion
+
+### After Phase 3 Portfolio Promotion
+
+The project has a stable Phase 3 portfolio snapshot available on `main`.
+
+Recommended use:
+
+* regular QA Automation applications
+* GitHub portfolio presentation
+* CV project section update
+* GitHub Profile README project link
+* recruiter-facing repository link
+
+### After Phase 4
+
+The project should be close to a mature portfolio-ready QA automation framework with structured execution suites, improved CI feedback, parallel execution support, advanced reporting, runtime configuration, and stronger diagnostics.
+
+Recommended use:
+
+* stronger Junior / Junior+ QA Automation applications
+* Technical QA applications
+* broader recruiter-facing portfolio presentation
+* demonstration of framework maturity beyond feature-level test automation
+* demonstration of scalable test execution and reporting strategy
+
+---
 
 ## Strategic Vision
 
