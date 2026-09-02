@@ -6,6 +6,7 @@
 * [Current Status](#current-status)
 * [System Under Test](#system-under-test)
 * [Implemented Coverage](#implemented-coverage)
+* [Test Suite Strategy](#test-suite-strategy)
 * [Technology Stack](#technology-stack)
 * [Getting Started](#getting-started)
 * [Running Tests](#running-tests)
@@ -32,6 +33,8 @@ The framework currently focuses on Playwright-based UI automation and is develop
 * pytest fixtures
 * pytest parametrization
 * marker-based test execution
+* representative Smoke and broader Regression coverage
+* independent end-to-end journey checkpoints
 * automated quality validation
 * reproducible development environment
 * CI-backed Pull Request workflow
@@ -42,148 +45,161 @@ The long-term goal of the project is to evolve into a production-style automatio
 
 ## Current Status
 
-Current project phase:
+Current stable project phase:
 
-```
+```text
 Phase 3 completed — Products, Cart, And Checkout Coverage
 ```
 
-Latest completed integration:
+Latest completed integration into `develop` before the current framework maturity work:
 
-```
+```text
 AQA-0083 — Checkout Automation Workstream merged into develop in PR #6
 ```
 
 Stable portfolio snapshot:
 
-```
+```text
 Completed Phase 3 state promoted to main as the current portfolio version
 ```
 
-The `main` branch represents the polished portfolio version of the completed Phase 3 project state. The `develop` branch remains the integration branch and may contain newer work after this README is read from `main`.
+The `main` branch represents the polished portfolio version of the completed Phase 3 project state.
 
-The project currently includes completed automation coverage for:
+The `develop` branch remains the integration branch and may contain newer work after this README is read from `main`.
 
-* login page and authentication behavior
+The current framework includes completed automation coverage for:
+
+* login and authentication behavior
+* authentication error handling
+* login UI behavior
 * protected route access validation
 * protected checkout route access validation
 * inventory page visibility and product listing behavior
 * product card content validation
-* inventory-side product details navigation
-* product details page validation
-* product sorting scenarios
-* cart page navigation
-* add-to-cart behavior from inventory and product details pages
+* inventory-side Product Details navigation
+* Product Details page validation
+* product sorting
+* Cart navigation
+* add-to-cart behavior from Inventory and Product Details
 * cart badge behavior
 * cart product content validation
-* remove-from-cart behavior from inventory, product details, and cart pages
+* remove-from-cart behavior from Inventory, Product Details, and Cart
 * Continue Shopping navigation
 * cart state persistence after logout and re-login
-* cart-owned checkout step one navigation
-* checkout information form validation
-* checkout information required field validation
-* checkout information error handling
-* checkout overview validation
-* checkout overview price summary validation
-* product details navigation from checkout overview
-* checkout finish action
-* checkout complete page confirmation validation
+* Cart → Checkout Information navigation
+* Checkout Information form validation
+* checkout required-field validation
+* checkout error-state behavior
+* Checkout Overview validation
+* Checkout Overview price summary validation
+* Product Details navigation from Checkout Overview
+* checkout Finish behavior
+* Checkout Complete confirmation validation
 * Back Home navigation after order completion
+* primary purchase journey validation through independent E2E checkpoints
 
-Completed login automation workstream includes:
+Completed Login automation coverage includes:
 
-* manual login test cases
+* manual Login test cases
 * `LoginPage` Page Object Model
-* reusable login page fixture
+* reusable Login Page fixture
 * centralized login test data
-* positive login scenarios
-* negative login scenarios
+* successful login validation
+* invalid credential validation
+* empty credential validation
+* locked out user validation
 * UI validation scenarios
-* protected inventory route access validation
-* protected cart route access validation
-* protected item details route access validation
-* protected checkout information route access validation
-* protected checkout overview route access validation
-* protected checkout complete route access validation
+* protected Inventory route validation
+* protected Cart route validation
+* protected Product Details route validation
+* protected Checkout Information route validation
+* protected Checkout Overview route validation
+* protected Checkout Complete route validation
 * input error icon validation after failed login
 * pytest parametrization
-* pytest markers
+* normalized pytest marker usage
 * GitHub Actions CI validation
 * HTML reporting and CI artifacts
 
-Completed inventory automation workstream includes:
+Completed Inventory automation coverage includes:
 
-* manual inventory test cases
+* manual Inventory test cases
 * `InventoryPage` Page Object Model
 * centralized product test data
-* inventory page visibility validation
+* Inventory page visibility validation
 * product list validation
 * product card content validation
-* product details navigation from inventory product names
-* product details navigation from inventory product images
+* Product Details navigation through product names
+* Product Details navigation through product images
 * product sorting validation
-* inventory-side add-to-cart and remove-from-cart validation
-* cart badge validation from inventory actions
-* regression and smoke coverage for inventory behavior
+* Inventory-side add-to-cart and remove-from-cart validation
+* cart badge validation from Inventory actions
+* representative Smoke coverage
+* broader Regression coverage
+* Navigation coverage
+* Sorting coverage
+* E2E purchase-flow checkpoint coverage
 
-Completed product details automation coverage includes:
+Completed Product Details automation coverage includes:
 
-* manual product details test cases
+* manual Product Details test cases
 * `ProductDetailsPage` Page Object Model
-* product details content validation
-* return navigation to inventory page
-* product-details-side add-to-cart validation
-* product-details-side remove-from-cart validation
-* cart badge validation from product details actions
-* cart navigation from product details page
-* all-products product details coverage using centralized product data
+* Product Details content validation
+* return navigation to Inventory
+* Product Details-side add-to-cart validation
+* Product Details-side remove-from-cart validation
+* cart badge validation from Product Details actions
+* Cart navigation from Product Details
+* all-products Product Details coverage using centralized product data
+* representative and broader product coverage
 
-Completed cart automation workstream includes:
+Completed Cart automation coverage includes:
 
-* manual cart test cases
+* manual Cart test cases
 * `CartPage` Page Object Model
-* cart page availability validation
-* empty cart state validation
+* empty Cart state validation
 * added product visibility validation
-* cart product content validation
+* Cart product content validation
 * remove-from-cart validation
 * cart badge decrement and removal validation
-* Continue Shopping navigation validation
-* Continue Shopping cart state preservation
-* product details navigation from cart item name
-* checkout information page navigation from the cart page with product in cart
-* cart state persistence validation after logout and re-login
-* all-products cart visibility and remove-from-cart coverage
+* Continue Shopping navigation
+* Continue Shopping cart-state preservation
+* Product Details navigation from Cart item name
+* Checkout Information navigation from Cart
+* cart state persistence after logout and re-login
+* all-products Cart visibility and remove-from-cart coverage
+* representative E2E Cart checkpoint validation
 
-Completed checkout automation workstream includes:
+Completed Checkout automation coverage includes:
 
-* manual checkout test cases
+* manual Checkout test cases
 * checkout Page Objects
 * centralized checkout test data
 * reusable checkout setup fixtures
-* checkout information form visibility validation
-* checkout required customer field validation
-* checkout information error message validation
-* checkout information input error icon validation
-* checkout information error close behavior
-* checkout information form submission with valid data
-* checkout information cancel navigation back to cart
-* checkout overview selected product validation
-* checkout overview all-products validation
-* checkout overview price summary validation
-* checkout overview cancel navigation back to inventory
-* product details navigation from checkout overview item name
-* all-products product details navigation from checkout overview
-* checkout finish action validation
-* checkout complete page confirmation validation
+* Checkout Information form validation
+* required customer field validation
+* checkout error message validation
+* checkout input error icon validation
+* checkout error close behavior
+* Checkout Information submission with valid data
+* Checkout Information cancellation back to Cart
+* Checkout Overview selected product validation
+* all-products Checkout Overview validation
+* Checkout Overview price summary validation
+* Checkout Overview cancellation back to Inventory
+* Product Details navigation from Checkout Overview
+* all-products Product Details navigation from Checkout Overview
+* checkout Finish validation
+* Checkout Complete confirmation validation
 * Back Home navigation after order completion
+* multiple independent checkpoints forming the primary E2E purchase journey
 
 Completed Phase 3 finalization includes:
 
 * one automated test module per covered page area
 * one manual test case file per covered page area
 * `BasePage` and `AppPage` structure alignment
-* shared authenticated-page behavior ownership through `AppPage`
+* shared authenticated-page behavior through `AppPage`
 * reusable product and checkout assertion helpers
 * fixture naming and reuse review
 * navigation return type review
@@ -194,68 +210,123 @@ Completed Phase 3 finalization includes:
 * PR review, CI validation, and squash merge into `develop`
 * stable Phase 3 portfolio promotion to `main`
 
-The next project direction is Phase 4 Framework Maturity.
+The next roadmap direction is Phase 4 Framework Maturity.
 
 ## System Under Test
 
-The framework is built and validated against the following application:
+The framework is built and validated against:
 
 * **Application:** Sauce Demo
 * **URL:** `https://www.saucedemo.com/`
 
-Sauce Demo is used as the primary System Under Test because it is a stable, publicly available web application designed for UI automation practice and testing education.
+Sauce Demo is used as the primary System Under Test because it is a stable, publicly available web application suitable for UI automation practice.
 
-It provides realistic e-commerce-style flows, including:
+It provides realistic e-commerce-style flows including:
 
 * authentication
 * product listing
+* Product Details
 * cart operations
-* checkout process
+* checkout
+* order completion
 
-This makes it suitable for demonstrating end-to-end test automation scenarios and scalable framework design.
+This makes it suitable for demonstrating multi-page test automation and scalable framework design.
 
 ## Implemented Coverage
 
 Current automated coverage includes Login, Inventory, Product Details, Cart, and Checkout-related behavior.
 
-Detailed test case definitions are stored in dedicated files under the `test_cases/` directory. The README provides only a high-level coverage overview to keep the project entry point readable and maintainable.
+Detailed test case definitions are stored under the `test_cases/` directory.
 
-| Workstream                      | Status    | Covered Areas                                                                                                                                                 | Test Case Documentation                                               |
-| ------------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| Login Page Automation           | Completed | positive login, negative login, UI validation, protected route access, protected checkout route access, input error icons                                     | [Login Page Test Cases](test_cases/login-page.md)                     |
-| Inventory Page Automation       | Completed | inventory page visibility, product list validation, product card content, sorting, product details navigation, inventory-side cart actions                    | [Inventory Page Test Cases](test_cases/inventory-page.md)             |
-| Product Details Page Automation | Completed | product details content, return navigation, product-details-side cart actions, cart badge behavior, cart navigation                                           | [Product Details Page Test Cases](test_cases/product-details-page.md) |
-| Cart Page Automation            | Completed | empty cart, added product visibility, cart content, remove from cart, cart badge behavior, Continue Shopping, cart persistence, checkout entry navigation     | [Cart Page Test Cases](test_cases/cart-page.md)                       |
-| Checkout Flow Automation        | Completed | checkout information form, required field validation, checkout overview, price summary validation, product details navigation from overview, order completion | [Checkout Page Test Cases](test_cases/checkout-page.md)               |
+The README provides only a high-level coverage overview to keep the project entry point readable and maintainable.
 
-Current automated test areas:
+| Workstream                      | Status    | Covered Areas                                                                                                                           | Test Case Documentation                                               |
+| ------------------------------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| Login Page Automation           | Completed | authentication, credential validation, UI behavior, protected route access, protected checkout routes                                   | [Login Page Test Cases](test_cases/login-page.md)                     |
+| Inventory Page Automation       | Completed | Inventory visibility, product list, product content, sorting, Product Details navigation, Inventory-side Cart actions                   | [Inventory Page Test Cases](test_cases/inventory-page.md)             |
+| Product Details Page Automation | Completed | product content, return navigation, Product Details-side Cart actions, cart badge behavior, Cart navigation                             | [Product Details Page Test Cases](test_cases/product-details-page.md) |
+| Cart Page Automation            | Completed | empty Cart, Cart content, item removal, cart badge behavior, Continue Shopping, persistence, Product Details navigation, Checkout entry | [Cart Page Test Cases](test_cases/cart-page.md)                       |
+| Checkout Flow Automation        | Completed | Checkout Information, field validation, Checkout Overview, price summaries, Product Details navigation, completion flow                 | [Checkout Page Test Cases](test_cases/checkout-page.md)               |
 
-* login and authentication tests
+Current automated test areas include:
+
+* authentication tests
+* login UI tests
 * protected route access tests
-* protected checkout route access tests
-* inventory page tests
-* product details tests
-* product sorting tests
-* cart page tests
+* Inventory tests
+* Product Details tests
+* Sorting tests
+* Cart tests
 * cart badge tests
 * cart item content tests
 * cart persistence tests
-* checkout information form tests
-* checkout overview tests
+* Checkout Information tests
+* Checkout Overview tests
 * checkout price summary tests
-* checkout completion tests
+* Checkout Complete tests
+* Navigation tests
+* Security tests
+* primary purchase E2E checkpoint tests
 * shared page-level behavior validation through reusable Page Objects
 
-Future automated test areas:
+Some manual test case files also contain documented `Planned` scenarios that do not yet have dedicated automated tests.
 
-* broader multipage user journey tests
+The individual test case files remain the source of truth for automation status.
+
+Future automated test areas may include:
+
+* broader end-to-end journey coverage beyond the current primary purchase checkpoints
 * API-level tests
 * cross-browser UI tests
 * additional approved edge-case or known-defect coverage
 
+## Test Suite Strategy
+
+Pytest markers are used to provide selective test execution without changing test independence.
+
+Current executable marker suites are:
+
+* `smoke`
+* `regression`
+* `ui`
+* `security`
+* `sorting`
+* `navigation`
+* `e2e`
+
+Markers describe different dimensions of test intent and are not mutually exclusive.
+
+A test may therefore belong to several suites when appropriate.
+
+Examples include:
+
+* `Smoke / UI`
+* `Regression / UI`
+* `Smoke / Navigation`
+* `Regression / Navigation`
+* `Smoke / Navigation / E2E`
+
+The main strategy is:
+
+* **Smoke** — fast representative validation of critical functionality
+* **Regression** — broader or deeper validation across expanded applicable cases
+* **UI** — visibility, presentation, state, and direct UI behavior
+* **Security** — authentication access control and protected routes
+* **Sorting** — product sorting behavior
+* **Navigation** — meaningful page transitions, excluding the authentication Login → Inventory transition
+* **E2E** — independent checkpoints that together form the primary purchase journey
+
+The E2E suite does not depend on test execution order or shared state.
+
+Each E2E checkpoint prepares its own required state through fixtures or test setup and can execute independently.
+
+Detailed marker definitions, assignment rules, and examples are documented in:
+
+* [Testing Strategy](docs/testing-strategy.md)
+
 ## Technology Stack
 
-Core technologies:
+### Core Technologies
 
 * Python 3.12
 * Pytest
@@ -266,30 +337,32 @@ Core technologies:
 * GitHub Actions
 * WSL2 with Ubuntu Linux
 
-Code quality tools:
+### Code Quality
 
 * Ruff
 * Black
 * isort
 * pre-commit
 
-Reporting and debugging:
+### Reporting And Debugging
 
 * pytest-html
 * screenshots on test failure
 * GitHub Actions artifacts
 
-CI/CD:
+### CI
 
 * GitHub Actions
 
-Installed for future expansion:
+### Installed For Future Expansion
 
 * requests
 * allure-pytest
 * pytest-xdist
 
-The currently implemented framework focuses on Playwright-based UI automation. API testing, advanced Allure reporting, parallel execution with pytest-xdist, Docker-based execution, Jenkins integration, Selenium comparison, and cross-browser execution are planned future extensions and are not part of the implemented framework scope yet.
+The currently implemented framework focuses on Playwright-based UI automation.
+
+API testing, advanced Allure reporting, parallel execution with pytest-xdist, Docker-based execution, Jenkins integration, Selenium comparison, and cross-browser execution are future extensions and are not part of the current implemented framework scope.
 
 ## Getting Started
 
@@ -305,14 +378,14 @@ Before setting up the framework, ensure the following tools are installed:
 
 ### 1. Clone Repository
 
-```
+```bash
 git clone git@github.com:B4GG1/playwright-python-qa-automation-framework.git
 cd playwright-python-qa-automation-framework
 ```
 
 ### 2. Create Virtual Environment
 
-```
+```bash
 python3 -m venv .venv
 source .venv/bin/activate
 ```
@@ -321,13 +394,13 @@ source .venv/bin/activate
 
 Recommended installation from locked dependency versions:
 
-```
+```bash
 pip install -r requirements-lock.txt
 ```
 
-Alternative installation from main dependency list:
+Alternative installation from the main dependency list:
 
-```
+```bash
 pip install -r requirements.txt
 ```
 
@@ -335,123 +408,141 @@ pip install -r requirements.txt
 
 For local Linux or WSL2 setup:
 
-```
+```bash
 playwright install --with-deps chromium
 ```
 
-If system dependencies are already installed, Chromium-only installation is also sufficient:
+If system dependencies are already installed:
 
-```
+```bash
 playwright install chromium
 ```
 
 ## Running Tests
 
-Run all tests:
+Run the complete automated test suite:
 
-```
+```bash
 pytest -v
 ```
 
-Run smoke tests:
+### Marker Suites
 
-```
+Run Smoke:
+
+```bash
 pytest -m smoke -v
 ```
 
-Run regression tests:
+Run Regression:
 
-```
+```bash
 pytest -m regression -v
 ```
 
-Run positive tests:
+Run UI:
 
-```
-pytest -m positive -v
-```
-
-Run negative tests:
-
-```
-pytest -m negative -v
+```bash
+pytest -m ui -v
 ```
 
-Run sorting tests:
+Run Security:
 
+```bash
+pytest -m security -v
 ```
+
+Run Sorting:
+
+```bash
 pytest -m sorting -v
 ```
 
-Run navigation tests:
+Run Navigation:
 
-```
+```bash
 pytest -m navigation -v
 ```
 
-Run end-to-end tests:
+Run the primary purchase E2E checkpoint suite:
 
-```
+```bash
 pytest -m e2e -v
 ```
 
-Run UI smoke tests:
+### Combined Marker Execution
 
-```
-pytest -m "ui and smoke" -v
-```
+Run Smoke UI tests:
 
-Run UI regression tests:
-
-```
-pytest -m "ui and regression" -v
+```bash
+pytest -m "smoke and ui" -v
 ```
 
-Run UI sorting tests:
+Run Regression UI tests:
 
-```
-pytest -m "ui and sorting" -v
-```
-
-Run UI navigation tests:
-
-```
-pytest -m "ui and navigation" -v
+```bash
+pytest -m "regression and ui" -v
 ```
 
-Run login tests:
+Run representative Smoke navigation tests:
 
+```bash
+pytest -m "smoke and navigation" -v
 ```
+
+Run broader Regression navigation tests:
+
+```bash
+pytest -m "regression and navigation" -v
+```
+
+Detailed marker semantics and additional execution patterns are documented in [Testing Strategy](docs/testing-strategy.md).
+
+### Page-Level Test Modules
+
+Run Login tests:
+
+```bash
 pytest tests/test_login_page.py -v
 ```
 
-Run inventory tests:
+Run Inventory tests:
 
-```
+```bash
 pytest tests/test_inventory_page.py -v
 ```
 
-Run product details tests:
+Run Product Details tests:
 
-```
+```bash
 pytest tests/test_product_details_page.py -v
 ```
 
-Run cart tests:
+Run Cart tests:
 
-```
+```bash
 pytest tests/test_cart_page.py -v
 ```
 
-Run checkout tests:
+Run Checkout tests:
 
-```
+```bash
 pytest tests/test_checkout_page.py -v
 ```
 
-For Phase 3 completed coverage validation, run:
+Markers can also be combined with module-level execution.
 
+Example:
+
+```bash
+pytest tests/test_checkout_page.py -m e2e -v
 ```
+
+### Full Page-Level Validation
+
+For complete current page-level coverage validation:
+
+```bash
 pytest -v tests/test_login_page.py
 pytest -v tests/test_inventory_page.py
 pytest -v tests/test_product_details_page.py
@@ -460,29 +551,33 @@ pytest -v tests/test_checkout_page.py
 pytest -v
 ```
 
+Marker-based commands are primarily used for selective local validation.
+
+The current GitHub Actions CI pipeline continues to execute the complete automated test suite rather than separate marker-based jobs.
+
 ## Quality Checks
 
 Run Ruff linting:
 
-```
+```bash
 ruff check .
 ```
 
 Check formatting with Black:
 
-```
+```bash
 black --check .
 ```
 
 Check import sorting with isort:
 
-```
+```bash
 isort . --check-only
 ```
 
 Run all main local validation checks:
 
-```
+```bash
 ruff check .
 black --check .
 isort . --check-only
@@ -491,50 +586,61 @@ pytest -v
 
 If formatting changes are needed:
 
-```
+```bash
 black .
 isort .
 ```
 
 Run pre-commit hooks manually:
 
-```
+```bash
 pre-commit run --all-files
 ```
 
 Install pre-commit hooks:
 
-```
+```bash
 pre-commit install
 ```
 
 ## Reports And Artifacts
 
-The framework generates runtime test outputs such as:
+The framework generates runtime outputs such as:
 
 * pytest console output
-* pytest HTML report
+* pytest HTML reports
 * screenshots on test failure
 * GitHub Actions artifacts
 
 Local report output is stored under:
 
-```
+```text
 reports/
 ```
 
 Generated reports, screenshots, cache files, and runtime artifacts should not be committed to Git.
 
-In CI, reports and screenshots are uploaded as GitHub Actions artifacts and can be downloaded from the workflow run page.
+The current CI pipeline generates a self-contained HTML report and uploads available report outputs as GitHub Actions artifacts.
+
+Current CI artifacts include:
+
+* `pytest-html-report`
+* `test-artifacts`
+
+Artifacts are retained temporarily for debugging and execution review.
+
+Detailed CI behavior is documented in:
+
+* [CI/CD Pipeline](docs/ci-cd-pipeline.md)
 
 ## Documentation
 
-All extended project documentation is stored in the `docs/` directory to keep the README focused on high-level information.
+Extended project documentation is stored in the `docs/` directory so that the README can remain a high-level entry point.
 
 ### Core Documentation
 
 * [Architecture](docs/architecture.md)
-  Overview of the framework architecture, layers, and design direction.
+  Overview of framework architecture, layers, and design direction.
 
 * [Framework And Project Structure](docs/framework-and-project-structure.md)
   Explanation of folder structure, responsibilities, and repository organization.
@@ -548,10 +654,10 @@ All extended project documentation is stored in the `docs/` directory to keep th
   Branching model, merge strategy, and repository workflow standards.
 
 * [Workflow](docs/workflow.md)
-  Day-to-day development workflow for working with branches, commits, pull requests, and CI.
+  Day-to-day workflow for branches, commits, Pull Requests, validation, and marker-based local execution.
 
 * [CI/CD Pipeline](docs/ci-cd-pipeline.md)
-  GitHub Actions workflow, pipeline stages, reports, and artifacts.
+  Current GitHub Actions workflow, full-suite CI execution, reports, artifacts, and future CI improvements.
 
 * [Quality Tooling](docs/quality-tooling.md)
   Ruff, Black, isort, pre-commit, Pytest, and local/CI quality gates.
@@ -559,30 +665,30 @@ All extended project documentation is stored in the `docs/` directory to keep th
 ### Testing And Planning
 
 * [Testing Strategy](docs/testing-strategy.md)
-  Test types, test design principles, automation strategy, and validation workflow.
+  Detailed test design, marker semantics, suite execution strategy, E2E checkpoint model, fixtures, parametrization, and validation approach.
 
 * [Features Overview](docs/features.md)
   Implemented and planned framework capabilities.
 
 * [Roadmap](docs/roadmap.md)
-  Development phases and long-term project direction.
+  Project phases and long-term framework direction.
 
 ### Test Case Documentation
 
 * [Login Page Test Cases](test_cases/login-page.md)
-  Manual login test cases mapped to automated test coverage.
+  Manual Login test cases mapped to automation coverage.
 
 * [Inventory Page Test Cases](test_cases/inventory-page.md)
-  Manual inventory test cases mapped to automated test coverage.
+  Manual Inventory test cases mapped to automation coverage.
 
 * [Product Details Page Test Cases](test_cases/product-details-page.md)
-  Manual product details test cases mapped to automated test coverage.
+  Manual Product Details test cases mapped to automation coverage.
 
 * [Cart Page Test Cases](test_cases/cart-page.md)
-  Manual cart test cases mapped to automated test coverage.
+  Manual Cart test cases mapped to automation coverage.
 
 * [Checkout Page Test Cases](test_cases/checkout-page.md)
-  Manual checkout test cases mapped to automated test coverage.
+  Manual Checkout test cases mapped to automation coverage.
 
 ## Roadmap
 
@@ -600,22 +706,33 @@ Current roadmap direction:
 * **Phase 4:** Framework Maturity — planned
 * **Phase 5:** Advanced Extensions — future
 
-Future planned areas include:
+Current planned Phase 4 areas include:
 
-* broader multipage user journey tests
-* API-level tests
-* Allure reporting
+* test suite organization improvements
+* CI execution improvements for selected test groups
+* parallel execution
+* reporting improvements
+* environment-based configuration
+* logging and diagnostics
+* fixture organization improvements
+
+Future extension areas include:
+
+* API-level testing
+* hybrid UI and API scenarios
 * cross-browser execution
-* Docker-based execution environment
-* Selenium comparison module
-* Jenkins pipeline integration
-* CI optimization
-* framework maturity improvements
+* Docker-based execution
+* Selenium comparison
+* Jenkins integration
+* advanced test analytics
+
+The detailed and authoritative roadmap is maintained in [docs/roadmap.md](docs/roadmap.md).
 
 ## Navigation Notes
 
 * Clickable links point directly to Markdown files in the repository.
-* GitHub automatically renders `.md` files with preview.
+* GitHub automatically renders `.md` files.
 * Extended documentation is version-controlled alongside the framework.
-* Detailed manual test cases are stored outside the README to keep the main project overview concise.
-* Runtime outputs such as reports and screenshots are ignored by Git and handled through local output or CI artifacts.
+* Detailed test strategy remains outside the README to keep the project entry point concise.
+* Detailed manual test cases remain under `test_cases/`.
+* Runtime reports and screenshots are ignored by Git and handled as local outputs or CI artifacts.
