@@ -4,14 +4,14 @@ This document defines the testing approach for the QA automation framework.
 
 The current focus is UI automation testing for the Sauce Demo application using Playwright and Pytest. The project follows an iterative testing strategy: manual test design is created before or alongside automation, selected scenarios are automated, and repeated interactions are gradually refactored into reusable framework components.
 
-The testing strategy described below represents the stable Phase 3 portfolio snapshot. The `main` branch should contain the polished portfolio version of this snapshot, while `develop` remains the integration branch and may contain newer work after this document is read from `main`.
+The strategy documented here reflects the current implemented test structure and normalized pytest marker behavior. The `main` branch represents the stable portfolio version, while `develop` and active workstream branches may contain newer validated changes before they are promoted to `main`.
 
 ## System Under Test
 
 * Application: Sauce Demo
 * URL: `https://www.saucedemo.com/`
 
-Sauce Demo is used as a stable training application for practicing UI automation, test design, Page Object Model, test data management, parametrization, CI validation, and framework development.
+Sauce Demo is used as a stable training application for practicing UI automation, test design, Page Object Model, test data management, parametrization, selective suite execution, CI validation, and framework development.
 
 ## Testing Approach
 
@@ -27,10 +27,11 @@ The project follows a progressive testing approach:
 8. Extract reusable assertions when the same validation logic is needed across multiple page areas.
 9. Use fixtures to reduce repeated setup.
 10. Use parametrization for repeated data-driven scenarios.
-11. Categorize tests with pytest markers.
-12. Validate tests locally and in CI.
-13. Update documentation when test coverage changes.
-14. Promote stable validated snapshots from `develop` to `main` when they are ready for portfolio presentation.
+11. Categorize tests with explicit pytest markers.
+12. Validate relevant marker suites and test modules locally.
+13. Validate the full test suite locally and in CI when required.
+14. Update test case and project documentation when coverage or strategy changes.
+15. Promote stable validated snapshots from `develop` to `main` when they are ready for portfolio presentation.
 
 This approach supports both QA thinking and automation engineering practice.
 
@@ -40,7 +41,7 @@ Test cases should be documented before or alongside automation work.
 
 Recommended location:
 
-```
+```text
 test_cases/
 ```
 
@@ -55,12 +56,12 @@ Each test case should include:
 * test type
 * priority
 * automation candidate status
-* automation status when implemented
+* automation status
 * reference to automated test file when applicable
 
-Current implemented test case documentation:
+Current test case documentation:
 
-```
+```text
 test_cases/login-page.md
 test_cases/inventory-page.md
 test_cases/product-details-page.md
@@ -78,11 +79,13 @@ Current test case identifiers include:
 
 These identifiers are also used in parametrized pytest output where practical.
 
+A documented test case may be marked as `Planned` before dedicated automation is implemented. The corresponding test case file remains the authoritative source for individual automation status.
+
 ## Current Automated Test Modules
 
-Current automated test modules follow the one test file per covered page area principle:
+Current automated test modules follow the one-test-file-per-covered-page-area principle:
 
-```
+```text
 tests/test_login_page.py
 tests/test_inventory_page.py
 tests/test_product_details_page.py
@@ -92,305 +95,436 @@ tests/test_checkout_page.py
 
 Each automated test module maps to the corresponding manual test case file:
 
-| Automated Test Module                | Manual Test Case File                | Test Case ID Range             |
+| Automated Test Module                | Manual Test Case File                | Documented Test Case Range     |
 | ------------------------------------ | ------------------------------------ | ------------------------------ |
 | `tests/test_login_page.py`           | `test_cases/login-page.md`           | `TC-LOGIN-001`–`019`           |
 | `tests/test_inventory_page.py`       | `test_cases/inventory-page.md`       | `TC-INVENTORY-001`–`022`       |
-| `tests/test_product_details_page.py` | `test_cases/product-details-page.md` | `TC-PRODUCT-DETAILS-001`–`014` |
-| `tests/test_cart_page.py`            | `test_cases/cart-page.md`            | `TC-CART-001`–`014`            |
-| `tests/test_checkout_page.py`        | `test_cases/checkout-page.md`        | `TC-CHECKOUT-001`–`018`        |
+| `tests/test_product_details_page.py` | `test_cases/product-details-page.md` | `TC-PRODUCT-DETAILS-001`–`015` |
+| `tests/test_cart_page.py`            | `test_cases/cart-page.md`            | `TC-CART-001`–`013`            |
+| `tests/test_checkout_page.py`        | `test_cases/checkout-page.md`        | `TC-CHECKOUT-001`–`020`        |
+
+Some documented scenarios are intentionally still planned:
+
+* `TC-PRODUCT-DETAILS-015`
+* `TC-CART-013`
+* `TC-CHECKOUT-002`
+* `TC-CHECKOUT-019`
+
+Their test case files should be checked before treating the complete documented range as fully automated.
 
 ## Current Test Coverage
 
-The current automated test coverage focuses on Sauce Demo Login, Inventory, Product Details, Cart, and Checkout page behavior.
+The current automated test coverage focuses on Sauce Demo Login, Inventory, Product Details, Cart, and Checkout behavior.
+
+### Login Coverage
 
 Implemented login coverage includes:
 
 * successful login with valid credentials
-* login with invalid username
-* login with invalid password
-* login with empty username
-* login with empty password
-* login with empty credentials
-* locked out user login attempt
-* login with invalid username and invalid password
+* invalid username validation
+* invalid password validation
+* empty username validation
+* empty password validation
+* empty credentials validation
+* locked out user validation
+* combined invalid username and password validation
 * error message close behavior
 * login page elements visibility
 * password field masking validation
 * login form submission with Enter key
-* direct inventory page access without login
-* direct cart page access without login
-* direct item details page access without login
-* direct checkout information page access without login
-* direct checkout overview page access without login
-* direct checkout complete page access without login
+* protected inventory route access validation
+* protected cart route access validation
+* protected product details route access validation
+* protected checkout information route access validation
+* protected checkout overview route access validation
+* protected checkout complete route access validation
 * input error icon visibility after failed login
+* lightweight Sauce Demo smoke availability check
+
+### Inventory Coverage
 
 Implemented inventory coverage includes:
 
 * inventory page visibility after successful login
-* product list visibility
+* product list validation
 * product card content validation
-* cart page navigation from inventory page
-* product add-to-cart from inventory page
-* inventory-side Add to cart button changing to Remove
-* cart badge visibility after adding one product
-* cart badge count update after adding multiple products
-* product sorting by name A to Z
-* product sorting by name Z to A
-* product sorting by price low to high
-* product sorting by price high to low
-* product details navigation from inventory product name for all products
-* product details navigation from inventory product image for all products
-* all-products add-to-cart coverage from inventory page
-* inventory-side remove-from-cart behavior
-* inventory-side Remove button changing back to Add to cart
-* cart badge count update after removing one of multiple products
-* cart badge disappearance after removing the last product
-* all-products remove-from-cart coverage from inventory page
-* product details navigation from product name for an example product
-* product details navigation from product image for an example product
+* cart page navigation
+* representative add-to-cart flow
+* Add to cart and Remove button state validation
+* cart badge visibility and count validation
+* product sorting by name
+* product sorting by price
+* product details navigation through product names
+* product details navigation through product images
+* all-products add-to-cart coverage
+* representative remove-from-cart flow
+* all-products remove-from-cart coverage
+* representative and full product-navigation coverage
+
+### Product Details Coverage
 
 Implemented product details coverage includes:
 
-* product details content visibility for a selected product
-* product details content matching centralized product test data for all products
-* return navigation from product details page to inventory page
-* product-details-side Add to cart button changing to Remove
-* product add-to-cart from product details page
-* all-products add-to-cart coverage from product details page
-* product remove-from-cart from product details page
-* product-details-side Remove button changing back to Add to cart
-* cart badge visibility after adding a product from product details page
-* cart badge count update when adding from product details with a non-empty cart
-* cart badge count update after removing one of multiple products from product details page
-* cart badge disappearance after removing the last product from product details page
-* cart page navigation from product details page
-* all-products remove-from-cart coverage from product details page
+* representative product details visibility
+* all-products product details validation
+* return navigation to inventory
+* Add to cart and Remove button state validation
+* representative add-to-cart behavior
+* all-products add-to-cart coverage
+* representative remove-from-cart behavior
+* all-products remove-from-cart coverage
+* cart badge visibility and count behavior
+* cart navigation from product details
+
+Full Product Details → Cart navigation coverage for every product is documented separately and remains planned.
+
+### Cart Coverage
 
 Implemented cart coverage includes:
 
-* empty cart state before adding products
-* added product visibility on cart page
-* cart product content matching added product data
-* product remove-from-cart from cart page
-* cart badge removal after removing the last product
-* Continue Shopping navigation from cart page to inventory page
+* initial empty-cart state
+* representative cart item visibility and content
+* representative remove-from-cart behavior
+* cart badge removal after removing the last item
+* Continue Shopping navigation
 * cart state persistence after logout and re-login
-* all-products cart visibility coverage
-* cart product content validation for each product
-* cart badge decrement after removing one of multiple products
-* product details navigation from cart item name
-* Continue Shopping cart state preservation
-* all-products remove-from-cart coverage from cart page
-* checkout information page navigation from the cart page with product in cart
+* all-products cart content validation
+* cart badge decrement behavior
+* representative Product Details navigation from cart item name
+* Continue Shopping cart-state preservation
+* all-products remove-from-cart coverage
+* checkout information page navigation
+
+Full Cart → Product Details navigation coverage for every product is documented separately and remains planned.
+
+### Checkout Coverage
 
 Implemented checkout coverage includes:
 
-* checkout information form displays required customer fields
-* checkout information form requires first name
-* checkout information form requires last name
-* checkout information form requires postal code
-* input error icons are displayed after failed checkout information submission
-* checkout information error message can be closed after validation failure
-* checkout information form continues to overview when valid data is provided
-* checkout information cancel returns to cart and preserves cart item
-* checkout overview displays selected product
-* checkout overview displays each selected product
-* checkout overview price summary is correct for one product
-* checkout overview price summary is correct for multiple products
-* checkout overview cancel returns to inventory page
-* product details can be opened from checkout overview item name
-* product details can be opened from checkout overview item name for each product
-* finish button completes checkout and opens order confirmation page
-* checkout complete page displays order confirmation message
-* Back Home returns to inventory page after order completion
+* detailed checkout information form validation
+* required First Name validation
+* required Last Name validation
+* required Postal Code validation
+* checkout input error icon validation
+* checkout error message close behavior
+* valid customer information transition to Checkout Overview
+* checkout information cancellation back to Cart
+* representative Checkout Overview product validation
+* all-products Checkout Overview validation
+* representative price summary validation
+* multiple-product price summary validation
+* checkout overview cancellation back to Inventory
+* representative Product Details navigation from Checkout Overview
+* all-products Product Details navigation from Checkout Overview
+* Finish transition to Checkout Complete
+* detailed checkout completion content validation
+* Back Home navigation to Inventory
 
-Phase 3 page-level automation coverage has been completed, reviewed, validated, squash-merged into `develop`, and promoted to `main` as the stable Phase 3 portfolio snapshot.
+Dedicated lightweight smoke validation of the Checkout Information form and Checkout Complete page is documented and remains planned.
 
-## Test Types
+## Marker Strategy
 
-### Smoke Tests
+Pytest markers are used to create meaningful, selectively executable test suites.
 
-Smoke tests validate the most critical application flows and should execute quickly.
+Markers describe different dimensions of test intent. They are not mutually exclusive.
 
-Current examples:
+A test may therefore legitimately use several markers when it belongs to several suites.
 
-* login page basic UI availability
-* successful login with valid credentials
-* inventory page visibility after successful login
-* product list visibility
-* cart page can be opened from the inventory page
-* product can be added to cart from inventory page
-* product can be removed from cart page
-* product details content is displayed for a selected product
-* product can be added to cart from product details page
-* product can be removed from cart from product details page
-* checkout button opens checkout information page with product in cart
-* checkout information form displays required customer fields
-* checkout information form continues to overview when valid data is provided
-* checkout overview displays selected product
-* checkout overview price summary is correct for one product
-* finish button completes checkout and opens order confirmation page
+For example:
 
-### Regression Tests
+```python
+@pytest.mark.smoke
+@pytest.mark.navigation
+@pytest.mark.e2e
+```
 
-Regression tests validate that existing functionality continues to work after changes.
+This means the same test is:
 
-Current examples:
+* a representative critical smoke check
+* a navigation scenario
+* a checkpoint in the primary end-to-end purchase journey
 
-* negative login scenarios
-* empty credential validation
-* locked out user validation
-* error message behavior
-* protected route access validation
-* protected checkout route access validation
-* product card content validation
-* product details navigation
-* product details content validation
-* product sorting behavior
-* cart badge behavior
-* cart item content validation
-* add-to-cart and remove-from-cart behavior from inventory page
-* add-to-cart and remove-from-cart behavior from product details page
-* add-to-cart and remove-from-cart behavior from cart page
-* cart state persistence after logout and re-login
-* Continue Shopping cart state preservation
-* checkout information required field validation
-* checkout information error message close behavior
-* checkout overview product summary validation
-* checkout overview price summary validation
-* checkout overview cancellation behavior
-* checkout complete page confirmation validation
-* Back Home navigation after order completion
+Running any matching marker selection should collect that test.
 
-### UI Tests
+Current executable markers are:
 
-UI tests validate user-facing browser behavior using Playwright.
+* `smoke`
+* `regression`
+* `ui`
+* `e2e`
+* `security`
+* `sorting`
+* `navigation`
 
-Current examples:
+Marker definitions are registered in:
 
-* login form visibility
-* password field configuration
-* error message visibility
-* error message close behavior
-* input error icon visibility
-* inventory page visibility after login
-* product list visibility
-* product card content visibility
-* product details page visibility
-* product sorting behavior
-* cart page visibility
-* cart item visibility
-* cart badge visibility
-* Add to cart and Remove button visibility
-* Continue Shopping navigation behavior
-* checkout information form visibility
-* checkout information field validation messages
-* checkout information input error icon visibility
-* checkout overview product item visibility
-* checkout overview price summary visibility
-* checkout complete page confirmation visibility
+```text
+pytest.ini
+```
 
-### Positive Tests
+The registered marker definitions are the configuration-level source of truth. Test modules and test case metadata should remain aligned with those definitions.
 
-Positive tests validate expected successful user behavior.
+### Smoke
 
-Current examples:
+`smoke` identifies fast representative validation of critical functionality.
 
-* valid user can log in successfully
-* valid user can submit login form using Enter key
-* product details can be opened from product name
-* product details can be opened from product image
-* user can return from product details page to inventory page
-* user can add products to the cart
-* user can remove products from the cart
-* user can open the cart page from authenticated pages
-* cart state persists after logout and re-login
-* user can continue from checkout information to checkout overview with valid customer data
-* user can complete checkout from checkout overview
-* user can return home after order completion
+Smoke coverage should answer whether an important feature or flow works at a representative level without attempting to validate every applicable variant.
 
-### Negative Tests
+Typical smoke patterns include:
 
-Negative tests validate error handling and invalid user behavior.
+* successful login
+* representative invalid login handling
+* core page availability
+* representative add-to-cart or remove-from-cart behavior
+* representative page navigation
+* representative cart content validation
+* critical checkout flow checkpoints
 
-Current examples:
+Where both representative and broader coverage exist, the representative scenario should normally be Smoke while the expanded counterpart should normally be Regression.
 
-* invalid login
-* empty required login fields
-* locked out user access
-* direct protected route access without login
-* empty required checkout information fields
+A Smoke marker should not automatically imply Regression.
 
-### Access Control Tests
+### Regression
 
-Access control tests validate that protected application areas cannot be accessed without proper authentication.
+`regression` identifies broader validation across expanded or full applicable cases.
 
-Current examples:
+Regression coverage is used when a scenario intentionally validates more depth than the representative Smoke equivalent.
 
-* unauthenticated user cannot directly access the inventory page
-* unauthenticated user cannot directly access the cart page
-* unauthenticated user cannot directly access an item details page
-* unauthenticated user cannot directly access the checkout information page
-* unauthenticated user cannot directly access the checkout overview page
-* unauthenticated user cannot directly access the checkout complete page
+Typical regression patterns include:
 
-### Sorting Tests
+* additional credential validation variants
+* detailed UI state validation
+* validation across every product
+* multiple-product behavior
+* full navigation coverage across all applicable products
+* detailed cart state transitions
+* detailed checkout field validation
+* detailed checkout completion content validation
 
-Sorting tests validate that product ordering changes correctly after selecting sorting options.
+Regression is not a default marker for every test that is not Smoke. Dedicated categories such as `security`, `sorting`, or `navigation` may stand alone when they already describe the scenario accurately.
 
-Current examples:
+### UI
 
-* products can be sorted by name A to Z
-* products can be sorted by name Z to A
-* products can be sorted by price low to high
-* products can be sorted by price high to low
+`ui` identifies tests whose primary validation includes visibility, presentation, UI state, or direct behavior of user-interface elements.
 
-Sorting tests use plain Python assertions for comparing extracted product names and converted product prices.
+Typical UI validations include:
 
-### Navigation Tests
+* form element visibility
+* error message visibility and content
+* error icon visibility
+* button state changes
+* product card content
+* cart badge state
+* Checkout Overview content
+* completion page content
 
-Navigation tests validate page transitions and user navigation paths.
+A Playwright test does not automatically require the `ui` marker.
 
-Current examples:
+Tests whose primary purpose is navigation, sorting, access control, or another dedicated behavior do not need `ui` unless direct UI state or presentation is also a meaningful part of the validation.
 
-* cart page can be opened from the inventory page
-* cart page can be opened from the product details page
-* product details can be opened from inventory product names
-* product details can be opened from inventory product images
-* product details can be opened from cart item names
-* product details can be opened from checkout overview item names
-* user can return from product details page to inventory page
-* user can return from cart page to inventory page
-* Continue Shopping returns the user from the cart page to the inventory page while preserving cart state
-* Checkout button opens checkout information page from the cart page with product in cart
-* checkout information Cancel button returns the user to the cart page while preserving cart state
-* checkout overview Cancel button returns the user to the inventory page while preserving cart state
-* Back Home returns the user to the inventory page after order completion
+### Security
 
-### End-to-End Tests
+`security` identifies access-control and protected-route tests.
 
-End-to-end tests validate complete user journeys across multiple pages.
+Current Security coverage validates that an unauthenticated user cannot directly access protected application areas.
 
-Current examples:
+Current protected routes include:
 
-* log in, add product to cart from inventory, and verify it on the cart page
-* log in, open product details, add product to cart, and verify cart state
-* add product to cart, log out, log in again, and verify cart state is preserved
-* add multiple products, remove one product, and verify badge/cart state
-* add product to cart, open checkout, submit customer information, finish checkout, and verify order completion
-* complete checkout and return to inventory page with Back Home
+* Inventory
+* Cart
+* Product Details
+* Checkout Information
+* Checkout Overview
+* Checkout Complete
 
-### API Tests
+These tests are currently owned by Login coverage because authentication state determines access to the protected application areas.
 
-The `api` marker is registered for future API testing scope.
+Security is a dedicated marker and does not need to be combined with Regression simply to make the test part of a broader suite.
 
-Current status:
+### Sorting
 
-* API tests are not implemented yet.
-* The current automated test suite focuses on UI coverage.
-* API testing is planned for a future approved project phase.
+`sorting` identifies product sorting behavior.
+
+Current Sorting coverage validates:
+
+* product name A to Z
+* product name Z to A
+* product price low to high
+* product price high to low
+
+Sorting tests use deterministic product data and plain Python comparisons for extracted product names and numeric product prices.
+
+Sorting is a dedicated marker and does not automatically require `ui` or `regression`.
+
+### Navigation
+
+`navigation` identifies meaningful page transitions.
+
+Current examples include:
+
+* Inventory → Cart
+* Inventory → Product Details
+* Product Details → Inventory
+* Product Details → Cart
+* Cart → Inventory
+* Cart → Product Details
+* Cart → Checkout Information
+* Checkout Information → Cart
+* Checkout Information → Checkout Overview
+* Checkout Overview → Inventory
+* Checkout Overview → Product Details
+* Checkout Overview → Checkout Complete
+* Checkout Complete → Inventory
+
+The authentication transition from Login to Inventory is intentionally excluded from the Navigation suite.
+
+Navigation may be combined with Smoke or Regression depending on whether the test validates one representative transition or broader applicable coverage.
+
+Navigation may also be combined with UI when meaningful UI state is validated together with the transition.
+
+### End-to-End
+
+`e2e` identifies tests forming the complete primary purchase journey through checkout completion and return to Inventory.
+
+The E2E suite is intentionally implemented as a collection of independent checkpoint tests rather than one state-sharing monolithic test.
+
+Each checkpoint:
+
+* can run independently
+* prepares its own state through fixtures or setup
+* validates one important part of the purchase journey
+* does not depend on execution order
+* does not share browser state with another E2E checkpoint
+
+Running:
+
+```bash
+pytest -m e2e -v
+```
+
+collects the current automated checkpoints that together represent the primary purchase journey.
+
+Current automated E2E checkpoints include:
+
+1. successful login to Inventory — `TC-LOGIN-001`
+2. representative product add-to-cart flow from Inventory — `TC-INVENTORY-005`
+3. representative cart content validation — `TC-CART-002`
+4. Cart → Checkout Information — `TC-CART-012`
+5. Checkout Information → Checkout Overview — `TC-CHECKOUT-008`
+6. representative selected product validation on Checkout Overview — `TC-CHECKOUT-010`
+7. representative price summary validation — `TC-CHECKOUT-012`
+8. Finish → Checkout Complete — `TC-CHECKOUT-017`
+9. Back Home → Inventory — `TC-CHECKOUT-020`
+
+`TC-CHECKOUT-019` is documented as an additional E2E completion-page smoke checkpoint but remains planned until dedicated automation is implemented.
+
+The E2E marker therefore describes membership in the logical primary journey, not whether an individual test executes every page of the journey itself.
+
+## Marker Assignment Principles
+
+Markers should be assigned according to test intent rather than mechanically.
+
+The following principles apply:
+
+* marker dimensions are orthogonal and valid combinations are expected
+* Smoke represents fast representative coverage
+* Regression represents broader or deeper applicable coverage
+* Smoke and Regression should not automatically be applied together
+* UI is used when direct UI presentation, visibility, state, or behavior is materially validated
+* Security is used for protected-route and access-control coverage
+* Sorting is used for product sorting behavior
+* Navigation is used for meaningful page transitions
+* E2E is used for checkpoints forming the primary purchase journey
+* dedicated marker categories may stand alone
+* a test should not receive Regression only because it is not Smoke
+* markers should remain explicit and readable in test code
+* parameter-level marker assignment is acceptable when individual parametrized cases belong to different suites
+
+## Marker-Based Suite Execution
+
+Run the complete test suite:
+
+```bash
+pytest -v
+```
+
+Run Smoke:
+
+```bash
+pytest -m smoke -v
+```
+
+Run Regression:
+
+```bash
+pytest -m regression -v
+```
+
+Run UI:
+
+```bash
+pytest -m ui -v
+```
+
+Run Security:
+
+```bash
+pytest -m security -v
+```
+
+Run Sorting:
+
+```bash
+pytest -m sorting -v
+```
+
+Run Navigation:
+
+```bash
+pytest -m navigation -v
+```
+
+Run the primary E2E checkpoint suite:
+
+```bash
+pytest -m e2e -v
+```
+
+Markers can be combined using normal pytest marker expressions.
+
+Run Smoke UI tests:
+
+```bash
+pytest -m "smoke and ui" -v
+```
+
+Run Regression UI tests:
+
+```bash
+pytest -m "regression and ui" -v
+```
+
+Run representative Smoke navigation tests:
+
+```bash
+pytest -m "smoke and navigation" -v
+```
+
+Run broader Regression navigation tests:
+
+```bash
+pytest -m "regression and navigation" -v
+```
+
+Marker expressions can also be scoped to one module.
+
+Example:
+
+```bash
+pytest tests/test_checkout_page.py -m e2e -v
+```
+
+This is useful when validating one workstream without executing every matching test in the repository.
 
 ## Test Design Principles
 
@@ -406,6 +540,7 @@ Automated tests should follow:
 * no hardcoded waits
 * independent test execution
 * readable failure output
+* explicit marker intent
 * clear mapping to manual test cases where practical
 
 Tests should focus on behavior, while page-specific UI interactions should be handled by Page Object classes.
@@ -416,7 +551,7 @@ Page Object Model is used to separate test logic from page interaction logic.
 
 Current implementation:
 
-```
+```text
 pages/base_page.py
 pages/app_page.py
 pages/login_page.py
@@ -430,103 +565,36 @@ The `BasePage` object is responsible for:
 
 * storing the Playwright `Page` instance
 * storing page URL metadata where applicable
-* opening the page URL through a shared `open()` method
+* opening page URLs through a shared `open()` method
 
 The `AppPage` object is responsible for shared authenticated-page behavior, including:
 
-* opening the cart page from authenticated page headers
-* accessing the cart link
-* accessing the cart badge
-* opening the application menu
-* logging out
-* resetting app state
-* opening the All Items page
-* opening the About link
-* exposing shared product-card/product-item locator helpers where reused by authenticated pages
+* cart access
+* cart badge access
+* application menu access
+* logout
+* reset app state
+* All Items navigation
+* About navigation
+* shared authenticated product-item helpers where reused
 
-The `LoginPage` object is responsible for:
+The `LoginPage` object is responsible for login form interaction and login-specific UI state.
 
-* opening the login page
-* filling username and password
-* clicking the login button
-* submitting login credentials
-* reading error messages
-* closing error messages
-* exposing login page UI locators where needed
-* exposing input error icon locators
+The `InventoryPage` object is responsible for inventory content, sorting, Inventory-side cart actions, and Inventory-owned navigation.
 
-The `InventoryPage` object is responsible for:
+The `ProductDetailsPage` object is responsible for product details content, Product Details-side cart actions, return navigation, and authenticated shared navigation inherited through the application page layer.
 
-* exposing inventory page locators
-* accessing the product list
-* accessing product cards
-* reading product names and prices
-* sorting products
-* opening product details from product name
-* opening product details from product image
-* adding products to the cart from inventory product cards
-* removing products from the cart from inventory product cards
+The `CartPage` object is responsible for cart contents, cart item interaction, product removal, Continue Shopping, Product Details navigation, and checkout entry.
 
-The `ProductDetailsPage` object is responsible for:
+The checkout Page Objects are split by checkout stage:
 
-* exposing product details page locators
-* exposing product details content locators
-* exposing Add to cart and Remove button locators
-* adding a product to the cart from the product details page
-* removing a product from the cart from the product details page
-* exposing the Back to products button
-* returning from product details page to inventory page
+* `CheckoutInformationPage`
+* `CheckoutOverviewPage`
+* `CheckoutCompletePage`
 
-The `CartPage` object is responsible for:
+They own checkout form interaction, checkout summary behavior, checkout completion behavior, and checkout-stage navigation.
 
-* opening the cart page
-* exposing cart page locators
-* accessing the cart contents container
-* accessing the cart list
-* accessing cart item cards
-* locating cart items by product name
-* reading cart item name, description, price, and quantity
-* exposing Remove button locators
-* removing products from the cart
-* opening product details from cart item name
-* exposing Continue Shopping button
-* returning from cart page to inventory page
-* exposing Checkout button locators
-* opening checkout step one from the cart page
-
-The `CheckoutInformationPage` object is responsible for:
-
-* opening the checkout information page where direct navigation is required
-* exposing checkout information form locators
-* exposing First Name, Last Name, and Postal Code inputs
-* exposing Continue and Cancel buttons
-* filling customer information
-* submitting checkout information
-* exposing validation error message locators
-* closing checkout information validation errors
-* exposing input error icon locators
-* returning from checkout information page to the cart page
-
-The `CheckoutOverviewPage` object is responsible for:
-
-* exposing checkout overview page locators
-* accessing checkout overview product item cards
-* locating checkout overview items by product name
-* accessing checkout overview item name, description, price, and quantity
-* exposing payment, shipping, item total, tax, and total summary locators
-* exposing Cancel and Finish buttons
-* returning from checkout overview page to inventory page
-* opening product details from checkout overview item name
-* completing checkout
-
-The `CheckoutCompletePage` object is responsible for:
-
-* exposing checkout complete page locators
-* exposing completion header and message locators
-* exposing Back Home button locators
-* returning from checkout complete page to inventory page
-
-Page Objects should be introduced when they reduce duplication and improve readability.
+Page Objects should be introduced or expanded when they reduce duplication and improve readability.
 
 ## Reusable Assertion Strategy
 
@@ -534,29 +602,36 @@ Reusable assertions are used when the same product-related or checkout-related v
 
 Current reusable assertion helper location:
 
-```
+```text
 framework/assertions/product_assertions.py
 ```
 
 Current reusable product and checkout assertions support:
 
-* inventory product card content validation
-* product details content validation
-* cart product item content validation
-* checkout overview product item content validation
-* checkout overview price summary validation
+* inventory product card validation
+* product details validation
+* cart item validation
+* Checkout Overview item validation
+* Checkout Overview price summary validation
 * inventory product state validation after checkout-related navigation
 * price string conversion for numeric sorting and checkout summary assertions
 
-Reusable assertion helpers should stay focused on shared validation logic. They should not contain navigation logic, test setup logic, or Page Object responsibilities.
+Reusable assertion helpers should remain focused on shared validation logic.
+
+They should not contain:
+
+* navigation logic
+* test setup logic
+* fixture responsibilities
+* Page Object responsibilities
 
 ## Fixture Strategy
 
-Fixtures are used to prepare reusable test setup.
+Fixtures are used to prepare reusable and isolated test setup.
 
-Current fixtures:
+Current fixtures include:
 
-```
+```text
 opened_login_page
 standard_user
 logged_in_inventory_page
@@ -567,55 +642,23 @@ checkout_step_two_page_with_one_product
 checkout_last_step_page_with_one_product
 ```
 
-The `opened_login_page` fixture:
+The fixtures progressively prepare common application states while allowing each test to remain independently executable.
 
-* creates a `LoginPage` instance
-* opens the login page
-* returns a ready-to-use Page Object for login-related tests
+Examples:
 
-The `standard_user` fixture:
+* `opened_login_page` prepares the login page
+* `logged_in_inventory_page` authenticates the standard user
+* `inventory_page_with_one_product_in_cart` prepares Inventory with one deterministic product in the cart
+* `cart_page_with_one_product` prepares the Cart with one product
+* `checkout_step_one_page_with_one_product` prepares Checkout Information
+* `checkout_step_two_page_with_one_product` prepares Checkout Overview
+* `checkout_last_step_page_with_one_product` prepares Checkout Complete
 
-* returns the primary valid user credentials from centralized login test data
+This fixture structure is especially important for the E2E checkpoint strategy because E2E tests must not rely on state created by another test.
 
-The `logged_in_inventory_page` fixture:
+Fixtures should be added when setup logic becomes meaningfully repeated.
 
-* uses valid user credentials
-* logs in through the login page
-* returns a ready-to-use `InventoryPage` instance
-
-The `inventory_page_with_one_product_in_cart` fixture:
-
-* starts from a logged-in inventory page
-* adds one deterministic product from centralized product test data to the cart
-* returns the inventory page and selected product data
-
-The `cart_page_with_one_product` fixture:
-
-* starts from an inventory page with one product already in the cart
-* opens the cart page
-* returns the cart page and selected product data
-
-The `checkout_step_one_page_with_one_product` fixture:
-
-* starts from a cart page with one product already in the cart
-* opens the checkout information page
-* returns the checkout information page and selected product data
-
-The `checkout_step_two_page_with_one_product` fixture:
-
-* starts from checkout step one with one product already in the cart
-* submits valid checkout customer information
-* returns the checkout overview page and selected product data
-
-The `checkout_last_step_page_with_one_product` fixture:
-
-* starts from checkout overview with one product already in the cart
-* finishes checkout
-* returns the checkout complete page and selected product data
-
-Fixtures should be added when setup logic becomes repeated across multiple tests.
-
-Avoid creating too many fixtures too early. Fixture growth should follow real framework needs.
+Avoid unnecessary fixture growth when a scenario is clearer with direct setup.
 
 ## Test Data Strategy
 
@@ -623,7 +666,7 @@ Test data should be separated from test logic when it improves readability, main
 
 Current test data location:
 
-```
+```text
 test_data/login_test_data.py
 test_data/product_test_data.py
 test_data/checkout_test_data.py
@@ -632,7 +675,7 @@ test_data/checkout_test_data.py
 Current login test data includes:
 
 * valid user cases
-* invalid login cases
+* invalid credential cases
 * empty credential cases
 * locked out user cases
 * expected error messages
@@ -649,19 +692,14 @@ Current product test data includes:
 Current checkout test data includes:
 
 * valid checkout customer information
-* checkout required field error messages
+* checkout required-field error messages
 * checkout page title expectations
-* checkout overview summary label expectations
+* Checkout Overview summary label expectations
 * checkout completion header and message expectations
 
-Inventory, product details, cart, and checkout tests reuse:
+Inventory, Product Details, Cart, and Checkout tests reuse centralized user and product data.
 
-* valid user data from login test data
-* deterministic product data from product test data
-
-A separate cart test data module is not needed at the current stage because cart tests reuse existing product and user data without introducing unique cart-only datasets.
-
-A separate checkout test data module is used because checkout introduces checkout-specific customer data, required field messages, page title expectations, summary labels, and completion text.
+A separate cart test data module is not needed at the current stage because Cart tests reuse existing product and user data without introducing unique Cart-only datasets.
 
 Test data should support:
 
@@ -674,126 +712,82 @@ Test data should support:
 
 Parametrization is used for repeated scenarios with the same test flow and different input data.
 
-Current parametrized areas:
+Current parametrized areas include:
 
-* invalid login scenarios
-* empty credential scenarios
-* locked out user scenario
-* positive login user case
-* protected route access scenarios, including checkout protected routes
-* inventory product card validation
-* product details navigation from inventory product name
-* product details navigation from inventory product image
-* product details content validation for all products
-* add-to-cart and remove-from-cart checks across all products
-* cart item content validation across all products
-* checkout overview item validation across product data
-* checkout overview product details navigation across product data
-* selected single-case tests where test case ID visibility in `pytest -v` is desired
+* valid login cases
+* invalid credential cases
+* empty credential cases
+* locked out user cases
+* protected route access
+* inventory product validation
+* Inventory → Product Details navigation
+* Product Details validation across all products
+* add-to-cart and remove-from-cart coverage across product data
+* cart item validation across product data
+* Checkout Overview item validation
+* Checkout Overview → Product Details navigation
+* selected single-case tests where test case ID visibility in `pytest -v` is useful
 
-Parametrized test IDs should use manual test case IDs where practical, for example:
+Parametrized test IDs should use manual test case IDs where practical.
 
-```
+Examples:
+
+```text
 TC-LOGIN-002
-TC-LOGIN-003
-TC-LOGIN-004
-TC-INVENTORY-001
-TC-INVENTORY-013
-TC-INVENTORY-015
-TC-PRODUCT-DETAILS-002
-TC-PRODUCT-DETAILS-014
-TC-CART-001
-TC-CART-009
-TC-CART-013
-TC-CHECKOUT-010
-TC-CHECKOUT-015
+TC-INVENTORY-013-0
+TC-PRODUCT-DETAILS-002-0
+TC-CART-011-0
+TC-CHECKOUT-011-0
+TC-CHECKOUT-016-0
 ```
 
-This improves traceability between:
+The exact suffix depends on centralized product IDs used by the test data.
+
+Meaningful parametrized IDs improve traceability between:
 
 * manual test cases
 * automated tests
 * terminal output
 * CI logs
-* test reports
+* reports
 
-## Marker Strategy
-
-Pytest markers are used to categorize tests.
-
-Current markers:
-
-* `smoke`
-* `regression`
-* `ui`
-* `api`
-* `e2e`
-* `positive`
-* `negative`
-* `sorting`
-* `navigation`
-
-The current implemented automated test suite focuses on UI coverage. The `api` marker is registered for future API testing scope and does not mean that API tests are implemented yet.
-
-Example marker commands:
-
-```
-pytest -m smoke -v
-pytest -m regression -v
-pytest -m positive -v
-pytest -m negative -v
-pytest -m sorting -v
-pytest -m navigation -v
-pytest -m e2e -v
-pytest -m "ui and smoke" -v
-pytest -m "ui and regression" -v
-pytest -m "ui and sorting" -v
-pytest -m "ui and navigation" -v
-```
-
-Markers should be used consistently to support selective local and CI execution.
+Individual `pytest.param()` cases may receive different markers when one representative dataset belongs to Smoke and remaining datasets belong to Regression.
 
 ## Assertion Strategy
 
 Assertions should be stable, meaningful, and focused on user-observable behavior where possible.
 
-Current assertion examples:
+Current assertion patterns include:
 
-* page URL matches expected page
+* page URL matches expected destination
 * element is visible
 * element is hidden
-* error message text matches expected value
-* password input has `type="password"`
-* protected route redirects unauthenticated user to login page
-* inventory page container is visible
-* product list is visible
-* product card content matches expected product data
-* product details page content matches selected product data
-* product names match expected sorted order
-* product prices match expected sorted order after numeric conversion
-* cart badge is visible
-* cart badge text matches expected count
-* cart badge is hidden when cart becomes empty
-* cart item is visible
-* cart item content matches added product data
-* cart item quantity matches expected value
-* Add to cart button changes to Remove
-* Remove button changes cart state
-* cart state remains visible after logout and re-login
-* checkout information form is visible
-* checkout required field error message matches expected value
-* checkout information input error icons are visible
-* checkout overview product content matches expected product data
-* checkout overview item total matches selected product prices
-* checkout overview total equals item total plus tax
-* checkout complete header matches expected confirmation text
-* checkout complete message matches expected confirmation text
+* error message matches expected text
+* password input uses the expected field type
+* protected routes redirect unauthenticated users to Login
+* inventory product content matches centralized product data
+* product details content matches centralized product data
+* sorted product names match expected order
+* converted product prices match expected order
+* cart badge state matches expected cart state
+* cart item content matches selected product data
+* Add to cart and Remove button states match cart state
+* cart state persists where explicitly expected
+* checkout field validation matches expected errors
+* Checkout Overview product content matches expected data
+* Checkout Overview price calculations match selected products
+* checkout completion content matches expected values
 
-Use Playwright assertions for UI/browser state when possible because they include built-in waiting behavior.
+Use Playwright assertions for browser and UI state when possible because they include built-in waiting behavior.
 
-Use plain Python assertions when comparing simple values, such as extracted text, product names, converted prices, expected error message strings, checkout summary values, or sorted lists.
+Use plain Python assertions when comparing extracted or calculated values such as:
 
-Use reusable assertion helpers when the same product-content or checkout-summary assertions are shared across test modules.
+* product names
+* product prices
+* sorted lists
+* calculated checkout totals
+
+Use reusable assertion helpers when the same meaningful validation is shared across multiple tests or page areas.
 
 ## Automation Priority
 
@@ -804,108 +798,122 @@ Automation should focus on:
 * regression-prone functionality
 * stable application behavior
 * high-value validation
-* scenarios that benefit from CI execution
+* scenarios that benefit from repeated local or CI execution
 * scenarios with clear expected results and stable selectors
 
-Not every possible case should be automated.
+Not every possible scenario needs dedicated automation.
 
-Some scenarios may remain manual or exploratory if automation would be unstable, low-value, or overly complex.
+Some scenarios may remain manual, exploratory, or planned when automation would currently add limited value or when the scenario belongs to later approved scope.
 
 ## Scope Boundaries
 
-The project uses scope boundaries to keep workstreams focused and maintainable.
+The project uses explicit scope boundaries to keep workstreams focused and maintainable.
 
-Current page-level automation boundaries:
+Current page-level automation boundaries include:
 
-* login behavior is included
-* inventory behavior is included
-* product details behavior is included
-* cart behavior is included
-* checkout behavior is included as dedicated Checkout Page coverage
-* cart-owned checkout entry behavior is included in Cart Page coverage
-* checkout protected route access validation is included in Login Page coverage
-* browser restart persistence is excluded
-* storage clearing is excluded
-* cross-user cart persistence is excluded
-* multi-user cart behavior is excluded
-* logout from multiple page locations is excluded unless explicitly scoped
+* Login behavior belongs to Login coverage.
+* Authentication-based protected-route validation belongs to Login coverage.
+* Inventory behavior belongs to Inventory coverage.
+* Product Details behavior belongs to Product Details coverage.
+* Cart behavior belongs to Cart coverage.
+* Cart → Checkout Information entry belongs to Cart coverage.
+* Checkout Information, Checkout Overview, and Checkout Complete behavior belong to Checkout coverage.
 
-Cart Page coverage should not own detailed checkout information form behavior, checkout overview validation, or checkout completion validation. These scenarios belong to Checkout Page coverage.
+Current excluded areas include:
+
+* browser restart persistence
+* storage clearing behavior
+* cross-user cart persistence
+* multi-user cart behavior
+* unapproved edge-case expansion
+
+Cart coverage should not own detailed Checkout Information, Checkout Overview, or Checkout Complete validation.
 
 ## Reporting And Debugging
 
 Test execution generates:
 
 * pytest console output
-* HTML reports using pytest-html
+* HTML reports through pytest-html
 * screenshots on failure
 * CI artifacts uploaded by GitHub Actions
 
 Generated reports and screenshots should not be committed to Git.
 
-They should be used as:
+They are runtime outputs used for:
 
-* local debugging outputs
-* CI artifacts
-* failure analysis evidence
+* local debugging
+* failure analysis
+* CI review
+* execution evidence
 
 ## Local Validation Strategy
 
 Recommended full local validation:
 
-```
+```bash
 ruff check .
 black --check .
 isort . --check-only
 pytest -v
 ```
 
-Recommended validation when login tests are changed:
+For normal implementation work, run the relevant test module before the full suite where useful.
 
-```
+### Login Changes
+
+```bash
 pytest -v tests/test_login_page.py
-pytest -m negative -v
-pytest -m "ui and smoke" -v
+pytest -m security -v
+pytest -m "smoke and ui" -v
+pytest -m "regression and ui" -v
 ```
 
-Recommended validation when inventory tests are changed:
+### Inventory Changes
 
-```
+```bash
 pytest -v tests/test_inventory_page.py
 pytest -m sorting -v
-pytest -m "ui and sorting" -v
+pytest tests/test_inventory_page.py -m navigation -v
 ```
 
-Recommended validation when product details tests are changed:
+### Product Details Changes
 
-```
+```bash
 pytest -v tests/test_product_details_page.py
-pytest -m navigation -v
-pytest -m "ui and regression" -v
+pytest tests/test_product_details_page.py -m navigation -v
+pytest tests/test_product_details_page.py -m regression -v
 ```
 
-Recommended validation when cart tests are changed:
+### Cart Changes
 
-```
+```bash
 pytest -v tests/test_cart_page.py
-pytest -m navigation -v
-pytest -m "ui and navigation" -v
-pytest -m "ui and regression" -v
+pytest tests/test_cart_page.py -m navigation -v
+pytest tests/test_cart_page.py -m regression -v
 ```
 
-Recommended validation when checkout tests are changed:
+### Checkout Changes
 
-```
+```bash
 pytest -v tests/test_checkout_page.py
+pytest tests/test_checkout_page.py -m navigation -v
+pytest tests/test_checkout_page.py -m regression -v
+```
+
+### Primary Purchase Journey Changes
+
+When changes affect checkpoints in the main purchase journey, run:
+
+```bash
 pytest -m e2e -v
-pytest -m navigation -v
-pytest -m "ui and regression" -v
-pytest -m "ui and navigation" -v
 ```
 
-For checkpoint, stabilization, or portfolio promotion tasks, run relevant scoped modules and full validation when possible:
+This validates the complete logical checkpoint suite across the covered page areas.
 
-```
+For checkpoint, stabilization, or portfolio-promotion tasks, run relevant scoped modules and full validation when possible:
+
+```bash
 pytest -v tests/test_login_page.py
 pytest -v tests/test_inventory_page.py
 pytest -v tests/test_product_details_page.py
@@ -914,28 +922,28 @@ pytest -v tests/test_checkout_page.py
 pytest -v
 ```
 
-The full test suite should still pass before a workstream is considered ready for merge unless a scoped validation exception is explicitly accepted.
+The full test suite should pass before a workstream is considered ready for merge unless a scoped validation exception is explicitly accepted.
 
 ## CI Validation Strategy
 
-GitHub Actions validates the project automatically on:
+GitHub Actions currently validates the project automatically according to the configured workflow triggers.
 
-* pushes to `main`
-* pushes to `develop`
-* pull requests targeting `main`
-* pull requests targeting `develop`
-* manual workflow execution
-
-The CI pipeline should validate:
+The current CI pipeline validates:
 
 * dependency installation
 * Playwright browser installation
 * linting
 * formatting
 * import sorting
-* test execution
+* full pytest execution
 * HTML report generation
 * artifact upload
+
+The current CI test execution is not split into separate marker-based jobs.
+
+Marker-based commands documented in this strategy are primarily intended for selective local execution and validation.
+
+Future CI marker separation should only be documented as implemented after the corresponding workflow changes are introduced and validated.
 
 Failing tests or quality checks should block merging.
 
@@ -946,22 +954,27 @@ Before promoting `develop` to `main`, validate that:
 * the full test suite passes locally when possible
 * CI on the promotion Pull Request passes
 * implemented test coverage is accurately described
-* future planned coverage is not described as implemented
+* planned coverage is not described as already automated
 * test case documentation remains aligned with automated test modules
+* marker definitions remain aligned with test usage
 * generated reports, screenshots, cache files, and virtual environment files are not tracked
 * the promoted state is suitable as a stable portfolio snapshot
 
-After promotion, `main` should represent the polished portfolio version of the project. Future implementation work should continue from `develop`.
+After promotion, `main` should represent the polished portfolio version of the project.
+
+Future implementation work should continue from `develop`.
 
 ## Future Improvements
 
-Planned improvements:
+Planned improvements include:
 
-* broader end-to-end scenarios
+* broader framework maturity work
 * API testing layer
 * multi-browser execution
-* smoke and regression CI job separation
-* marker-based CI job separation
+* marker-based CI job separation where justified
+* smoke and regression CI job separation where justified
 * Allure reporting integration
 * improved diagnostics and logs
 * environment-based configuration
+
+Future capabilities should not be described as implemented until their corresponding project tasks are completed and validated.
