@@ -4,9 +4,11 @@
 
 This project uses GitHub Actions as the main Continuous Integration (CI) pipeline.
 
-The pipeline validates code quality, installs project dependencies, prepares the Playwright browser environment, runs automated tests, generates test reports, and publishes test artifacts after each workflow execution.
+The pipeline validates code quality, installs project dependencies, prepares the Playwright browser environment, runs the automated test suite, generates test reports, and publishes test artifacts after each workflow execution.
 
-At the current stage, the project focuses on CI. Continuous Delivery / Deployment (CD) is not implemented yet and may be added later if the project requires deployment, package publishing, or environment-based execution.
+At the current stage, the project focuses on CI.
+
+Continuous Delivery / Deployment is not implemented and should not be treated as part of the current project capabilities.
 
 ## Current CI Scope
 
@@ -14,131 +16,156 @@ The current CI pipeline supports:
 
 * Python 3.12 setup
 * dependency installation from `requirements-lock.txt`
-* Playwright Chromium browser installation with Linux dependencies
+* Playwright Chromium installation with Linux dependencies
 * Ruff linting
 * Black formatting validation
 * isort import validation
 * full Pytest test suite execution
 * pytest HTML report generation
-* screenshot artifact upload on failure through the `reports/` directory
+* screenshot artifact collection through the `reports/` directory
 * reports directory upload as a CI artifact
 * explicit artifact retention configuration
 * validation for `main` and `develop`
 * validation for Pull Requests targeting `main` and `develop`
 * manual workflow execution through GitHub Actions
 
-The pipeline is designed to act as a quality gate before changes are merged into stable branches.
+The pipeline acts as a quality gate before changes are merged into stable branches.
 
-The `main` branch represents the stable portfolio version of the project. The `develop` branch remains the integration branch and may contain newer validated work before it is promoted to `main`.
+The `main` branch represents the stable portfolio version of the project.
+
+The `develop` branch remains the integration branch and may contain newer validated work before it is promoted to `main`.
 
 ## CI Trigger Strategy
 
 The pipeline is executed automatically on:
 
-* `push` to the `main` branch
-* `push` to the `develop` branch
-* `pull_request` targeting the `main` branch
-* `pull_request` targeting the `develop` branch
-* manual execution via `workflow_dispatch`
+* `push` to `main`
+* `push` to `develop`
+* `pull_request` targeting `main`
+* `pull_request` targeting `develop`
+* manual execution through `workflow_dispatch`
 
-This means that regular pushes to feature branches do not automatically trigger the CI workflow unless the workflow is executed manually or the branch is opened as a Pull Request targeting `main` or `develop`.
+Regular pushes to feature, refactor, fix, or documentation branches do not automatically execute CI unless:
+
+* a Pull Request targeting `main` or `develop` is opened
+* the workflow is started manually
 
 This trigger strategy ensures that:
 
-* stable branches are continuously validated
-* pull requests are checked before merge
-* completed feature workstreams are validated before integration
-* portfolio promotion from `develop` to `main` is validated before merge
-* manual debugging runs are possible when needed
-* both `develop` and `main` can be protected by automated checks
+* integration and stable branches are continuously validated
+* Pull Requests are checked before merge
+* completed workstreams are validated before integration
+* portfolio promotion from `develop` to `main` is validated
+* manual debugging runs remain available
 
 ## Workflow Permissions
 
-The current workflow uses minimal GitHub token permissions for the CI scope:
+The current workflow uses minimal GitHub token permissions:
 
 ```yaml
 permissions:
   contents: read
 ```
 
-This is sufficient because the workflow only needs to read repository contents, install dependencies, execute checks, run tests, and upload artifacts through GitHub Actions.
+This is sufficient because the workflow only needs to:
 
-The project currently does not require deployment credentials, cloud credentials, package publishing tokens, or elevated repository permissions.
+* read repository contents
+* install dependencies
+* execute quality checks
+* run automated tests
+* upload artifacts
+
+The project currently does not require:
+
+* deployment credentials
+* cloud credentials
+* package publishing tokens
+* elevated repository permissions
 
 ## Execution Environment
 
-Each pipeline run is executed on a fresh GitHub-hosted runner.
+Each pipeline run executes on a fresh GitHub-hosted runner.
 
 Current execution environment:
 
-* Ubuntu latest
+* `ubuntu-latest`
 * Python 3.12
 * isolated runtime environment
-* Playwright Chromium browser installed during pipeline execution
+* Chromium installed through Playwright during the pipeline
 
-The runner is temporary and is destroyed after the workflow finishes. This helps ensure that test results are reproducible and not dependent on local machine state.
+The runner is temporary and is destroyed after the workflow finishes.
+
+This helps ensure that CI results are reproducible and do not depend on local developer machine state.
 
 ## Pipeline Stages
 
-The CI pipeline consists of the following stages.
+The current pipeline consists of one CI job containing the following stages.
 
 ### 1. Repository Checkout
 
-The repository source code is downloaded into the GitHub Actions runner using:
+Repository contents are downloaded using:
 
-* `actions/checkout@v4`
+```yaml
+actions/checkout@v4
+```
 
-This gives the runner access to the project files, tests, configuration, and documentation.
+This gives the runner access to:
+
+* framework code
+* automated tests
+* test data
+* configuration
+* project documentation
 
 ### 2. Python Setup
 
-Python runtime is installed using:
+Python is configured using:
 
-* `actions/setup-python@v5`
+```yaml
+actions/setup-python@v5
+```
 
 Current Python version:
 
-* Python 3.12
+```text
+3.12
+```
 
-This keeps CI aligned with the local development environment.
+This keeps CI aligned with the supported local project environment.
 
 ### 3. Dependency Installation
 
-Project dependencies are installed from the locked dependency file:
+The workflow upgrades `pip` and installs dependencies from:
 
-* `requirements-lock.txt`
+```text
+requirements-lock.txt
+```
 
-The pipeline also upgrades `pip` before installing project dependencies.
-
-Using a locked dependency file improves repeatability because CI installs exact dependency versions instead of resolving the latest compatible versions on every run.
+Using the locked dependency file improves execution repeatability because CI installs the project-approved dependency versions.
 
 ### 4. Playwright Browser Installation
 
-Playwright browser dependencies are installed during the CI run.
-
-Current browser installation command:
+The workflow installs Chromium and its required Linux dependencies using:
 
 ```bash
 playwright install --with-deps chromium
 ```
 
-Currently installed browser:
+Current CI browser:
 
 * Chromium
 
-The `--with-deps` option installs required Linux dependencies for Playwright browser execution in the GitHub-hosted Ubuntu environment.
-
-Future framework expansion may include Firefox and WebKit execution.
+Multi-browser execution is not part of the current CI implementation.
 
 ### 5. Code Quality Checks
 
 The pipeline validates code quality using:
 
-* Ruff for linting
-* Black for formatting validation
-* isort for import sorting validation
+* Ruff
+* Black
+* isort
 
-Current quality commands:
+Current commands:
 
 ```bash
 ruff check .
@@ -146,82 +173,90 @@ black --check .
 isort . --check-only
 ```
 
-These checks ensure that code formatting, linting rules, and import organization remain consistent across the project.
+These checks validate:
+
+* linting
+* formatting
+* import organization
+
+A failure in any quality check fails the CI job.
 
 ### 6. Test Execution
 
-Automated tests are executed using Pytest.
+The current CI pipeline executes the complete Pytest suite.
 
-Current CI test command:
+Current command:
 
 ```bash
 mkdir -p reports
 pytest -v --html=reports/report.html --self-contained-html
 ```
 
-The command generates:
+This execution is intentionally not filtered by pytest markers.
 
-* verbose console output
-* self-contained HTML test report
-* screenshots on failure, if configured by the pytest hook
-* files inside the `reports/` directory
+The command produces:
 
-Current report location:
+* verbose pytest output
+* a self-contained HTML report
+* failure screenshots when generated by the configured pytest hook
+* runtime files inside `reports/`
+
+Current HTML report location:
 
 ```text
 reports/report.html
 ```
 
-The current automated test suite includes:
+The automated test suite currently covers:
 
-* login page validation
-* positive login scenarios
-* negative login scenarios
-* login UI behavior checks
-* protected route access validation
-* protected checkout route access validation
-* inventory page validation
+* successful login behavior
+* invalid credential validation
+* empty credential validation
+* locked out user validation
+* login UI behavior
+* protected route access
+* protected checkout route access
+* Inventory page behavior
 * product list and product card validation
-* inventory-side product details navigation validation
-* product details page validation
-* product details content validation
-* product details add-to-cart validation
-* product details remove-from-cart validation
-* product sorting validation
-* cart page validation
-* empty cart state validation
-* add-to-cart behavior validation
-* cart badge validation
-* cart product visibility and content validation
-* remove-from-cart validation
-* Continue Shopping navigation validation
-* cart state persistence after logout and re-login
-* cart-owned navigation to checkout step one
-* checkout information form validation
-* checkout information required field validation
-* checkout information error state validation
-* checkout information cancel navigation validation
-* checkout overview product summary validation
-* checkout overview price summary validation
-* checkout overview cancel navigation validation
-* product details navigation from checkout overview
-* checkout finish action validation
-* checkout complete page confirmation validation
-* Back Home navigation after order completion
+* product sorting
+* Inventory → Product Details navigation
+* Product Details validation
+* Product Details cart behavior
+* Cart validation
+* cart badge behavior
+* cart item visibility and content
+* cart persistence
+* Continue Shopping behavior
+* Cart → Checkout Information navigation
+* Checkout Information validation
+* checkout required-field validation
+* checkout error-state behavior
+* Checkout Information navigation
+* Checkout Overview product validation
+* Checkout Overview price summary validation
+* Checkout Overview navigation
+* Checkout Overview → Product Details navigation
+* checkout completion
+* Checkout Complete validation
+* Back Home navigation
+
+Detailed test ownership, marker assignment, and coverage strategy are documented in [Testing Strategy](testing-strategy.md).
 
 ### 7. Artifact Upload
 
-The pipeline uploads test execution outputs as GitHub Actions artifacts.
+The pipeline uploads runtime test outputs using GitHub Actions artifacts.
 
-Current artifact upload steps:
+Current artifact uploads:
 
-* pytest HTML report upload
-* full `reports/` directory upload
+* pytest HTML report
+* complete `reports/` directory
 
-Current artifacts:
+Current artifact names:
 
-* `pytest-html-report`
-* `test-artifacts`
+```text
+pytest-html-report
+test-artifacts
+```
 
 Artifact upload steps use:
 
@@ -229,139 +264,224 @@ Artifact upload steps use:
 if: always()
 ```
 
-This ensures that reports and screenshots are still uploaded even when tests fail.
+This ensures that available reports and screenshots are uploaded even when the test suite fails.
 
-Current artifact retention:
+Current retention configuration:
 
 ```yaml
 retention-days: 7
 ```
 
-This keeps artifacts available long enough for debugging while avoiding unnecessary long-term storage.
-
 ## Test Reports And Artifacts
 
-Generated reports and screenshots should not be committed to Git.
+Generated reports and screenshots are runtime outputs and should not be committed to Git.
 
-They are runtime outputs and should be handled through:
+They are handled through:
 
-* local `reports/` directory
+* the local `reports/` directory
 * GitHub Actions artifacts
-* future reporting integrations such as Allure
 
-Current artifact examples:
+Current CI artifacts:
 
 * `pytest-html-report`
 * `test-artifacts`
 
-Artifacts are available for download from the workflow run page in GitHub Actions.
+Artifacts can be used for:
+
+* failure investigation
+* execution evidence
+* debugging
+* Pull Request review
 
 ## Artifact Retention
 
-Artifacts are stored temporarily by GitHub Actions.
-
-They are used for:
-
-* debugging failed tests
-* reviewing test execution evidence
-* validating CI output
-* sharing reports without committing generated files to the repository
-
-The current workflow explicitly keeps artifacts for:
+Current GitHub Actions artifacts are retained for:
 
 ```yaml
 retention-days: 7
 ```
 
-This retention period is appropriate for a portfolio framework because it preserves debugging evidence without keeping generated outputs longer than necessary.
+Temporary retention keeps debugging evidence available without treating generated execution output as permanent repository content.
 
 ## Quality Gate Expectation
 
-The CI pipeline acts as a quality gate.
+The CI pipeline acts as a merge quality gate.
 
 Expected behavior:
 
-* linting failure should fail the pipeline
-* formatting failure should fail the pipeline
-* import sorting failure should fail the pipeline
-* test failure should fail the pipeline
-* artifacts should still be uploaded for debugging when failures occur
+* Ruff failure fails CI
+* Black validation failure fails CI
+* isort validation failure fails CI
+* automated test failure fails CI
+* available reports and screenshots are still uploaded after failures
 
-Test execution should not use:
+The main test execution should not use:
 
 ```yaml
 continue-on-error: true
 ```
 
-for the main test suite, because failing tests should block the pipeline.
+because a failed automated test suite should block successful CI completion.
 
-The current workflow follows this expectation by running quality checks and the full test suite as regular failing steps.
+The current workflow follows this expectation.
 
-## Marker-Based Test Execution
+## Pytest Marker Strategy And CI
 
-The framework supports pytest markers for selective local test execution.
+The framework uses pytest markers to create selectively executable test suites.
 
-Current marker categories include:
+Current executable markers are:
 
 * `smoke`
 * `regression`
 * `ui`
-* `api`
-* `e2e`
-* `positive`
-* `negative`
+* `security`
 * `sorting`
 * `navigation`
+* `e2e`
 
-Useful local validation commands:
+Detailed marker semantics and assignment rules are documented in [Testing Strategy](testing-strategy.md).
+
+### Local Marker Execution
+
+Markers currently support selective **local** validation.
+
+Common commands:
 
 ```bash
 pytest -m smoke -v
 pytest -m regression -v
-pytest -m positive -v
-pytest -m negative -v
+pytest -m ui -v
+pytest -m security -v
 pytest -m sorting -v
 pytest -m navigation -v
-pytest -m "ui and smoke" -v
-pytest -m "ui and regression" -v
-pytest -m "ui and sorting" -v
-pytest -m "ui and navigation" -v
 pytest -m e2e -v
 ```
 
-The main CI pipeline currently executes the full test suite rather than a marker-filtered subset.
+Markers may also be combined.
 
-Future CI improvements may include separate jobs for smoke, regression, API, sorting, navigation, end-to-end, and cross-browser test execution.
+Examples:
+
+```bash
+pytest -m "smoke and ui" -v
+pytest -m "regression and ui" -v
+pytest -m "smoke and navigation" -v
+pytest -m "regression and navigation" -v
+```
+
+Marker execution may also be scoped to a specific test module.
+
+Example:
+
+```bash
+pytest tests/test_checkout_page.py -m e2e -v
+```
+
+The `e2e` suite consists of independent checkpoints that collectively represent the primary purchase journey.
+
+Individual E2E tests remain:
+
+* independently executable
+* fixture-driven
+* order-independent
+* isolated from state produced by other tests
+
+### Current CI Execution
+
+The current GitHub Actions pipeline does **not** execute separate marker-based jobs.
+
+CI currently executes:
+
+```bash
+pytest -v --html=reports/report.html --self-contained-html
+```
+
+which runs the complete automated suite.
+
+Therefore:
+
+* Smoke is not currently a separate CI job
+* Regression is not currently a separate CI job
+* Security is not currently a separate CI job
+* Sorting is not currently a separate CI job
+* Navigation is not currently a separate CI job
+* E2E is not currently a separate CI job
+
+Marker-based CI separation must not be treated as implemented until the GitHub Actions workflow is explicitly changed and validated.
+
+## Local And CI Execution Responsibilities
+
+Local selective execution and CI full-suite execution currently serve different purposes.
+
+### Local Execution
+
+Marker-based local execution is useful for:
+
+* fast feedback during implementation
+* validating a changed behavior category
+* validating a representative Smoke suite
+* running broader Regression coverage
+* checking Security or Sorting behavior
+* validating Navigation-related changes
+* validating the logical E2E checkpoint suite
+
+### CI Execution
+
+Current CI provides:
+
+* complete automated regression protection through the full test suite
+* code quality validation
+* deterministic clean-environment execution
+* generated test evidence
+* merge gating
+
+The complete suite remains the current CI quality gate.
 
 ## Branch Protection Strategy
 
 The CI pipeline supports the repository branching strategy.
 
-Recommended branch protection rules:
-
-### `main`
+Recommended protection for `main`:
 
 * require Pull Request before merge
-* require CI pipeline to pass
+* require CI to pass
 * disallow direct pushes
 * disallow force pushes
-* keep as stable portfolio/release branch
+* preserve `main` as the stable portfolio branch
 
-### `develop`
+Recommended protection for `develop`:
 
 * require Pull Request before merge
-* require CI pipeline to pass
+* require CI to pass
 * disallow direct pushes where practical
-* use as the main integration branch for completed workstreams
+* preserve `develop` as the normal integration branch
 
-For a solo portfolio project, full enforcement can be introduced gradually. However, the preferred workflow is:
+Preferred integration flow:
 
 ```text
-feature branch → Pull Request → CI validation → Squash merge → develop
-develop → Pull Request → CI validation → Squash merge → main
+feature / fix / docs / refactor branch
+        ↓
+Pull Request
+        ↓
+CI validation
+        ↓
+Squash merge
+        ↓
+develop
 ```
 
-This keeps `develop` as the main integration branch and `main` as the polished portfolio branch.
+Portfolio promotion flow:
+
+```text
+develop
+  ↓
+Pull Request
+  ↓
+CI validation
+  ↓
+Squash merge
+  ↓
+main
+```
 
 ## Workflow Security Notes
 
@@ -369,66 +489,77 @@ GitHub Actions workflow files should be treated as sensitive project configurati
 
 Recommended practices:
 
-* review all changes to `.github/workflows/*.yml`
-* avoid unknown shell scripts in workflow steps
-* avoid suspicious commands such as `curl | bash`, `wget | bash`, `eval`, or encoded shell payloads
+* review every change to `.github/workflows/*.yml`
+* avoid unknown shell scripts
+* avoid suspicious commands such as `curl | bash`, `wget | bash`, `eval`, or encoded payload execution
 * do not add secrets unless required
 * avoid unnecessary workflow permissions
-* use minimal `GITHUB_TOKEN` permissions where possible
+* use minimal `GITHUB_TOKEN` permissions
 
-Recommended minimal workflow permission for the current CI scope:
+Current permission configuration:
 
 ```yaml
 permissions:
   contents: read
 ```
 
-The project currently uses this minimal permission model.
+No elevated GitHub token permission is currently required.
 
 ## Benefits Of Current CI Setup
 
 The current CI setup provides:
 
-* automated validation on repository changes
-* consistent execution environment
-* early detection of linting and formatting issues
-* automated UI test execution
-* confidence before merging feature workstreams
-* validation before promoting stable portfolio snapshots to `main`
-* downloadable reports and artifacts
-* support for professional Pull Request workflow
-* foundation for future CI/CD improvements
+* automated validation of integration changes
+* a consistent execution environment
+* linting and formatting enforcement
+* complete automated UI test execution
+* failure detection before merge
+* HTML execution reports
+* downloadable debugging artifacts
+* support for Pull Request quality gates
+* validation before stable portfolio promotion
+* a foundation for future framework maturity improvements
 
 ## Current CI Status
 
-The CI pipeline is operational and supports the completed page-level automation coverage for Login, Inventory, Product Details, Cart, and Checkout areas.
+The CI pipeline is operational for the current page-level automation framework.
 
-The pipeline validates:
+It validates:
 
-* project setup
-* code quality
-* full automated test execution
-* generated HTML report
-* CI artifacts
+* project dependency setup
+* Playwright Chromium setup
+* Ruff
+* Black
+* isort
+* full automated Pytest execution
+* HTML report generation
+* test artifacts
 * Pull Requests targeting `develop`
 * Pull Requests targeting `main`
-* stable portfolio branch promotion from `develop` to `main`
+* pushes to `develop`
+* pushes to `main`
+* manual workflow executions
 
-It is ready to support stable portfolio branch validation, future framework maturity work, API testing, reporting improvements, CI optimization, and later advanced framework extensions.
+The pipeline currently uses a single full-suite execution strategy.
+
+Marker-based suite separation, parallel execution, multi-browser execution, and other CI maturity improvements are not part of the current implementation.
 
 ## Future Improvements
 
-Planned CI improvements include:
+Possible future CI improvements include:
 
-* dependency caching for faster pipeline execution
+* dependency caching
 * Playwright browser caching
-* JUnit XML test result publishing
-* Allure reporting integration
-* separate smoke and regression jobs
-* separate marker-based jobs for selected test categories
+* JUnit XML result publishing
+* Allure reporting
+* separate marker-based jobs where justified
+* separate Smoke and Regression execution where justified
 * parallel test execution
 * multi-browser execution
-* Docker-based execution environment
-* scheduled regression runs
-* advanced test analytics and history tracking
-* optional deployment or publishing pipeline if the project scope requires it
+* Docker-based execution
+* scheduled test execution
+* improved test analytics and history tracking
+
+These items are future possibilities only.
+
+They should not be described as implemented until the corresponding project scope is approved, implemented, and validated.
