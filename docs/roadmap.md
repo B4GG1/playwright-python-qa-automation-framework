@@ -528,17 +528,210 @@ Recommended use:
 * GitHub Profile README project link
 * recruiter-facing repository link
 
-### After Phase 4
+## Phase 4: Framework Maturity
 
-The project should be close to a mature portfolio-ready QA automation framework.
+**Status:** In Progress
 
-Recommended use:
+Phase 4 focuses on improving the scalability, maintainability, execution strategy, reporting, configuration, and diagnostics of the existing automation framework.
 
-* stronger Junior / Junior+ QA Automation applications
-* Technical QA applications
-* broader recruiter-facing portfolio presentation
+Unlike Phase 3, this phase does not primarily expand application feature coverage. Its purpose is to mature the framework built around the completed Login, Inventory, Product Details, Cart, and Checkout automation.
+
+Phase 4 is divided into focused workstreams so that framework improvements can be introduced and validated incrementally.
+
+Planned workstreams:
+
+* Phase 4A — Marker And Suite Strategy
+* Phase 4B — CI Execution Strategy
+* Phase 4C — Parallel Execution
+* Phase 4D — Reporting Upgrade
+* Phase 4E — Runtime Configuration
+* Phase 4F — Diagnostics And Fixture Cleanup
+* Phase 4 Checkpoint
+
+Main learning goals:
+
+* scalable test organization
+* predictable marker-based execution
+* smoke and regression suite separation
+* execution optimization
+* CI execution strategy
+* parallel test execution
+* advanced reporting
+* environment-based framework configuration
+* stronger failure diagnostics
+* maintainable fixture organization
+* stronger CI/test feedback loops
+* maintainable framework design
 
 ---
+
+## Phase 4A: Marker And Suite Strategy
+
+**Status:** In Progress
+
+Phase 4A focuses on normalizing pytest marker semantics and establishing a predictable test-suite execution strategy before CI execution is further expanded.
+
+The goal is to make marker-based execution intentional, maintainable, and suitable for later CI job separation and framework scaling.
+
+Completed work:
+
+* AQA-0084 — Audit Current Pytest Marker Usage
+* AQA-0085 — Normalize Pytest Marker Definitions And Usage
+
+Current marker strategy work includes:
+
+* audit of marker definitions in `pytest.ini`
+* audit of marker assignments across all automated test modules
+* normalization of Smoke and Regression semantics
+* normalization of UI marker semantics
+* normalization of Navigation marker semantics
+* clarification of Security marker usage
+* preservation of Sorting as a dedicated executable category
+* clarification of E2E execution semantics
+* removal of Positive and Negative as executable pytest markers
+* preservation of positive and negative testing as test-design concepts where applicable
+* removal of the unused API executable marker from the current UI automation suite
+* explicit marker assignment through `@pytest.mark.*` decorators
+* no dynamic marker assignment through `conftest.py`
+* synchronization of affected test case coverage and automation metadata
+
+Remaining Phase 4A work:
+
+* AQA-0086 — Document Marker And Suite Execution Strategy
+* AQA-0087 — Validate Phase 4A Marker And Suite Strategy
+
+Phase 4A prepares the framework for CI suite separation without introducing Phase 4B CI workflow changes prematurely.
+
+---
+
+## Phase 4B: CI Execution Strategy
+
+**Status:** Planned
+
+Phase 4B will improve GitHub Actions execution so that CI provides clearer and faster feedback for different test scopes.
+
+Planned areas:
+
+* review the current GitHub Actions workflow
+* separate fast quality checks from browser test execution where useful
+* introduce CI execution for selected marker-based suites
+* support dedicated Smoke and Regression execution
+* keep full-suite execution available as final validation
+* maintain useful CI artifacts and reports
+* improve CI job naming and feedback clarity
+* avoid unnecessary workflow complexity for portfolio scope
+
+Phase 4B will use the marker strategy established during Phase 4A.
+
+---
+
+## Phase 4C: Parallel Execution
+
+**Status:** Planned
+
+Phase 4C will introduce and validate parallel pytest execution using `pytest-xdist`.
+
+Planned areas:
+
+* add `pytest-xdist`
+* validate test independence under parallel execution
+* identify scenarios affected by shared Sauce Demo application state
+* define safe parallel execution commands
+* verify compatibility with existing fixtures
+* verify compatibility with reporting and failure artifacts
+* document any test groups that should remain sequential
+
+The goal is execution optimization without sacrificing test reliability.
+
+---
+
+## Phase 4D: Reporting Upgrade
+
+**Status:** Planned
+
+Phase 4D will improve test reporting and failure artifacts.
+
+Planned areas:
+
+* review the current HTML reporting structure
+* improve organization of generated reports
+* improve screenshot, trace, video, or other failure artifact handling where useful
+* improve CI artifact naming and accessibility
+* integrate Allure reporting
+* generate Allure result data locally
+* integrate useful Allure output with CI where appropriate
+* document reporting commands and artifact locations
+
+The goal is to make test results easier to review locally, in CI, and during portfolio presentation.
+
+---
+
+## Phase 4E: Runtime Configuration
+
+**Status:** Planned
+
+Phase 4E will introduce environment-based runtime configuration.
+
+Planned areas may include:
+
+* base URL configuration
+* browser selection
+* headed or headless execution mode
+* timeout configuration
+* screenshot policy
+* trace policy
+* video policy
+* sensible local defaults
+* environment variable handling
+* documented configuration usage
+
+The goal is to reduce hardcoded runtime assumptions and make framework execution more flexible.
+
+---
+
+## Phase 4F: Diagnostics And Fixture Cleanup
+
+**Status:** Planned
+
+Phase 4F will review framework diagnostics and fixture organization after the previous maturity improvements.
+
+Planned areas:
+
+* introduce or improve lightweight logging utilities
+* expose useful runtime information during test execution
+* improve failed-test diagnostics
+* review screenshot and trace diagnostics
+* review current fixture structure
+* identify fixture duplication or unclear responsibility
+* reorganize fixtures only where the current structure justifies it
+* keep fixture names explicit and scenario-oriented
+* avoid refactoring solely for structural complexity
+
+This workstream will provide final framework cleanup before the Phase 4 checkpoint.
+
+---
+
+## Phase 4 Checkpoint
+
+**Status:** Planned
+
+After Phase 4 implementation, a checkpoint will confirm whether the framework maturity work is complete and whether the project is ready for Phase 5 Advanced Extensions.
+
+Checkpoint scope:
+
+* review completed Phase 4A–4F workstreams
+* verify marker and suite execution strategy
+* verify CI execution strategy
+* verify parallel execution behavior
+* verify reporting and failure artifacts
+* verify environment-based configuration
+* verify diagnostics and fixture organization
+* run required test and quality validation
+* review documentation synchronization
+* check repository cleanup and Git status
+* confirm readiness for broader portfolio presentation
+* confirm readiness for Phase 5 Advanced Extensions
+
 
 ## Strategic Vision
 

@@ -56,7 +56,7 @@ A test may therefore use multiple markers when appropriate.
 
 Examples include:
 
-```text id="xqf2zp"
+```
 Smoke / UI
 Regression / UI
 Smoke / Navigation
@@ -298,7 +298,7 @@ pytest.ini
 
 Standard local quality validation:
 
-```bash id="vxu9h4"
+```
 ruff check .
 black --check .
 isort . --check-only
