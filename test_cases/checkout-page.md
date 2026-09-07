@@ -125,7 +125,6 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 
 * This is the representative smoke validation for checkout information form availability.
 * Detailed validation of individual form elements is covered by TC-CHECKOUT-001.
-* Dedicated automation for this smoke scenario is planned.
 
 ---
 
@@ -894,7 +893,6 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 * This is the representative smoke validation of checkout complete page availability.
 * This scenario is part of the primary E2E purchase flow.
 * Detailed confirmation content validation is covered by TC-CHECKOUT-018.
-* Dedicated automation for this smoke scenario is planned.
 
 ---
 

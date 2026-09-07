@@ -554,5 +554,5 @@ The goal of this document is to define cart-page-owned scenarios and track their
 **Notes:**
 
 * This is the full regression counterpart of TC-CART-009.
-* The planned automated implementation should use parametrized product data to validate Cart → Product Details navigation independently for every applicable product.
+* The automated implementation uses parametrized product data to validate Cart → Product Details navigation independently for every applicable product.
 * TC-CART-009 remains the representative smoke validation for this navigation path.

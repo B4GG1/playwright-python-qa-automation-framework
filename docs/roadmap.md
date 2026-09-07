@@ -432,6 +432,7 @@ Completed work:
 
 * AQA-0084 — Audit Current Pytest Marker Usage
 * AQA-0085 — Normalize Pytest Marker Definitions And Usage
+* AQA-0086 — Document Marker And Suite Execution Strategy
 
 Current marker strategy work includes:
 
@@ -451,7 +452,6 @@ Current marker strategy work includes:
 
 Remaining Phase 4A work:
 
-* AQA-0086 — Document Marker And Suite Execution Strategy
 * AQA-0087 — Validate Phase 4A Marker And Suite Strategy
 
 Phase 4A prepares the framework for CI suite separation without introducing Phase 4B CI workflow changes prematurely.
