@@ -422,39 +422,54 @@ Main learning goals:
 
 ## Phase 4A: Marker And Suite Strategy
 
-**Status:** In Progress
+**Status:** Completed
 
-Phase 4A focuses on normalizing pytest marker semantics and establishing a predictable test-suite execution strategy before CI execution is further expanded.
-
-The goal is to make marker-based execution intentional, maintainable, and suitable for later CI job separation and framework scaling.
+Phase 4A normalized pytest marker semantics and established a predictable test-suite execution strategy required for later CI execution improvements.
 
 Completed work:
 
 * AQA-0084 — Audit Current Pytest Marker Usage
 * AQA-0085 — Normalize Pytest Marker Definitions And Usage
 * AQA-0086 — Document Marker And Suite Execution Strategy
-
-Current marker strategy work includes:
-
-* audit of marker definitions in `pytest.ini`
-* audit of marker assignments across all automated test modules
-* normalization of Smoke and Regression semantics
-* normalization of UI marker semantics
-* normalization of Navigation marker semantics
-* clarification of Security marker usage
-* preservation of Sorting as a dedicated executable category
-* clarification of E2E execution semantics
-* removal of Positive and Negative as executable pytest markers
-* removal of the unused API executable marker from the current UI automation suite
-* explicit marker assignment through `@pytest.mark.*` decorators
-* no dynamic marker assignment through `conftest.py`
-* synchronization of affected test case coverage and automation metadata
-
-Remaining Phase 4A work:
-
 * AQA-0087 — Validate Phase 4A Marker And Suite Strategy
 
-Phase 4A prepares the framework for CI suite separation without introducing Phase 4B CI workflow changes prematurely.
+Completed marker strategy scope:
+
+* audited marker definitions in `pytest.ini`
+* audited marker assignments across all automated test modules
+* normalized Smoke and Regression semantics
+* normalized UI marker semantics
+* normalized Navigation marker semantics
+* clarified Security marker usage
+* preserved Sorting as a dedicated executable category
+* clarified E2E execution semantics
+* removed Positive and Negative as executable pytest markers
+* removed the unused API executable marker from the current UI automation suite
+* preserved API testing as future project scope
+* kept marker assignment explicit through `@pytest.mark.*` decorators
+* confirmed that no dynamic marker assignment is performed through `conftest.py`
+* synchronized affected test case coverage and automation metadata
+* completed dedicated automation for `TC-PRODUCT-DETAILS-015`
+* completed dedicated automation for `TC-CART-013`
+* completed dedicated automation for `TC-CHECKOUT-002`
+* completed dedicated automation for `TC-CHECKOUT-019`
+
+Final Phase 4A validation confirmed:
+
+* `pytest -m smoke -v` passes
+* `pytest -m regression -v` passes
+* `pytest -m ui -v` passes
+* `pytest -m security -v` passes
+* `pytest -m sorting -v` passes
+* `pytest -m navigation -v` passes
+* `pytest -m e2e -v` passes
+* the full Pytest suite passes
+* Ruff passes
+* Black validation passes
+* isort validation passes
+* test case traceability and general Phase 4A documentation are synchronized
+
+Phase 4A is complete and provides the marker and suite strategy required for Phase 4B CI Execution Strategy.
 
 ---
 
