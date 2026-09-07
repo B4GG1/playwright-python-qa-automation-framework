@@ -98,8 +98,8 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 **Type:** Smoke / UI\
 **Priority:** High\
 **Automation Candidate:** Yes\
-**Automation Status:** Planned\
-**Automated In:** TBD
+**Automation Status:** Automated\
+**Automated In:** `tests/test_checkout_page.py`
 
 **Preconditions:**
 
@@ -861,8 +861,8 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 **Type:** Smoke / UI / E2E\
 **Priority:** High\
 **Automation Candidate:** Yes\
-**Automation Status:** Planned\
-**Automated In:** TBD
+**Automation Status:** Automated\
+**Automated In:** `tests/test_checkout_page.py`
 
 **Preconditions:**
 

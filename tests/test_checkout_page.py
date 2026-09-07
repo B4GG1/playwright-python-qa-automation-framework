@@ -54,6 +54,25 @@ def test_checkout_information_form_displays_required_customer_fields(
     expect(checkout_page.get_title()).to_have_text(CHECKOUT_STEP_ONE_TITLE)
 
 
+@pytest.mark.smoke
+@pytest.mark.ui
+@pytest.mark.parametrize(
+    "_case_id",
+    ["TC-CHECKOUT-002"],
+    ids=["TC-CHECKOUT-002"],
+)
+def test_checkout_information_form_is_visible(
+    checkout_step_one_page_with_one_product: tuple[
+        CheckoutInformationPage,
+        dict[str, str],
+    ],
+    _case_id: str,
+):
+    checkout_page = checkout_step_one_page_with_one_product[0]
+
+    expect(checkout_page.get_checkout_info_block()).to_be_visible()
+
+
 @pytest.mark.regression
 @pytest.mark.ui
 @pytest.mark.parametrize(
@@ -541,6 +560,29 @@ def test_checkout_complete_page_displays_order_confirmation_message(
         CHECKOUT_COMPLETE_MESSAGE
     )
 
+    expect(checkout_last_step_page.get_back_home_button()).to_be_visible()
+
+
+@pytest.mark.smoke
+@pytest.mark.ui
+@pytest.mark.e2e
+@pytest.mark.parametrize(
+    "_case_id",
+    ["TC-CHECKOUT-019"],
+    ids=["TC-CHECKOUT-019"],
+)
+def test_checkout_complete_page_elements_are_visible(
+    checkout_last_step_page_with_one_product: tuple[
+        CheckoutCompletePage,
+        dict[str, str],
+    ],
+    _case_id: str,
+):
+    checkout_last_step_page = checkout_last_step_page_with_one_product[0]
+
+    expect(checkout_last_step_page.get_checkout_complete_container()).to_be_visible()
+    expect(checkout_last_step_page.get_checkout_complete_header()).to_be_visible()
+    expect(checkout_last_step_page.get_checkout_complete_text()).to_be_visible()
     expect(checkout_last_step_page.get_back_home_button()).to_be_visible()
 
 

@@ -369,3 +369,24 @@ def test_all_products_can_be_removed_from_cart_from_product_details_page(
     cart_page = details_page.open_cart()
 
     expect(cart_page.get_product_item_by_name(product["product_name"])).to_be_hidden()
+
+
+@pytest.mark.regression
+@pytest.mark.navigation
+@pytest.mark.parametrize(
+    "product",
+    LIST_OF_PRODUCTS,
+    ids=[f"TC-PRODUCT-DETAILS-015-{product['product_id']}" for product in LIST_OF_PRODUCTS],
+)
+def test_cart_page_can_be_opened_from_product_details_page_for_each_product(
+    logged_in_inventory_page: InventoryPage,
+    product,
+):
+    details_page = logged_in_inventory_page.open_product_details_by_name(product["product_name"])
+
+    expect(details_page.page).to_have_url(f'{ProductDetailsPage.URL}{product["product_id"]}')
+
+    cart_page = details_page.open_cart()
+
+    expect(cart_page.page).to_have_url(CartPage.URL)
+    expect(cart_page.get_cart_contents_container()).to_be_visible()

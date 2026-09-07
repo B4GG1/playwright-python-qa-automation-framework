@@ -328,3 +328,29 @@ def test_checkout_button_opens_checkout_information_page_with_product_in_cart(
     expect(checkout_step_one.page).to_have_url(CheckoutInformationPage.URL)
     expect(checkout_step_one.get_checkout_info_block()).to_be_visible()
     expect(cart_page.get_cart_contents_container()).not_to_be_visible()
+
+
+@pytest.mark.regression
+@pytest.mark.navigation
+@pytest.mark.parametrize(
+    "product",
+    LIST_OF_PRODUCTS,
+    ids=[f"TC-CART-013-{product['product_id']}" for product in LIST_OF_PRODUCTS],
+)
+def test_product_details_can_be_opened_from_cart_item_name_for_each_product(
+    logged_in_inventory_page: InventoryPage,
+    product,
+):
+    logged_in_inventory_page.add_product_to_cart(product["product_name"])
+
+    cart_page = logged_in_inventory_page.open_cart()
+
+    expect(cart_page.get_product_item_by_name(product["product_name"])).to_be_visible()
+
+    product_details_page = cart_page.open_product_details_by_name(product["product_name"])
+
+    expect(product_details_page.page).to_have_url(
+        f"{ProductDetailsPage.URL}{product['product_id']}"
+    )
+    expect(product_details_page.get_product_item_or_items()).to_be_visible()
+    expect(product_details_page.get_back_to_products_button()).to_be_visible()
