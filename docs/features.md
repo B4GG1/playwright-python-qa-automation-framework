@@ -217,9 +217,8 @@ Current Product Details automation includes:
 * cart badge visibility
 * cart badge count updates
 * cart badge disappearance
-* Cart navigation from Product Details
-
-Full Product Details → Cart navigation coverage for every product remains documented as planned.
+* representative Cart navigation from Product Details
+* full Product Details → Cart navigation coverage across all products
 
 ### Cart Page Test Coverage
 
@@ -237,16 +236,16 @@ Current Cart automation includes:
 * Continue Shopping cart-state preservation
 * Cart state persistence after logout and re-login
 * representative Product Details navigation from Cart
+* full Cart → Product Details navigation coverage across all products
 * Checkout Information navigation from Cart
 * E2E Cart checkpoints
-
-Full Cart → Product Details navigation coverage for every product remains documented as planned.
 
 ### Checkout Page Test Coverage
 
 Current Checkout automation includes:
 
 * Checkout Information form validation
+* lightweight Smoke validation of Checkout Information form availability
 * required First Name validation
 * required Last Name validation
 * required Postal Code validation
@@ -265,10 +264,9 @@ Current Checkout automation includes:
 * all-products Product Details navigation from Checkout Overview
 * Finish navigation to Checkout Complete
 * Checkout Complete content validation
+* lightweight Smoke validation of Checkout Complete page availability
 * Back Home navigation to Inventory
 * independent Checkout-related E2E checkpoints
-
-Dedicated lightweight Smoke scenarios documented as `Planned` remain outside current automated coverage.
 
 ### Primary Purchase E2E Coverage
 

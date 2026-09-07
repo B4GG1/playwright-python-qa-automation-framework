@@ -96,21 +96,16 @@ tests/test_checkout_page.py
 Each automated test module maps to the corresponding manual test case file:
 
 | Automated Test Module                | Manual Test Case File                | Documented Test Case Range     |
-| ------------------------------------ | ------------------------------------ | ------------------------------ |
+|--------------------------------------|--------------------------------------|--------------------------------|
 | `tests/test_login_page.py`           | `test_cases/login-page.md`           | `TC-LOGIN-001`–`019`           |
 | `tests/test_inventory_page.py`       | `test_cases/inventory-page.md`       | `TC-INVENTORY-001`–`022`       |
 | `tests/test_product_details_page.py` | `test_cases/product-details-page.md` | `TC-PRODUCT-DETAILS-001`–`015` |
 | `tests/test_cart_page.py`            | `test_cases/cart-page.md`            | `TC-CART-001`–`013`            |
 | `tests/test_checkout_page.py`        | `test_cases/checkout-page.md`        | `TC-CHECKOUT-001`–`020`        |
 
-Some documented scenarios are intentionally still planned:
+The documented test case ranges above are currently fully covered by automation.
 
-* `TC-PRODUCT-DETAILS-015`
-* `TC-CART-013`
-* `TC-CHECKOUT-002`
-* `TC-CHECKOUT-019`
-
-Their test case files should be checked before treating the complete documented range as fully automated.
+Individual coverage details and automation metadata remain authoritative in the corresponding test case files.
 
 ## Current Test Coverage
 
@@ -175,8 +170,7 @@ Implemented product details coverage includes:
 * all-products remove-from-cart coverage
 * cart badge visibility and count behavior
 * cart navigation from product details
-
-Full Product Details → Cart navigation coverage for every product is documented separately and remains planned.
+* full Product Details → Cart navigation coverage across all products
 
 ### Cart Coverage
 
@@ -191,17 +185,17 @@ Implemented cart coverage includes:
 * all-products cart content validation
 * cart badge decrement behavior
 * representative Product Details navigation from cart item name
+* full Cart → Product Details navigation coverage across all products
 * Continue Shopping cart-state preservation
 * all-products remove-from-cart coverage
 * checkout information page navigation
-
-Full Cart → Product Details navigation coverage for every product is documented separately and remains planned.
 
 ### Checkout Coverage
 
 Implemented checkout coverage includes:
 
 * detailed checkout information form validation
+* representative lightweight smoke validation of Checkout Information form availability
 * required First Name validation
 * required Last Name validation
 * required Postal Code validation
@@ -218,9 +212,8 @@ Implemented checkout coverage includes:
 * all-products Product Details navigation from Checkout Overview
 * Finish transition to Checkout Complete
 * detailed checkout completion content validation
+* representative lightweight smoke validation of Checkout Complete page availability
 * Back Home navigation to Inventory
-
-Dedicated lightweight smoke validation of the Checkout Information form and Checkout Complete page is documented and remains planned.
 
 ## Marker Strategy
 
@@ -233,9 +226,9 @@ A test may therefore legitimately use several markers when it belongs to several
 For example:
 
 ```python
-@pytest.mark.smoke
-@pytest.mark.navigation
-@pytest.mark.e2e
+'@pytest.mark.smoke'
+'@pytest.mark.navigation'
+'@pytest.mark.e2e'
 ```
 
 This means the same test is:
@@ -414,9 +407,8 @@ Current automated E2E checkpoints include:
 6. representative selected product validation on Checkout Overview — `TC-CHECKOUT-010`
 7. representative price summary validation — `TC-CHECKOUT-012`
 8. Finish → Checkout Complete — `TC-CHECKOUT-017`
-9. Back Home → Inventory — `TC-CHECKOUT-020`
-
-`TC-CHECKOUT-019` is documented as an additional E2E completion-page smoke checkpoint but remains planned until dedicated automation is implemented.
+9. Checkout Complete page availability — `TC-CHECKOUT-019`
+10. Back Home → Inventory — `TC-CHECKOUT-020`
 
 The E2E marker therefore describes membership in the logical primary journey, not whether an individual test executes every page of the journey itself.
 

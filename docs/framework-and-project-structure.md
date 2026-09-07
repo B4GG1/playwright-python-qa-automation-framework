@@ -751,9 +751,8 @@ Current Product Details automation includes:
 * cart badge visibility
 * cart badge count updates
 * cart badge disappearance
-* Cart navigation
-
-Full Product Details → Cart navigation for every product remains documented separately as planned.
+* representative Cart navigation
+* full Product Details → Cart navigation coverage across all products
 
 ## Cart Test Suite Structure
 
@@ -771,6 +770,7 @@ Current Cart automation includes:
 * Continue Shopping state preservation
 * Cart persistence after logout and re-login
 * representative Product Details navigation
+* full Cart → Product Details navigation coverage across all products
 * Checkout Information navigation
 * E2E Cart checkpoints
 
@@ -778,13 +778,12 @@ Cart owns the checkout entry transition.
 
 Detailed Checkout Information, Checkout Overview, and Checkout Complete behavior is owned by Checkout tests.
 
-Full Cart → Product Details navigation for every product remains documented separately as planned.
-
 ## Checkout Test Suite Structure
 
 Current Checkout automation includes:
 
 * Checkout Information form validation
+* lightweight Smoke validation of Checkout Information form availability
 * required First Name validation
 * required Last Name validation
 * required Postal Code validation
@@ -802,10 +801,9 @@ Current Checkout automation includes:
 * all-products Product Details navigation from Checkout Overview
 * Finish transition
 * Checkout Complete validation
+* lightweight Smoke validation of Checkout Complete page availability
 * Back Home navigation
 * Checkout E2E checkpoints
-
-Some dedicated lightweight Smoke scenarios remain documented as planned and do not yet have dedicated automated tests.
 
 ## Marker-Based Test Organization
 

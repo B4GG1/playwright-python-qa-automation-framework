@@ -647,8 +647,7 @@ Current Product Details coverage includes:
 * cart badge count updates
 * cart badge disappearance
 * Cart navigation
-
-Full Product Details → Cart navigation for every product remains documented separately as planned.
+* full Product Details → Cart navigation coverage across all products
 
 ## Cart Test Architecture
 
@@ -688,10 +687,9 @@ Current Cart coverage includes:
 * Continue Shopping state preservation
 * Cart persistence after logout and re-login
 * Product Details navigation from Cart
+* full Cart → Product Details navigation coverage across all products
 * Cart → Checkout Information navigation
 * Cart-related E2E checkpoints
-
-Full Cart → Product Details navigation for every product remains documented separately as planned.
 
 ## Checkout Test Architecture
 
@@ -720,6 +718,7 @@ Full-suite CI execution
 Current Checkout coverage includes:
 
 * Checkout Information form validation
+* lightweight Smoke validation of Checkout Information form availability
 * required First Name validation
 * required Last Name validation
 * required Postal Code validation
@@ -737,10 +736,9 @@ Current Checkout coverage includes:
 * all-products Product Details navigation from Checkout Overview
 * Finish transition
 * Checkout Complete validation
+* lightweight Smoke validation of Checkout Complete page availability
 * Back Home navigation
 * Checkout-related E2E checkpoints
-
-Dedicated lightweight Smoke scenarios documented as `Planned` remain outside the current automated suite.
 
 ## Marker Architecture
 
@@ -773,9 +771,9 @@ A test may use multiple markers when it legitimately belongs to multiple suites.
 Example:
 
 ```python
-@pytest.mark.smoke
-@pytest.mark.navigation
-@pytest.mark.e2e
+'@pytest.mark.smoke'
+'@pytest.mark.navigation'
+'@pytest.mark.e2e'
 ```
 
 This represents a test that is simultaneously:
