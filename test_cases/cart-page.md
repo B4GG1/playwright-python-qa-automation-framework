@@ -22,7 +22,7 @@ The goal of this document is to define cart-page-owned scenarios and track their
 | [TC-CART-010](#tc-cart-010--continue-shopping-preserves-cart-state)                               | Continue Shopping preserves cart state                               | Regression / UI          | Medium   | Automated         | `tests/test_cart_page.py` |
 | [TC-CART-011](#tc-cart-011--all-products-can-be-removed-from-cart-page)                           | All products can be removed from cart page                           | Regression               | Medium   | Automated         | `tests/test_cart_page.py` |
 | [TC-CART-012](#tc-cart-012--checkout-button-opens-checkout-information-page-with-product-in-cart) | Checkout button opens checkout information page with product in cart | Smoke / Navigation / E2E | High     | Automated         | `tests/test_cart_page.py` |
-| [TC-CART-013](#tc-cart-013--product-details-can-be-opened-from-cart-item-name-for-each-product)   | Product details can be opened from cart item name for each product   | Regression / Navigation  | Medium   | Planned           | `tests/test_cart_page.py` |
+| [TC-CART-013](#tc-cart-013--product-details-can-be-opened-from-cart-item-name-for-each-product)   | Product details can be opened from cart item name for each product   | Regression / Navigation  | Medium   | Automated         | `tests/test_cart_page.py` |
 
 ---
 

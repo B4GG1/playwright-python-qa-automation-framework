@@ -24,7 +24,7 @@ The goal of this document is to define product-details-page-owned scenarios and 
 | [TC-PRODUCT-DETAILS-012](#tc-product-details-012--cart-badge-disappears-after-removing-last-product-from-product-details-page)        | Cart badge disappears after removing last product from product details page        | Smoke / UI              | Medium   | Automated         | `tests/test_product_details_page.py` |
 | [TC-PRODUCT-DETAILS-013](#tc-product-details-013--cart-page-can-be-opened-from-product-details-page)                                  | Cart page can be opened from product details page                                  | Smoke / Navigation      | Medium   | Automated         | `tests/test_product_details_page.py` |
 | [TC-PRODUCT-DETAILS-014](#tc-product-details-014--all-products-can-be-removed-from-cart-from-product-details-page)                    | All products can be removed from cart from product details page                    | Regression              | Medium   | Automated         | `tests/test_product_details_page.py` |
-| [TC-PRODUCT-DETAILS-015](#tc-product-details-015--cart-page-can-be-opened-from-product-details-page-for-each-product)                 | Cart page can be opened from product details page for each product                 | Regression / Navigation | Medium   | Planned           | `tests/test_product_details_page.py` |
+| [TC-PRODUCT-DETAILS-015](#tc-product-details-015--cart-page-can-be-opened-from-product-details-page-for-each-product)                 | Cart page can be opened from product details page for each product                 | Regression / Navigation | Medium   | Automated         | `tests/test_product_details_page.py` |
 
 ---
 
