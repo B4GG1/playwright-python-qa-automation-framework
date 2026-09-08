@@ -41,6 +41,94 @@ jobs:
       - name: Run isort import validation
         run: isort . --check-only
 
+  smoke:
+    needs: quality
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install project dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-lock.txt
+
+      - name: Install Playwright browsers
+        run: playwright install --with-deps chromium
+
+      - name: Run Smoke test suite with HTML report
+        run: |
+          mkdir -p reports
+          pytest -m smoke -v --html=reports/smoke-report.html --self-contained-html
+
+      - name: Upload Smoke pytest HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-pytest-html-report
+          path: reports/smoke-report.html
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Upload Smoke test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-test-artifacts
+          path: reports/
+          if-no-files-found: warn
+          retention-days: 7
+
+  regression:
+    needs: quality
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install project dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-lock.txt
+
+      - name: Install Playwright browsers
+        run: playwright install --with-deps chromium
+
+      - name: Run Regression test suite with HTML report
+        run: |
+          mkdir -p reports
+          pytest -m regression -v --html=reports/regression-report.html --self-contained-html
+
+      - name: Upload Regression pytest HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: regression-pytest-html-report
+          path: reports/regression-report.html
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Upload Regression test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: regression-test-artifacts
+          path: reports/
+          if-no-files-found: warn
+          retention-days: 7
+
   full-suite:
     needs: quality
     runs-on: ubuntu-latest
