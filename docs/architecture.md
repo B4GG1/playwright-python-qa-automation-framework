@@ -4,7 +4,7 @@ This document describes the current architecture of the QA automation framework.
 
 The project follows a lightweight, modular architecture focused on readability, maintainability, traceability, deterministic execution, and incremental framework growth.
 
-The current architecture includes Page Object Model, shared authenticated-page behavior, reusable assertions, reusable pytest fixtures, centralized test data, explicit marker-based test organization, CI execution, reporting, screenshot capture, and technical documentation.
+The current architecture includes Page Object Model, shared authenticated-page behavior, reusable assertions, reusable pytest fixtures, centralized test data, explicit marker-based test organization, staged CI execution, reporting, screenshot capture, and technical documentation.
 
 ## Current Architecture Scope
 
@@ -21,12 +21,16 @@ The current framework includes:
 * explicit pytest marker categorization
 * strict pytest marker validation
 * marker-based selective local execution
+* dedicated Smoke CI execution
+* dedicated Regression CI execution
+* complete unfiltered full-suite CI execution
 * parametrized execution with manual test case IDs where practical
 * independent E2E purchase-journey checkpoints
 * CI execution with GitHub Actions
+* separate CI code-quality validation
 * code quality tooling
 * HTML reporting
-* CI artifacts
+* job-specific CI artifacts
 * screenshot capture on test failure
 * manual test case documentation mapped to automation
 * one automated test module per covered page area
@@ -435,6 +439,8 @@ This supports:
 * isolated tests
 * marker-based selective execution
 * independent E2E checkpoints
+* dedicated Smoke and Regression CI execution
+* complete full-suite CI execution
 * CI stability
 
 Tests should not rely on shared browser state produced by earlier test cases.
@@ -451,6 +457,8 @@ Potential future usage includes:
 * execution configuration
 
 The layer remains intentionally minimal until approved framework maturity scope requires expansion.
+
+Runtime environment configuration is not part of the current Phase 4B implementation.
 
 ## `reports/`
 
@@ -469,6 +477,14 @@ They are intended for:
 * debugging
 * execution evidence
 * CI artifacts
+
+Current CI browser jobs generate separate report files for:
+
+* Smoke
+* Regression
+* full-suite
+
+Detailed report and artifact naming is documented in `docs/ci-cd-pipeline.md`.
 
 ## `test_cases/`
 
@@ -531,8 +547,14 @@ Markers and parametrization
         ↓
 Selective local execution
         ↓
-Full-suite CI execution
+CI execution
 ```
+
+Depending on marker assignment, Login tests may participate in:
+
+* dedicated Smoke CI execution
+* dedicated Regression CI execution
+* complete full-suite CI execution
 
 Current Login coverage includes:
 
@@ -581,8 +603,14 @@ Markers and parametrization
         ↓
 Selective local execution
         ↓
-Full-suite CI execution
+CI execution
 ```
+
+Depending on marker assignment, Inventory tests may participate in:
+
+* dedicated Smoke CI execution
+* dedicated Regression CI execution
+* complete full-suite CI execution
 
 Current Inventory coverage includes:
 
@@ -629,8 +657,14 @@ Markers and parametrization
         ↓
 Selective local execution
         ↓
-Full-suite CI execution
+CI execution
 ```
+
+Depending on marker assignment, Product Details tests may participate in:
+
+* dedicated Smoke CI execution
+* dedicated Regression CI execution
+* complete full-suite CI execution
 
 Current Product Details coverage includes:
 
@@ -670,8 +704,14 @@ Markers and parametrization
         ↓
 Selective local execution
         ↓
-Full-suite CI execution
+CI execution
 ```
+
+Depending on marker assignment, Cart tests may participate in:
+
+* dedicated Smoke CI execution
+* dedicated Regression CI execution
+* complete full-suite CI execution
 
 Current Cart coverage includes:
 
@@ -712,8 +752,14 @@ Markers and parametrization
         ↓
 Selective local execution
         ↓
-Full-suite CI execution
+CI execution
 ```
+
+Depending on marker assignment, Checkout tests may participate in:
+
+* dedicated Smoke CI execution
+* dedicated Regression CI execution
+* complete full-suite CI execution
 
 Current Checkout coverage includes:
 
@@ -788,6 +834,30 @@ Detailed marker semantics are documented in:
 docs/testing-strategy.md
 ```
 
+### Marker Execution Responsibilities
+
+All executable markers remain available for selective local execution.
+
+Dedicated CI jobs currently exist for:
+
+* `smoke`
+* `regression`
+
+Dedicated CI jobs do not currently exist for:
+
+* `ui`
+* `security`
+* `sorting`
+* `navigation`
+* `e2e`
+
+Tests carrying those markers are still included in complete full-suite CI execution.
+
+Dedicated CI execution and marker semantics are separate concerns:
+
+* markers define test intent and selectable suites
+* CI determines which marker expressions receive dedicated workflow jobs
+
 ## E2E Architecture
 
 The E2E suite represents independent checkpoints that collectively form the primary purchase journey.
@@ -830,6 +900,10 @@ pytest -m e2e -v
 
 to execute a logical purchase-journey checkpoint suite while keeping individual tests isolated.
 
+E2E does not currently have a dedicated GitHub Actions job.
+
+E2E tests remain part of the complete unfiltered full-suite CI execution.
+
 ## Local And CI Execution Architecture
 
 Local execution supports both:
@@ -855,9 +929,117 @@ pytest -m navigation -v
 pytest -m e2e -v
 ```
 
-Current GitHub Actions CI executes the complete Pytest suite rather than separate marker-based jobs.
+### Current Phase 4B CI Architecture
 
-Marker-based CI separation remains future work until explicitly implemented and validated.
+GitHub Actions separates code-quality validation from browser-test execution.
+
+Current job structure:
+
+```text
+quality
+├── smoke
+├── regression
+└── full-suite
+```
+
+The `quality` job executes first and validates:
+
+* Ruff
+* Black
+* isort
+
+The quality job does not install Playwright Chromium.
+
+Smoke, Regression, and full-suite declare:
+
+```yaml
+needs: quality
+```
+
+After successful quality validation, the three browser jobs are independently executable and do not depend on each other.
+
+### Smoke CI Execution
+
+Smoke executes the approved Smoke marker suite:
+
+```bash
+pytest -m smoke -v
+```
+
+The actual CI command also generates a self-contained pytest HTML report.
+
+### Regression CI Execution
+
+Regression executes the approved Regression marker suite:
+
+```bash
+pytest -m regression -v
+```
+
+The actual CI command also generates a self-contained pytest HTML report.
+
+### Full-Suite CI Execution
+
+The full-suite job executes the complete unfiltered Pytest suite:
+
+```bash
+pytest -v
+```
+
+The full-suite job remains the complete automated regression gate.
+
+Smoke and Regression provide dedicated targeted feedback without replacing full-suite execution.
+
+### Browser Execution
+
+Playwright Chromium is installed only in browser-test jobs:
+
+* Smoke
+* Regression
+* full-suite
+
+The quality job does not prepare a browser environment.
+
+### CI Artifacts
+
+Each browser job generates its own pytest HTML report and uses non-conflicting GitHub Actions artifact names.
+
+Artifact uploads use `if: always()` so available runtime evidence can still be published when an executing browser-test command fails.
+
+Detailed CI commands, triggers, report paths, artifact names, and retention are documented in:
+
+```text
+docs/ci-cd-pipeline.md
+```
+
+## CI Execution Boundaries
+
+The current CI architecture represents Phase 4B.
+
+Phase 4B includes:
+
+* separate code-quality validation
+* dedicated Smoke CI execution
+* dedicated Regression CI execution
+* complete full-suite CI execution
+* explicit quality-gate dependencies
+* job-specific reports and artifacts
+
+The independent browser jobs may be scheduled concurrently by GitHub Actions after `quality` succeeds.
+
+This does not mean Pytest itself executes tests in parallel.
+
+Parallel Pytest execution with `pytest-xdist` is not currently implemented and belongs to Phase 4C.
+
+Advanced Allure reporting is not currently implemented and belongs to Phase 4D.
+
+The current reporting architecture uses:
+
+* `pytest-html`
+* screenshots on failure
+* GitHub Actions artifacts
+
+Runtime environment configuration and other later framework maturity capabilities are also outside the current Phase 4B architecture.
 
 ## Design Direction
 
@@ -872,7 +1054,9 @@ The framework follows a modular architecture where:
 * fixtures prepare deterministic reusable state
 * manual test cases define documented scenario coverage
 * markers organize selective test suites
-* CI validates the full automated suite
+* CI validates code quality before browser execution
+* CI provides dedicated Smoke and Regression feedback
+* CI preserves complete full-suite regression validation
 * documentation describes implemented framework behavior
 
 Future framework maturity work may improve:
@@ -882,8 +1066,9 @@ Future framework maturity work may improve:
 * logging
 * diagnostics
 * reporting
-* CI execution strategy
 * parallel execution
+
+Phase 4C parallel execution and Phase 4D Allure reporting are not part of the current implementation.
 
 Future API, cross-browser, Docker, Selenium, or Jenkins extensions remain separate from the current architecture.
 
@@ -901,7 +1086,9 @@ The framework should prioritize:
 * traceability
 * explicit marker semantics
 * selective local validation
-* full-suite CI validation
+* dedicated Smoke and Regression CI feedback
+* complete full-suite CI validation
+* staged quality-gate execution
 * incremental framework growth
 
 The framework should avoid:
@@ -916,6 +1103,8 @@ The framework should avoid:
 * moving authenticated shared behavior out of `AppPage`
 * treating every Playwright test as automatically belonging to `ui`
 * assigning Regression mechanically to every non-Smoke test
+* treating CI job-level concurrency as Pytest parallel execution
+* describing Allure as active reporting before Phase 4D
 * describing future framework capabilities as already implemented
 
 ## Current Architecture Status
@@ -947,13 +1136,33 @@ Current architecture capabilities include:
 * Navigation execution
 * independent E2E checkpoint execution
 * local selective validation
-* full-suite CI validation
+* separate CI code-quality validation
+* dedicated Smoke CI execution
+* dedicated Regression CI execution
+* complete full-suite CI validation
 * HTML reporting
 * screenshot capture
-* CI artifacts
+* job-specific CI artifacts
+
+Current CI architecture:
+
+```text
+quality
+├── smoke
+├── regression
+└── full-suite
+```
+
+The `quality` job is the prerequisite gate.
+
+Smoke, Regression, and full-suite are independent browser jobs after successful quality validation.
+
+UI, Security, Sorting, Navigation, and E2E do not currently have dedicated CI jobs but remain selectively executable locally and participate in complete full-suite execution.
+
+Parallel Pytest execution and advanced Allure reporting are not currently implemented.
 
 The `main` branch represents the stable portfolio version of the project.
 
 The `develop` branch and active workstream branches may contain newer validated changes before promotion.
 
-The next approved architecture direction remains Phase 4 Framework Maturity.
+The current architecture direction remains Phase 4 Framework Maturity, with Phase 4B CI Execution Strategy implemented and later maturity capabilities kept separate until their approved tasks are completed.

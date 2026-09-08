@@ -2,7 +2,7 @@
 
 This document describes the repository structure and the responsibility of each major directory and configuration file.
 
-The framework is structured to support maintainable Playwright UI automation, Page Object Model components, shared framework utilities, centralized test data, reusable pytest fixtures, marker-based test organization, reporting, documentation, CI execution, and future framework expansion.
+The framework is structured to support maintainable Playwright UI automation, Page Object Model components, shared framework utilities, centralized test data, reusable pytest fixtures, marker-based test organization, reporting, documentation, staged CI execution, and future framework expansion.
 
 The `main` branch represents the stable portfolio version of the project, while `develop` and active workstream branches may contain newer validated changes before promotion.
 
@@ -45,23 +45,56 @@ Contains GitHub Actions workflow definitions.
 Current responsibilities:
 
 * repository checkout
-* Python setup
+* Python 3.12 setup
 * dependency installation
-* Playwright Chromium installation
+* separate code-quality validation
 * Ruff validation
 * Black validation
 * isort validation
-* full Pytest suite execution
+* dedicated Smoke browser-test execution
+* dedicated Regression browser-test execution
+* complete unfiltered full-suite execution
+* Playwright Chromium installation for browser-test jobs
 * HTML report generation
-* artifact upload
+* job-specific artifact upload
 * validation for `develop`
 * validation for `main`
 * Pull Request validation
 * manual workflow execution
 
-The current CI pipeline executes the complete automated test suite.
+Current Phase 4B job structure:
 
-Separate marker-based CI jobs are not currently implemented.
+```text
+quality
+├── smoke
+├── regression
+└── full-suite
+```
+
+The `quality` job executes first.
+
+Smoke, Regression, and full-suite depend on successful quality validation and do not depend on each other.
+
+Dedicated CI jobs currently exist for:
+
+* Smoke
+* Regression
+
+Dedicated CI jobs do not currently exist for:
+
+* UI
+* Security
+* Sorting
+* Navigation
+* E2E
+
+Tests carrying those markers remain part of the complete unfiltered full-suite CI execution.
+
+Detailed CI behavior is documented in:
+
+```text
+docs/ci-cd-pipeline.md
+```
 
 ### `config/`
 
@@ -76,6 +109,8 @@ Potential future responsibilities include:
 * environment profiles
 
 This directory remains intentionally minimal until approved framework maturity scope requires expansion.
+
+Runtime environment configuration is not part of the current Phase 4B implementation.
 
 ### `docs/`
 
@@ -100,6 +135,7 @@ Documentation should:
 * reflect current implemented behavior
 * match actual pytest marker configuration
 * distinguish implemented functionality from planned functionality
+* distinguish dedicated CI marker jobs from selectively executable local suites
 * avoid documenting future CI capabilities as already implemented
 * remain synchronized with relevant framework changes
 
@@ -354,6 +390,22 @@ They are intended for:
 * execution evidence
 * CI artifact publishing
 
+Current CI browser jobs generate separate report outputs for:
+
+* Smoke
+* Regression
+* full-suite
+
+Current report files include:
+
+```text
+reports/smoke-report.html
+reports/regression-report.html
+reports/report.html
+```
+
+Detailed artifact names and retention behavior are documented in `docs/ci-cd-pipeline.md`.
+
 ### `resources/`
 
 Reserved for static resources and supporting files.
@@ -573,6 +625,12 @@ Contains locked dependency versions for reproducible:
 * local setup
 * CI installation
 
+The presence of future-use dependencies such as `pytest-xdist` or `allure-pytest` does not mean those capabilities are currently active.
+
+Pytest-level parallel execution belongs to Phase 4C.
+
+Advanced Allure reporting belongs to Phase 4D.
+
 ## Current Page-Level Test Suite Structure
 
 The project follows one manual test case file and one automated test module per covered page area.
@@ -592,8 +650,14 @@ explicit pytest markers and parametrization
         ↓
 selective local execution
         ↓
-full-suite CI validation
+CI execution
 ```
+
+Depending on marker assignment, Login tests may participate in:
+
+* dedicated Smoke CI execution
+* dedicated Regression CI execution
+* complete full-suite CI execution
 
 ### Inventory
 
@@ -612,8 +676,14 @@ explicit pytest markers and parametrization
         ↓
 selective local execution
         ↓
-full-suite CI validation
+CI execution
 ```
+
+Depending on marker assignment, Inventory tests may participate in:
+
+* dedicated Smoke CI execution
+* dedicated Regression CI execution
+* complete full-suite CI execution
 
 ### Product Details
 
@@ -632,8 +702,14 @@ explicit pytest markers and parametrization
         ↓
 selective local execution
         ↓
-full-suite CI validation
+CI execution
 ```
+
+Depending on marker assignment, Product Details tests may participate in:
+
+* dedicated Smoke CI execution
+* dedicated Regression CI execution
+* complete full-suite CI execution
 
 ### Cart
 
@@ -656,8 +732,14 @@ explicit pytest markers and parametrization
         ↓
 selective local execution
         ↓
-full-suite CI validation
+CI execution
 ```
+
+Depending on marker assignment, Cart tests may participate in:
+
+* dedicated Smoke CI execution
+* dedicated Regression CI execution
+* complete full-suite CI execution
 
 ### Checkout
 
@@ -681,8 +763,14 @@ explicit pytest markers and parametrization
         ↓
 selective local execution
         ↓
-full-suite CI validation
+CI execution
 ```
+
+Depending on marker assignment, Checkout tests may participate in:
+
+* dedicated Smoke CI execution
+* dedicated Regression CI execution
+* complete full-suite CI execution
 
 ## Login Test Suite Structure
 
@@ -851,6 +939,15 @@ pytest -m navigation -v
 pytest -m e2e -v
 ```
 
+Dedicated CI jobs currently exist for:
+
+* Smoke
+* Regression
+
+UI, Security, Sorting, Navigation, and E2E remain selectively executable locally without dedicated CI jobs.
+
+Tests carrying these markers remain included in complete full-suite CI execution.
+
 Detailed marker strategy is documented in:
 
 ```text
@@ -895,6 +992,10 @@ Run the suite with:
 pytest -m e2e -v
 ```
 
+E2E does not currently have a dedicated CI job.
+
+Its tests remain part of the complete full-suite CI execution.
+
 ## Local And CI Execution Structure
 
 Local validation supports:
@@ -913,16 +1014,147 @@ isort . --check-only
 pytest -v
 ```
 
-The current GitHub Actions pipeline executes:
+### Current Phase 4B CI Structure
 
+The current GitHub Actions pipeline uses four jobs:
+
+```text
+quality
+├── smoke
+├── regression
+└── full-suite
+```
+
+The `quality` job performs:
+
+* repository checkout
+* Python 3.12 setup
+* dependency installation
 * Ruff
 * Black
 * isort
-* the complete Pytest suite
-* HTML reporting
-* artifact upload
 
-Current CI does not use separate marker-based jobs.
+The quality job does not install Playwright Chromium.
+
+A failure in the quality job prevents browser-test execution.
+
+The following jobs depend on successful `quality` validation:
+
+* `smoke`
+* `regression`
+* `full-suite`
+
+These three jobs do not depend on each other.
+
+### Smoke CI Execution
+
+The Smoke job installs Chromium and runs the approved Smoke suite.
+
+Core command:
+
+```bash
+pytest -m smoke -v
+```
+
+The CI command also generates:
+
+```text
+reports/smoke-report.html
+```
+
+### Regression CI Execution
+
+The Regression job installs Chromium and runs the approved Regression suite.
+
+Core command:
+
+```bash
+pytest -m regression -v
+```
+
+The CI command also generates:
+
+```text
+reports/regression-report.html
+```
+
+### Full-Suite CI Execution
+
+The full-suite job installs Chromium and executes the complete unfiltered test suite.
+
+Core command:
+
+```bash
+pytest -v
+```
+
+The CI command also generates:
+
+```text
+reports/report.html
+```
+
+The full-suite job remains the complete automated regression gate.
+
+### CI Artifacts
+
+Browser jobs use non-conflicting artifact names.
+
+Smoke:
+
+```text
+smoke-pytest-html-report
+smoke-test-artifacts
+```
+
+Regression:
+
+```text
+regression-pytest-html-report
+regression-test-artifacts
+```
+
+Full-suite:
+
+```text
+pytest-html-report
+test-artifacts
+```
+
+Artifact upload steps use `if: always()` so available reports and runtime outputs can still be published when an executing browser-test command fails.
+
+Detailed CI behavior is documented in:
+
+```text
+docs/ci-cd-pipeline.md
+```
+
+## Current Phase Boundaries
+
+The current CI execution structure belongs to Phase 4B.
+
+Implemented Phase 4B capabilities include:
+
+* separate code-quality validation
+* dedicated Smoke CI execution
+* dedicated Regression CI execution
+* complete full-suite CI execution
+* explicit quality-gate dependencies
+* job-specific reports and artifacts
+
+Smoke, Regression, and full-suite may be scheduled concurrently by GitHub Actions after `quality` succeeds.
+
+This is job-level CI scheduling and is not Pytest-level parallel execution.
+
+Parallel Pytest execution using `pytest-xdist` belongs to Phase 4C and is not currently implemented.
+
+Advanced Allure reporting belongs to Phase 4D and is not currently implemented.
+
+Current reporting uses:
+
+* pytest-html
+* screenshots on failure
+* GitHub Actions artifacts
 
 ## Architecture Goals
 
@@ -941,7 +1173,10 @@ The project structure is designed to support:
 * test independence
 * explicit marker semantics
 * selective local suite execution
-* full-suite CI validation
+* dedicated Smoke CI feedback
+* dedicated Regression CI feedback
+* complete full-suite CI validation
+* staged CI quality gating
 * test case traceability
 * stable portfolio promotion
 
@@ -982,14 +1217,30 @@ Implemented structure includes:
 * Navigation suite execution
 * independent E2E checkpoint execution
 * local quality checks
-* full-suite CI validation
+* separate CI quality validation
+* dedicated Smoke CI execution
+* dedicated Regression CI execution
+* complete full-suite CI validation
 * HTML reporting
 * screenshot capture on failure
-* CI artifacts
+* job-specific CI artifacts
 
 The `main` branch represents the stable portfolio version of the framework.
 
 The `develop` branch and active workstream branches may contain newer validated changes before promotion.
+
+Current Phase 4B CI structure:
+
+```text
+quality
+├── smoke
+├── regression
+└── full-suite
+```
+
+UI, Security, Sorting, Navigation, and E2E do not currently have dedicated CI jobs.
+
+Parallel Pytest execution, advanced Allure reporting, runtime environment configuration, API testing, and cross-browser execution remain outside the current Phase 4B implementation.
 
 Future improvements may include:
 
@@ -997,8 +1248,8 @@ Future improvements may include:
 * environment configuration
 * logging and diagnostics
 * reporting improvements
-* CI execution improvements
-* parallel execution
+* Phase 4C parallel execution
+* Phase 4D Allure reporting
 * API testing structure
 * cross-browser execution
 * Selenium comparison

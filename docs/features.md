@@ -8,7 +8,7 @@ The implemented feature set reflects the current framework state on the active d
 
 The current implemented scope focuses on UI automation with Playwright and Pytest.
 
-API testing, Selenium comparison, Docker-based execution, Jenkins integration, cross-browser execution, parallel execution, and advanced reporting remain future extensions unless explicitly described as implemented below.
+API testing, Selenium comparison, Docker-based execution, Jenkins integration, cross-browser execution, Pytest-level parallel execution, and advanced reporting remain future extensions unless explicitly described as implemented below.
 
 ## Currently Implemented
 
@@ -20,8 +20,10 @@ API testing, Selenium comparison, Docker-based execution, Jenkins integration, c
 * centralized pytest configuration
 * strict pytest marker validation
 * marker-based selective local execution
-* full automated test suite execution
-* full automated test suite execution in CI
+* dedicated Smoke CI execution
+* dedicated Regression CI execution
+* complete full automated test suite execution
+* complete full automated test suite execution in CI
 
 Current executable pytest markers:
 
@@ -308,6 +310,10 @@ Run the suite with:
 pytest -m e2e -v
 ```
 
+E2E does not currently have a dedicated CI job.
+
+Its tests still participate in complete full-suite CI execution.
+
 ### Test Organization
 
 Current test organization includes:
@@ -390,6 +396,7 @@ Current code quality capabilities include:
 * isort import validation
 * pre-commit local quality hooks
 * local full-suite validation
+* dedicated CI quality validation
 * CI quality gates
 
 Standard local validation:
@@ -403,7 +410,7 @@ pytest -v
 
 ### Selective Marker Validation
 
-Current local marker execution includes:
+All current marker suites remain available for selective local execution:
 
 ```bash
 pytest -m smoke -v
@@ -424,7 +431,11 @@ pytest -m "smoke and navigation" -v
 pytest -m "regression and navigation" -v
 ```
 
-Marker suites are primarily intended for selective local validation.
+Smoke and Regression additionally have dedicated GitHub Actions CI jobs.
+
+UI, Security, Sorting, Navigation, and E2E remain selectively executable without dedicated CI jobs.
+
+Tests assigned to those markers still run through complete full-suite CI execution.
 
 ### CI/CD
 
@@ -434,14 +445,18 @@ Current CI capabilities include:
 * automated repository checkout
 * Python 3.12 setup
 * dependency installation
-* Playwright Chromium installation
+* separate code-quality validation
 * Ruff validation
 * Black validation
 * isort validation
-* full Pytest execution
+* dedicated Smoke browser-test execution
+* dedicated Regression browser-test execution
+* complete unfiltered full-suite execution
+* Playwright Chromium installation in browser-test jobs
 * pytest HTML report generation
-* report artifact upload
-* debugging artifact upload
+* Smoke-specific report and artifact upload
+* Regression-specific report and artifact upload
+* full-suite report and artifact upload
 * explicit artifact retention
 * CI execution on pushes to `main`
 * CI execution on pushes to `develop`
@@ -450,9 +465,56 @@ Current CI capabilities include:
 * manual execution through `workflow_dispatch`
 * minimal workflow permissions using `contents: read`
 
-The current CI pipeline executes the complete automated test suite.
+Current CI job structure:
 
-Separate marker-based CI jobs are not currently implemented.
+```text
+quality
+├── smoke
+├── regression
+└── full-suite
+```
+
+The `quality` job runs first.
+
+It validates:
+
+```bash
+ruff check .
+black --check .
+isort . --check-only
+```
+
+The quality job does not install Playwright Chromium.
+
+Smoke, Regression, and full-suite depend on successful quality validation and do not depend on each other.
+
+The dedicated Smoke job executes:
+
+```bash
+pytest -m smoke -v
+```
+
+The dedicated Regression job executes:
+
+```bash
+pytest -m regression -v
+```
+
+The full-suite job executes the complete unfiltered test collection:
+
+```bash
+pytest -v
+```
+
+The full-suite job remains the complete CI regression gate.
+
+The following marker suites do not currently have dedicated CI jobs:
+
+* UI
+* Security
+* Sorting
+* Navigation
+* E2E
 
 ### Reporting And Debugging
 
@@ -463,8 +525,31 @@ Current reporting and debugging support includes:
 * self-contained HTML reports in CI
 * screenshots on test failure
 * `reports/` runtime output directory
-* GitHub Actions artifact upload
+* job-specific GitHub Actions artifact upload
 * downloadable CI execution artifacts
+
+Current Smoke artifact names:
+
+```text
+smoke-pytest-html-report
+smoke-test-artifacts
+```
+
+Current Regression artifact names:
+
+```text
+regression-pytest-html-report
+regression-test-artifacts
+```
+
+Current full-suite artifact names:
+
+```text
+pytest-html-report
+test-artifacts
+```
+
+Artifact upload steps use `if: always()` so available browser-test outputs can still be published when an executing test command fails.
 
 Generated runtime outputs are not intended to be committed to Git.
 
@@ -497,10 +582,16 @@ automated test
       ↓
 pytest markers
       ↓
-selective local suite execution
+selective suite execution
       ↓
-full-suite CI validation
+CI execution
 ```
+
+Depending on marker assignment, automated tests may participate in:
+
+* dedicated Smoke CI execution
+* dedicated Regression CI execution
+* complete full-suite CI execution
 
 ## Planned Features
 
@@ -532,17 +623,16 @@ Potential future automation areas include:
 
 Possible future improvements include:
 
-* marker-based CI job separation
-* dedicated Smoke CI execution
-* dedicated Regression CI execution
 * additional suite-specific CI execution where justified
-* parallel execution
+* Pytest-level parallel execution
 * expanded traceability
 * additional parametrized scenarios where useful
 
-The current normalized marker strategy is already implemented locally.
+The current normalized marker strategy is implemented.
 
-Future work should improve CI execution and scalability rather than reintroduce obsolete marker categories.
+Dedicated Smoke and Regression CI execution is also implemented.
+
+Future work should improve execution scalability and feedback without reintroducing obsolete marker categories.
 
 ### Reporting And Diagnostics
 
@@ -556,22 +646,24 @@ Possible future improvements include:
 * execution analytics
 * JUnit XML output
 
+Advanced Allure reporting is not currently implemented.
+
 ### CI/CD Improvements
 
 Possible future CI improvements include:
 
 * dependency caching
 * Playwright browser caching
-* separate Smoke execution
-* separate Regression execution
-* selected marker-based jobs
-* parallel execution
+* additional marker-based jobs where justified
+* Phase 4C Pytest-level parallel execution
 * multi-browser execution
 * scheduled regression execution
 * JUnit XML publishing
 * improved reporting integrations
 
-These features are not currently implemented.
+Dedicated Smoke and Regression jobs are already part of the current Phase 4B implementation.
+
+The independent Smoke, Regression, and full-suite GitHub Actions jobs may be scheduled concurrently after `quality`, but this is CI job scheduling rather than Pytest-level parallel execution.
 
 ### API Testing
 
@@ -591,13 +683,27 @@ API testing is not currently implemented and `api` is not a current executable p
 
 `pytest-xdist` is installed for future execution optimization.
 
-Parallel execution is not currently part of the default local or CI workflow.
+Pytest-level parallel execution is not currently part of the default local or CI workflow.
 
 Potential future usage includes:
 
 * faster Regression execution
 * parallel UI execution
 * CI runtime optimization
+
+Parallel execution belongs to future Phase 4C scope and should not be confused with GitHub Actions running independent jobs concurrently.
+
+### Advanced Reporting
+
+`allure-pytest` is installed but Allure reporting is not currently part of the active reporting workflow.
+
+Current reporting uses:
+
+* pytest-html
+* screenshots on failure
+* GitHub Actions artifacts
+
+Advanced Allure reporting belongs to future Phase 4D scope.
 
 ### Cross-Browser Execution
 
@@ -641,14 +747,31 @@ The implemented framework currently demonstrates:
 * Sorting execution
 * Navigation execution
 * independent E2E checkpoint execution
+* selective local marker execution
 * code quality tooling
 * pre-commit validation
 * GitHub Actions CI
-* full-suite CI execution
-* HTML reporting
+* separate CI quality validation
+* dedicated Smoke CI execution
+* dedicated Regression CI execution
+* complete full-suite CI execution
+* pytest HTML reporting
 * screenshots on failure
-* CI artifacts
+* job-specific CI artifacts
 * Git branching workflow
 * technical project documentation
 
-Planned technologies and features should remain clearly separated from this implemented scope until they are approved, implemented, validated, and documented.
+Current Phase 4B CI structure:
+
+```text
+quality
+├── smoke
+├── regression
+└── full-suite
+```
+
+UI, Security, Sorting, Navigation, and E2E do not currently have dedicated CI jobs.
+
+Parallel Pytest execution, advanced Allure reporting, runtime environment configuration, cross-browser execution, and other later framework maturity capabilities remain outside the current implemented Phase 4B scope.
+
+Planned technologies and features should remain clearly separated from the implemented scope until they are approved, implemented, validated, and documented.

@@ -269,11 +269,15 @@ Smoke and Regression are not automatically assigned together.
 
 Representative coverage should normally use Smoke, while expanded or all-cases coverage should normally use Regression.
 
+Both Smoke and Regression are now also executed as dedicated GitHub Actions CI jobs.
+
 ### UI
 
 The `ui` marker is used when visibility, presentation, state, or direct UI behavior is materially validated.
 
 A Playwright test does not automatically require the `ui` marker.
+
+The UI marker does not currently have a dedicated CI job.
 
 ### Security
 
@@ -288,6 +292,8 @@ Current Security coverage includes unauthenticated access attempts to protected 
 * Checkout Overview
 * Checkout Complete
 
+The Security marker does not currently have a dedicated CI job.
+
 ### Sorting
 
 The `sorting` marker identifies product sorting behavior.
@@ -299,6 +305,8 @@ Current sorting coverage includes:
 * product price low to high
 * product price high to low
 
+The Sorting marker does not currently have a dedicated CI job.
+
 ### Navigation
 
 The `navigation` marker identifies meaningful page transitions.
@@ -306,6 +314,8 @@ The `navigation` marker identifies meaningful page transitions.
 The authentication Login → Inventory transition is intentionally excluded from the Navigation suite.
 
 Navigation may be combined with Smoke or Regression depending on whether the scenario is representative or expanded.
+
+The Navigation marker does not currently have a dedicated CI job.
 
 ### End-to-End
 
@@ -324,6 +334,10 @@ Run the complete logical E2E checkpoint suite with:
 ```bash
 pytest -m e2e -v
 ```
+
+The E2E marker does not currently have a dedicated CI job.
+
+Tests carrying UI, Security, Sorting, Navigation, or E2E markers still participate in the complete unfiltered full-suite CI execution.
 
 ## Playwright Assertions
 
@@ -464,31 +478,154 @@ isort . --check-only
 
 GitHub Actions validates the project automatically for the configured workflow triggers.
 
-Current CI checks include:
+The current Phase 4B pipeline separates code-quality validation from browser-test execution.
 
-* Ruff linting
-* Black formatting validation
-* isort import validation
-* full Pytest execution
-* pytest HTML report generation
-* artifact upload for reports and screenshots
+Current job structure:
 
-Current CI quality and test commands include:
+```text
+quality
+├── smoke
+├── regression
+└── full-suite
+```
+
+The `quality` job executes first.
+
+After successful quality validation, Smoke, Regression, and full-suite become independently executable browser jobs.
+
+### Quality Job
+
+The quality job executes:
 
 ```bash
 ruff check .
 black --check .
 isort . --check-only
-pytest -v --html=reports/report.html --self-contained-html
 ```
 
-The current CI pipeline runs the complete automated test suite.
+It also performs repository checkout, Python 3.12 setup, and dependency installation.
 
-It does not currently split execution into separate marker-based jobs.
+The quality job does not install Playwright Chromium.
 
-Marker-based execution is primarily used for selective local validation.
+A failure in the quality job prevents all three browser jobs from starting.
 
-Separate Smoke, Regression, E2E, Security, Navigation, or other marker-based CI jobs should only be described as implemented after the corresponding workflow changes are introduced and validated.
+### Smoke CI Job
+
+The Smoke CI job executes the approved Smoke marker suite.
+
+Core command:
+
+```bash
+pytest -m smoke -v
+```
+
+The current workflow also generates:
+
+```text
+reports/smoke-report.html
+```
+
+and uploads Smoke-specific artifacts.
+
+### Regression CI Job
+
+The Regression CI job executes the approved Regression marker suite.
+
+Core command:
+
+```bash
+pytest -m regression -v
+```
+
+The current workflow also generates:
+
+```text
+reports/regression-report.html
+```
+
+and uploads Regression-specific artifacts.
+
+### Full-Suite CI Job
+
+The full-suite job executes the complete unfiltered test suite.
+
+Core command:
+
+```bash
+pytest -v
+```
+
+The workflow generates:
+
+```text
+reports/report.html
+```
+
+The complete full-suite job remains the primary full regression gate.
+
+Dedicated Smoke and Regression jobs provide additional suite-specific feedback but do not replace full-suite validation.
+
+### CI Marker Coverage
+
+Dedicated CI jobs currently exist for:
+
+* Smoke
+* Regression
+
+Dedicated CI jobs do not currently exist for:
+
+* UI
+* Security
+* Sorting
+* Navigation
+* E2E
+
+These markers remain available for selective local validation.
+
+Tests assigned to them still run through the complete full-suite CI job.
+
+## CI Reports And Artifacts
+
+Current browser-test jobs generate self-contained pytest HTML reports.
+
+Smoke artifacts:
+
+```text
+smoke-pytest-html-report
+smoke-test-artifacts
+```
+
+Regression artifacts:
+
+```text
+regression-pytest-html-report
+regression-test-artifacts
+```
+
+Full-suite artifacts:
+
+```text
+pytest-html-report
+test-artifacts
+```
+
+Artifact upload steps use:
+
+```yaml
+if: always()
+```
+
+This allows available reports and runtime outputs to be uploaded when an executing browser-test command fails.
+
+If the quality job fails, browser jobs are not started and therefore do not generate browser-test artifacts for that workflow run.
+
+Current artifact retention is seven days.
+
+Detailed CI behavior is documented in:
+
+```text
+docs/ci-cd-pipeline.md
+```
 
 ## Quality Gates
 
@@ -534,9 +671,25 @@ The scoped validation should normally be followed by full-suite validation befor
 Before merging a Pull Request:
 
 * GitHub Actions must pass
-* tests must pass
-* configured quality checks must pass
+* Ruff must pass
+* Black validation must pass
+* isort validation must pass
+* required browser-test jobs must pass
+* full-suite validation must pass
 * generated execution artifacts should be available when needed for debugging
+
+The current dependency model means:
+
+```text
+quality
+├── smoke
+├── regression
+└── full-suite
+```
+
+A failed quality job prevents browser execution.
+
+Smoke, Regression, and full-suite do not depend on each other.
 
 ### Portfolio Promotion Quality Gate
 
@@ -562,22 +715,38 @@ Current capabilities include:
 * centralized login, product, and checkout test data
 * parametrized tests
 * normalized marker-based test categorization
-* Smoke suite execution
-* Regression suite execution
-* UI suite execution
-* Security suite execution
-* Sorting suite execution
-* Navigation suite execution
-* independent E2E checkpoint suite execution
+* selective local Smoke execution
+* selective local Regression execution
+* selective local UI execution
+* selective local Security execution
+* selective local Sorting execution
+* selective local Navigation execution
+* independent E2E checkpoint execution
 * screenshot capture on failure
 * local quality validation
-* full-suite CI validation
-* HTML report generation
+* dedicated CI quality validation
+* dedicated Smoke CI execution
+* dedicated Regression CI execution
+* complete full-suite CI validation
+* pytest HTML report generation
 * CI artifact upload
 
-The current CI strategy remains full-suite execution.
+Current CI execution uses the Phase 4B structure:
 
-Marker-based suite separation in CI is not implemented yet.
+```text
+quality
+├── smoke
+├── regression
+└── full-suite
+```
+
+The quality job is the prerequisite gate for browser-test execution.
+
+Smoke and Regression have dedicated CI jobs.
+
+UI, Security, Sorting, Navigation, and E2E remain selectively executable without dedicated CI jobs.
+
+The full-suite job remains the complete unfiltered regression gate.
 
 ## Quality Goals
 
@@ -590,12 +759,37 @@ The project quality tooling supports:
 * consistent import organization
 * reliable Pytest execution
 * selective marker-based local validation
-* reliable CI validation
+* dedicated Smoke CI feedback
+* dedicated Regression CI feedback
+* complete full-suite CI regression protection
+* reliable CI quality gates
 * stable workstream integration
 * professional Pull Request workflow
 * traceability between test cases and automated coverage
 * safe checkpoint validation
 * stable portfolio promotion
+
+## Current Phase Boundaries
+
+The current implemented CI behavior belongs to Phase 4B.
+
+Phase 4B includes:
+
+* separate code-quality validation
+* dedicated Smoke CI execution
+* dedicated Regression CI execution
+* complete full-suite execution
+* job-specific reports and artifacts
+
+Parallel Pytest execution is not currently implemented.
+
+Parallel execution using `pytest-xdist` belongs to Phase 4C.
+
+Advanced Allure reporting is not currently implemented.
+
+Allure reporting belongs to Phase 4D.
+
+The presence of `pytest-xdist` or `allure-pytest` in project dependencies must not be treated as evidence that these capabilities are active in the current validation workflow.
 
 ## Future Improvements
 
@@ -607,8 +801,8 @@ Possible future quality tooling improvements include:
 * JUnit XML output
 * refined pre-commit configuration
 * stronger failure diagnostics
-* separate marker-based CI jobs
-* parallel test execution
-* Allure reporting integration
+* Phase 4C parallel test execution
+* Phase 4D Allure reporting integration
+* additional CI execution improvements where justified
 
 Future improvements should not be described as implemented until the corresponding project work is completed and validated.

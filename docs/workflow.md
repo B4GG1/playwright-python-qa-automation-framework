@@ -6,6 +6,8 @@ For detailed branching rules, see: [Git Branching Strategy](git-branching-strate
 
 For detailed test categorization and pytest marker semantics, see: [Testing Strategy](testing-strategy.md).
 
+For detailed GitHub Actions execution, job dependencies, reports, and artifacts, see: [CI/CD Pipeline](ci-cd-pipeline.md).
+
 The workflow described below supports two branch roles:
 
 * `develop` is the main integration branch for completed and validated work.
@@ -73,7 +75,9 @@ For small independent tasks, the recommended workflow is:
 10. Merge using Squash and merge after validation.
 11. Update local `develop`.
 
-The standard task workflow should not target `main` directly. Regular implementation work should flow through `develop` first.
+The standard task workflow should not target `main` directly.
+
+Regular implementation work should flow through `develop` first.
 
 ## Workstream Workflow
 
@@ -197,7 +201,7 @@ pytest -v
 
 ### Marker-Based Validation
 
-Pytest markers support selective local validation.
+Pytest markers support selective validation.
 
 Current executable marker suites are:
 
@@ -210,6 +214,20 @@ pytest -m sorting -v
 pytest -m navigation -v
 pytest -m e2e -v
 ```
+
+All marker suites remain available for local execution.
+
+The current Phase 4B CI pipeline additionally executes dedicated Smoke and Regression jobs.
+
+The following markers do not currently have dedicated CI jobs and remain selectively executable locally when useful:
+
+* `ui`
+* `security`
+* `sorting`
+* `navigation`
+* `e2e`
+
+Tests carrying these markers are still included in the complete unfiltered full-suite CI execution.
 
 Markers describe different dimensions of test intent and may be combined where useful.
 
@@ -230,7 +248,9 @@ Example:
 pytest tests/test_checkout_page.py -m e2e -v
 ```
 
-The `e2e` suite represents independent checkpoint tests that collectively form the primary purchase journey. Tests do not depend on shared state or execution order.
+The `e2e` suite represents independent checkpoint tests that collectively form the primary purchase journey.
+
+Tests do not depend on shared state or execution order.
 
 Detailed marker meanings and assignment rules are documented in [Testing Strategy](testing-strategy.md).
 
@@ -253,6 +273,8 @@ Additional marker-based validation should be selected according to the changed b
 Examples:
 
 ```bash
+pytest -m smoke -v
+pytest -m regression -v
 pytest -m security -v
 pytest -m sorting -v
 pytest -m navigation -v
@@ -388,7 +410,9 @@ Recommended portfolio promotion workflow:
 10. Update local `main` and `develop`.
 11. Continue future work from `develop`.
 
-Portfolio promotion should not introduce unrelated new implementation scope. It should promote a stable, already validated snapshot.
+Portfolio promotion should not introduce unrelated new implementation scope.
+
+It should promote a stable, already validated snapshot.
 
 Recommended promotion Pull Request title:
 
@@ -419,28 +443,191 @@ GitHub Actions validates changes on:
 
 * push to `main`
 * push to `develop`
-* pull requests targeting `main`
-* pull requests targeting `develop`
-* manual workflow dispatch
+* Pull Requests targeting `main`
+* Pull Requests targeting `develop`
+* manual workflow execution through `workflow_dispatch`
 
-The CI pipeline validates:
+Regular pushes to feature, refactor, fix, or documentation branches do not automatically start the workflow unless a Pull Request targets `main` or `develop`, or the workflow is started manually.
+
+### Current Phase 4B CI Structure
+
+The current GitHub Actions workflow contains four jobs:
+
+```text
+quality
+├── smoke
+├── regression
+└── full-suite
+```
+
+The `quality` job executes first.
+
+After it succeeds, the following browser-test jobs become independently executable:
+
+* `smoke`
+* `regression`
+* `full-suite`
+
+These three jobs do not depend on each other.
+
+### Quality Job
+
+The `quality` job validates:
 
 * dependency installation
-* Playwright browser installation
 * Ruff linting
-* Black formatting validation
-* isort import sorting validation
-* full Pytest test execution
-* HTML report generation
-* artifact upload
+* Black formatting
+* isort import sorting
 
-The current CI pipeline executes the full pytest suite rather than separate marker-based jobs.
+Current commands:
 
-Marker-based commands documented in this workflow are intended for selective local validation. Separate marker-based CI jobs should only be documented as implemented after the corresponding CI changes are completed.
+```bash
+ruff check .
+black --check .
+isort . --check-only
+```
 
-A Pull Request should not be merged if CI fails.
+The quality job does not install Playwright Chromium.
+
+A failure in the quality job prevents Smoke, Regression, and full-suite browser execution.
+
+### Smoke Job
+
+The dedicated Smoke CI job executes the approved Smoke marker suite.
+
+Marker command:
+
+```bash
+pytest -m smoke -v
+```
+
+The CI implementation also generates a self-contained HTML report and uploads Smoke-specific artifacts.
+
+### Regression Job
+
+The dedicated Regression CI job executes the approved Regression marker suite.
+
+Marker command:
+
+```bash
+pytest -m regression -v
+```
+
+The CI implementation also generates a self-contained HTML report and uploads Regression-specific artifacts.
+
+### Full-Suite Job
+
+The full-suite job remains the complete CI regression gate.
+
+Its test execution is intentionally not filtered by markers.
+
+Core command:
+
+```bash
+pytest -v
+```
+
+The CI implementation generates a self-contained HTML report and uploads the complete available `reports/` directory.
+
+The dedicated Smoke and Regression jobs supplement the complete full-suite gate rather than replacing it.
+
+### Browser Setup
+
+Playwright Chromium is installed only in:
+
+* `smoke`
+* `regression`
+* `full-suite`
+
+Current browser installation command:
+
+```bash
+playwright install --with-deps chromium
+```
+
+The `quality` job does not require browser installation.
+
+### CI Marker Responsibility
+
+Dedicated CI jobs currently exist for:
+
+* Smoke
+* Regression
+
+Dedicated CI jobs do not currently exist for:
+
+* UI
+* Security
+* Sorting
+* Navigation
+* E2E
+
+These marker suites remain available for selective local execution.
+
+Their tests still participate in full-suite CI execution as part of the normal collected test suite.
+
+### Reports And Artifacts
+
+Current browser jobs generate self-contained pytest HTML reports.
+
+Artifact names are separated between jobs to avoid conflicts.
+
+Smoke artifacts:
+
+```text
+smoke-pytest-html-report
+smoke-test-artifacts
+```
+
+Regression artifacts:
+
+```text
+regression-pytest-html-report
+regression-test-artifacts
+```
+
+Full-suite artifacts:
+
+```text
+pytest-html-report
+test-artifacts
+```
+
+Artifact upload steps use `if: always()` so available reports and runtime outputs can still be uploaded when a browser-test command fails.
+
+Detailed artifact paths, retention, and job behavior are documented in [CI/CD Pipeline](ci-cd-pipeline.md).
+
+### CI Failure Behavior
+
+A Pull Request should not be merged if required CI validation fails.
+
+Current quality-gate behavior includes:
+
+* Ruff failure fails CI
+* Black failure fails CI
+* isort failure fails CI
+* failed `quality` prevents browser jobs from starting
+* Smoke failure fails the Smoke job
+* Regression failure fails the Regression job
+* full-suite failure fails the full-suite job
+
+The workflow does not convert required test or quality failures into successful results.
 
 This applies both to regular Pull Requests into `develop` and portfolio promotion Pull Requests into `main`.
+
+### Current And Future Execution Scope
+
+The current implementation represents Phase 4B CI Execution Strategy.
+
+The independent Smoke, Regression, and full-suite GitHub Actions jobs may be scheduled concurrently after `quality`.
+
+This is CI job-level execution and is not Pytest-level parallel test execution.
+
+Parallel execution using `pytest-xdist` belongs to Phase 4C and is not currently implemented.
+
+Advanced Allure reporting belongs to Phase 4D and is not currently part of the active CI workflow.
+
+The current reporting implementation uses pytest-html, screenshots when generated, and GitHub Actions artifacts.
 
 ## Merge Strategy
 
@@ -593,11 +780,20 @@ When pytest marker behavior changes, verify that:
 * `docs/testing-strategy.md` describes the current marker semantics
 * workflow and README commands do not reference removed markers
 
+When CI execution behavior changes, verify that:
+
+* `.github/workflows/ci.yml` remains the implementation source of truth
+* `docs/ci-cd-pipeline.md` reflects current jobs, dependencies, reports, artifacts, and triggers
+* `docs/workflow.md` reflects current local and CI responsibilities
+* README remains concise and points to detailed CI documentation
+* marker suites executed in dedicated CI jobs are distinguished from locally selective marker suites
+* future Phase 4 capabilities are not described as already implemented
+
 For portfolio promotion, documentation should also be checked for:
 
 * stale workstream-finalization wording
 * stale PR-readiness wording
-* statements that suggest completed Phase 3 work exists only on `develop`
+* statements that suggest completed work exists only on `develop`
 * implemented features mixed with planned future extensions
 * missing distinction between `main` as the stable portfolio branch and `develop` as the integration branch
 
@@ -607,9 +803,24 @@ The current workflow supports completed Phase 3 page-level automation coverage f
 
 Phase 3 page-level automation coverage has been completed, reviewed, validated, squash-merged into `develop`, and promoted to `main` as the stable Phase 3 portfolio snapshot.
 
-The `main` branch represents the polished portfolio version of the project. The `develop` branch remains the integration branch and may contain newer work after this document is read from `main`.
+Phase 4A established the current executable Pytest marker strategy.
 
-Future work should continue from `develop` unless a specific portfolio promotion or release task targets `main`.
+Phase 4B CI Execution Strategy is implemented with:
+
+* a dedicated `quality` job
+* dedicated Smoke CI execution
+* dedicated Regression CI execution
+* a complete unfiltered `full-suite` job
+* quality-gate dependencies before browser execution
+* separate HTML reports and artifacts for browser-test jobs
+
+The `main` branch represents the polished portfolio version of the project.
+
+The `develop` branch remains the integration branch and may contain newer work after this document is read from `main`.
+
+Future framework maturity work should continue from `develop` unless a specific portfolio promotion or release task targets `main`.
+
+Phase 4C parallel execution and Phase 4D Allure reporting are not part of the current implementation.
 
 ## Summary
 
@@ -619,10 +830,15 @@ It supports:
 
 * clean Git history
 * professional Pull Request workflow
-* reliable CI validation
+* reliable CI quality validation
+* dedicated Smoke CI execution
+* dedicated Regression CI execution
+* complete full-suite CI validation
 * selective local marker-based validation
 * readable project evolution
 * safe workstream integration
 * controlled portfolio promotion to `main`
 * phase-based project management
 * portfolio-ready repository standards
+
+Detailed current CI implementation is documented in [CI/CD Pipeline](ci-cd-pipeline.md).

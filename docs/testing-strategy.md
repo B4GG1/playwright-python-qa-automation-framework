@@ -4,7 +4,9 @@ This document defines the testing approach for the QA automation framework.
 
 The current focus is UI automation testing for the Sauce Demo application using Playwright and Pytest. The project follows an iterative testing strategy: manual test design is created before or alongside automation, selected scenarios are automated, and repeated interactions are gradually refactored into reusable framework components.
 
-The strategy documented here reflects the current implemented test structure and normalized pytest marker behavior. The `main` branch represents the stable portfolio version, while `develop` and active workstream branches may contain newer validated changes before they are promoted to `main`.
+The strategy documented here reflects the current implemented test structure, normalized pytest marker behavior, and Phase 4B CI execution strategy.
+
+The `main` branch represents the stable portfolio version, while `develop` and active workstream branches may contain newer validated changes before they are promoted to `main`.
 
 ## System Under Test
 
@@ -29,9 +31,10 @@ The project follows a progressive testing approach:
 10. Use parametrization for repeated data-driven scenarios.
 11. Categorize tests with explicit pytest markers.
 12. Validate relevant marker suites and test modules locally.
-13. Validate the full test suite locally and in CI when required.
-14. Update test case and project documentation when coverage or strategy changes.
-15. Promote stable validated snapshots from `develop` to `main` when they are ready for portfolio presentation.
+13. Validate the complete test suite locally when required.
+14. Validate code quality and automated suites through GitHub Actions.
+15. Update test case and project documentation when coverage or strategy changes.
+16. Promote stable validated snapshots from `develop` to `main` when they are ready for portfolio presentation.
 
 This approach supports both QA thinking and automation engineering practice.
 
@@ -79,7 +82,9 @@ Current test case identifiers include:
 
 These identifiers are also used in parametrized pytest output where practical.
 
-A documented test case may be marked as `Planned` before dedicated automation is implemented. The corresponding test case file remains the authoritative source for individual automation status.
+A documented test case may be marked as `Planned` before dedicated automation is implemented.
+
+The corresponding test case file remains the authoritative source for individual automation status.
 
 ## Current Automated Test Modules
 
@@ -96,7 +101,7 @@ tests/test_checkout_page.py
 Each automated test module maps to the corresponding manual test case file:
 
 | Automated Test Module                | Manual Test Case File                | Documented Test Case Range     |
-|--------------------------------------|--------------------------------------|--------------------------------|
+| ------------------------------------ | ------------------------------------ | ------------------------------ |
 | `tests/test_login_page.py`           | `test_cases/login-page.md`           | `TC-LOGIN-001`–`019`           |
 | `tests/test_inventory_page.py`       | `test_cases/inventory-page.md`       | `TC-INVENTORY-001`–`022`       |
 | `tests/test_product_details_page.py` | `test_cases/product-details-page.md` | `TC-PRODUCT-DETAILS-001`–`015` |
@@ -113,7 +118,7 @@ The current automated test coverage focuses on Sauce Demo Login, Inventory, Prod
 
 ### Login Coverage
 
-Implemented login coverage includes:
+Implemented Login coverage includes:
 
 * successful login with valid credentials
 * invalid username validation
@@ -127,30 +132,30 @@ Implemented login coverage includes:
 * login page elements visibility
 * password field masking validation
 * login form submission with Enter key
-* protected inventory route access validation
-* protected cart route access validation
-* protected product details route access validation
-* protected checkout information route access validation
-* protected checkout overview route access validation
-* protected checkout complete route access validation
+* protected Inventory route access validation
+* protected Cart route access validation
+* protected Product Details route access validation
+* protected Checkout Information route access validation
+* protected Checkout Overview route access validation
+* protected Checkout Complete route access validation
 * input error icon visibility after failed login
 * lightweight Sauce Demo smoke availability check
 
 ### Inventory Coverage
 
-Implemented inventory coverage includes:
+Implemented Inventory coverage includes:
 
-* inventory page visibility after successful login
+* Inventory page visibility after successful login
 * product list validation
 * product card content validation
-* cart page navigation
+* Cart page navigation
 * representative add-to-cart flow
 * Add to cart and Remove button state validation
 * cart badge visibility and count validation
 * product sorting by name
 * product sorting by price
-* product details navigation through product names
-* product details navigation through product images
+* Product Details navigation through product names
+* Product Details navigation through product images
 * all-products add-to-cart coverage
 * representative remove-from-cart flow
 * all-products remove-from-cart coverage
@@ -158,68 +163,70 @@ Implemented inventory coverage includes:
 
 ### Product Details Coverage
 
-Implemented product details coverage includes:
+Implemented Product Details coverage includes:
 
-* representative product details visibility
-* all-products product details validation
-* return navigation to inventory
+* representative Product Details visibility
+* all-products Product Details validation
+* return navigation to Inventory
 * Add to cart and Remove button state validation
 * representative add-to-cart behavior
 * all-products add-to-cart coverage
 * representative remove-from-cart behavior
 * all-products remove-from-cart coverage
 * cart badge visibility and count behavior
-* cart navigation from product details
+* Cart navigation from Product Details
 * full Product Details → Cart navigation coverage across all products
 
 ### Cart Coverage
 
-Implemented cart coverage includes:
+Implemented Cart coverage includes:
 
-* initial empty-cart state
-* representative cart item visibility and content
-* representative remove-from-cart behavior
+* initial empty-Cart state
+* representative Cart item visibility and content
+* representative remove-from-Cart behavior
 * cart badge removal after removing the last item
 * Continue Shopping navigation
 * cart state persistence after logout and re-login
-* all-products cart content validation
+* all-products Cart content validation
 * cart badge decrement behavior
-* representative Product Details navigation from cart item name
+* representative Product Details navigation from Cart item name
 * full Cart → Product Details navigation coverage across all products
 * Continue Shopping cart-state preservation
-* all-products remove-from-cart coverage
-* checkout information page navigation
+* all-products remove-from-Cart coverage
+* Checkout Information page navigation
 
 ### Checkout Coverage
 
-Implemented checkout coverage includes:
+Implemented Checkout coverage includes:
 
-* detailed checkout information form validation
-* representative lightweight smoke validation of Checkout Information form availability
+* detailed Checkout Information form validation
+* representative lightweight Smoke validation of Checkout Information form availability
 * required First Name validation
 * required Last Name validation
 * required Postal Code validation
 * checkout input error icon validation
 * checkout error message close behavior
 * valid customer information transition to Checkout Overview
-* checkout information cancellation back to Cart
+* Checkout Information cancellation back to Cart
 * representative Checkout Overview product validation
 * all-products Checkout Overview validation
 * representative price summary validation
 * multiple-product price summary validation
-* checkout overview cancellation back to Inventory
+* Checkout Overview cancellation back to Inventory
 * representative Product Details navigation from Checkout Overview
 * all-products Product Details navigation from Checkout Overview
 * Finish transition to Checkout Complete
 * detailed checkout completion content validation
-* representative lightweight smoke validation of Checkout Complete page availability
+* representative lightweight Smoke validation of Checkout Complete page availability
 * Back Home navigation to Inventory
 
 ## Marker Strategy
 
 Pytest markers are used to create meaningful, selectively executable test suites.
 
-Markers describe different dimensions of test intent. They are not mutually exclusive.
+Markers describe different dimensions of test intent.
+
+They are not mutually exclusive.
 
 A test may therefore legitimately use several markers when it belongs to several suites.
 
@@ -233,8 +240,8 @@ For example:
 
 This means the same test is:
 
-* a representative critical smoke check
-* a navigation scenario
+* a representative critical Smoke check
+* a Navigation scenario
 * a checkpoint in the primary end-to-end purchase journey
 
 Running any matching marker selection should collect that test.
@@ -255,7 +262,17 @@ Marker definitions are registered in:
 pytest.ini
 ```
 
-The registered marker definitions are the configuration-level source of truth. Test modules and test case metadata should remain aligned with those definitions.
+The registered marker definitions are the configuration-level source of truth.
+
+Test modules and test case metadata should remain aligned with those definitions.
+
+The project uses:
+
+```text
+--strict-markers
+```
+
+so unknown or unregistered markers should fail collection rather than silently creating accidental test categories.
 
 ### Smoke
 
@@ -263,19 +280,21 @@ The registered marker definitions are the configuration-level source of truth. T
 
 Smoke coverage should answer whether an important feature or flow works at a representative level without attempting to validate every applicable variant.
 
-Typical smoke patterns include:
+Typical Smoke patterns include:
 
 * successful login
 * representative invalid login handling
 * core page availability
 * representative add-to-cart or remove-from-cart behavior
 * representative page navigation
-* representative cart content validation
+* representative Cart content validation
 * critical checkout flow checkpoints
 
 Where both representative and broader coverage exist, the representative scenario should normally be Smoke while the expanded counterpart should normally be Regression.
 
 A Smoke marker should not automatically imply Regression.
+
+Smoke currently has a dedicated GitHub Actions CI job.
 
 ### Regression
 
@@ -283,18 +302,22 @@ A Smoke marker should not automatically imply Regression.
 
 Regression coverage is used when a scenario intentionally validates more depth than the representative Smoke equivalent.
 
-Typical regression patterns include:
+Typical Regression patterns include:
 
 * additional credential validation variants
 * detailed UI state validation
 * validation across every product
 * multiple-product behavior
 * full navigation coverage across all applicable products
-* detailed cart state transitions
+* detailed Cart state transitions
 * detailed checkout field validation
 * detailed checkout completion content validation
 
-Regression is not a default marker for every test that is not Smoke. Dedicated categories such as `security`, `sorting`, or `navigation` may stand alone when they already describe the scenario accurately.
+Regression is not a default marker for every test that is not Smoke.
+
+Dedicated categories such as `security`, `sorting`, or `navigation` may stand alone when they already describe the scenario accurately.
+
+Regression currently has a dedicated GitHub Actions CI job.
 
 ### UI
 
@@ -315,6 +338,8 @@ A Playwright test does not automatically require the `ui` marker.
 
 Tests whose primary purpose is navigation, sorting, access control, or another dedicated behavior do not need `ui` unless direct UI state or presentation is also a meaningful part of the validation.
 
+UI remains available for selective execution but does not currently have a dedicated CI job.
+
 ### Security
 
 `security` identifies access-control and protected-route tests.
@@ -334,6 +359,8 @@ These tests are currently owned by Login coverage because authentication state d
 
 Security is a dedicated marker and does not need to be combined with Regression simply to make the test part of a broader suite.
 
+Security remains available for selective execution but does not currently have a dedicated CI job.
+
 ### Sorting
 
 `sorting` identifies product sorting behavior.
@@ -348,6 +375,8 @@ Current Sorting coverage validates:
 Sorting tests use deterministic product data and plain Python comparisons for extracted product names and numeric product prices.
 
 Sorting is a dedicated marker and does not automatically require `ui` or `regression`.
+
+Sorting remains available for selective execution but does not currently have a dedicated CI job.
 
 ### Navigation
 
@@ -375,6 +404,8 @@ Navigation may be combined with Smoke or Regression depending on whether the tes
 
 Navigation may also be combined with UI when meaningful UI state is validated together with the transition.
 
+Navigation remains available for selective execution but does not currently have a dedicated CI job.
+
 ### End-to-End
 
 `e2e` identifies tests forming the complete primary purchase journey through checkout completion and return to Inventory.
@@ -401,7 +432,7 @@ Current automated E2E checkpoints include:
 
 1. successful login to Inventory — `TC-LOGIN-001`
 2. representative product add-to-cart flow from Inventory — `TC-INVENTORY-005`
-3. representative cart content validation — `TC-CART-002`
+3. representative Cart content validation — `TC-CART-002`
 4. Cart → Checkout Information — `TC-CART-012`
 5. Checkout Information → Checkout Overview — `TC-CHECKOUT-008`
 6. representative selected product validation on Checkout Overview — `TC-CHECKOUT-010`
@@ -411,6 +442,10 @@ Current automated E2E checkpoints include:
 10. Back Home → Inventory — `TC-CHECKOUT-020`
 
 The E2E marker therefore describes membership in the logical primary journey, not whether an individual test executes every page of the journey itself.
+
+E2E remains selectively executable but does not currently have a dedicated CI job.
+
+Its tests are still included in complete full-suite CI execution.
 
 ## Marker Assignment Principles
 
@@ -431,6 +466,10 @@ The following principles apply:
 * a test should not receive Regression only because it is not Smoke
 * markers should remain explicit and readable in test code
 * parameter-level marker assignment is acceptable when individual parametrized cases belong to different suites
+
+CI execution responsibility is separate from marker meaning.
+
+The existence or absence of a dedicated CI job does not change the semantic meaning of a marker.
 
 ## Marker-Based Suite Execution
 
@@ -518,6 +557,39 @@ pytest tests/test_checkout_page.py -m e2e -v
 
 This is useful when validating one workstream without executing every matching test in the repository.
 
+## Dedicated CI Marker Execution
+
+The current Phase 4B GitHub Actions workflow uses dedicated CI jobs for two marker suites:
+
+* Smoke
+* Regression
+
+Smoke CI uses the marker selection:
+
+```bash
+pytest -m smoke -v
+```
+
+Regression CI uses the marker selection:
+
+```bash
+pytest -m regression -v
+```
+
+The actual workflow commands additionally generate self-contained pytest HTML reports.
+
+Dedicated CI jobs do not currently exist for:
+
+* UI
+* Security
+* Sorting
+* Navigation
+* E2E
+
+These marker suites remain selectively executable locally.
+
+Tests assigned to them still participate in the complete unfiltered full-suite CI execution.
+
 ## Test Design Principles
 
 Automated tests should follow:
@@ -561,7 +633,7 @@ The `BasePage` object is responsible for:
 
 The `AppPage` object is responsible for shared authenticated-page behavior, including:
 
-* cart access
+* Cart access
 * cart badge access
 * application menu access
 * logout
@@ -570,13 +642,13 @@ The `AppPage` object is responsible for shared authenticated-page behavior, incl
 * About navigation
 * shared authenticated product-item helpers where reused
 
-The `LoginPage` object is responsible for login form interaction and login-specific UI state.
+The `LoginPage` object is responsible for Login form interaction and Login-specific UI state.
 
-The `InventoryPage` object is responsible for inventory content, sorting, Inventory-side cart actions, and Inventory-owned navigation.
+The `InventoryPage` object is responsible for Inventory content, sorting, Inventory-side Cart actions, and Inventory-owned navigation.
 
-The `ProductDetailsPage` object is responsible for product details content, Product Details-side cart actions, return navigation, and authenticated shared navigation inherited through the application page layer.
+The `ProductDetailsPage` object is responsible for Product Details content, Product Details-side Cart actions, return navigation, and authenticated shared navigation inherited through the application page layer.
 
-The `CartPage` object is responsible for cart contents, cart item interaction, product removal, Continue Shopping, Product Details navigation, and checkout entry.
+The `CartPage` object is responsible for Cart contents, Cart item interaction, product removal, Continue Shopping, Product Details navigation, and checkout entry.
 
 The checkout Page Objects are split by checkout stage:
 
@@ -600,12 +672,12 @@ framework/assertions/product_assertions.py
 
 Current reusable product and checkout assertions support:
 
-* inventory product card validation
-* product details validation
-* cart item validation
+* Inventory product card validation
+* Product Details validation
+* Cart item validation
 * Checkout Overview item validation
 * Checkout Overview price summary validation
-* inventory product state validation after checkout-related navigation
+* Inventory product state validation after checkout-related navigation
 * price string conversion for numeric sorting and checkout summary assertions
 
 Reusable assertion helpers should remain focused on shared validation logic.
@@ -638,9 +710,9 @@ The fixtures progressively prepare common application states while allowing each
 
 Examples:
 
-* `opened_login_page` prepares the login page
+* `opened_login_page` prepares the Login page
 * `logged_in_inventory_page` authenticates the standard user
-* `inventory_page_with_one_product_in_cart` prepares Inventory with one deterministic product in the cart
+* `inventory_page_with_one_product_in_cart` prepares Inventory with one deterministic product in the Cart
 * `cart_page_with_one_product` prepares the Cart with one product
 * `checkout_step_one_page_with_one_product` prepares Checkout Information
 * `checkout_step_two_page_with_one_product` prepares Checkout Overview
@@ -664,7 +736,7 @@ test_data/product_test_data.py
 test_data/checkout_test_data.py
 ```
 
-Current login test data includes:
+Current Login test data includes:
 
 * valid user cases
 * invalid credential cases
@@ -687,11 +759,11 @@ Current checkout test data includes:
 * checkout required-field error messages
 * checkout page title expectations
 * Checkout Overview summary label expectations
-* checkout completion header and message expectations
+* Checkout Complete header and message expectations
 
 Inventory, Product Details, Cart, and Checkout tests reuse centralized user and product data.
 
-A separate cart test data module is not needed at the current stage because Cart tests reuse existing product and user data without introducing unique Cart-only datasets.
+A separate Cart test data module is not needed at the current stage because Cart tests reuse existing product and user data without introducing unique Cart-only datasets.
 
 Test data should support:
 
@@ -711,11 +783,11 @@ Current parametrized areas include:
 * empty credential cases
 * locked out user cases
 * protected route access
-* inventory product validation
+* Inventory product validation
 * Inventory → Product Details navigation
 * Product Details validation across all products
 * add-to-cart and remove-from-cart coverage across product data
-* cart item validation across product data
+* Cart item validation across product data
 * Checkout Overview item validation
 * Checkout Overview → Product Details navigation
 * selected single-case tests where test case ID visibility in `pytest -v` is useful
@@ -757,14 +829,14 @@ Current assertion patterns include:
 * error message matches expected text
 * password input uses the expected field type
 * protected routes redirect unauthenticated users to Login
-* inventory product content matches centralized product data
-* product details content matches centralized product data
+* Inventory product content matches centralized product data
+* Product Details content matches centralized product data
 * sorted product names match expected order
 * converted product prices match expected order
-* cart badge state matches expected cart state
-* cart item content matches selected product data
-* Add to cart and Remove button states match cart state
-* cart state persists where explicitly expected
+* cart badge state matches expected Cart state
+* Cart item content matches selected product data
+* Add to cart and Remove button states match Cart state
+* Cart state persists where explicitly expected
 * checkout field validation matches expected errors
 * Checkout Overview product content matches expected data
 * Checkout Overview price calculations match selected products
@@ -815,8 +887,8 @@ Current excluded areas include:
 
 * browser restart persistence
 * storage clearing behavior
-* cross-user cart persistence
-* multi-user cart behavior
+* cross-user Cart persistence
+* multi-user Cart behavior
 * unapproved edge-case expansion
 
 Cart coverage should not own detailed Checkout Information, Checkout Overview, or Checkout Complete validation.
@@ -838,6 +910,28 @@ They are runtime outputs used for:
 * failure analysis
 * CI review
 * execution evidence
+
+Current CI browser jobs generate separate HTML reports for:
+
+* Smoke
+* Regression
+* full-suite
+
+Current report paths:
+
+```text
+reports/smoke-report.html
+reports/regression-report.html
+reports/report.html
+```
+
+GitHub Actions uses separate artifact names for each browser job to avoid conflicts.
+
+Detailed artifact behavior is documented in:
+
+```text
+docs/ci-cd-pipeline.md
+```
 
 ## Local Validation Strategy
 
@@ -918,26 +1012,163 @@ The full test suite should pass before a workstream is considered ready for merg
 
 ## CI Validation Strategy
 
-GitHub Actions currently validates the project automatically according to the configured workflow triggers.
+GitHub Actions validates the project automatically according to the configured workflow triggers.
 
-The current CI pipeline validates:
+Current triggers include:
 
+* push to `main`
+* push to `develop`
+* Pull Requests targeting `main`
+* Pull Requests targeting `develop`
+* manual execution through `workflow_dispatch`
+
+Regular pushes to feature, refactor, fix, or documentation branches do not automatically trigger CI unless:
+
+* the branch is part of a Pull Request targeting `main` or `develop`
+* the workflow is started manually
+
+### Phase 4B Job Structure
+
+The current CI pipeline separates code-quality validation from browser-test execution.
+
+Current structure:
+
+```text
+quality
+├── smoke
+├── regression
+└── full-suite
+```
+
+The `quality` job executes first.
+
+Smoke, Regression, and full-suite all declare:
+
+```yaml
+needs: quality
+```
+
+After successful quality validation, those three browser jobs are independently executable and do not depend on each other.
+
+### Quality Validation
+
+The `quality` job validates:
+
+```bash
+ruff check .
+black --check .
+isort . --check-only
+```
+
+It also performs:
+
+* repository checkout
+* Python 3.12 setup
 * dependency installation
-* Playwright browser installation
-* linting
-* formatting
-* import sorting
-* full pytest execution
-* HTML report generation
-* artifact upload
 
-The current CI test execution is not split into separate marker-based jobs.
+The quality job does not install Playwright Chromium.
 
-Marker-based commands documented in this strategy are primarily intended for selective local execution and validation.
+A quality failure prevents all browser-test jobs from executing.
 
-Future CI marker separation should only be documented as implemented after the corresponding workflow changes are introduced and validated.
+### Smoke CI Validation
 
-Failing tests or quality checks should block merging.
+The dedicated Smoke job executes:
+
+```bash
+pytest -m smoke -v
+```
+
+The actual CI command additionally generates a self-contained pytest HTML report.
+
+Smoke failure fails the Smoke job.
+
+### Regression CI Validation
+
+The dedicated Regression job executes:
+
+```bash
+pytest -m regression -v
+```
+
+The actual CI command additionally generates a self-contained pytest HTML report.
+
+Regression failure fails the Regression job.
+
+### Full-Suite CI Validation
+
+The full-suite job executes the complete unfiltered automated test suite:
+
+```bash
+pytest -v
+```
+
+It is intentionally not filtered by markers.
+
+The full-suite job remains the complete automated regression gate.
+
+Smoke and Regression provide targeted CI feedback but do not replace full-suite execution.
+
+### Marker Suites Without Dedicated CI Jobs
+
+Dedicated CI jobs do not currently exist for:
+
+* UI
+* Security
+* Sorting
+* Navigation
+* E2E
+
+These suites remain available for selective local execution.
+
+Tests assigned to those markers still participate in complete full-suite CI validation.
+
+### CI Failure Behavior
+
+Failing required quality or test execution should fail CI.
+
+The current workflow does not use `continue-on-error: true` for required validation.
+
+Browser-job artifact upload steps use:
+
+```yaml
+if: always()
+```
+
+so available reports and runtime outputs can still be published after a browser-test failure.
+
+A failed `quality` job prevents browser-test jobs from starting, so no browser-test artifacts are produced in that case.
+
+## Phase 4B Execution Boundaries
+
+The current CI execution strategy belongs to Phase 4B.
+
+Implemented Phase 4B behavior includes:
+
+* separate code-quality validation
+* dedicated Smoke CI execution
+* dedicated Regression CI execution
+* complete unfiltered full-suite CI execution
+* explicit quality-gate dependencies
+* suite-specific HTML reports
+* non-conflicting GitHub Actions artifacts
+
+The three browser jobs may be scheduled concurrently by GitHub Actions after `quality` succeeds.
+
+This is CI job-level scheduling.
+
+It is not Pytest-level parallel test execution.
+
+Parallel execution with `pytest-xdist` belongs to Phase 4C and is not currently implemented.
+
+Advanced Allure reporting belongs to Phase 4D and is not currently implemented.
+
+The current reporting solution remains:
+
+* pytest-html
+* screenshots on failure
+* GitHub Actions artifacts
+
+The presence of `pytest-xdist` or `allure-pytest` in project dependencies does not make those capabilities part of the active testing strategy.
 
 ## Portfolio Promotion Validation
 
@@ -949,6 +1180,7 @@ Before promoting `develop` to `main`, validate that:
 * planned coverage is not described as already automated
 * test case documentation remains aligned with automated test modules
 * marker definitions remain aligned with test usage
+* CI documentation remains aligned with actual workflow behavior
 * generated reports, screenshots, cache files, and virtual environment files are not tracked
 * the promoted state is suitable as a stable portfolio snapshot
 
@@ -961,12 +1193,14 @@ Future implementation work should continue from `develop`.
 Planned improvements include:
 
 * broader framework maturity work
-* API testing layer
-* multi-browser execution
-* marker-based CI job separation where justified
-* smoke and regression CI job separation where justified
-* Allure reporting integration
+* Phase 4C parallel Pytest execution with `pytest-xdist`
+* Phase 4D Allure reporting integration
 * improved diagnostics and logs
 * environment-based configuration
+* API testing layer
+* multi-browser execution
+* additional suite-specific CI jobs where justified
+
+Dedicated Smoke and Regression CI jobs are already implemented and should not be treated as future scope.
 
 Future capabilities should not be described as implemented until their corresponding project tasks are completed and validated.

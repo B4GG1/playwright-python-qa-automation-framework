@@ -11,6 +11,7 @@
 * [Getting Started](#getting-started)
 * [Running Tests](#running-tests)
 * [Quality Checks](#quality-checks)
+* [CI Execution](#ci-execution)
 * [Reports And Artifacts](#reports-and-artifacts)
 * [Documentation](#documentation)
 * [Roadmap](#roadmap)
@@ -36,6 +37,8 @@ The framework currently focuses on Playwright-based UI automation and is develop
 * representative Smoke and broader Regression coverage
 * independent end-to-end journey checkpoints
 * automated quality validation
+* dedicated Smoke and Regression CI execution
+* complete full-suite CI validation
 * reproducible development environment
 * CI-backed Pull Request workflow
 * debugging and reporting capabilities
@@ -45,16 +48,10 @@ The long-term goal of the project is to evolve into a production-style automatio
 
 ## Current Status
 
-Current stable project phase:
+Current stable portfolio phase:
 
 ```text
 Phase 3 completed — Products, Cart, And Checkout Coverage
-```
-
-Latest completed integration into `develop` before the current framework maturity work:
-
-```text
-AQA-0083 — Checkout Automation Workstream merged into develop in PR #6
 ```
 
 Stable portfolio snapshot:
@@ -65,7 +62,19 @@ Completed Phase 3 state promoted to main as the current portfolio version
 
 The `main` branch represents the polished portfolio version of the completed Phase 3 project state.
 
-The `develop` branch remains the integration branch and may contain newer work after this README is read from `main`.
+The `develop` branch remains the integration branch and may contain newer framework maturity work after this README is read from `main`.
+
+Current Phase 4 framework maturity progress includes:
+
+* Phase 4A marker strategy normalization
+* explicit Smoke and Regression suite definitions
+* normalized executable pytest markers
+* Phase 4B CI execution strategy
+* separate code-quality validation
+* dedicated Smoke CI execution
+* dedicated Regression CI execution
+* preserved complete full-suite CI execution
+* job-specific reports and artifacts
 
 The current framework includes completed automation coverage for:
 
@@ -210,7 +219,7 @@ Completed Phase 3 finalization includes:
 * PR review, CI validation, and squash merge into `develop`
 * stable Phase 3 portfolio promotion to `main`
 
-The next roadmap direction is Phase 4 Framework Maturity.
+The current roadmap direction is Phase 4 Framework Maturity.
 
 ## System Under Test
 
@@ -241,7 +250,7 @@ Detailed test case definitions are stored under the `test_cases/` directory.
 The README provides only a high-level coverage overview to keep the project entry point readable and maintainable.
 
 | Workstream                      | Status    | Covered Areas                                                                                                                           | Test Case Documentation                                               |
-| ------------------------------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+|---------------------------------|-----------|-----------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------|
 | Login Page Automation           | Completed | authentication, credential validation, UI behavior, protected route access, protected checkout routes                                   | [Login Page Test Cases](test_cases/login-page.md)                     |
 | Inventory Page Automation       | Completed | Inventory visibility, product list, product content, sorting, Product Details navigation, Inventory-side Cart actions                   | [Inventory Page Test Cases](test_cases/inventory-page.md)             |
 | Product Details Page Automation | Completed | product content, return navigation, Product Details-side Cart actions, cart badge behavior, Cart navigation                             | [Product Details Page Test Cases](test_cases/product-details-page.md) |
@@ -320,6 +329,21 @@ The E2E suite does not depend on test execution order or shared state.
 
 Each E2E checkpoint prepares its own required state through fixtures or test setup and can execute independently.
 
+Current CI uses dedicated jobs for:
+
+* Smoke
+* Regression
+
+The following marker suites remain selectively executable locally and do not currently have dedicated CI jobs:
+
+* UI
+* Security
+* Sorting
+* Navigation
+* E2E
+
+Tests carrying these markers are still included in the complete unfiltered full-suite CI execution.
+
 Detailed marker definitions, assignment rules, and examples are documented in:
 
 * [Testing Strategy](docs/testing-strategy.md)
@@ -353,6 +377,10 @@ Detailed marker definitions, assignment rules, and examples are documented in:
 ### CI
 
 * GitHub Actions
+* dedicated quality validation
+* Smoke suite execution
+* Regression suite execution
+* complete full-suite execution
 
 ### Installed For Future Expansion
 
@@ -551,9 +579,11 @@ pytest -v tests/test_checkout_page.py
 pytest -v
 ```
 
-Marker-based commands are primarily used for selective local validation.
+Marker-based commands remain useful for selective local validation.
 
-The current GitHub Actions CI pipeline continues to execute the complete automated test suite rather than separate marker-based jobs.
+Smoke and Regression are additionally executed as dedicated GitHub Actions jobs.
+
+The complete unfiltered suite remains the full-suite CI regression gate.
 
 ## Quality Checks
 
@@ -603,6 +633,70 @@ Install pre-commit hooks:
 pre-commit install
 ```
 
+## CI Execution
+
+The current Phase 4B GitHub Actions pipeline separates code-quality validation from browser-test execution.
+
+Current job structure:
+
+```text
+quality
+├── smoke
+├── regression
+└── full-suite
+```
+
+The `quality` job runs first and validates:
+
+* Ruff
+* Black
+* isort
+
+It does not install Playwright Chromium.
+
+After successful quality validation, the following browser jobs are independently executable:
+
+* `smoke`
+* `regression`
+* `full-suite`
+
+Smoke executes:
+
+```bash
+pytest -m smoke -v
+```
+
+Regression executes:
+
+```bash
+pytest -m regression -v
+```
+
+The full-suite job executes the complete unfiltered suite:
+
+```bash
+pytest -v
+```
+
+All three browser jobs install Playwright Chromium.
+
+The workflow runs automatically for:
+
+* pushes to `main`
+* pushes to `develop`
+* Pull Requests targeting `main`
+* Pull Requests targeting `develop`
+
+It can also be started manually through `workflow_dispatch`.
+
+Parallel Pytest execution with `pytest-xdist` is not currently implemented.
+
+Advanced Allure reporting is also not part of the current CI workflow.
+
+Detailed CI job behavior, dependencies, commands, artifacts, and failure handling are documented in:
+
+* [CI/CD Pipeline](docs/ci-cd-pipeline.md)
+
 ## Reports And Artifacts
 
 The framework generates runtime outputs such as:
@@ -620,16 +714,30 @@ reports/
 
 Generated reports, screenshots, cache files, and runtime artifacts should not be committed to Git.
 
-The current CI pipeline generates a self-contained HTML report and uploads available report outputs as GitHub Actions artifacts.
+The current CI browser jobs generate self-contained pytest HTML reports and upload available report outputs as GitHub Actions artifacts.
 
-Current CI artifacts include:
+Current Smoke artifacts:
+
+* `smoke-pytest-html-report`
+* `smoke-test-artifacts`
+
+Current Regression artifacts:
+
+* `regression-pytest-html-report`
+* `regression-test-artifacts`
+
+Current full-suite artifacts:
 
 * `pytest-html-report`
 * `test-artifacts`
 
+Artifact uploads use separate names between jobs to avoid conflicts.
+
+Available browser-job reports and artifacts are uploaded with `if: always()` even when test execution fails.
+
 Artifacts are retained temporarily for debugging and execution review.
 
-Detailed CI behavior is documented in:
+Detailed artifact paths, retention, and CI behavior are documented in:
 
 * [CI/CD Pipeline](docs/ci-cd-pipeline.md)
 
@@ -654,10 +762,10 @@ Extended project documentation is stored in the `docs/` directory so that the RE
   Branching model, merge strategy, and repository workflow standards.
 
 * [Workflow](docs/workflow.md)
-  Day-to-day workflow for branches, commits, Pull Requests, validation, and marker-based local execution.
+  Day-to-day workflow for branches, commits, Pull Requests, local validation, marker execution, and CI responsibilities.
 
 * [CI/CD Pipeline](docs/ci-cd-pipeline.md)
-  Current GitHub Actions workflow, full-suite CI execution, reports, artifacts, and future CI improvements.
+  Current GitHub Actions quality gate, Smoke and Regression jobs, complete full-suite execution, reports, artifacts, triggers, and future CI maturity boundaries.
 
 * [Quality Tooling](docs/quality-tooling.md)
   Ruff, Black, isort, pre-commit, Pytest, and local/CI quality gates.
@@ -700,21 +808,39 @@ Current roadmap direction:
 * **Phase 3A:** Inventory And Products Automation Workstream — completed
 * **Phase 3B:** Cart Automation Workstream — completed
 * **Phase 3C:** Structure Cleanup, Coverage Completion, And Documentation Sync — completed
-* **Phase 3D:** Checkout Automation Workstream — completed and merged into `develop`
-* **Phase 3 Completion Review:** covered by AQA-0082 and AQA-0083
+* **Phase 3D:** Checkout Automation Workstream — completed
+* **Phase 3 Completion Review:** completed
 * **Phase 3 Portfolio Promotion:** completed Phase 3 state promoted to `main`
-* **Phase 4:** Framework Maturity — planned
+* **Phase 4:** Framework Maturity — in progress
+* **Phase 4A:** Marker Strategy And Test Suite Organization — implemented
+* **Phase 4B:** CI Execution Strategy — implemented
+* **Phase 4C:** Parallel Execution — planned
+* **Phase 4D:** Reporting Upgrade — planned
 * **Phase 5:** Advanced Extensions — future
 
-Current planned Phase 4 areas include:
+Current Phase 4 work focuses on framework maturity rather than expanding page-level functional coverage.
 
-* test suite organization improvements
-* CI execution improvements for selected test groups
+Phase 4A established the current marker and suite strategy.
+
+Phase 4B introduced:
+
+* separate CI quality validation
+* dedicated Smoke CI execution
+* dedicated Regression CI execution
+* preserved complete full-suite execution
+* clearer CI reports and artifacts
+
+Planned later Phase 4 areas include:
+
 * parallel execution
 * reporting improvements
 * environment-based configuration
 * logging and diagnostics
 * fixture organization improvements
+
+Parallel execution with `pytest-xdist` is not currently implemented.
+
+Advanced Allure reporting is not currently implemented.
 
 Future extension areas include:
 
@@ -734,5 +860,6 @@ The detailed and authoritative roadmap is maintained in [docs/roadmap.md](docs/r
 * GitHub automatically renders `.md` files.
 * Extended documentation is version-controlled alongside the framework.
 * Detailed test strategy remains outside the README to keep the project entry point concise.
+* Detailed CI behavior remains in `docs/ci-cd-pipeline.md`.
 * Detailed manual test cases remain under `test_cases/`.
 * Runtime reports and screenshots are ignored by Git and handled as local outputs or CI artifacts.
