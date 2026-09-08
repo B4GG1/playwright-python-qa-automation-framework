@@ -393,15 +393,15 @@ Unlike Phase 3, this phase does not primarily expand application feature coverag
 
 Phase 4 is divided into focused workstreams so that framework improvements can be introduced and validated incrementally.
 
-Planned workstreams:
+Workstreams:
 
-* Phase 4A — Marker And Suite Strategy
-* Phase 4B — CI Execution Strategy
-* Phase 4C — Parallel Execution
-* Phase 4D — Reporting Upgrade
-* Phase 4E — Runtime Configuration
-* Phase 4F — Diagnostics And Fixture Cleanup
-* Phase 4 Checkpoint
+* Phase 4A — Marker And Suite Strategy — Completed
+* Phase 4B — CI Execution Strategy — Completed
+* Phase 4C — Parallel Execution — Planned
+* Phase 4D — Reporting Upgrade — Planned
+* Phase 4E — Runtime Configuration — Planned
+* Phase 4F — Diagnostics And Fixture Cleanup — Planned
+* Phase 4 Checkpoint — Planned
 
 Main learning goals:
 
@@ -475,22 +475,73 @@ Phase 4A is complete and provides the marker and suite strategy required for Pha
 
 ## Phase 4B: CI Execution Strategy
 
-**Status:** Planned
+**Status:** Completed
 
-Phase 4B will improve GitHub Actions execution so that CI provides clearer and faster feedback for different test scopes.
+Phase 4B improved GitHub Actions execution so that CI provides clearer and faster feedback for code quality, representative Smoke coverage, broader Regression coverage, and complete full-suite validation.
 
-Planned areas:
+Completed work:
 
-* review the current GitHub Actions workflow
-* separate fast quality checks from browser test execution where useful
-* introduce CI execution for selected marker-based suites
-* support dedicated Smoke and Regression execution
-* keep full-suite execution available as final validation
-* maintain useful CI artifacts and reports
-* improve CI job naming and feedback clarity
-* avoid unnecessary workflow complexity for portfolio scope
+* AQA-0088 — Separate CI Quality And Full-Suite Execution
+* AQA-0089 — Add Smoke And Regression CI Jobs
+* AQA-0090 — Document Phase 4B CI Execution Strategy
+* AQA-0091 — Validate And Integrate Phase 4B CI Execution Strategy
 
-Phase 4B will use the marker strategy established during Phase 4A.
+Completed CI execution scope:
+
+* reviewed and normalized the existing GitHub Actions workflow
+* separated code-quality validation from browser-test execution
+* introduced a dedicated `quality` job
+* configured Ruff validation through `ruff check .`
+* configured Black validation through `black --check .`
+* configured isort validation through `isort . --check-only`
+* kept Playwright browser installation out of the `quality` job
+* introduced dedicated Smoke CI execution
+* introduced dedicated Regression CI execution
+* preserved complete unfiltered full-suite CI execution
+* configured Smoke execution with `pytest -m smoke -v`
+* configured Regression execution with `pytest -m regression -v`
+* preserved `pytest -v` as the complete full-suite CI regression gate
+* configured Smoke, Regression, and full-suite jobs to depend on successful quality validation
+* kept Smoke, Regression, and full-suite independent from one another
+* preserved Chromium installation only for browser-test jobs
+* preserved minimal workflow permissions through `contents: read`
+* preserved automatic workflow execution for pushes to `main` and `develop`
+* preserved automatic workflow execution for Pull Requests targeting `main` and `develop`
+* preserved manual workflow execution through `workflow_dispatch`
+* introduced separate self-contained pytest HTML reports for Smoke, Regression, and full-suite execution
+* introduced non-conflicting GitHub Actions artifact names for each browser-test job
+* preserved artifact upload through `if: always()` for available browser-test outputs
+* preserved seven-day artifact retention
+* synchronized README and technical documentation with the implemented Phase 4B workflow
+* synchronized Git branching documentation with current CI execution behavior
+
+Final Phase 4B validation confirmed:
+
+* Ruff passes
+* Black validation passes
+* isort validation passes
+* `pytest -m smoke -v` passes
+* `pytest -m regression -v` passes
+* the complete Pytest suite passes
+* quality validation remains separated from browser execution
+* Smoke and Regression retain dedicated CI execution
+* full-suite remains complete and unfiltered
+* browser-test jobs depend only on successful quality validation
+* browser-test jobs do not depend on one another
+* reports and artifact behavior remain aligned with the implemented workflow
+* Phase 4B documentation is synchronized with the implemented CI strategy
+
+Phase 4B does not introduce Pytest-level parallel execution.
+
+The independent Smoke, Regression, and full-suite GitHub Actions jobs may be scheduled concurrently after successful quality validation, but this is GitHub Actions job-level scheduling rather than `pytest-xdist` parallel test execution.
+
+Parallel execution remains Phase 4C scope.
+
+Allure reporting remains Phase 4D scope.
+
+Runtime configuration and later framework maturity capabilities also remain outside Phase 4B.
+
+Phase 4B completes the CI Execution Strategy required before Phase 4C Parallel Execution.
 
 ---
 
