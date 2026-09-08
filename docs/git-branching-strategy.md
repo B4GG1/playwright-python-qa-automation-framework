@@ -13,6 +13,8 @@ When this document is read from `main`, the `develop` branch may already contain
 
 For detailed pytest marker semantics and suite execution strategy, see [Testing Strategy](testing-strategy.md).
 
+For detailed GitHub Actions execution, job dependencies, reports, and artifacts, see [CI/CD Pipeline](ci-cd-pipeline.md).
+
 ## Branching Model
 
 This repository follows a lightweight Git workflow inspired by a simplified Git Flow model.
@@ -457,11 +459,116 @@ Example:
 pytest tests/test_checkout_page.py -m e2e -v
 ```
 
-Marker-based execution is primarily used for selective local validation.
+All current marker suites remain available for selective local validation.
 
 Detailed marker semantics and assignment rules are documented in [Testing Strategy](testing-strategy.md).
 
-The current GitHub Actions pipeline executes the complete automated test suite rather than separate marker-based jobs.
+### Marker Execution In CI
+
+The current Phase 4B GitHub Actions pipeline additionally provides dedicated CI execution for:
+
+* Smoke
+* Regression
+
+The following marker suites do not currently have dedicated CI jobs:
+
+* UI
+* Security
+* Sorting
+* Navigation
+* E2E
+
+Tests carrying these markers still participate in the complete unfiltered full-suite CI execution.
+
+Dedicated marker execution in CI does not change marker semantics or local execution availability.
+
+## CI Validation
+
+GitHub Actions currently separates code-quality validation from browser-test execution.
+
+Current job structure:
+
+```text
+quality
+├── smoke
+├── regression
+└── full-suite
+```
+
+The `quality` job executes first and validates:
+
+```bash
+ruff check .
+black --check .
+isort . --check-only
+```
+
+The quality job does not install Playwright Chromium.
+
+Smoke, Regression, and full-suite all depend on successful `quality` validation.
+
+They do not depend on each other.
+
+After `quality` succeeds, the three browser jobs may therefore be scheduled independently by GitHub Actions.
+
+### Smoke CI
+
+The dedicated Smoke job executes:
+
+```bash
+pytest -m smoke -v
+```
+
+The actual CI command also generates a self-contained pytest HTML report and uploads Smoke-specific artifacts.
+
+### Regression CI
+
+The dedicated Regression job executes:
+
+```bash
+pytest -m regression -v
+```
+
+The actual CI command also generates a self-contained pytest HTML report and uploads Regression-specific artifacts.
+
+### Full-Suite CI
+
+The `full-suite` job executes the complete unfiltered automated test suite:
+
+```bash
+pytest -v
+```
+
+The full-suite job remains the complete CI regression gate.
+
+Dedicated Smoke and Regression execution provides targeted feedback without replacing full-suite validation.
+
+### CI Triggers
+
+The current GitHub Actions workflow runs automatically for:
+
+* pushes to `main`
+* pushes to `develop`
+* Pull Requests targeting `main`
+* Pull Requests targeting `develop`
+
+The workflow can also be started manually through:
+
+* `workflow_dispatch`
+
+Regular pushes to feature, fix, documentation, refactor, or promotion branches do not automatically start CI unless the branch participates in a Pull Request targeting `main` or `develop`, or the workflow is started manually.
+
+### CI Execution Boundaries
+
+The current Phase 4B workflow does not use Pytest-level parallel execution.
+
+The independent Smoke, Regression, and full-suite jobs may run concurrently after `quality`, but this is GitHub Actions job-level scheduling.
+
+Parallel Pytest execution with `pytest-xdist` is not currently implemented.
+
+Advanced Allure reporting is also not part of the current CI workflow.
+
+Detailed CI behavior, reports, artifacts, retention, and failure handling are documented in [CI/CD Pipeline](ci-cd-pipeline.md).
 
 ### Workstream-Specific Validation
 
@@ -495,18 +602,22 @@ For portfolio promotion into `main`, the full test suite and quality checks shou
 Before merging a Pull Request, verify:
 
 * CI pipeline passed
+* required quality validation passed
+* required browser-test jobs passed
+* complete full-suite CI validation passed
 * no unrelated files are included
 * no generated reports, screenshots, cache files, or virtual environment files are tracked
 * changed files match the intended task, workstream, cleanup, or promotion scope
 * documentation is updated when needed
 * test cases and automated tests are aligned
 * marker documentation reflects current executable marker behavior when marker usage changes
+* CI documentation reflects current workflow behavior when CI execution changes
 * Page Object responsibilities remain logically separated
 * shared authenticated-page behavior remains owned by the correct abstraction
 * reusable assertion helpers remain focused on shared validation logic
 * test data remains centralized where practical
-* cart-owned checkout entry behavior remains separated from detailed checkout behavior
-* Checkout Information, Checkout Overview, and Checkout Complete behavior remain owned by checkout tests
+* Cart-owned checkout entry behavior remains separated from detailed checkout behavior
+* Checkout Information, Checkout Overview, and Checkout Complete behavior remain owned by Checkout tests
 * implemented features are not mixed with planned future features
 * commit message for squash merge is clear
 * target branch is correct
@@ -533,6 +644,7 @@ Before promoting `develop` to `main`, verify:
 * README reflects the stable portfolio state
 * documentation does not contain stale workstream-finalization wording
 * documentation reflects current marker definitions and execution commands
+* documentation reflects current CI execution behavior
 * documentation clearly separates implemented scope from planned future scope
 * test case documentation is aligned with automated coverage
 * generated reports, screenshots, cache files, and virtual environment files are not tracked
@@ -616,9 +728,14 @@ This strategy ensures:
 * clean Git history
 * controlled integration workflow
 * controlled portfolio promotion workflow
-* reliable CI integration
+* reliable CI quality gating
+* dedicated Smoke CI validation
+* dedicated Regression CI validation
+* complete full-suite CI regression validation
 * consistent local validation
 * normalized marker-based selective execution
 * professional repository standards
 * scalable workflow for future collaboration
 * clear separation between active work, integration, and stable portfolio state
+
+The detailed CI implementation remains documented in [CI/CD Pipeline](ci-cd-pipeline.md).
