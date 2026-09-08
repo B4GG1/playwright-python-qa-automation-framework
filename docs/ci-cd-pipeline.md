@@ -4,9 +4,18 @@
 
 This project uses GitHub Actions as the main Continuous Integration (CI) pipeline.
 
-The pipeline validates code quality, installs project dependencies, prepares the Playwright browser environment, runs automated tests, generates test reports, and publishes test artifacts after each workflow execution.
+The current Phase 4B pipeline separates code-quality validation from browser-test execution and provides dedicated CI jobs for:
 
-At the current stage, the project focuses on CI. Continuous Delivery / Deployment (CD) is not implemented yet and may be added later if the project requires deployment, package publishing, or environment-based execution.
+* code-quality validation
+* Smoke suite execution
+* Regression suite execution
+* complete full-suite execution
+
+The workflow installs project dependencies, validates code quality, prepares Playwright Chromium where browser execution is required, runs the appropriate Pytest suites, generates HTML reports, and publishes test artifacts.
+
+At the current stage, the project focuses on CI.
+
+Continuous Delivery / Deployment is not implemented and should not be treated as part of the current project capabilities.
 
 ## Current CI Scope
 
@@ -14,354 +23,644 @@ The current CI pipeline supports:
 
 * Python 3.12 setup
 * dependency installation from `requirements-lock.txt`
-* Playwright Chromium browser installation with Linux dependencies
-* Ruff linting
-* Black formatting validation
-* isort import validation
-* full Pytest test suite execution
+* dedicated Ruff, Black, and isort quality validation
+* dedicated Smoke browser-test execution
+* dedicated Regression browser-test execution
+* complete unfiltered Pytest full-suite execution
+* Playwright Chromium installation with Linux dependencies for browser-test jobs
 * pytest HTML report generation
-* screenshot artifact upload on failure through the `reports/` directory
-* reports directory upload as a CI artifact
+* screenshot artifact collection through the `reports/` directory
+* job-specific GitHub Actions artifacts
 * explicit artifact retention configuration
 * validation for `main` and `develop`
 * validation for Pull Requests targeting `main` and `develop`
 * manual workflow execution through GitHub Actions
 
-The pipeline is designed to act as a quality gate before changes are merged into stable branches.
+The pipeline acts as a quality gate before changes are merged into stable branches.
 
-The `main` branch represents the stable portfolio version of the project. The `develop` branch remains the integration branch and may contain newer validated work before it is promoted to `main`.
+The `main` branch represents the stable portfolio version of the project.
+
+The `develop` branch remains the integration branch and may contain newer validated work before it is promoted to `main`.
 
 ## CI Trigger Strategy
 
 The pipeline is executed automatically on:
 
-* `push` to the `main` branch
-* `push` to the `develop` branch
-* `pull_request` targeting the `main` branch
-* `pull_request` targeting the `develop` branch
-* manual execution via `workflow_dispatch`
+* `push` to `main`
+* `push` to `develop`
+* `pull_request` targeting `main`
+* `pull_request` targeting `develop`
+* manual execution through `workflow_dispatch`
 
-This means that regular pushes to feature branches do not automatically trigger the CI workflow unless the workflow is executed manually or the branch is opened as a Pull Request targeting `main` or `develop`.
+Regular pushes to feature, refactor, fix, or documentation branches do not automatically execute CI unless:
+
+* a Pull Request targeting `main` or `develop` is opened
+* the workflow is started manually through `workflow_dispatch`
 
 This trigger strategy ensures that:
 
-* stable branches are continuously validated
-* pull requests are checked before merge
-* completed feature workstreams are validated before integration
-* portfolio promotion from `develop` to `main` is validated before merge
-* manual debugging runs are possible when needed
-* both `develop` and `main` can be protected by automated checks
+* integration and stable branches are continuously validated
+* Pull Requests are checked before merge
+* completed workstreams can be validated before integration
+* portfolio promotion from `develop` to `main` is validated
+* manual validation and debugging runs remain available
 
 ## Workflow Permissions
 
-The current workflow uses minimal GitHub token permissions for the CI scope:
+The current workflow uses minimal GitHub token permissions:
 
 ```yaml
 permissions:
   contents: read
 ```
 
-This is sufficient because the workflow only needs to read repository contents, install dependencies, execute checks, run tests, and upload artifacts through GitHub Actions.
+This is sufficient because the workflow only needs to:
 
-The project currently does not require deployment credentials, cloud credentials, package publishing tokens, or elevated repository permissions.
+* read repository contents
+* install dependencies
+* execute quality checks
+* run automated tests
+* upload artifacts
+
+The project currently does not require:
+
+* deployment credentials
+* cloud credentials
+* package publishing tokens
+* elevated repository permissions
 
 ## Execution Environment
 
-Each pipeline run is executed on a fresh GitHub-hosted runner.
+Each CI job executes on a fresh GitHub-hosted runner.
 
 Current execution environment:
 
-* Ubuntu latest
+* `ubuntu-latest`
 * Python 3.12
 * isolated runtime environment
-* Playwright Chromium browser installed during pipeline execution
+* dependencies installed from `requirements-lock.txt`
 
-The runner is temporary and is destroyed after the workflow finishes. This helps ensure that test results are reproducible and not dependent on local machine state.
+Browser-test jobs additionally install Chromium and its required Linux dependencies through Playwright.
 
-## Pipeline Stages
+The `quality` job does not install Chromium because it performs static code-quality validation only.
 
-The CI pipeline consists of the following stages.
+GitHub-hosted runners are temporary and are destroyed after execution.
 
-### 1. Repository Checkout
+This helps ensure that CI results do not depend on local developer machine state.
 
-The repository source code is downloaded into the GitHub Actions runner using:
+## Current Job Structure
 
-* `actions/checkout@v4`
+The Phase 4B pipeline contains four jobs:
 
-This gives the runner access to the project files, tests, configuration, and documentation.
+```text
+quality
+├── smoke
+├── regression
+└── full-suite
+```
 
-### 2. Python Setup
+The dependency model is intentional.
 
-Python runtime is installed using:
+The `quality` job executes first.
 
-* `actions/setup-python@v5`
+After `quality` succeeds:
+
+* `smoke`
+* `regression`
+* `full-suite`
+
+become independently executable jobs.
+
+The browser jobs do not depend on each other.
+
+A Smoke failure does not prevent Regression or full-suite from executing after they have been released by the successful quality gate.
+
+Similarly, Regression and full-suite do not define execution dependencies between each other.
+
+GitHub Actions may schedule these independent jobs concurrently when runners are available.
+
+This job-level concurrency is not the same as parallel Pytest execution.
+
+Parallel test execution with `pytest-xdist` belongs to Phase 4C and is not part of the current Phase 4B implementation.
+
+## Quality Job
+
+The `quality` job is the first CI gate.
+
+Its responsibility is to validate repository code quality before browser resources are prepared.
+
+The job performs:
+
+### Repository Checkout
+
+```yaml
+actions/checkout@v4
+```
+
+### Python Setup
+
+```yaml
+actions/setup-python@v5
+```
 
 Current Python version:
 
-* Python 3.12
-
-This keeps CI aligned with the local development environment.
-
-### 3. Dependency Installation
-
-Project dependencies are installed from the locked dependency file:
-
-* `requirements-lock.txt`
-
-The pipeline also upgrades `pip` before installing project dependencies.
-
-Using a locked dependency file improves repeatability because CI installs exact dependency versions instead of resolving the latest compatible versions on every run.
-
-### 4. Playwright Browser Installation
-
-Playwright browser dependencies are installed during the CI run.
-
-Current browser installation command:
-
-```bash
-playwright install --with-deps chromium
+```text
+3.12
 ```
 
-Currently installed browser:
+### Dependency Installation
 
-* Chromium
+The workflow upgrades `pip` and installs project dependencies from:
 
-The `--with-deps` option installs required Linux dependencies for Playwright browser execution in the GitHub-hosted Ubuntu environment.
+```text
+requirements-lock.txt
+```
 
-Future framework expansion may include Firefox and WebKit execution.
+Current installation commands:
 
-### 5. Code Quality Checks
+```bash
+python -m pip install --upgrade pip
+pip install -r requirements-lock.txt
+```
 
-The pipeline validates code quality using:
-
-* Ruff for linting
-* Black for formatting validation
-* isort for import sorting validation
-
-Current quality commands:
+### Ruff Validation
 
 ```bash
 ruff check .
+```
+
+### Black Validation
+
+```bash
 black --check .
+```
+
+### isort Validation
+
+```bash
 isort . --check-only
 ```
 
-These checks ensure that code formatting, linting rules, and import organization remain consistent across the project.
+The quality job does not:
 
-### 6. Test Execution
+* install Playwright Chromium
+* execute browser tests
+* generate browser-test HTML reports
+* upload browser-test artifacts
 
-Automated tests are executed using Pytest.
+A failure in Ruff, Black, isort, dependency installation, or another required quality-job step fails the job.
 
-Current CI test command:
+Because all browser jobs declare:
+
+```yaml
+needs: quality
+```
+
+a failed quality job prevents Smoke, Regression, and full-suite execution.
+
+This avoids unnecessary browser setup and test execution when the repository does not pass the initial code-quality gate.
+
+## Smoke Job
+
+The `smoke` job provides dedicated CI execution of the approved Smoke marker suite.
+
+It depends on:
+
+```yaml
+needs: quality
+```
+
+After the quality job succeeds, the Smoke job:
+
+1. checks out the repository
+2. configures Python 3.12
+3. installs dependencies
+4. installs Playwright Chromium
+5. executes the Smoke suite
+6. generates a self-contained HTML report
+7. uploads Smoke-specific artifacts
+
+The marker selection command is:
+
+```bash
+pytest -m smoke -v
+```
+
+The current CI command also generates the HTML report:
+
+```bash
+mkdir -p reports
+pytest -m smoke -v --html=reports/smoke-report.html --self-contained-html
+```
+
+Current Smoke HTML report:
+
+```text
+reports/smoke-report.html
+```
+
+A failing Smoke test fails the `smoke` job and therefore contributes to an unsuccessful CI workflow result.
+
+The job does not use `continue-on-error: true`.
+
+## Regression Job
+
+The `regression` job provides dedicated CI execution of the approved Regression marker suite.
+
+It depends on:
+
+```yaml
+needs: quality
+```
+
+After the quality job succeeds, the Regression job:
+
+1. checks out the repository
+2. configures Python 3.12
+3. installs dependencies
+4. installs Playwright Chromium
+5. executes the Regression suite
+6. generates a self-contained HTML report
+7. uploads Regression-specific artifacts
+
+The marker selection command is:
+
+```bash
+pytest -m regression -v
+```
+
+The current CI command also generates the HTML report:
+
+```bash
+mkdir -p reports
+pytest -m regression -v --html=reports/regression-report.html --self-contained-html
+```
+
+Current Regression HTML report:
+
+```text
+reports/regression-report.html
+```
+
+A failing Regression test fails the `regression` job and therefore contributes to an unsuccessful CI workflow result.
+
+The job does not use `continue-on-error: true`.
+
+## Full-Suite Job
+
+The `full-suite` job remains the complete CI regression gate.
+
+It depends on:
+
+```yaml
+needs: quality
+```
+
+After the quality job succeeds, the full-suite job:
+
+1. checks out the repository
+2. configures Python 3.12
+3. installs dependencies
+4. installs Playwright Chromium
+5. executes the complete Pytest suite
+6. generates a self-contained HTML report
+7. uploads full-suite artifacts
+
+The full-suite execution is intentionally not filtered by Pytest markers.
+
+The core command is:
+
+```bash
+pytest -v
+```
+
+The current CI command is:
 
 ```bash
 mkdir -p reports
 pytest -v --html=reports/report.html --self-contained-html
 ```
 
-The command generates:
-
-* verbose console output
-* self-contained HTML test report
-* screenshots on failure, if configured by the pytest hook
-* files inside the `reports/` directory
-
-Current report location:
+Current full-suite HTML report:
 
 ```text
 reports/report.html
 ```
 
-The current automated test suite includes:
+The full-suite job validates the complete automated test collection regardless of Smoke, Regression, or other marker assignment.
 
-* login page validation
-* positive login scenarios
-* negative login scenarios
-* login UI behavior checks
-* protected route access validation
-* protected checkout route access validation
-* inventory page validation
-* product list and product card validation
-* inventory-side product details navigation validation
-* product details page validation
-* product details content validation
-* product details add-to-cart validation
-* product details remove-from-cart validation
-* product sorting validation
-* cart page validation
-* empty cart state validation
-* add-to-cart behavior validation
-* cart badge validation
-* cart product visibility and content validation
-* remove-from-cart validation
-* Continue Shopping navigation validation
-* cart state persistence after logout and re-login
-* cart-owned navigation to checkout step one
-* checkout information form validation
-* checkout information required field validation
-* checkout information error state validation
-* checkout information cancel navigation validation
-* checkout overview product summary validation
-* checkout overview price summary validation
-* checkout overview cancel navigation validation
-* product details navigation from checkout overview
-* checkout finish action validation
-* checkout complete page confirmation validation
-* Back Home navigation after order completion
+Dedicated Smoke and Regression jobs provide additional suite-specific CI feedback, but they do not replace the full-suite gate.
 
-### 7. Artifact Upload
+A failed full-suite test fails the `full-suite` job and the overall CI workflow.
 
-The pipeline uploads test execution outputs as GitHub Actions artifacts.
+## Playwright Browser Installation
 
-Current artifact upload steps:
+Chromium is installed only in jobs that execute browser tests:
 
-* pytest HTML report upload
-* full `reports/` directory upload
+* `smoke`
+* `regression`
+* `full-suite`
 
-Current artifacts:
+The installation command is:
 
-* `pytest-html-report`
-* `test-artifacts`
+```bash
+playwright install --with-deps chromium
+```
 
-Artifact upload steps use:
+The `quality` job intentionally does not install Chromium.
+
+Current CI browser:
+
+* Chromium
+
+Cross-browser CI execution is not currently implemented.
+
+## Pytest Marker Strategy And CI
+
+The framework uses explicit Pytest markers to provide selectively executable test suites.
+
+Current executable markers are:
+
+* `smoke`
+* `regression`
+* `ui`
+* `security`
+* `sorting`
+* `navigation`
+* `e2e`
+
+Detailed marker semantics and assignment rules are documented in [Testing Strategy](testing-strategy.md).
+
+### Marker Suites Executed As Dedicated CI Jobs
+
+Phase 4B currently provides dedicated CI jobs for:
+
+* `smoke`
+* `regression`
+
+These suites are executed automatically whenever their CI jobs are released after successful quality validation.
+
+### Markers Without Dedicated CI Jobs
+
+The following executable markers do not currently have dedicated GitHub Actions jobs:
+
+* `ui`
+* `security`
+* `sorting`
+* `navigation`
+* `e2e`
+
+They remain available for selective local execution and for scoped validation during implementation or investigation.
+
+Example commands:
+
+```bash
+pytest -m ui -v
+pytest -m security -v
+pytest -m sorting -v
+pytest -m navigation -v
+pytest -m e2e -v
+```
+
+These tests are still included in the complete full-suite CI execution when they form part of the normal collected test suite.
+
+Not having a dedicated marker job does not mean that the tests are excluded from CI.
+
+It means only that CI does not currently execute them as separate marker-filtered jobs.
+
+### Local Marker Execution
+
+All approved executable markers remain available locally:
+
+```bash
+pytest -m smoke -v
+pytest -m regression -v
+pytest -m ui -v
+pytest -m security -v
+pytest -m sorting -v
+pytest -m navigation -v
+pytest -m e2e -v
+```
+
+Markers may also be combined.
+
+Examples:
+
+```bash
+pytest -m "smoke and ui" -v
+pytest -m "regression and ui" -v
+pytest -m "smoke and navigation" -v
+pytest -m "regression and navigation" -v
+```
+
+Marker execution may also be scoped to a specific test module.
+
+Example:
+
+```bash
+pytest tests/test_checkout_page.py -m e2e -v
+```
+
+The `e2e` suite consists of independent checkpoints that collectively represent the primary purchase journey.
+
+Individual E2E tests remain:
+
+* independently executable
+* fixture-driven
+* order-independent
+* isolated from state produced by other tests
+
+## Local And CI Execution Responsibilities
+
+Local execution and CI execution serve related but different purposes.
+
+### Local Execution
+
+Selective local execution is useful for:
+
+* fast feedback during implementation
+* validating a changed behavior category
+* running the representative Smoke suite
+* running broader Regression coverage
+* validating UI behavior
+* checking Security or Sorting behavior
+* validating Navigation-related changes
+* validating the logical E2E checkpoint suite
+* running focused module-level validation before the full suite
+
+### CI Execution
+
+Current Phase 4B CI provides:
+
+* mandatory code-quality validation
+* dedicated Smoke execution
+* dedicated Regression execution
+* complete unfiltered full-suite execution
+* clean-environment browser execution
+* generated HTML reports
+* downloadable runtime artifacts
+* merge-gate feedback
+
+The full-suite job remains the complete automated regression gate.
+
+Smoke and Regression provide additional targeted feedback without replacing complete suite execution.
+
+## Test Reports And Artifacts
+
+Generated reports and screenshots are runtime outputs and should not be committed to Git.
+
+They are handled through:
+
+* the local `reports/` directory
+* GitHub Actions artifacts
+
+Each browser job uses report and artifact names that do not conflict with the other jobs.
+
+### Smoke Artifacts
+
+Smoke HTML report:
+
+```text
+reports/smoke-report.html
+```
+
+GitHub Actions artifact names:
+
+```text
+smoke-pytest-html-report
+smoke-test-artifacts
+```
+
+### Regression Artifacts
+
+Regression HTML report:
+
+```text
+reports/regression-report.html
+```
+
+GitHub Actions artifact names:
+
+```text
+regression-pytest-html-report
+regression-test-artifacts
+```
+
+### Full-Suite Artifacts
+
+Full-suite HTML report:
+
+```text
+reports/report.html
+```
+
+GitHub Actions artifact names:
+
+```text
+pytest-html-report
+test-artifacts
+```
+
+Browser-job artifact upload steps use:
 
 ```yaml
 if: always()
 ```
 
-This ensures that reports and screenshots are still uploaded even when tests fail.
+This allows available reports and runtime outputs to be uploaded even when a test command fails within an executing browser job.
 
-Current artifact retention:
-
-```yaml
-retention-days: 7
-```
-
-This keeps artifacts available long enough for debugging while avoiding unnecessary long-term storage.
-
-## Test Reports And Artifacts
-
-Generated reports and screenshots should not be committed to Git.
-
-They are runtime outputs and should be handled through:
-
-* local `reports/` directory
-* GitHub Actions artifacts
-* future reporting integrations such as Allure
-
-Current artifact examples:
-
-* `pytest-html-report`
-* `test-artifacts`
-
-Artifacts are available for download from the workflow run page in GitHub Actions.
+If the `quality` job fails, the browser jobs do not start, so they do not produce browser-test artifacts for that workflow execution.
 
 ## Artifact Retention
 
-Artifacts are stored temporarily by GitHub Actions.
-
-They are used for:
-
-* debugging failed tests
-* reviewing test execution evidence
-* validating CI output
-* sharing reports without committing generated files to the repository
-
-The current workflow explicitly keeps artifacts for:
+Current GitHub Actions artifacts are retained for:
 
 ```yaml
 retention-days: 7
 ```
 
-This retention period is appropriate for a portfolio framework because it preserves debugging evidence without keeping generated outputs longer than necessary.
+Temporary retention keeps execution and debugging evidence available without treating generated runtime output as permanent repository content.
 
-## Quality Gate Expectation
+Artifacts can be used for:
 
-The CI pipeline acts as a quality gate.
+* failure investigation
+* execution evidence
+* debugging
+* Pull Request review
 
-Expected behavior:
+## Quality Gate Behavior
 
-* linting failure should fail the pipeline
-* formatting failure should fail the pipeline
-* import sorting failure should fail the pipeline
-* test failure should fail the pipeline
-* artifacts should still be uploaded for debugging when failures occur
+The CI pipeline acts as a merge quality gate.
 
-Test execution should not use:
+Current expected failure behavior:
+
+* Ruff failure fails `quality`
+* Black validation failure fails `quality`
+* isort validation failure fails `quality`
+* failed `quality` prevents all browser jobs from starting
+* Smoke test failure fails `smoke`
+* Regression test failure fails `regression`
+* full-suite test failure fails `full-suite`
+* browser-test failures are not converted into successful results
+* available browser-job reports and artifacts are uploaded through `if: always()`
+
+The workflow does not use:
 
 ```yaml
 continue-on-error: true
 ```
 
-for the main test suite, because failing tests should block the pipeline.
+for the required quality or browser-test execution commands.
 
-The current workflow follows this expectation by running quality checks and the full test suite as regular failing steps.
-
-## Marker-Based Test Execution
-
-The framework supports pytest markers for selective local test execution.
-
-Current marker categories include:
-
-* `smoke`
-* `regression`
-* `ui`
-* `api`
-* `e2e`
-* `positive`
-* `negative`
-* `sorting`
-* `navigation`
-
-Useful local validation commands:
-
-```bash
-pytest -m smoke -v
-pytest -m regression -v
-pytest -m positive -v
-pytest -m negative -v
-pytest -m sorting -v
-pytest -m navigation -v
-pytest -m "ui and smoke" -v
-pytest -m "ui and regression" -v
-pytest -m "ui and sorting" -v
-pytest -m "ui and navigation" -v
-pytest -m e2e -v
-```
-
-The main CI pipeline currently executes the full test suite rather than a marker-filtered subset.
-
-Future CI improvements may include separate jobs for smoke, regression, API, sorting, navigation, end-to-end, and cross-browser test execution.
+A failed required validation should therefore prevent the workflow from being treated as successful.
 
 ## Branch Protection Strategy
 
 The CI pipeline supports the repository branching strategy.
 
-Recommended branch protection rules:
-
-### `main`
+Recommended protection for `main`:
 
 * require Pull Request before merge
-* require CI pipeline to pass
+* require CI to pass
 * disallow direct pushes
 * disallow force pushes
-* keep as stable portfolio/release branch
+* preserve `main` as the stable portfolio branch
 
-### `develop`
+Recommended protection for `develop`:
 
 * require Pull Request before merge
-* require CI pipeline to pass
+* require CI to pass
 * disallow direct pushes where practical
-* use as the main integration branch for completed workstreams
+* preserve `develop` as the normal integration branch
 
-For a solo portfolio project, full enforcement can be introduced gradually. However, the preferred workflow is:
+Preferred integration flow:
 
 ```text
-feature branch → Pull Request → CI validation → Squash merge → develop
-develop → Pull Request → CI validation → Squash merge → main
+feature / fix / docs / refactor branch
+        ↓
+Pull Request
+        ↓
+CI validation
+        ↓
+Squash merge
+        ↓
+develop
 ```
 
-This keeps `develop` as the main integration branch and `main` as the polished portfolio branch.
+Portfolio promotion flow:
+
+```text
+develop
+  ↓
+Pull Request
+  ↓
+CI validation
+  ↓
+Squash merge
+  ↓
+main
+```
 
 ## Workflow Security Notes
 
@@ -369,66 +668,123 @@ GitHub Actions workflow files should be treated as sensitive project configurati
 
 Recommended practices:
 
-* review all changes to `.github/workflows/*.yml`
-* avoid unknown shell scripts in workflow steps
-* avoid suspicious commands such as `curl | bash`, `wget | bash`, `eval`, or encoded shell payloads
+* review every change to `.github/workflows/*.yml`
+* avoid unknown shell scripts
+* avoid suspicious commands such as `curl | bash`, `wget | bash`, `eval`, or encoded payload execution
 * do not add secrets unless required
 * avoid unnecessary workflow permissions
-* use minimal `GITHUB_TOKEN` permissions where possible
+* use minimal `GITHUB_TOKEN` permissions
 
-Recommended minimal workflow permission for the current CI scope:
+Current permission configuration:
 
 ```yaml
 permissions:
   contents: read
 ```
 
-The project currently uses this minimal permission model.
+No elevated GitHub token permission is currently required.
 
-## Benefits Of Current CI Setup
+## Phase 4B And Future CI Maturity
 
-The current CI setup provides:
+The current documented implementation represents Phase 4B CI Execution Strategy.
 
-* automated validation on repository changes
-* consistent execution environment
-* early detection of linting and formatting issues
-* automated UI test execution
-* confidence before merging feature workstreams
-* validation before promoting stable portfolio snapshots to `main`
-* downloadable reports and artifacts
-* support for professional Pull Request workflow
-* foundation for future CI/CD improvements
+Phase 4B includes:
+
+* separation of code-quality validation from browser execution
+* dedicated Smoke CI execution
+* dedicated Regression CI execution
+* preserved complete full-suite execution
+* explicit job dependencies through the quality gate
+* suite-specific reports and artifacts
+
+### Phase 4C — Parallel Execution
+
+Parallel Pytest execution is not currently implemented.
+
+Phase 4C is intended to introduce and validate parallel execution using `pytest-xdist`.
+
+The current Phase 4B workflow must therefore not be described as using:
+
+* `pytest-xdist`
+* `pytest -n`
+* parallel test workers
+
+The independent Smoke, Regression, and full-suite GitHub Actions jobs may execute concurrently after `quality`, but this is CI job scheduling rather than Pytest-level parallelization.
+
+### Phase 4D — Reporting Upgrade
+
+Advanced Allure reporting is not currently implemented.
+
+Allure belongs to the planned Phase 4D reporting upgrade.
+
+The current reporting implementation uses:
+
+* `pytest-html`
+* failure screenshots where generated
+* GitHub Actions artifacts
+
+The presence of `allure-pytest` in project dependencies must not be treated as evidence that Allure reporting is currently part of the active local or CI workflow.
 
 ## Current CI Status
 
-The CI pipeline is operational and supports the completed page-level automation coverage for Login, Inventory, Product Details, Cart, and Checkout areas.
+The Phase 4B CI pipeline is operational.
 
-The pipeline validates:
+It currently validates:
 
-* project setup
-* code quality
-* full automated test execution
-* generated HTML report
-* CI artifacts
+* project dependency setup
+* Ruff
+* Black
+* isort
+* dedicated Smoke execution
+* dedicated Regression execution
+* complete automated Pytest execution
+* Playwright Chromium setup for browser jobs
+* HTML report generation
+* job-specific test artifacts
 * Pull Requests targeting `develop`
 * Pull Requests targeting `main`
-* stable portfolio branch promotion from `develop` to `main`
+* pushes to `develop`
+* pushes to `main`
+* manual workflow executions
 
-It is ready to support stable portfolio branch validation, future framework maturity work, API testing, reporting improvements, CI optimization, and later advanced framework extensions.
+Current execution structure:
+
+```text
+quality
+├── smoke
+├── regression
+└── full-suite
+```
+
+The quality job is the prerequisite gate.
+
+Smoke, Regression, and full-suite are independent browser-test jobs after successful quality validation.
+
+The full-suite job remains the complete unfiltered CI regression gate.
+
+Dedicated CI jobs are not currently implemented for:
+
+* UI
+* Security
+* Sorting
+* Navigation
+* E2E
+
+Parallel Pytest execution, advanced Allure reporting, runtime environment configuration, multi-browser execution, and other later framework maturity capabilities are not part of the current Phase 4B implementation.
 
 ## Future Improvements
 
-Planned CI improvements include:
+Future CI and framework maturity work may include capabilities approved in later project phases, such as:
 
-* dependency caching for faster pipeline execution
-* Playwright browser caching
-* JUnit XML test result publishing
-* Allure reporting integration
-* separate smoke and regression jobs
-* separate marker-based jobs for selected test categories
-* parallel test execution
+* Phase 4C parallel Pytest execution
+* Phase 4D Allure reporting
+* improved reporting and diagnostics
+* runtime environment configuration
+* dependency or browser caching where justified
+* JUnit XML publishing where useful
 * multi-browser execution
-* Docker-based execution environment
-* scheduled regression runs
-* advanced test analytics and history tracking
-* optional deployment or publishing pipeline if the project scope requires it
+* Docker-based execution
+* scheduled execution
+* improved test analytics and history tracking
+
+These capabilities should not be described as implemented until their corresponding project scope is completed and validated.

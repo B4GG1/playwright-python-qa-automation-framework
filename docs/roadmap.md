@@ -47,8 +47,10 @@ Completed areas:
 * LoginPage Page Object Model
 * reusable pytest fixture for opened login page
 * centralized login test data
-* positive login scenario
-* negative login scenarios
+* successful login scenario
+* invalid credential validation scenarios
+* required credential field validation
+* locked out user validation
 * pytest parametrization
 * pytest marker usage
 * login page UI visibility test
@@ -85,11 +87,11 @@ Phase 2 produced the first complete and reviewed automation workstream in the pr
 
 **Status:** Completed
 
-The Phase 2 checkpoint verified that the login page workstream was completed and that the project was ready for the next automation area.
+The Phase 2 checkpoint verified that the Login workstream was completed and that the project was ready for the next automation area.
 
 Completed checkpoint scope:
 
-* reviewed completed login page scope
+* reviewed completed Login scope
 * verified full local test execution
 * verified marker-based test execution
 * reviewed CI status after merge
@@ -98,7 +100,7 @@ Completed checkpoint scope:
 * confirmed Git status
 * prepared high-level Phase 3 scope
 
-This checkpoint allowed the project to move from login-only automation into broader application coverage.
+This checkpoint allowed the project to move from Login-only automation into broader application coverage.
 
 ---
 
@@ -106,42 +108,42 @@ This checkpoint allowed the project to move from login-only automation into broa
 
 **Status:** Completed and promoted to `main` as stable portfolio snapshot
 
-Phase 3 expanded automation coverage beyond login into broader Sauce Demo application behavior.
+Phase 3 expanded automation coverage beyond Login into broader Sauce Demo application behavior.
 
 The phase was split into smaller workstreams to keep the scope controlled and reviewable.
 
 Completed work:
 
-* inventory page Page Object Model
-* product details Page Object Model
-* cart page Page Object Model
-* checkout Page Objects
+* Inventory Page Object Model
+* Product Details Page Object Model
+* Cart Page Object Model
+* Checkout Page Objects
 * shared authenticated-page behavior through `AppPage`
 * reusable product assertion helpers
 * checkout-related assertion support
 * product list validation
 * product sorting validation
-* product details validation
-* inventory-side product details navigation
-* cart functionality tests
+* Product Details validation
+* Inventory-side Product Details navigation
+* Cart functionality tests
 * cart badge validation
-* cart page validation
-* cart product content validation
-* remove-from-cart validation from inventory, product details, and cart pages
-* continue shopping navigation validation
-* cart state persistence after logout and re-login
-* cart-owned navigation to checkout step one
-* checkout information form validation
-* checkout information error handling
-* checkout overview validation
-* checkout overview price summary validation
-* product details navigation from checkout overview
-* complete order flow
+* Cart page validation
+* Cart product content validation
+* Remove validation from Inventory, Product Details, and Cart
+* Continue Shopping navigation validation
+* Cart state persistence after logout and re-login
+* Cart-owned navigation to Checkout Information
+* Checkout Information form validation
+* Checkout Information error handling
+* Checkout Overview validation
+* Checkout Overview price summary validation
+* Product Details navigation from Checkout Overview
+* checkout completion flow
 * order confirmation validation
 * protected checkout route access validation
-* manual test cases for login, inventory, product details, cart, and checkout areas
+* manual test cases for Login, Inventory, Product Details, Cart, and Checkout
 * test data expansion for product and checkout scenarios
-* documentation synchronization after checkout workstream
+* documentation synchronization after Checkout workstream
 * PR review, CI validation, and squash merge into `develop`
 * promotion of the completed Phase 3 state to `main` as the stable portfolio snapshot
 
@@ -152,14 +154,14 @@ Main learning goals completed:
 * reusable fixtures
 * reusable assertion helpers
 * test data strategy
-* end-to-end scenario design
+* independent E2E checkpoint design
 * Page Object interaction between multiple pages
-* clearer smoke/regression separation
-* scope control between cart and checkout behavior
+* clearer Smoke and Regression separation
+* scope control between Cart and Checkout behavior
 * documentation synchronization after structural refactors and workstream completion
 * stable portfolio promotion workflow from `develop` to `main`
 
-Phase 3 is complete after the checkout workstream was validated, synchronized, reviewed in PR #6, passed CI, squash-merged into `develop`, and promoted to `main` as the stable Phase 3 portfolio snapshot.
+Phase 3 is complete after the Checkout workstream was validated, synchronized, reviewed in PR #6, passed CI, squash-merged into `develop`, and promoted to `main` as the stable Phase 3 portfolio snapshot.
 
 ---
 
@@ -167,34 +169,34 @@ Phase 3 is complete after the checkout workstream was validated, synchronized, r
 
 **Status:** Completed
 
-Phase 3A focused on inventory page and product-related validation before cart and checkout scenarios.
+Phase 3A focused on Inventory and product-related validation before Cart and Checkout scenarios.
 
 Completed areas:
 
-* inventory and products manual test cases
-* InventoryPage Page Object Model
-* ProductDetailsPage Page Object Model
-* reusable logged-in inventory page fixture
+* Inventory and Products manual test cases
+* `InventoryPage` Page Object Model
+* `ProductDetailsPage` Page Object Model
+* reusable logged-in Inventory fixture
 * centralized product test data
-* inventory page visibility test
+* Inventory visibility validation
 * product list validation
 * product card content validation
-* product details navigation from product name
-* product details navigation from product image
-* return from product details page to inventory page
+* Product Details navigation from product name
+* Product Details navigation from product image
+* return from Product Details to Inventory
 * product sorting by name A to Z
 * product sorting by name Z to A
 * product sorting by price low to high
 * product sorting by price high to low
-* sorting marker registration
-* local validation of inventory tests
+* Sorting marker registration
+* local validation of Inventory tests
 * full local test suite validation
 * test case coverage mapping
 * documentation updates
 
 Completed review scope:
 
-* reviewed completed inventory and products scope
+* reviewed completed Inventory and Products scope
 * verified test case coverage
 * verified Page Object structure
 * verified fixture usage
@@ -203,7 +205,7 @@ Completed review scope:
 * reviewed documentation updates
 * confirmed cleanup needs
 
-Phase 3A completed the inventory and product validation layer required before cart automation.
+Phase 3A completed the Inventory and Product validation layer required before Cart automation.
 
 ---
 
@@ -211,46 +213,46 @@ Phase 3A completed the inventory and product validation layer required before ca
 
 **Status:** Completed
 
-Phase 3B focused on cart-related behavior.
+Phase 3B focused on Cart-related behavior.
 
 Completed areas:
 
-* cart-related manual test cases
-* CartPage Page Object Model
-* cart page availability validation
-* empty cart state validation
-* add product to cart from inventory page
-* cart link navigation
+* Cart-related manual test cases
+* `CartPage` Page Object Model
+* Cart page availability validation
+* empty Cart state validation
+* Add to cart from Inventory
+* Cart navigation
 * cart badge visibility validation
 * cart badge count validation
-* cart page product visibility validation
-* cart product content validation
-* remove product from cart page
+* Cart product visibility validation
+* Cart product content validation
+* Remove behavior from Cart
 * cart badge removal after removing the last product
-* continue shopping navigation from cart to inventory
-* cart state persistence after logout and re-login
-* product-details-side Add to cart and Remove button behavior
-* use of existing centralized product test data for cart scenarios
-* use of existing valid user test data for persistence scenarios
-* cart test case coverage mapping
+* Continue Shopping navigation from Cart to Inventory
+* Cart state persistence after logout and re-login
+* Product Details-side Add to cart and Remove behavior
+* reuse of centralized product test data for Cart scenarios
+* reuse of valid user data for persistence scenarios
+* Cart test case coverage mapping
 * documentation updates
 
 Completed stabilization scope:
 
-* reviewed completed cart workstream files
-* verified cart test cases against implemented automation
-* verified TC-CART IDs used in tests
+* reviewed completed Cart workstream files
+* verified Cart test cases against implemented automation
+* verified `TC-CART` IDs used in tests
 * verified Page Object responsibility boundaries
 * verified that tests do not duplicate selectors unnecessarily
-* confirmed checkout behavior remains excluded from detailed cart scope
-* reviewed README and technical docs for current project state
-* ran cart-specific validation
+* confirmed detailed Checkout behavior remains outside Cart scope
+* reviewed README and technical docs
+* ran Cart-specific validation
 * ran full local test suite
 * ran quality checks
 * confirmed Git status and cleanup needs
 * prepared the workstream for the next project step
 
-Phase 3B completed cart behavior automation while keeping detailed checkout behavior out of cart scope.
+Phase 3B completed Cart behavior automation while keeping detailed Checkout behavior outside Cart scope.
 
 ---
 
@@ -260,14 +262,14 @@ Phase 3B completed cart behavior automation while keeping detailed checkout beha
 
 Phase 3C focused on final cleanup after the Login, Inventory, Product Details, and Cart page-level coverage work.
 
-The goal of this workstream was to align project structure, test coverage, Page Objects, fixtures, test case files, and documentation before continuing into checkout automation.
+The goal of this workstream was to align project structure, test coverage, Page Objects, fixtures, test case files, and documentation before continuing into Checkout automation.
 
 Completed areas:
 
 * one automated test module per covered page area
 * one manual test case file per covered page area
 * Login, Inventory, Product Details, and Cart test case coverage synchronization
-* missing page-level coverage completion after cart workstream
+* missing page-level coverage completion after Cart workstream
 * Page Object responsibility review
 * `BasePage` and `AppPage` structure review
 * authenticated shared behavior ownership review
@@ -277,12 +279,12 @@ Completed areas:
 * TC coverage mapping review
 * test case metadata cleanup
 * README and technical documentation synchronization
-* roadmap readiness review for the checkout workstream
+* roadmap readiness review for the Checkout workstream
 * local quality validation
-* full pytest validation
+* full Pytest validation
 * PR readiness confirmation or blocker listing
 
-Phase 3C prepared the framework structure for the dedicated checkout automation workstream.
+Phase 3C prepared the framework structure for the dedicated Checkout automation workstream.
 
 ---
 
@@ -290,42 +292,42 @@ Phase 3C prepared the framework structure for the dedicated checkout automation 
 
 **Status:** Completed and merged into `develop`
 
-Phase 3D focused on checkout-related behavior after inventory, product details, and cart coverage.
+Phase 3D focused on Checkout behavior after Inventory, Product Details, and Cart coverage.
 
-The goal of this workstream was to implement checkout automation while keeping responsibility boundaries clear:
+The workstream kept responsibility boundaries clear:
 
-* Cart Page coverage owns navigation from the cart page to checkout step one.
-* Checkout Page coverage owns checkout information form behavior, checkout overview behavior, and checkout completion behavior.
-* Login Page coverage owns protected checkout route access validation.
+* Cart coverage owns navigation from Cart to Checkout Information.
+* Checkout coverage owns Checkout Information, Checkout Overview, and Checkout Complete behavior.
+* Login coverage owns protected Checkout route access validation.
 
 Completed areas:
 
-* checkout-related manual test cases
-* checkout Page Objects
-* checkout information form visibility validation
-* checkout required customer field validation
-* checkout information error message validation
-* checkout information input error icon validation
-* checkout information error close behavior
-* checkout information form submission with valid data
-* checkout information cancel navigation back to cart
-* checkout overview selected product validation
-* checkout overview all-products validation
-* checkout overview one-product price summary validation
-* checkout overview multiple-products price summary validation
-* checkout overview cancel navigation back to inventory
-* product details navigation from checkout overview item name
-* all-products product details navigation from checkout overview
-* checkout finish action validation
-* checkout complete page confirmation validation
+* Checkout-related manual test cases
+* Checkout Page Objects
+* Checkout Information form visibility validation
+* Checkout required customer field validation
+* Checkout Information error message validation
+* Checkout Information input error icon validation
+* Checkout Information error close behavior
+* Checkout Information submission with valid data
+* Checkout Information cancellation back to Cart
+* Checkout Overview selected product validation
+* Checkout Overview all-products validation
+* Checkout Overview one-product price summary validation
+* Checkout Overview multiple-products price summary validation
+* Checkout Overview cancellation back to Inventory
+* Product Details navigation from Checkout Overview item name
+* all-products Product Details navigation from Checkout Overview
+* Finish validation
+* Checkout Complete confirmation validation
 * Back Home navigation after order completion
-* protected checkout information route validation
-* protected checkout overview route validation
-* protected checkout complete route validation
-* checkout test data
-* checkout fixtures
-* checkout test case coverage mapping
-* documentation synchronization after checkout implementation
+* protected Checkout Information route validation
+* protected Checkout Overview route validation
+* protected Checkout Complete route validation
+* Checkout test data
+* Checkout fixtures
+* Checkout test case coverage mapping
+* documentation synchronization after Checkout implementation
 * PR creation from `feature/checkout` into `develop`
 * CI validation on PR #6
 * squash merge into `develop`
@@ -338,15 +340,15 @@ Phase 3D is complete after AQA-0082 final validation and documentation sync, AQA
 
 **Status:** Completed through AQA-0082 and AQA-0083
 
-A separate large Phase 3 checkpoint task is not required after the checkout merge because the practical checkpoint scope was already covered by:
+A separate large Phase 3 checkpoint task was not required after the Checkout merge because the practical checkpoint scope was already covered by:
 
-* AQA-0082 — checkout workstream final validation and documentation sync
+* AQA-0082 — Checkout workstream final validation and documentation sync
 * AQA-0083 — PR creation, PR diff review, CI verification, squash merge into `develop`, local update, and branch cleanup
 
 Covered completion scope:
 
-* reviewed completed Phase 3 checkout scope
-* validated checkout test coverage
+* reviewed completed Phase 3 Checkout scope
+* validated Checkout test coverage
 * confirmed full local test suite before PR
 * confirmed quality checks before PR
 * verified CI status on PR #6
@@ -363,50 +365,269 @@ The next project direction is Phase 4 Framework Maturity.
 
 **Status:** Completed
 
-Phase 3 portfolio promotion moves the completed and validated Phase 3 project state from `develop` to `main`.
+Phase 3 portfolio promotion moved the completed and validated Phase 3 project state from `develop` to `main`.
 
-The purpose of this promotion is to make `main` the polished portfolio branch suitable for recruiters, technical reviewers, and CV/GitHub profile links.
+The purpose of this promotion was to make `main` the polished portfolio branch suitable for recruiters, technical reviewers, and CV/GitHub profile links.
 
-Promotion scope:
+Completed promotion scope:
 
-* confirm that Phase 3 page-level automation coverage is complete
-* confirm that Login, Inventory, Product Details, Cart, and Checkout documentation is synchronized
-* confirm that implemented features are not mixed with planned future features
-* confirm that stale checkout-finalization or PR-readiness wording has been removed
-* confirm that generated reports, screenshots, cache files, and virtual environment files are not tracked
-* validate the promotion Pull Request through CI
-* squash-merge the stable Phase 3 snapshot into `main`
+* confirmed Phase 3 page-level automation coverage
+* confirmed Login, Inventory, Product Details, Cart, and Checkout documentation synchronization
+* confirmed implemented features were separated from planned future features
+* removed stale Checkout-finalization and PR-readiness wording
+* confirmed generated reports, screenshots, cache files, and virtual environment files were not tracked
+* validated the promotion Pull Request through CI
+* squash-merged the stable Phase 3 snapshot into `main`
 
-After this promotion, future implementation and framework maturity work continues from `develop`. The `develop` branch may contain newer work after this roadmap is read from `main`.
+After promotion, future implementation and framework maturity work continues from `develop`.
 
 ---
 
 ## Phase 4: Framework Maturity
 
-**Status:** Planned
+**Status:** In Progress
 
-Phase 4 will improve framework scalability and maintainability.
+Phase 4 focuses on improving the scalability, maintainability, execution strategy, reporting, configuration, and diagnostics of the existing automation framework.
 
-Planned work:
+Unlike Phase 3, this phase does not primarily expand application feature coverage. Its purpose is to mature the framework built around the completed Login, Inventory, Product Details, Cart, and Checkout automation.
 
-* smoke and regression suite separation improvements
-* CI jobs for selected test groups
-* pytest marker strategy improvements
-* parallel execution with pytest-xdist
-* improved reporting structure
-* Allure reporting integration
-* environment-based configuration
-* logging utilities
-* improved fixture organization
-* stronger diagnostics for failed tests
+Phase 4 is divided into focused workstreams so that framework improvements can be introduced and validated incrementally.
+
+Workstreams:
+
+* Phase 4A — Marker And Suite Strategy — Completed
+* Phase 4B — CI Execution Strategy — Completed
+* Phase 4C — Parallel Execution — Planned
+* Phase 4D — Reporting Upgrade — Planned
+* Phase 4E — Runtime Configuration — Planned
+* Phase 4F — Diagnostics And Fixture Cleanup — Planned
+* Phase 4 Checkpoint — Planned
 
 Main learning goals:
 
 * scalable test organization
+* predictable marker-based execution
+* smoke and regression suite separation
 * execution optimization
+* CI execution strategy
+* parallel test execution
 * advanced reporting
-* maintainable framework design
+* environment-based framework configuration
+* stronger failure diagnostics
+* maintainable fixture organization
 * stronger CI/test feedback loops
+* maintainable framework design
+
+---
+
+## Phase 4A: Marker And Suite Strategy
+
+**Status:** Completed
+
+Phase 4A normalized pytest marker semantics and established a predictable test-suite execution strategy required for later CI execution improvements.
+
+Completed work:
+
+* AQA-0084 — Audit Current Pytest Marker Usage
+* AQA-0085 — Normalize Pytest Marker Definitions And Usage
+* AQA-0086 — Document Marker And Suite Execution Strategy
+* AQA-0087 — Validate Phase 4A Marker And Suite Strategy
+
+Completed marker strategy scope:
+
+* audited marker definitions in `pytest.ini`
+* audited marker assignments across all automated test modules
+* normalized Smoke and Regression semantics
+* normalized UI marker semantics
+* normalized Navigation marker semantics
+* clarified Security marker usage
+* preserved Sorting as a dedicated executable category
+* clarified E2E execution semantics
+* removed Positive and Negative as executable pytest markers
+* removed the unused API executable marker from the current UI automation suite
+* preserved API testing as future project scope
+* kept marker assignment explicit through `@pytest.mark.*` decorators
+* confirmed that no dynamic marker assignment is performed through `conftest.py`
+* synchronized affected test case coverage and automation metadata
+* completed dedicated automation for `TC-PRODUCT-DETAILS-015`
+* completed dedicated automation for `TC-CART-013`
+* completed dedicated automation for `TC-CHECKOUT-002`
+* completed dedicated automation for `TC-CHECKOUT-019`
+
+Final Phase 4A validation confirmed:
+
+* `pytest -m smoke -v` passes
+* `pytest -m regression -v` passes
+* `pytest -m ui -v` passes
+* `pytest -m security -v` passes
+* `pytest -m sorting -v` passes
+* `pytest -m navigation -v` passes
+* `pytest -m e2e -v` passes
+* the full Pytest suite passes
+* Ruff passes
+* Black validation passes
+* isort validation passes
+* test case traceability and general Phase 4A documentation are synchronized
+
+Phase 4A is complete and provides the marker and suite strategy required for Phase 4B CI Execution Strategy.
+
+---
+
+## Phase 4B: CI Execution Strategy
+
+**Status:** Completed
+
+Phase 4B improved GitHub Actions execution so that CI provides clearer and faster feedback for code quality, representative Smoke coverage, broader Regression coverage, and complete full-suite validation.
+
+Completed work:
+
+* AQA-0088 — Separate CI Quality And Full-Suite Execution
+* AQA-0089 — Add Smoke And Regression CI Jobs
+* AQA-0090 — Document Phase 4B CI Execution Strategy
+* AQA-0091 — Validate And Integrate Phase 4B CI Execution Strategy
+
+Completed CI execution scope:
+
+* reviewed and normalized the existing GitHub Actions workflow
+* separated code-quality validation from browser-test execution
+* introduced a dedicated `quality` job
+* configured Ruff validation through `ruff check .`
+* configured Black validation through `black --check .`
+* configured isort validation through `isort . --check-only`
+* kept Playwright browser installation out of the `quality` job
+* introduced dedicated Smoke CI execution
+* introduced dedicated Regression CI execution
+* preserved complete unfiltered full-suite CI execution
+* configured Smoke execution with `pytest -m smoke -v`
+* configured Regression execution with `pytest -m regression -v`
+* preserved `pytest -v` as the complete full-suite CI regression gate
+* configured Smoke, Regression, and full-suite jobs to depend on successful quality validation
+* kept Smoke, Regression, and full-suite independent from one another
+* preserved Chromium installation only for browser-test jobs
+* preserved minimal workflow permissions through `contents: read`
+* preserved automatic workflow execution for pushes to `main` and `develop`
+* preserved automatic workflow execution for Pull Requests targeting `main` and `develop`
+* preserved manual workflow execution through `workflow_dispatch`
+* introduced separate self-contained pytest HTML reports for Smoke, Regression, and full-suite execution
+* introduced non-conflicting GitHub Actions artifact names for each browser-test job
+* preserved artifact upload through `if: always()` for available browser-test outputs
+* preserved seven-day artifact retention
+* synchronized README and technical documentation with the implemented Phase 4B workflow
+* synchronized Git branching documentation with current CI execution behavior
+
+Final Phase 4B validation confirmed:
+
+* Ruff passes
+* Black validation passes
+* isort validation passes
+* `pytest -m smoke -v` passes
+* `pytest -m regression -v` passes
+* the complete Pytest suite passes
+* quality validation remains separated from browser execution
+* Smoke and Regression retain dedicated CI execution
+* full-suite remains complete and unfiltered
+* browser-test jobs depend only on successful quality validation
+* browser-test jobs do not depend on one another
+* reports and artifact behavior remain aligned with the implemented workflow
+* Phase 4B documentation is synchronized with the implemented CI strategy
+
+Phase 4B does not introduce Pytest-level parallel execution.
+
+The independent Smoke, Regression, and full-suite GitHub Actions jobs may be scheduled concurrently after successful quality validation, but this is GitHub Actions job-level scheduling rather than `pytest-xdist` parallel test execution.
+
+Parallel execution remains Phase 4C scope.
+
+Allure reporting remains Phase 4D scope.
+
+Runtime configuration and later framework maturity capabilities also remain outside Phase 4B.
+
+Phase 4B completes the CI Execution Strategy required before Phase 4C Parallel Execution.
+
+---
+
+## Phase 4C: Parallel Execution
+
+**Status:** Planned
+
+Phase 4C will introduce and validate parallel pytest execution using `pytest-xdist`.
+
+Planned areas:
+
+* add `pytest-xdist`
+* validate test independence under parallel execution
+* identify scenarios affected by shared Sauce Demo application state
+* define safe parallel execution commands
+* verify compatibility with existing fixtures
+* verify compatibility with reporting and failure artifacts
+* document any test groups that should remain sequential
+
+The goal is execution optimization without sacrificing test reliability.
+
+---
+
+## Phase 4D: Reporting Upgrade
+
+**Status:** Planned
+
+Phase 4D will improve test reporting and failure artifacts.
+
+Planned areas:
+
+* review the current HTML reporting structure
+* improve organization of generated reports
+* improve screenshot, trace, video, or other failure artifact handling where useful
+* improve CI artifact naming and accessibility
+* integrate Allure reporting
+* generate Allure result data locally
+* integrate useful Allure output with CI where appropriate
+* document reporting commands and artifact locations
+
+The goal is to make test results easier to review locally, in CI, and during portfolio presentation.
+
+---
+
+## Phase 4E: Runtime Configuration
+
+**Status:** Planned
+
+Phase 4E will introduce environment-based runtime configuration.
+
+Planned areas may include:
+
+* base URL configuration
+* browser selection
+* headed or headless execution mode
+* timeout configuration
+* screenshot policy
+* trace policy
+* video policy
+* sensible local defaults
+* environment variable handling
+* documented configuration usage
+
+The goal is to reduce hardcoded runtime assumptions and make framework execution more flexible.
+
+---
+
+## Phase 4F: Diagnostics And Fixture Cleanup
+
+**Status:** Planned
+
+Phase 4F will review framework diagnostics and fixture organization after the previous maturity improvements.
+
+Planned areas:
+
+* introduce or improve lightweight logging utilities
+* expose useful runtime information during test execution
+* improve failed-test diagnostics
+* review screenshot and trace diagnostics
+* review current fixture structure
+* identify fixture duplication or unclear responsibility
+* reorganize fixtures only where the current structure justifies it
+* keep fixture names explicit and scenario-oriented
+* avoid refactoring solely for structural complexity
+
+This workstream will provide final framework cleanup before the Phase 4 checkpoint.
 
 ---
 
@@ -414,16 +635,22 @@ Main learning goals:
 
 **Status:** Planned
 
-After Phase 4 implementation, a checkpoint task will be required before moving to advanced extensions.
+After Phase 4 implementation, a checkpoint will confirm whether the framework maturity work is complete and whether the project is ready for Phase 5 Advanced Extensions.
 
 Checkpoint scope:
 
-* review framework maturity improvements
-* verify reporting and diagnostics
+* review completed Phase 4A–4F workstreams
+* verify marker and suite execution strategy
 * verify CI execution strategy
-* review documentation
-* check cleanup needs
-* confirm whether the project is ready for broader portfolio presentation or advanced extensions
+* verify parallel execution behavior
+* verify reporting and failure artifacts
+* verify environment-based configuration
+* verify diagnostics and fixture organization
+* run required test and quality validation
+* review documentation synchronization
+* check repository cleanup and Git status
+* confirm readiness for broader portfolio presentation
+* confirm readiness for Phase 5 Advanced Extensions
 
 ---
 
@@ -459,7 +686,7 @@ Main learning goals:
 
 ### After Phase 2
 
-The project contains a complete login page automation workstream and can be used as an early proof of structured QA automation learning.
+The project contains a complete Login automation workstream and can be used as an early proof of structured QA automation learning.
 
 Recommended use:
 
@@ -469,49 +696,49 @@ Recommended use:
 
 ### After Phase 3A
 
-The project contains login coverage plus inventory and product validation.
+The project contains Login coverage plus Inventory and Product validation.
 
 Recommended use:
 
 * stronger GitHub portfolio presentation
 * early QA Automation application support
 * demonstration of Page Object Model beyond a single page
-* demonstration of product data validation and sorting tests
+* demonstration of product data validation and Sorting tests
 
 ### After Phase 3B
 
-The project contains login, inventory, product details, and cart automation coverage.
+The project contains Login, Inventory, Product Details, and Cart automation coverage.
 
 Recommended use:
 
-* stronger portfolio presentation than login/inventory-only state
+* stronger portfolio presentation than Login/Inventory-only state
 * demonstration of stateful UI testing
-* demonstration of multipage Page Object interaction
-* demonstration of cart behavior validation without mixing detailed checkout scope
+* demonstration of multi-page Page Object interaction
+* demonstration of Cart behavior validation without mixing detailed Checkout scope
 * continued preparation for regular QA Automation applications
 
 ### After Phase 3C
 
-The project contains synchronized page-level coverage, cleaned-up structure, aligned test case documentation, shared authenticated-page behavior, reusable product assertions, and final documentation sync after Login, Inventory, Product Details, and Cart coverage.
+The project contains synchronized page-level coverage, cleaned-up structure, aligned test case documentation, shared authenticated-page behavior, reusable product assertions, and final documentation synchronization after Login, Inventory, Product Details, and Cart coverage.
 
 Recommended use:
 
-* stronger portfolio presentation before checkout automation
+* stronger portfolio presentation before Checkout automation
 * demonstration of structure cleanup and documentation discipline
 * demonstration of traceability between manual test cases and automated tests
 * demonstration of reusable framework components
-* preparation for checkout automation
+* preparation for Checkout automation
 
 ### After Phase 3D
 
-The project contains checkout automation in addition to login, inventory, product details, and cart coverage.
+The project contains Checkout automation in addition to Login, Inventory, Product Details, and Cart coverage.
 
 Recommended use:
 
 * stronger regular QA Automation application support
-* demonstration of realistic multi-step e-commerce UI flow automation
-* demonstration of form validation, overview validation, and order completion checks
-* demonstration of clear Page Object boundaries across multipage workflows
+* demonstration of realistic multi-step e-commerce UI automation
+* demonstration of form validation, Overview validation, and order completion checks
+* demonstration of clear Page Object boundaries across multi-page workflows
 * demonstration of documentation synchronization after feature workstream completion
 
 ### After Phase 3 Portfolio Promotion
@@ -528,13 +755,15 @@ Recommended use:
 
 ### After Phase 4
 
-The project should be close to a mature portfolio-ready QA automation framework.
+The project should be close to a mature portfolio-ready QA automation framework with structured execution suites, improved CI feedback, parallel execution support, advanced reporting, runtime configuration, and stronger diagnostics.
 
 Recommended use:
 
 * stronger Junior / Junior+ QA Automation applications
 * Technical QA applications
 * broader recruiter-facing portfolio presentation
+* demonstration of framework maturity beyond feature-level test automation
+* demonstration of scalable test execution and reporting strategy
 
 ---
 
@@ -550,6 +779,8 @@ The long-term objective is to evolve this repository into a scalable, portfolio-
 * Playwright expertise
 * ability to work with Page Object Model
 * ability to organize test data and parametrized tests
+* ability to design independent marker-based suites
+* ability to design independent E2E journey checkpoints
 * ability to keep scope controlled across workstreams
 * ability to maintain documentation alongside automation
 * stable Git and Pull Request workflow
