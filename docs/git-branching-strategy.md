@@ -11,9 +11,9 @@ The branching strategy supports two stable branch roles:
 
 When this document is read from `main`, the `develop` branch may already contain newer integration work that has not yet been promoted to the stable portfolio branch.
 
-For detailed pytest marker semantics and suite execution strategy, see [Testing Strategy](testing-strategy.md).
+For detailed pytest marker semantics and sequential/parallel suite execution strategy, see [Testing Strategy](testing-strategy.md).
 
-For detailed GitHub Actions execution, job dependencies, reports, and artifacts, see [CI/CD Pipeline](ci-cd-pipeline.md).
+For detailed GitHub Actions execution, job dependencies, pytest-xdist execution, reports, and artifacts, see [CI/CD Pipeline](ci-cd-pipeline.md).
 
 ## Branching Model
 
@@ -417,7 +417,7 @@ Promotion to `main` should not be used for incomplete feature work, experimental
 
 ## Local Validation Before Pull Request
 
-Recommended full local checks before opening a Pull Request:
+Recommended full sequential local checks before opening a Pull Request:
 
 ```bash
 ruff check .
@@ -425,6 +425,33 @@ black --check .
 isort . --check-only
 pytest -v
 ```
+
+Sequential execution remains supported as the baseline local validation mode.
+
+### Parallel Validation
+
+Phase 4C adds validated pytest-xdist worker-level parallel execution.
+
+Approved parallel commands are:
+
+```bash
+pytest -m smoke -n auto -v
+pytest -m regression -n auto -v
+pytest -n auto -v
+```
+
+Parallel validation should be used when the task or workstream affects:
+
+* worker-level execution
+* fixture isolation
+* shared-state assumptions
+* parametrized execution independence
+* E2E checkpoint independence
+* parallel reporting or failure-artifact behavior
+
+Parallel execution is an additional supported mode and does not replace sequential validation.
+
+The current suite was validated under pytest-xdist execution without identified sequential-only test exceptions.
 
 ### Marker-Based Validation
 
@@ -461,11 +488,11 @@ pytest tests/test_checkout_page.py -m e2e -v
 
 All current marker suites remain available for selective local validation.
 
-Detailed marker semantics and assignment rules are documented in [Testing Strategy](testing-strategy.md).
+Detailed marker semantics, test-independence expectations, and parallel execution behavior are documented in [Testing Strategy](testing-strategy.md).
 
 ### Marker Execution In CI
 
-The current Phase 4B GitHub Actions pipeline additionally provides dedicated CI execution for:
+The current GitHub Actions pipeline provides dedicated CI execution for:
 
 * Smoke
 * Regression
@@ -482,11 +509,13 @@ Tests carrying these markers still participate in the complete unfiltered full-s
 
 Dedicated marker execution in CI does not change marker semantics or local execution availability.
 
+Smoke, Regression, and full-suite CI execution use pytest-xdist worker-level parallelism.
+
 ## CI Validation
 
-GitHub Actions currently separates code-quality validation from browser-test execution.
+GitHub Actions separates code-quality validation from browser-test execution.
 
-Current job structure:
+The Phase 4B job structure is preserved:
 
 ```text
 quality
@@ -503,7 +532,7 @@ black --check .
 isort . --check-only
 ```
 
-The quality job does not install Playwright Chromium.
+The quality job does not install Playwright Chromium and does not use pytest-xdist.
 
 Smoke, Regression, and full-suite all depend on successful `quality` validation.
 
@@ -511,12 +540,24 @@ They do not depend on each other.
 
 After `quality` succeeds, the three browser jobs may therefore be scheduled independently by GitHub Actions.
 
+Phase 4C adds worker-level parallelism inside those existing browser jobs:
+
+```text
+quality
+├── smoke
+│   └── pytest-xdist workers
+├── regression
+│   └── pytest-xdist workers
+└── full-suite
+    └── pytest-xdist workers
+```
+
 ### Smoke CI
 
 The dedicated Smoke job executes:
 
 ```bash
-pytest -m smoke -v
+pytest -m smoke -n auto -v
 ```
 
 The actual CI command also generates a self-contained pytest HTML report and uploads Smoke-specific artifacts.
@@ -526,7 +567,7 @@ The actual CI command also generates a self-contained pytest HTML report and upl
 The dedicated Regression job executes:
 
 ```bash
-pytest -m regression -v
+pytest -m regression -n auto -v
 ```
 
 The actual CI command also generates a self-contained pytest HTML report and uploads Regression-specific artifacts.
@@ -536,7 +577,7 @@ The actual CI command also generates a self-contained pytest HTML report and upl
 The `full-suite` job executes the complete unfiltered automated test suite:
 
 ```bash
-pytest -v
+pytest -n auto -v
 ```
 
 The full-suite job remains the complete CI regression gate.
@@ -560,13 +601,30 @@ Regular pushes to feature, fix, documentation, refactor, or promotion branches d
 
 ### CI Execution Boundaries
 
-The current Phase 4B workflow does not use Pytest-level parallel execution.
+The current execution model combines the Phase 4B CI job structure with the Phase 4C pytest-xdist strategy.
 
-The independent Smoke, Regression, and full-suite jobs may run concurrently after `quality`, but this is GitHub Actions job-level scheduling.
+GitHub Actions may schedule Smoke, Regression, and full-suite concurrently after `quality`.
 
-Parallel Pytest execution with `pytest-xdist` is not currently implemented.
+This is **GitHub Actions job-level concurrency**.
 
-Advanced Allure reporting is also not part of the current CI workflow.
+Inside each browser-test job, pytest-xdist distributes collected tests between workers.
+
+This is **Pytest worker-level parallelism**.
+
+The two mechanisms are separate and should not be treated as interchangeable.
+
+Phase 4C does not introduce:
+
+* additional CI jobs
+* CI matrices
+* cross-browser execution
+* Docker execution
+* runtime environment configuration
+* advanced Allure reporting
+
+Current browser-test execution remains Chromium-only.
+
+Advanced Allure reporting remains outside the current CI workflow and belongs to Phase 4D.
 
 Detailed CI behavior, reports, artifacts, retention, and failure handling are documented in [CI/CD Pipeline](ci-cd-pipeline.md).
 
@@ -593,6 +651,14 @@ pytest -v tests/test_checkout_page.py
 pytest -v
 ```
 
+When a workstream affects parallel-safety assumptions, additionally run:
+
+```bash
+pytest -m smoke -n auto -v
+pytest -m regression -n auto -v
+pytest -n auto -v
+```
+
 The full test suite should still pass before a workstream is considered ready for merge unless a scoped validation exception is explicitly accepted.
 
 For portfolio promotion into `main`, the full test suite and quality checks should pass before merge unless a specific scoped validation exception is explicitly accepted.
@@ -611,7 +677,9 @@ Before merging a Pull Request, verify:
 * documentation is updated when needed
 * test cases and automated tests are aligned
 * marker documentation reflects current executable marker behavior when marker usage changes
+* execution documentation reflects current sequential and parallel behavior when execution strategy changes
 * CI documentation reflects current workflow behavior when CI execution changes
+* GitHub Actions job concurrency is not confused with pytest-xdist worker parallelism
 * Page Object responsibilities remain logically separated
 * shared authenticated-page behavior remains owned by the correct abstraction
 * reusable assertion helpers remain focused on shared validation logic
@@ -644,6 +712,7 @@ Before promoting `develop` to `main`, verify:
 * README reflects the stable portfolio state
 * documentation does not contain stale workstream-finalization wording
 * documentation reflects current marker definitions and execution commands
+* documentation reflects current sequential and parallel execution behavior
 * documentation reflects current CI execution behavior
 * documentation clearly separates implemented scope from planned future scope
 * test case documentation is aligned with automated coverage
@@ -662,7 +731,7 @@ git checkout develop
 git pull origin develop
 ```
 
-Then optionally delete the completed local source branch:
+Then optionally delete the completed local source branch if it is no longer required for related work:
 
 ```bash
 git branch -d feature/<short-description>
@@ -699,6 +768,7 @@ A checkpoint task should verify:
 * local validation
 * relevant scoped test execution
 * relevant marker suite execution where applicable
+* parallel validation where required by the active scope
 * full suite execution or accepted scoped validation
 * CI status
 * documentation status
@@ -729,11 +799,13 @@ This strategy ensures:
 * controlled integration workflow
 * controlled portfolio promotion workflow
 * reliable CI quality gating
-* dedicated Smoke CI validation
-* dedicated Regression CI validation
-* complete full-suite CI regression validation
-* consistent local validation
+* dedicated parallel Smoke CI validation
+* dedicated parallel Regression CI validation
+* parallel complete full-suite CI regression validation
+* consistent sequential local validation
+* supported pytest-xdist parallel validation
 * normalized marker-based selective execution
+* clear separation between GitHub Actions job concurrency and Pytest worker parallelism
 * professional repository standards
 * scalable workflow for future collaboration
 * clear separation between active work, integration, and stable portfolio state

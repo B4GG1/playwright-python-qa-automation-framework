@@ -8,7 +8,7 @@ The implemented feature set reflects the current framework state on the active d
 
 The current implemented scope focuses on UI automation with Playwright and Pytest.
 
-API testing, Selenium comparison, Docker-based execution, Jenkins integration, cross-browser execution, Pytest-level parallel execution, and advanced reporting remain future extensions unless explicitly described as implemented below.
+API testing, Selenium comparison, Docker-based execution, Jenkins integration, cross-browser execution, and advanced Allure reporting remain future extensions unless explicitly described as implemented below.
 
 ## Currently Implemented
 
@@ -20,10 +20,16 @@ API testing, Selenium comparison, Docker-based execution, Jenkins integration, c
 * centralized pytest configuration
 * strict pytest marker validation
 * marker-based selective local execution
+* sequential local Pytest execution
+* pytest-xdist worker-level parallel execution
+* parallel Smoke execution
+* parallel Regression execution
+* parallel full-suite execution
 * dedicated Smoke CI execution
 * dedicated Regression CI execution
 * complete full automated test suite execution
 * complete full automated test suite execution in CI
+* pytest-xdist execution inside existing CI browser-test jobs
 
 Current executable pytest markers:
 
@@ -44,8 +50,26 @@ Current suite capabilities include:
 * product Sorting validation
 * page-transition Navigation validation
 * independent E2E purchase-journey checkpoint validation
+* supported sequential execution
+* validated worker-level parallel execution
 
-Detailed marker semantics are documented in:
+Approved parallel execution commands:
+
+```bash
+pytest -m smoke -n auto -v
+pytest -m regression -n auto -v
+pytest -n auto -v
+```
+
+Sequential execution remains supported:
+
+```bash
+pytest -m smoke -v
+pytest -m regression -v
+pytest -v
+```
+
+Detailed marker and execution semantics are documented in:
 
 ```text
 docs/testing-strategy.md
@@ -150,6 +174,8 @@ test_data/checkout_test_data.py
 ```
 
 Inventory, Product Details, Cart, and Checkout tests reuse centralized product data instead of introducing unnecessary page-specific datasets.
+
+Centralized test data represents reusable test input and does not create shared browser state between tests or xdist workers.
 
 ### Login Page Test Coverage
 
@@ -304,7 +330,7 @@ E2E tests:
 * do not depend on execution order
 * do not share state between test cases
 
-Run the suite with:
+Run the suite sequentially with:
 
 ```bash
 pytest -m e2e -v
@@ -313,6 +339,8 @@ pytest -m e2e -v
 E2E does not currently have a dedicated CI job.
 
 Its tests still participate in complete full-suite CI execution.
+
+Because the full-suite CI job executes through pytest-xdist, E2E checkpoints may be distributed between workers while remaining independent.
 
 ### Test Organization
 
@@ -332,6 +360,8 @@ Current test organization includes:
 * parametrized Checkout scenarios where appropriate
 * test case IDs in pytest parametrization where practical
 * traceability between test case documentation and automation
+* compatibility with sequential and parallel execution
+* order-independent test design
 
 Current automated test modules:
 
@@ -386,6 +416,14 @@ Reusable fixture setup supports:
 * Checkout preparation
 * isolated test execution
 * independent E2E checkpoints
+* sequential execution
+* pytest-xdist worker-level execution
+
+Tests do not rely on state produced by previous tests.
+
+Current fixture chains, Cart and Checkout scenarios, logout/re-login persistence, parametrized scenarios, and E2E checkpoints were validated under parallel execution.
+
+No sequential-only test exceptions were identified during Phase 4C validation.
 
 ### Code Quality
 
@@ -399,13 +437,21 @@ Current code quality capabilities include:
 * dedicated CI quality validation
 * CI quality gates
 
-Standard local validation:
+Standard sequential local validation:
 
 ```bash
 ruff check .
 black --check .
 isort . --check-only
 pytest -v
+```
+
+Parallel execution validation is additionally available through:
+
+```bash
+pytest -m smoke -n auto -v
+pytest -m regression -n auto -v
+pytest -n auto -v
 ```
 
 ### Selective Marker Validation
@@ -431,11 +477,20 @@ pytest -m "smoke and navigation" -v
 pytest -m "regression and navigation" -v
 ```
 
+Smoke and Regression also support the approved parallel commands:
+
+```bash
+pytest -m smoke -n auto -v
+pytest -m regression -n auto -v
+```
+
 Smoke and Regression additionally have dedicated GitHub Actions CI jobs.
 
 UI, Security, Sorting, Navigation, and E2E remain selectively executable without dedicated CI jobs.
 
 Tests assigned to those markers still run through complete full-suite CI execution.
+
+Parallel execution changes test distribution, not marker semantics.
 
 ### CI/CD
 
@@ -449,9 +504,10 @@ Current CI capabilities include:
 * Ruff validation
 * Black validation
 * isort validation
-* dedicated Smoke browser-test execution
-* dedicated Regression browser-test execution
-* complete unfiltered full-suite execution
+* dedicated parallel Smoke browser-test execution
+* dedicated parallel Regression browser-test execution
+* parallel complete unfiltered full-suite execution
+* pytest-xdist worker-level parallel execution
 * Playwright Chromium installation in browser-test jobs
 * pytest HTML report generation
 * Smoke-specific report and artifact upload
@@ -484,29 +540,45 @@ black --check .
 isort . --check-only
 ```
 
-The quality job does not install Playwright Chromium.
+The quality job does not install Playwright Chromium and does not use pytest-xdist.
 
 Smoke, Regression, and full-suite depend on successful quality validation and do not depend on each other.
+
+GitHub Actions may schedule those browser jobs concurrently after `quality`.
 
 The dedicated Smoke job executes:
 
 ```bash
-pytest -m smoke -v
+pytest -m smoke -n auto -v
 ```
 
 The dedicated Regression job executes:
 
 ```bash
-pytest -m regression -v
+pytest -m regression -n auto -v
 ```
 
 The full-suite job executes the complete unfiltered test collection:
 
 ```bash
-pytest -v
+pytest -n auto -v
 ```
 
 The full-suite job remains the complete CI regression gate.
+
+GitHub Actions job-level concurrency and pytest-xdist worker-level parallelism are separate mechanisms.
+
+Conceptually:
+
+```text
+quality
+├── smoke
+│   └── xdist workers
+├── regression
+│   └── xdist workers
+└── full-suite
+    └── xdist workers
+```
 
 The following marker suites do not currently have dedicated CI jobs:
 
@@ -551,6 +623,12 @@ test-artifacts
 
 Artifact upload steps use `if: always()` so available browser-test outputs can still be published when an executing test command fails.
 
+Current artifact retention remains seven days.
+
+The existing report, screenshot, and artifact behavior was preserved and validated after pytest-xdist integration.
+
+No sequential-only reporting exception was identified during current Phase 4C validation.
+
 Generated runtime outputs are not intended to be committed to Git.
 
 ### Repository And Documentation
@@ -562,6 +640,7 @@ Current repository documentation includes:
 * framework structure documentation
 * testing strategy
 * marker execution strategy
+* parallel execution strategy
 * workflow documentation
 * Git branching strategy
 * CI/CD documentation
@@ -584,14 +663,16 @@ pytest markers
       ↓
 selective suite execution
       ↓
+sequential / parallel execution
+      ↓
 CI execution
 ```
 
 Depending on marker assignment, automated tests may participate in:
 
-* dedicated Smoke CI execution
-* dedicated Regression CI execution
-* complete full-suite CI execution
+* dedicated parallel Smoke CI execution
+* dedicated parallel Regression CI execution
+* parallel complete full-suite CI execution
 
 ## Planned Features
 
@@ -624,13 +705,14 @@ Potential future automation areas include:
 Possible future improvements include:
 
 * additional suite-specific CI execution where justified
-* Pytest-level parallel execution
 * expanded traceability
 * additional parametrized scenarios where useful
 
 The current normalized marker strategy is implemented.
 
-Dedicated Smoke and Regression CI execution is also implemented.
+Dedicated Smoke and Regression CI execution is implemented.
+
+Pytest-xdist worker-level parallel execution is also implemented locally and in the existing CI browser-test jobs.
 
 Future work should improve execution scalability and feedback without reintroducing obsolete marker categories.
 
@@ -655,15 +737,16 @@ Possible future CI improvements include:
 * dependency caching
 * Playwright browser caching
 * additional marker-based jobs where justified
-* Phase 4C Pytest-level parallel execution
 * multi-browser execution
 * scheduled regression execution
 * JUnit XML publishing
 * improved reporting integrations
 
-Dedicated Smoke and Regression jobs are already part of the current Phase 4B implementation.
+Dedicated Smoke and Regression jobs and pytest-xdist execution are already part of the current implementation.
 
-The independent Smoke, Regression, and full-suite GitHub Actions jobs may be scheduled concurrently after `quality`, but this is CI job scheduling rather than Pytest-level parallel execution.
+The independent Smoke, Regression, and full-suite GitHub Actions jobs may be scheduled concurrently after `quality`.
+
+Inside each browser job, pytest-xdist additionally distributes collected tests between workers.
 
 ### API Testing
 
@@ -681,17 +764,43 @@ API testing is not currently implemented and `api` is not a current executable p
 
 ### Parallel Execution
 
-`pytest-xdist` is installed for future execution optimization.
+`pytest-xdist` is an implemented execution capability.
 
-Pytest-level parallel execution is not currently part of the default local or CI workflow.
+Current approved local parallel commands are:
 
-Potential future usage includes:
+```bash
+pytest -m smoke -n auto -v
+pytest -m regression -n auto -v
+pytest -n auto -v
+```
 
-* faster Regression execution
-* parallel UI execution
-* CI runtime optimization
+The existing Smoke, Regression, and full-suite GitHub Actions browser jobs also execute through pytest-xdist.
 
-Parallel execution belongs to future Phase 4C scope and should not be confused with GitHub Actions running independent jobs concurrently.
+Current CI commands use the same worker-level strategy together with existing HTML reporting.
+
+Sequential execution remains supported:
+
+```bash
+pytest -m smoke -v
+pytest -m regression -v
+pytest -v
+```
+
+The current suite was validated for:
+
+* fixture isolation
+* browser-state independence
+* Cart and Checkout state preparation
+* logout and re-login behavior
+* E2E checkpoint independence
+* parametrized scenario independence
+* report and failure-screenshot compatibility
+
+No sequential-only test exceptions were identified during Phase 4C validation.
+
+GitHub Actions job concurrency and pytest-xdist worker concurrency remain distinct execution layers.
+
+Current parallel execution remains Chromium-only and does not introduce cross-browser parallelization or CI matrices.
 
 ### Advanced Reporting
 
@@ -716,6 +825,8 @@ Potential future browsers include:
 
 Cross-browser execution is not currently part of the implemented framework or CI strategy.
 
+Current pytest-xdist support parallelizes the existing Chromium-based test execution and should not be interpreted as cross-browser parallel execution.
+
 ### Future Extensions
 
 Potential long-term extensions include:
@@ -732,6 +843,8 @@ The implemented framework currently demonstrates:
 
 * Playwright UI automation
 * Pytest
+* pytest-xdist worker-level parallel execution
+* supported sequential execution
 * Page Object Model
 * shared authenticated-page behavior
 * reusable assertion helpers
@@ -748,30 +861,42 @@ The implemented framework currently demonstrates:
 * Navigation execution
 * independent E2E checkpoint execution
 * selective local marker execution
+* parallel local Smoke execution
+* parallel local Regression execution
+* parallel local full-suite execution
 * code quality tooling
 * pre-commit validation
 * GitHub Actions CI
 * separate CI quality validation
-* dedicated Smoke CI execution
-* dedicated Regression CI execution
-* complete full-suite CI execution
+* dedicated parallel Smoke CI execution
+* dedicated parallel Regression CI execution
+* parallel complete full-suite CI execution
 * pytest HTML reporting
 * screenshots on failure
 * job-specific CI artifacts
 * Git branching workflow
 * technical project documentation
 
-Current Phase 4B CI structure:
+Current CI execution model:
 
 ```text
 quality
 ├── smoke
+│   └── pytest-xdist workers
 ├── regression
+│   └── pytest-xdist workers
 └── full-suite
+    └── pytest-xdist workers
 ```
+
+The `quality` job is the prerequisite and does not use browser execution or pytest-xdist.
+
+Smoke, Regression, and full-suite remain separate GitHub Actions jobs and may execute concurrently after successful quality validation.
 
 UI, Security, Sorting, Navigation, and E2E do not currently have dedicated CI jobs.
 
-Parallel Pytest execution, advanced Allure reporting, runtime environment configuration, cross-browser execution, and other later framework maturity capabilities remain outside the current implemented Phase 4B scope.
+Phase 4C pytest-xdist parallel execution is implemented.
+
+Advanced Allure reporting, runtime environment configuration, cross-browser execution, Docker-based execution, CI matrices, and other later framework maturity capabilities remain outside the current implemented scope.
 
 Planned technologies and features should remain clearly separated from the implemented scope until they are approved, implemented, validated, and documented.
