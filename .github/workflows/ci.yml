@@ -65,7 +65,7 @@ jobs:
       - name: Run Smoke test suite with HTML report
         run: |
           mkdir -p reports
-          pytest -m smoke -v --html=reports/smoke-report.html --self-contained-html
+          pytest -m smoke -n auto -v --html=reports/smoke-report.html --self-contained-html
 
       - name: Upload Smoke pytest HTML report
         if: always()
@@ -109,7 +109,7 @@ jobs:
       - name: Run Regression test suite with HTML report
         run: |
           mkdir -p reports
-          pytest -m regression -v --html=reports/regression-report.html --self-contained-html
+          pytest -m regression -n auto -v --html=reports/regression-report.html --self-contained-html
 
       - name: Upload Regression pytest HTML report
         if: always()
@@ -153,7 +153,7 @@ jobs:
       - name: Run pytest test suite with HTML report
         run: |
           mkdir -p reports
-          pytest -v --html=reports/report.html --self-contained-html
+          pytest -n auto -v --html=reports/report.html --self-contained-html
 
       - name: Upload pytest HTML report
         if: always()
