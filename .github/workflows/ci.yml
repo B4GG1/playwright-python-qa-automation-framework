@@ -147,13 +147,40 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements-lock.txt
 
+      - name: Set up Java for Allure CLI
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Install Allure CLI
+        run: |
+          npm install -g allure-commandline
+          allure --version
+
       - name: Install Playwright browsers
         run: playwright install --with-deps chromium
 
-      - name: Run pytest test suite with HTML report
+      - name: Run pytest test suite with HTML report and Allure results
         run: |
           mkdir -p reports
-          pytest -n auto -v --html=reports/report.html --self-contained-html
+          pytest -n auto -v \
+            --html=reports/report.html \
+            --self-contained-html \
+            --alluredir=reports/allure-results \
+            --clean-alluredir
+
+      - name: Generate Allure HTML report
+        if: always()
+        run: |
+          if [ -d reports/allure-results ] && \
+             [ -n "$(find reports/allure-results -type f -print -quit)" ]; then
+            allure generate reports/allure-results \
+              --clean \
+              -o reports/allure-report
+          else
+            echo "No Allure result data found. Skipping Allure report generation."
+          fi
 
       - name: Upload pytest HTML report
         if: always()
@@ -161,6 +188,15 @@ jobs:
         with:
           name: pytest-html-report
           path: reports/report.html
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Upload Allure HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: full-suite-allure-report
+          path: reports/allure-report/
           if-no-files-found: warn
           retention-days: 7
 
