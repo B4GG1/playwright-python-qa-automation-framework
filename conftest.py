@@ -1,6 +1,7 @@
 import os
 from datetime import UTC, datetime
 
+import allure
 import pytest
 from playwright.sync_api import Page
 
@@ -39,6 +40,16 @@ def pytest_runtest_makereport(item, call):
         page.screenshot(path=file_path, full_page=True)
     except Exception as e:
         print(f"[screenshot-error] {test_name}: {e}")
+        return
+
+    try:
+        allure.attach.file(
+            file_path,
+            name="Failure screenshot",
+            attachment_type=allure.attachment_type.PNG,
+        )
+    except Exception as e:
+        print(f"[allure-attachment-error] {test_name}: {e}")
 
 
 @pytest.fixture()

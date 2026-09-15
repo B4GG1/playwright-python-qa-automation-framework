@@ -398,7 +398,7 @@ Workstreams:
 * Phase 4A — Marker And Suite Strategy — Completed
 * Phase 4B — CI Execution Strategy — Completed
 * Phase 4C — Parallel Execution — Completed
-* Phase 4D — Reporting Upgrade — Planned
+* Phase 4D — Reporting Upgrade — Completed
 * Phase 4E — Runtime Configuration — Planned
 * Phase 4F — Diagnostics And Fixture Cleanup — Planned
 * Phase 4 Checkpoint — Planned
@@ -620,22 +620,83 @@ Phase 4C completes the parallel execution layer required before Phase 4D Reporti
 
 ## Phase 4D: Reporting Upgrade
 
-**Status:** Planned
+**Status:** Completed
 
-Phase 4D will improve test reporting and failure artifacts.
+Phase 4D upgraded the framework reporting workflow while preserving the existing execution strategy and lightweight pytest-html reporting.
 
-Planned areas:
+Completed work:
 
-* review the current HTML reporting structure
-* improve organization of generated reports
-* improve screenshot, trace, video, or other failure artifact handling where useful
-* improve CI artifact naming and accessibility
-* integrate Allure reporting
-* generate Allure result data locally
-* integrate useful Allure output with CI where appropriate
-* document reporting commands and artifact locations
+* AQA-0096 — Integrate Local Allure Reporting And Failure Evidence
+* AQA-0097 — Integrate Allure Reporting Into CI
+* AQA-0098 — Document Phase 4D Reporting Strategy
+* AQA-0099 — Validate And Integrate Phase 4D Reporting Upgrade
 
-The goal is to make test results easier to review locally, in CI, and during portfolio presentation.
+Completed reporting scope:
+
+* preserved pytest-html as the lightweight reporting layer
+* preserved existing Smoke and Regression pytest-html reporting
+* preserved full-suite pytest-html reporting
+* integrated Allure Pytest result collection
+* added local Allure result generation
+* added local Allure HTML report generation through the standalone Allure CLI
+* validated Allure reporting with sequential execution
+* validated Allure reporting with pytest-xdist parallel execution
+* preserved the existing failure screenshot capture mechanism
+* reused the same captured failure screenshot as the Allure `Failure screenshot` attachment
+* integrated Allure result collection into the complete full-suite GitHub Actions job
+* added Allure HTML generation to the full-suite CI reporting path
+* added Java 17 and the standalone Allure CLI where required by the CI full-suite job
+* added the dedicated `full-suite-allure-report` GitHub Actions artifact
+* preserved the existing pytest-html artifacts and broader `reports/` artifact behavior
+* preserved seven-day CI artifact retention
+* kept generated reporting output outside version-controlled repository content
+* synchronized README and technical documentation with the implemented reporting strategy
+
+Approved local Allure result collection supports both:
+
+* `pytest -v --alluredir=reports/allure-results --clean-alluredir`
+* `pytest -n auto -v --alluredir=reports/allure-results --clean-alluredir`
+
+Approved local Allure HTML generation uses:
+
+* `allure generate reports/allure-results --clean -o reports/allure-report`
+
+Final local Phase 4D validation confirmed:
+
+* Ruff passes
+* Black validation passes
+* isort validation passes
+* parallel Smoke execution passes
+* parallel Regression execution passes
+* parallel complete full-suite execution passes
+* sequential complete full-suite execution passes
+* combined pytest-html and Allure full-suite reporting passes
+* fresh parallel reporting execution completes with all 154 tests passing
+* fresh Allure result generation contains 154 `*-result.json` test result files
+* `--clean-alluredir` removes stale result data before fresh result generation
+* pytest-html report generation remains functional
+* Allure HTML report generation succeeds
+* the generated Allure HTML report opens correctly in a browser
+* controlled failure validation produces the expected screenshot evidence
+* the captured failure screenshot is attached to Allure as `Failure screenshot`
+* the Allure attachment reuses the same PNG as the existing screenshot mechanism
+* generated report output remains ignored by Git
+* only the intentional `reports/.gitkeep` placeholder remains tracked under the generated reporting directory
+
+Phase 4D does not introduce:
+
+* Allure history persistence
+* trend-history storage
+* report hosting
+* GitHub Pages reporting
+* trace or video policy
+* runtime environment configuration
+* cross-browser execution
+* CI matrices
+* retries
+* Phase 4E+ functionality
+
+Phase 4D completes the reporting layer required before Phase 4E Runtime Configuration.
 
 ---
 
