@@ -4,7 +4,11 @@
 
 This project uses GitHub Actions as the main Continuous Integration (CI) pipeline.
 
-The current pipeline preserves the Phase 4B job structure separating code-quality validation from browser-test execution and extends the browser-test jobs with the Phase 4C Pytest parallel execution strategy.
+The current pipeline combines:
+
+* the Phase 4B CI job structure
+* the Phase 4C pytest-xdist parallel execution strategy
+* the Phase 4D reporting strategy
 
 The workflow provides dedicated CI jobs for:
 
@@ -13,7 +17,16 @@ The workflow provides dedicated CI jobs for:
 * parallel Regression suite execution
 * parallel complete full-suite execution
 
-The workflow installs project dependencies, validates code quality, prepares Playwright Chromium where browser execution is required, runs the appropriate Pytest suites through `pytest-xdist`, generates HTML reports, and publishes test artifacts.
+The reporting strategy intentionally uses complementary reporting mechanisms:
+
+* pytest-html provides lightweight self-contained HTML reports
+* Allure provides advanced reporting for the complete full-suite CI execution
+* failure screenshots provide browser evidence for failed test calls
+* GitHub Actions artifacts preserve generated reporting and debugging outputs temporarily
+
+Smoke and Regression remain focused on pytest-html reporting.
+
+The complete `full-suite` job additionally collects Allure result data, generates an Allure HTML report, and publishes it as a dedicated GitHub Actions artifact.
 
 At the current stage, the project focuses on CI.
 
@@ -32,10 +45,14 @@ The current CI pipeline supports:
 * `pytest-xdist` worker-level parallel execution in browser-test jobs
 * automatic xdist worker selection through `-n auto`
 * Playwright Chromium installation with Linux dependencies for browser-test jobs
-* pytest HTML report generation
-* screenshot artifact collection through the `reports/` directory
+* pytest-html report generation
+* Allure result collection in the `full-suite` job
+* Allure HTML report generation in the `full-suite` job
+* failure screenshot collection
+* Allure failure screenshot attachments
 * job-specific GitHub Actions artifacts
-* explicit artifact retention configuration
+* dedicated Allure report artifact publishing
+* explicit seven-day artifact retention
 * validation for `main` and `develop`
 * validation for Pull Requests targeting `main` and `develop`
 * manual workflow execution through GitHub Actions
@@ -87,6 +104,7 @@ This is sufficient because the workflow only needs to:
 * install dependencies
 * execute quality checks
 * run automated tests
+* generate runtime reports
 * upload artifacts
 
 The project currently does not require:
@@ -94,6 +112,7 @@ The project currently does not require:
 * deployment credentials
 * cloud credentials
 * package publishing tokens
+* report-hosting credentials
 * elevated repository permissions
 
 ## Execution Environment
@@ -113,9 +132,14 @@ The `quality` job does not install Chromium because it performs static code-qual
 
 The `quality` job also does not use pytest-xdist.
 
+The `full-suite` job additionally prepares the tooling required for Allure HTML report generation:
+
+* Java 17 through `actions/setup-java@v4`
+* Allure CLI through the `allure-commandline` npm package
+
 GitHub-hosted runners are temporary and are destroyed after execution.
 
-This helps ensure that CI results do not depend on local developer machine state.
+Generated reports and browser evidence therefore need to be published as workflow artifacts when they should remain available after the job completes.
 
 ## Current Job Structure
 
@@ -148,7 +172,7 @@ Similarly, Regression and full-suite do not define execution dependencies betwee
 
 GitHub Actions may schedule these independent browser jobs concurrently when runners are available.
 
-Phase 4C additionally enables worker-level parallel test execution inside each browser-test job.
+Phase 4C enables worker-level parallel test execution inside each browser-test job.
 
 These are two separate concurrency mechanisms:
 
@@ -167,15 +191,34 @@ quality
     └── pytest-xdist workers
 ```
 
-The `quality` job remains outside the browser and xdist execution layer.
+Phase 4D adds advanced reporting inside the existing `full-suite` job.
+
+It does not introduce another browser job.
+
+Conceptually:
+
+```text
+quality
+├── smoke
+│   └── pytest-xdist
+│       └── pytest-html
+├── regression
+│   └── pytest-xdist
+│       └── pytest-html
+└── full-suite
+    └── pytest-xdist
+        ├── pytest-html
+        ├── Allure results
+        └── Allure HTML report
+```
+
+The `quality` job remains outside the browser, xdist, and test-reporting execution layer.
 
 ## Quality Job
 
 The `quality` job is the first CI gate.
 
 Its responsibility is to validate repository code quality before browser resources are prepared.
-
-The job performs:
 
 ### Repository Checkout
 
@@ -203,14 +246,25 @@ The workflow upgrades `pip` and installs project dependencies from:
 requirements-lock.txt
 ```
 
-Current installation commands:
+Current commands:
 
 ```bash
 python -m pip install --upgrade pip
 pip install -r requirements-lock.txt
 ```
 
-The locked dependencies include `pytest-xdist`, which is used later by the browser-test jobs.
+The locked dependencies include:
+
+* pytest
+* pytest-playwright
+* pytest-xdist
+* pytest-html
+* allure-pytest
+* the remaining project dependencies
+
+The Allure CLI itself is not provided by the Python requirements file.
+
+It is prepared separately inside the `full-suite` CI job.
 
 ### Ruff Validation
 
@@ -235,7 +289,9 @@ The quality job does not:
 * install Playwright Chromium
 * execute browser tests
 * execute Pytest through xdist
-* generate browser-test HTML reports
+* generate pytest-html reports
+* generate Allure results
+* generate Allure HTML reports
 * upload browser-test artifacts
 
 A failure in Ruff, Black, isort, dependency installation, or another required quality-job step fails the job.
@@ -264,19 +320,19 @@ After the quality job succeeds, the Smoke job:
 
 1. checks out the repository
 2. configures Python 3.12
-3. installs dependencies
+3. installs project dependencies
 4. installs Playwright Chromium
 5. executes the Smoke suite through pytest-xdist
-6. generates a self-contained HTML report
+6. generates a self-contained pytest-html report
 7. uploads Smoke-specific artifacts
 
-The parallel marker selection command is:
+The core parallel marker command is:
 
 ```bash
 pytest -m smoke -n auto -v
 ```
 
-The current CI command also generates the HTML report:
+The actual CI command is:
 
 ```bash
 mkdir -p reports
@@ -293,7 +349,17 @@ reports/smoke-report.html
 
 A failing Smoke test fails the `smoke` job and therefore contributes to an unsuccessful CI workflow result.
 
-The job does not use `continue-on-error: true`.
+The job does not use:
+
+```yaml
+continue-on-error: true
+```
+
+Smoke does not collect or generate Allure reporting.
+
+This is intentional.
+
+The dedicated Smoke job remains the lightweight, targeted pytest-html feedback path.
 
 ## Regression Job
 
@@ -309,19 +375,19 @@ After the quality job succeeds, the Regression job:
 
 1. checks out the repository
 2. configures Python 3.12
-3. installs dependencies
+3. installs project dependencies
 4. installs Playwright Chromium
 5. executes the Regression suite through pytest-xdist
-6. generates a self-contained HTML report
+6. generates a self-contained pytest-html report
 7. uploads Regression-specific artifacts
 
-The parallel marker selection command is:
+The core parallel marker command is:
 
 ```bash
 pytest -m regression -n auto -v
 ```
 
-The current CI command also generates the HTML report:
+The actual CI command is:
 
 ```bash
 mkdir -p reports
@@ -336,11 +402,21 @@ reports/regression-report.html
 
 A failing Regression test fails the `regression` job and therefore contributes to an unsuccessful CI workflow result.
 
-The job does not use `continue-on-error: true`.
+The job does not use:
+
+```yaml
+continue-on-error: true
+```
+
+Regression does not collect or generate Allure reporting.
+
+This is intentional.
+
+The dedicated Regression job remains focused on broader marker-specific pytest-html feedback.
 
 ## Full-Suite Job
 
-The `full-suite` job remains the complete CI regression gate.
+The `full-suite` job remains the complete CI regression gate and is the primary CI source for advanced Allure reporting.
 
 It depends on:
 
@@ -352,38 +428,132 @@ After the quality job succeeds, the full-suite job:
 
 1. checks out the repository
 2. configures Python 3.12
-3. installs dependencies
-4. installs Playwright Chromium
-5. executes the complete Pytest suite through pytest-xdist
-6. generates a self-contained HTML report
-7. uploads full-suite artifacts
+3. installs project dependencies
+4. configures Java 17 for Allure CLI
+5. installs Allure CLI
+6. installs Playwright Chromium
+7. executes the complete Pytest suite through pytest-xdist
+8. generates the existing self-contained pytest-html report
+9. collects Allure result data
+10. generates the Allure HTML report when usable result data exists
+11. uploads the existing pytest-html artifact
+12. uploads the dedicated Allure report artifact
+13. uploads the broader `reports/` runtime artifact
 
 The full-suite execution is intentionally not filtered by Pytest markers.
 
-The parallel core command is:
+### Java Setup
 
-```bash
-pytest -n auto -v
+The workflow configures Java through:
+
+```yaml
+uses: actions/setup-java@v4
+with:
+  distribution: temurin
+  java-version: "17"
 ```
 
-The current CI command is:
+Java is required by the Allure command-line report generator.
+
+This setup is limited to the `full-suite` job.
+
+### Allure CLI Installation
+
+The workflow installs the Allure command-line tool with:
+
+```bash
+npm install -g allure-commandline
+allure --version
+```
+
+The CLI is separate from `allure-pytest`.
+
+Their responsibilities are different:
+
+* `allure-pytest` integrates Allure result collection with Pytest
+* Allure CLI converts the generated result data into a browsable HTML report
+
+### Full-Suite Test Execution
+
+The current command is:
 
 ```bash
 mkdir -p reports
-pytest -n auto -v --html=reports/report.html --self-contained-html
+pytest -n auto -v \
+  --html=reports/report.html \
+  --self-contained-html \
+  --alluredir=reports/allure-results \
+  --clean-alluredir
 ```
 
-Current full-suite HTML report:
+This command performs two report-producing responsibilities during the same Pytest execution:
+
+* pytest-html generates the lightweight HTML report
+* allure-pytest writes Allure result data
+
+Current pytest-html output:
 
 ```text
 reports/report.html
 ```
 
-The full-suite job validates the complete automated test collection regardless of Smoke, Regression, or other marker assignment.
+Current Allure result location:
 
-Dedicated Smoke and Regression jobs provide additional suite-specific CI feedback, but they do not replace the full-suite gate.
+```text
+reports/allure-results/
+```
 
-A failed full-suite test fails the `full-suite` job and the overall CI workflow.
+The `--clean-alluredir` option removes stale result data before the current test execution populates the directory.
+
+### Allure HTML Generation
+
+After Pytest execution, the workflow contains a separate Allure report-generation step.
+
+The generated report location is:
+
+```text
+reports/allure-report/
+```
+
+The core generation command is:
+
+```bash
+allure generate reports/allure-results \
+  --clean \
+  -o reports/allure-report
+```
+
+The generation step uses:
+
+```yaml
+if: always()
+```
+
+so it can still execute after a failed Pytest step.
+
+The shell logic additionally checks that:
+
+* `reports/allure-results/` exists
+* the directory contains usable result files
+
+before running `allure generate`.
+
+Conceptually:
+
+```bash
+if Allure result data exists:
+    generate reports/allure-report/
+else:
+    skip generation
+```
+
+This avoids treating absence of result data as a report-generation failure.
+
+It also means a failed full-suite test execution can still produce a useful Allure HTML report when Pytest generated usable Allure result data before failing.
+
+A failed test command still fails the `full-suite` job.
+
+Report generation does not convert a failed test suite into a successful test result.
 
 ## Pytest-xdist Execution
 
@@ -397,7 +567,7 @@ The current CI browser jobs use:
 
 to enable worker-level parallel execution.
 
-Current CI parallel commands:
+Current core CI commands are:
 
 ```bash
 pytest -m smoke -n auto -v
@@ -405,9 +575,9 @@ pytest -m regression -n auto -v
 pytest -n auto -v
 ```
 
-The same execution model was validated locally before CI integration.
+The actual full-suite command additionally enables pytest-html and Allure result collection.
 
-Sequential local execution remains supported and is not removed by the Phase 4C implementation.
+Sequential local execution remains supported.
 
 Examples:
 
@@ -417,7 +587,7 @@ pytest -m regression -v
 pytest -v
 ```
 
-Parallel execution therefore extends the supported execution strategy rather than replacing sequential Pytest execution.
+Parallel execution extends the supported execution strategy rather than replacing sequential Pytest execution.
 
 ### Test Isolation Expectations
 
@@ -435,6 +605,21 @@ The validated suite follows these expectations:
 
 No sequential-only test exceptions were identified during Phase 4C parallel-safety validation.
 
+### Reporting Compatibility
+
+The reporting implementation is compatible with the existing xdist model.
+
+Supported behavior includes:
+
+* pytest-html under parallel CI execution
+* Allure result collection through the parallel full suite
+* failure screenshot capture during parallel execution
+* Allure attachment of failure screenshots when result collection is active
+
+Sequential execution remains supported as well.
+
+Phase 4D therefore does not introduce a sequential-only reporting requirement.
+
 ## GitHub Actions Concurrency Versus Pytest Parallelism
 
 GitHub Actions concurrency and pytest-xdist parallelism operate at different levels.
@@ -450,8 +635,6 @@ full-suite
 ```
 
 Each is a separate GitHub Actions job running in its own runner environment.
-
-This behavior was established as part of the Phase 4B CI architecture.
 
 ### Pytest Worker-Level Parallelism
 
@@ -469,9 +652,13 @@ smoke job
 
 The number of workers selected by `-n auto` depends on the execution environment and should not be treated as a fixed CI configuration value.
 
-Phase 4C therefore does not replace GitHub Actions job concurrency.
+Phase 4C does not replace GitHub Actions job concurrency.
 
 It adds a second execution layer inside the existing browser-test jobs.
+
+Phase 4D does not change either concurrency model.
+
+It adds reporting capabilities to the existing execution structure.
 
 ## Playwright Browser Installation
 
@@ -495,14 +682,14 @@ Current CI browser:
 
 Cross-browser CI execution is not currently implemented.
 
-Parallel execution does not introduce:
+The current execution and reporting strategy does not introduce:
 
 * Firefox CI execution
 * WebKit CI execution
 * cross-browser matrices
 * browser-specific parallel jobs
 
-The current parallel CI scope remains Chromium-only.
+The current CI browser scope remains Chromium-only.
 
 ## Pytest Marker Strategy And CI
 
@@ -527,14 +714,16 @@ The existing CI structure provides dedicated browser jobs for:
 * `smoke`
 * `regression`
 
-Phase 4C preserves those jobs and enables xdist inside them.
-
 Current commands:
 
 ```bash
 pytest -m smoke -n auto -v
 pytest -m regression -n auto -v
 ```
+
+These jobs retain their existing pytest-html reporting.
+
+They do not generate Allure reports.
 
 ### Markers Without Dedicated CI Jobs
 
@@ -562,9 +751,11 @@ These tests are still included in the complete full-suite CI execution when they
 
 Because the full-suite CI job uses pytest-xdist, those tests may execute on xdist workers as part of the complete collection.
 
+Because full-suite also collects Allure results, these tests can additionally appear in the advanced full-suite Allure report.
+
 Not having a dedicated marker job does not mean that the tests are excluded from CI.
 
-It means only that CI does not currently execute them as separate marker-filtered jobs.
+It means only that CI does not execute them as separate marker-filtered jobs.
 
 ### Local Marker Execution
 
@@ -582,7 +773,7 @@ pytest -m navigation -v
 pytest -m e2e -v
 ```
 
-Approved Phase 4C parallel commands:
+Approved parallel commands:
 
 ```bash
 pytest -m smoke -n auto -v
@@ -639,10 +830,11 @@ Selective local execution is useful for:
 * validating Navigation-related changes
 * validating the logical E2E checkpoint suite
 * running focused module-level validation before the full suite
+* generating local Allure reporting when richer execution analysis is useful
 
 Sequential execution remains useful for normal development and focused debugging.
 
-Parallel execution is useful for validating worker-safe behavior and reducing suite execution time, where appropriate.
+Parallel execution is useful for validating worker-safe behavior and reducing suite execution time where appropriate.
 
 Approved parallel validation commands:
 
@@ -651,6 +843,26 @@ pytest -m smoke -n auto -v
 pytest -m regression -n auto -v
 pytest -n auto -v
 ```
+
+Local Allure results can be collected through either sequential or parallel execution.
+
+Example parallel execution:
+
+```bash
+pytest -n auto -v \
+  --alluredir=reports/allure-results \
+  --clean-alluredir
+```
+
+Generate the corresponding local Allure HTML report with:
+
+```bash
+allure generate reports/allure-results \
+  --clean \
+  -o reports/allure-report
+```
+
+The Allure CLI must be installed locally and available on `PATH` for HTML generation.
 
 ### CI Execution
 
@@ -661,7 +873,9 @@ Current CI provides:
 * dedicated parallel Regression execution
 * parallel complete unfiltered full-suite execution
 * clean-environment browser execution
-* generated HTML reports
+* pytest-html reporting
+* full-suite Allure reporting
+* failure screenshots
 * downloadable runtime artifacts
 * merge-gate feedback
 
@@ -669,18 +883,85 @@ The full-suite job remains the complete automated regression gate.
 
 Smoke and Regression provide additional targeted feedback without replacing complete suite execution.
 
+## Reporting Responsibilities
+
+The current reporting model intentionally separates responsibilities.
+
+### pytest-html
+
+pytest-html provides the lightweight HTML reporting layer.
+
+It is used by:
+
+* Smoke CI
+* Regression CI
+* full-suite CI
+
+Current report files:
+
+```text
+reports/smoke-report.html
+reports/regression-report.html
+reports/report.html
+```
+
+pytest-html remains available even after Allure integration.
+
+Allure does not replace it.
+
+### Allure
+
+Allure provides the richer advanced reporting layer.
+
+Current responsibilities include:
+
+* structured result collection through `allure-pytest`
+* local complete-suite reporting
+* parallel reporting compatibility
+* generated local HTML reports
+* complete full-suite CI reporting
+* failure screenshot attachments
+
+Current output locations:
+
+```text
+reports/allure-results/
+reports/allure-report/
+```
+
+Allure is not currently generated independently in the dedicated Smoke and Regression jobs.
+
+### Failure Screenshots
+
+Failure screenshots provide browser evidence for failed test calls.
+
+Current output location:
+
+```text
+reports/screenshots/
+```
+
+The screenshot is captured through the existing Pytest failure hook.
+
+When screenshot capture succeeds and Allure result collection is active, the same PNG file is attached to the Allure result as:
+
+```text
+Failure screenshot
+```
+
+The Allure integration does not capture a second screenshot.
+
+The existing screenshot file is reused.
+
+### GitHub Actions Artifacts
+
+GitHub Actions artifacts preserve generated reports and runtime evidence after the temporary runner is destroyed.
+
+Artifacts are temporary execution outputs.
+
+They are not repository source content.
+
 ## Test Reports And Artifacts
-
-Generated reports and screenshots are runtime outputs and should not be committed to Git.
-
-They are handled through:
-
-* the local `reports/` directory
-* GitHub Actions artifacts
-
-Each browser job uses report and artifact names that do not conflict with the other jobs.
-
-The existing reporting and artifact structure was preserved when pytest-xdist was enabled.
 
 ### Smoke Artifacts
 
@@ -695,6 +976,14 @@ GitHub Actions artifact names:
 ```text
 smoke-pytest-html-report
 smoke-test-artifacts
+```
+
+The dedicated pytest-html artifact contains the Smoke report.
+
+The broader Smoke runtime artifact uploads:
+
+```text
+reports/
 ```
 
 ### Regression Artifacts
@@ -712,20 +1001,68 @@ regression-pytest-html-report
 regression-test-artifacts
 ```
 
+The dedicated pytest-html artifact contains the Regression report.
+
+The broader Regression runtime artifact uploads:
+
+```text
+reports/
+```
+
 ### Full-Suite Artifacts
 
-Full-suite HTML report:
+Full-suite pytest-html report:
 
 ```text
 reports/report.html
+```
+
+Full-suite Allure results:
+
+```text
+reports/allure-results/
+```
+
+Generated full-suite Allure HTML report:
+
+```text
+reports/allure-report/
 ```
 
 GitHub Actions artifact names:
 
 ```text
 pytest-html-report
+full-suite-allure-report
 test-artifacts
 ```
+
+Responsibilities:
+
+* `pytest-html-report` — dedicated existing full-suite pytest-html report
+* `full-suite-allure-report` — generated Allure HTML report
+* `test-artifacts` — broader existing `reports/` runtime output
+
+The Allure artifact uses:
+
+```yaml
+name: full-suite-allure-report
+path: reports/allure-report/
+```
+
+The existing `test-artifacts` artifact continues to upload:
+
+```text
+reports/
+```
+
+This preserves the existing runtime artifact behavior.
+
+Because Allure output is located inside `reports/`, the broader `test-artifacts` artifact may also contain Allure runtime output in addition to the dedicated Allure report artifact.
+
+The dedicated `full-suite-allure-report` artifact remains the clearly named source for the generated advanced report.
+
+## Artifact Upload After Test Failure
 
 Browser-job artifact upload steps use:
 
@@ -735,9 +1072,23 @@ if: always()
 
 This allows available reports and runtime outputs to be uploaded even when a test command fails within an executing browser job.
 
-If the `quality` job fails, the browser jobs do not start, so they do not produce browser-test artifacts for that workflow execution.
+The full-suite Allure report-generation step also uses:
 
-The Phase 4C CI validation confirmed that the expected report and artifact outputs remain available with pytest-xdist enabled.
+```yaml
+if: always()
+```
+
+and separately checks whether usable Allure result data exists.
+
+Therefore:
+
+* a failed test suite still fails the job
+* available pytest-html output can still be uploaded
+* available failure screenshots can still be uploaded
+* Allure report generation can still be attempted
+* a generated Allure report can still be published as an artifact
+
+If the `quality` job fails, the browser jobs do not start, so they do not produce browser-test artifacts for that workflow execution.
 
 ## Failure Screenshots And Parallel Execution
 
@@ -754,13 +1105,63 @@ Screenshot filenames include:
 * the test name
 * a UTC timestamp
 
-The screenshot mechanism and shared report directory were reviewed during Phase 4C parallel-safety validation.
+The screenshot mechanism was validated with pytest-xdist worker-level execution.
 
-The parallel validation did not identify a filename collision or another worker-safety issue requiring a framework change.
+The current implementation does not require a sequential-only screenshot mechanism.
 
-The current implementation therefore keeps the existing screenshot and report structure unchanged.
+Phase 4D extends the existing screenshot behavior by attaching the same successfully captured PNG to Allure result data.
 
-No new reporting architecture was introduced as part of Phase 4C.
+The original runtime screenshot continues to exist under:
+
+```text
+reports/screenshots/
+```
+
+This keeps screenshot evidence useful independently of Allure while also exposing it inside the advanced report.
+
+## Generated Runtime Output Policy
+
+Generated reports and evidence are runtime outputs.
+
+Current generated paths include:
+
+```text
+reports/
+reports/screenshots/
+reports/allure-results/
+reports/allure-report/
+```
+
+Generated reporting output should not be committed to Git.
+
+The repository ignore policy includes:
+
+```text
+reports/*
+!reports/.gitkeep
+
+allure-results/
+allure-report/
+```
+
+Because the implemented Allure output paths are currently nested under `reports/`, they are already covered by the `reports/*` ignore rule.
+
+The additional root-level Allure ignore entries protect against accidental generated output if Allure is run with default or alternate root-level paths.
+
+Repository content should include:
+
+* test code
+* framework code
+* configuration
+* documentation
+
+Repository content should not include generated:
+
+* pytest-html reports
+* Allure result files
+* Allure HTML reports
+* failure screenshots
+* other execution artifacts
 
 ## Artifact Retention
 
@@ -778,8 +1179,9 @@ Artifacts can be used for:
 * execution evidence
 * debugging
 * Pull Request review
+* Allure report inspection
 
-Parallel execution does not change the existing retention strategy.
+Phase 4D does not change the existing seven-day retention strategy.
 
 ## Quality Gate Behavior
 
@@ -796,6 +1198,7 @@ Current expected failure behavior:
 * full-suite test failure fails `full-suite`
 * browser-test failures are not converted into successful results
 * available browser-job reports and artifacts are uploaded through `if: always()`
+* Allure report generation may still be attempted after full-suite test failure
 
 The workflow does not use:
 
@@ -809,7 +1212,11 @@ A failed required validation should therefore prevent the workflow from being tr
 
 pytest-xdist does not change this failure policy.
 
-A failing worker-level test still causes the corresponding Pytest command and browser-test job to fail.
+Allure reporting also does not change this failure policy.
+
+Reporting provides evidence about execution.
+
+It does not mask test failures.
 
 ## Branch Protection Strategy
 
@@ -858,6 +1265,8 @@ Squash merge
 main
 ```
 
+For a larger shared workstream branch, multiple approved tasks may be completed and pushed on the same branch before one final workstream Pull Request is created.
+
 ## Workflow Security Notes
 
 GitHub Actions workflow files should be treated as sensitive project configuration.
@@ -880,9 +1289,9 @@ permissions:
 
 No elevated GitHub token permission is currently required.
 
-## Phase 4B And Phase 4C Execution Strategy
+## Phase 4B, Phase 4C, And Phase 4D Strategy
 
-The current CI combines two completed framework maturity layers.
+The current CI combines three framework maturity layers.
 
 ### Phase 4B — CI Execution Structure
 
@@ -916,14 +1325,14 @@ Implemented Phase 4C CI behavior includes:
 * `-n auto` worker selection
 * xdist integration into the existing browser-test jobs
 * preservation of the `quality` prerequisite
-* preservation of existing HTML reports
+* preservation of existing pytest-html reports
 * preservation of existing artifact names
 * preservation of seven-day artifact retention
 * preservation of Chromium-only browser execution
 
 Phase 4C does not introduce new GitHub Actions jobs.
 
-The current browser commands are:
+The core browser commands are:
 
 ```bash
 pytest -m smoke -n auto -v
@@ -939,23 +1348,61 @@ pytest-xdist worker execution happens independently inside each browser-test job
 
 ### Phase 4D — Reporting Upgrade
 
-Advanced Allure reporting is not currently implemented.
+Phase 4D adds reporting capabilities without changing the established CI job architecture.
 
-Allure belongs to the planned Phase 4D reporting upgrade.
+Implemented Phase 4D behavior includes:
 
-The current reporting implementation uses:
+* Allure Pytest integration
+* full-suite Allure result collection
+* full-suite Allure HTML generation
+* explicit Allure CLI setup in CI
+* Java setup required by Allure CLI
+* dedicated `full-suite-allure-report` artifact
+* preservation of existing pytest-html reports
+* preservation of existing artifact names
+* preservation of seven-day artifact retention
+* reuse of existing failure screenshots as Allure attachments
+* reporting compatibility with pytest-xdist
+* reporting compatibility with sequential local execution
+* continued Chromium-only browser scope
 
-* `pytest-html`
-* failure screenshots where generated
-* GitHub Actions artifacts
+The current complementary reporting model is:
 
-The presence of `allure-pytest` in project dependencies must not be treated as evidence that Allure reporting is currently part of the active local or CI workflow.
+```text
+pytest-html
+    → lightweight HTML reports
+
+Allure
+    → advanced full-suite reporting
+
+failure screenshots
+    → direct browser failure evidence
+    → attached to Allure when result collection is active
+
+GitHub Actions artifacts
+    → temporary distribution of generated CI outputs
+```
+
+Allure does not replace pytest-html.
+
+Phase 4D does not introduce:
+
+* Allure history persistence
+* trend-history storage
+* report hosting
+* GitHub Pages publishing
+* additional browser jobs
+* CI matrices
+* retries
+* cross-browser reporting
+* trace/video policy
+* runtime environment configuration
 
 ## Current CI Status
 
-The current CI pipeline is operational with the Phase 4B structure and Phase 4C parallel execution strategy.
+The current CI pipeline implements the Phase 4B structure, Phase 4C parallel execution strategy, and Phase 4D reporting strategy.
 
-It currently validates:
+It currently validates or provides:
 
 * project dependency setup
 * Ruff
@@ -965,8 +1412,12 @@ It currently validates:
 * dedicated parallel Regression execution
 * parallel complete automated Pytest execution
 * Playwright Chromium setup for browser jobs
-* HTML report generation
+* pytest-html report generation
+* full-suite Allure result generation
+* full-suite Allure HTML report generation
+* failure screenshot evidence
 * job-specific test artifacts
+* dedicated full-suite Allure report artifact
 * Pull Requests targeting `develop`
 * Pull Requests targeting `main`
 * pushes to `develop`
@@ -979,10 +1430,15 @@ Current execution structure:
 quality
 ├── smoke
 │   └── pytest-xdist
+│       └── pytest-html
 ├── regression
 │   └── pytest-xdist
+│       └── pytest-html
 └── full-suite
     └── pytest-xdist
+        ├── pytest-html
+        ├── Allure results
+        └── Allure HTML report
 ```
 
 The quality job is the prerequisite gate.
@@ -999,14 +1455,17 @@ Dedicated CI jobs are not currently implemented for:
 * Navigation
 * E2E
 
-Phase 4C does not implement:
+The current CI scope does not implement:
 
-* advanced Allure reporting
 * runtime environment configuration
 * multi-browser execution
 * Docker execution
 * CI matrices
 * additional marker-specific jobs
+* Allure history persistence
+* hosted Allure reporting
+* GitHub Pages reporting
+* retries
 
 These remain outside the current implemented CI scope.
 
@@ -1014,16 +1473,25 @@ These remain outside the current implemented CI scope.
 
 Future CI and framework maturity work may include capabilities approved in later project phases, such as:
 
-* Phase 4D Allure reporting
-* improved reporting and diagnostics
+* improved diagnostics and logs
 * runtime environment configuration
 * dependency or browser caching where justified
 * JUnit XML publishing where useful
+* Allure history and trend persistence
+* hosted reporting where justified
 * multi-browser execution
 * Docker-based execution
 * scheduled execution
-* improved test analytics and history tracking
+* improved test analytics
 
-Pytest-xdist parallel execution is already implemented and should not be described as future functionality.
+The following are already implemented and should not be described as future-only functionality:
+
+* dedicated Smoke and Regression CI jobs
+* pytest-xdist parallel execution
+* pytest-html reporting
+* failure screenshots
+* local Allure reporting
+* full-suite CI Allure reporting
+* dedicated Allure report artifact publishing
 
 Future capabilities should not be described as implemented until their corresponding project scope is completed and validated.

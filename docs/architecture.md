@@ -2,9 +2,9 @@
 
 This document describes the current architecture of the QA automation framework.
 
-The project follows a lightweight, modular architecture focused on readability, maintainability, traceability, deterministic execution, test independence, and incremental framework growth.
+The project follows a lightweight, modular architecture focused on readability, maintainability, traceability, deterministic execution, test independence, reporting visibility, and incremental framework growth.
 
-The current architecture includes Page Object Model, shared authenticated-page behavior, reusable assertions, reusable pytest fixtures, centralized test data, explicit marker-based test organization, sequential and pytest-xdist parallel execution, staged CI execution, reporting, screenshot capture, and technical documentation.
+The current architecture includes Page Object Model, shared authenticated-page behavior, reusable assertions, reusable pytest fixtures, centralized test data, explicit marker-based test organization, sequential and pytest-xdist parallel execution, staged CI execution, pytest-html reporting, Allure reporting, failure screenshot evidence, GitHub Actions artifacts, and technical documentation.
 
 ## Current Architecture Scope
 
@@ -35,9 +35,13 @@ The current framework includes:
 * CI execution with GitHub Actions
 * separate CI code-quality validation
 * code quality tooling
-* HTML reporting
+* pytest-html reporting
+* Allure result collection
+* Allure HTML report generation
+* failure screenshot capture
+* failure screenshot attachment to Allure
 * job-specific CI artifacts
-* screenshot capture on test failure
+* dedicated full-suite Allure report artifact
 * manual test case documentation mapped to automation
 * one automated test module per covered page area
 * one manual test case file per covered page area
@@ -98,7 +102,18 @@ framework/
     ↓
 Playwright / Pytest / pytest-xdist
     ↓
+reporting / diagnostics
+    ↓
 local validation / CI
+```
+
+Reporting and diagnostics currently include:
+
+```text
+pytest-html
+Allure
+failure screenshots
+GitHub Actions artifacts
 ```
 
 The layers are intentionally lightweight.
@@ -133,10 +148,13 @@ Current responsibilities:
 * preserve traceability to manual test cases where practical
 * remain independent of test execution order
 * remain compatible with supported sequential and parallel execution
+* produce normal Pytest result data consumed by reporting integrations
 
 Test modules should not duplicate selectors when Page Objects already expose the required interaction or state.
 
 Test modules should not depend on state produced by another test because xdist workers may execute tests independently and in a different order from sequential execution.
+
+Reporting integrations should not change test ownership or introduce reporting-specific test implementations.
 
 ## `pages/`
 
@@ -168,7 +186,9 @@ The Page Object layer should remain focused on interaction logic.
 
 Assertions should remain in tests or reusable assertion helpers.
 
-Parallel execution does not change Page Object ownership or responsibility boundaries.
+Reporting concerns should not be moved into Page Objects.
+
+Parallel execution and Allure integration do not change Page Object ownership or responsibility boundaries.
 
 ## `BasePage`
 
@@ -182,7 +202,7 @@ Current responsibilities:
 
 `BasePage` should remain intentionally small.
 
-It should not become a generic container for unrelated framework helpers.
+It should not become a generic container for unrelated framework helpers, reporting logic, or execution configuration.
 
 ## `AppPage`
 
@@ -374,6 +394,7 @@ They should not own:
 * navigation
 * browser setup
 * fixtures
+* reporting
 * Page Object interactions
 
 ## `test_data/`
@@ -427,7 +448,8 @@ Contains shared pytest hooks and fixtures.
 
 Current responsibilities include:
 
-* screenshot capture on failure
+* screenshot capture on browser-test failure during the Pytest call phase
+* Allure attachment of successfully captured failure screenshots
 * `opened_login_page`
 * `standard_user`
 * `logged_in_inventory_page`
@@ -444,6 +466,47 @@ The current Playwright page/context flow and project fixture chains are function
 Each test therefore prepares and owns the browser/application state required for its scenario rather than consuming browser state produced by another test.
 
 This fixture model was validated under pytest-xdist worker-level parallel execution during Phase 4C.
+
+### Failure Screenshot Hook
+
+The failure hook reacts only to failed test calls.
+
+When the test has a Playwright `page` fixture, the hook creates a failure screenshot under:
+
+```text
+reports/screenshots/
+```
+
+The filename contains:
+
+* the test name
+* a UTC timestamp
+
+The existing screenshot mechanism remains the primary capture mechanism.
+
+Phase 4D does not introduce a second screenshot capture path.
+
+After successful screenshot capture, the same PNG file is attached to Allure as:
+
+```text
+Failure screenshot
+```
+
+when Allure result collection is active.
+
+The attachment uses:
+
+```text
+image/png
+```
+
+semantics through the Allure PNG attachment type.
+
+If screenshot capture fails, the hook stops before the Allure attachment step because no screenshot file is available.
+
+If Allure attachment fails after successful screenshot capture, the original screenshot remains available under `reports/screenshots/`.
+
+This preserves failure evidence independently of the advanced reporting layer.
 
 Fixture growth should follow real repeated setup needs rather than speculative abstraction.
 
@@ -464,13 +527,21 @@ This supports:
 * dedicated parallel Smoke CI execution
 * dedicated parallel Regression CI execution
 * parallel complete full-suite CI execution
+* reporting compatibility
 * CI stability
 
 Tests should not rely on shared browser state produced by earlier test cases.
 
-Tests must also not assume a specific xdist worker, test order, or relationship between parametrized cases.
+Tests must also not assume:
+
+* a specific xdist worker
+* a specific test order
+* a relationship between parametrized cases
+* a reporting system to prepare functional state
 
 No sequential-only test exceptions were identified during Phase 4C validation.
+
+Phase 4D reporting does not change these independence requirements.
 
 ## `config/`
 
@@ -485,9 +556,9 @@ Potential future usage includes:
 
 The layer remains intentionally minimal until approved framework maturity scope requires expansion.
 
-Runtime environment configuration is not part of the current implemented Phase 4C architecture.
+Runtime environment configuration is not part of the current implemented Phase 4D architecture.
 
-pytest-xdist integration does not introduce a new runtime configuration layer.
+Neither pytest-xdist nor Allure reporting introduces a new runtime configuration layer.
 
 ## `reports/`
 
@@ -495,25 +566,76 @@ Stores generated runtime outputs.
 
 Current usage includes:
 
-* pytest HTML reports
+* pytest-html reports
 * failure screenshots
+* Allure result data
+* generated Allure HTML reports
 * CI artifact source files
+
+Current generated paths include:
+
+```text
+reports/smoke-report.html
+reports/regression-report.html
+reports/report.html
+reports/screenshots/
+reports/allure-results/
+reports/allure-report/
+```
 
 Generated runtime outputs should not be committed to Git.
 
 They are intended for:
 
 * debugging
+* failure analysis
 * execution evidence
 * CI artifacts
+* local report review
 
-Current CI browser jobs generate separate report files for:
+### pytest-html Outputs
 
-* Smoke
-* Regression
-* full-suite
+Current CI browser jobs generate:
 
-The existing report structure is preserved under parallel execution.
+```text
+reports/smoke-report.html
+reports/regression-report.html
+reports/report.html
+```
+
+Smoke and Regression remain focused on pytest-html reporting.
+
+The full-suite job also preserves pytest-html in addition to generating Allure data.
+
+### Allure Result Data
+
+Allure result collection writes structured execution data to:
+
+```text
+reports/allure-results/
+```
+
+This data is generated by `allure-pytest`.
+
+It is runtime output rather than repository content.
+
+### Allure HTML Report
+
+The standalone Allure CLI generates the browsable HTML report under:
+
+```text
+reports/allure-report/
+```
+
+using result data from:
+
+```text
+reports/allure-results/
+```
+
+The CLI is a report-generation prerequisite separate from the Python `allure-pytest` dependency.
+
+### Failure Screenshots
 
 Failure screenshots are stored under:
 
@@ -523,11 +645,33 @@ reports/screenshots/
 
 Screenshot filenames include the test name and UTC timestamp.
 
-The report directory and failure screenshot behavior were reviewed and exercised during Phase 4C parallel validation.
+When Allure result collection is active, the same successfully captured file is reused as the Allure failure attachment.
 
-No worker-related filename collision or sequential-only reporting exception was identified for the current suite.
+### Generated-Output Boundary
 
-Detailed report and artifact naming is documented in `docs/ci-cd-pipeline.md`.
+The repository ignore policy excludes generated report content.
+
+Current relevant ignore behavior includes:
+
+```text
+reports/*
+!reports/.gitkeep
+
+allure-results/
+allure-report/
+```
+
+The implemented Allure paths are nested under `reports/` and are therefore already excluded by `reports/*`.
+
+The additional root-level Allure ignore rules also protect against accidental output produced with different paths.
+
+Generated outputs remain outside version-controlled project content.
+
+Detailed report and artifact naming is documented in:
+
+```text
+docs/ci-cd-pipeline.md
+```
 
 ## `test_cases/`
 
@@ -555,6 +699,8 @@ The same identifiers are also used in parametrized pytest output where practical
 
 Test case files remain the source of truth for individual automation status.
 
+Phase 4D reporting does not introduce new test case automation or test case metadata changes.
+
 ## `docs/`
 
 Contains technical documentation for:
@@ -566,6 +712,7 @@ Contains technical documentation for:
 * testing strategy
 * pytest marker strategy
 * sequential and parallel execution strategy
+* reporting strategy
 * CI/CD
 * quality tooling
 * technology stack
@@ -573,6 +720,14 @@ Contains technical documentation for:
 * roadmap
 
 Documentation should reflect current implemented behavior and clearly separate it from planned functionality.
+
+Reporting documentation should distinguish:
+
+* pytest-html responsibilities
+* Allure responsibilities
+* failure screenshot responsibilities
+* GitHub Actions artifact responsibilities
+* generated runtime output from repository content
 
 ## Login Test Architecture
 
@@ -593,6 +748,8 @@ Selective local execution
         ↓
 Sequential / parallel suite execution
         ↓
+Reporting
+        ↓
 CI execution
 ```
 
@@ -601,6 +758,7 @@ Depending on marker assignment, Login tests may participate in:
 * dedicated parallel Smoke CI execution
 * dedicated parallel Regression CI execution
 * parallel complete full-suite CI execution
+* complete full-suite Allure reporting
 
 Current Login coverage includes:
 
@@ -653,6 +811,8 @@ Selective local execution
         ↓
 Sequential / parallel suite execution
         ↓
+Reporting
+        ↓
 CI execution
 ```
 
@@ -661,6 +821,7 @@ Depending on marker assignment, Inventory tests may participate in:
 * dedicated parallel Smoke CI execution
 * dedicated parallel Regression CI execution
 * parallel complete full-suite CI execution
+* complete full-suite Allure reporting
 
 Current Inventory coverage includes:
 
@@ -684,7 +845,11 @@ Current Inventory coverage includes:
 * representative navigation checkpoints
 * broader all-products navigation coverage
 
-Inventory tests reuse `test_data/product_test_data.py`.
+Inventory tests reuse:
+
+```text
+test_data/product_test_data.py
+```
 
 ## Product Details Test Architecture
 
@@ -709,6 +874,8 @@ Selective local execution
         ↓
 Sequential / parallel suite execution
         ↓
+Reporting
+        ↓
 CI execution
 ```
 
@@ -717,6 +884,7 @@ Depending on marker assignment, Product Details tests may participate in:
 * dedicated parallel Smoke CI execution
 * dedicated parallel Regression CI execution
 * parallel complete full-suite CI execution
+* complete full-suite Allure reporting
 
 Current Product Details coverage includes:
 
@@ -758,6 +926,8 @@ Selective local execution
         ↓
 Sequential / parallel suite execution
         ↓
+Reporting
+        ↓
 CI execution
 ```
 
@@ -766,6 +936,7 @@ Depending on marker assignment, Cart tests may participate in:
 * dedicated parallel Smoke CI execution
 * dedicated parallel Regression CI execution
 * parallel complete full-suite CI execution
+* complete full-suite Allure reporting
 
 Current Cart coverage includes:
 
@@ -810,6 +981,8 @@ Selective local execution
         ↓
 Sequential / parallel suite execution
         ↓
+Reporting
+        ↓
 CI execution
 ```
 
@@ -818,6 +991,7 @@ Depending on marker assignment, Checkout tests may participate in:
 * dedicated parallel Smoke CI execution
 * dedicated parallel Regression CI execution
 * parallel complete full-suite CI execution
+* complete full-suite Allure reporting
 
 Current Checkout coverage includes:
 
@@ -913,13 +1087,14 @@ Dedicated CI jobs do not currently exist for:
 
 Tests carrying those markers are still included in complete full-suite CI execution.
 
-Dedicated CI execution and marker semantics are separate concerns:
+Dedicated CI execution, reporting, and marker semantics are separate concerns:
 
 * markers define test intent and selectable suites
 * CI determines which marker expressions receive dedicated workflow jobs
 * xdist determines how collected tests are distributed between workers
+* reporting integrations consume results from the resulting execution
 
-Parallel execution does not change marker semantics or marker assignment.
+Parallel execution and Allure reporting do not change marker semantics or marker assignment.
 
 ## E2E Architecture
 
@@ -969,6 +1144,139 @@ E2E does not currently have a dedicated GitHub Actions job.
 
 E2E tests remain part of the complete unfiltered full-suite CI execution and may therefore be distributed between xdist workers.
 
+When full-suite Allure result collection is enabled, E2E checkpoints are represented as normal results within the advanced full-suite report.
+
+## Reporting Architecture
+
+The reporting architecture uses complementary tools with different responsibilities.
+
+```text
+Pytest execution
+      ↓
+┌──────────────────────────────┐
+│ pytest-html                  │
+│ lightweight HTML reporting   │
+└──────────────────────────────┘
+
+Pytest execution
+      ↓
+┌──────────────────────────────┐
+│ allure-pytest                │
+│ structured Allure results    │
+└──────────────────────────────┘
+      ↓
+Allure CLI
+      ↓
+generated Allure HTML report
+
+failed browser test
+      ↓
+existing screenshot hook
+      ↓
+reports/screenshots/*.png
+      ↓
+same PNG attached to Allure
+```
+
+### pytest-html Responsibility
+
+pytest-html remains the lightweight reporting layer.
+
+It is used in:
+
+* Smoke CI
+* Regression CI
+* full-suite CI
+
+Current paths:
+
+```text
+reports/smoke-report.html
+reports/regression-report.html
+reports/report.html
+```
+
+Allure does not replace pytest-html.
+
+### Allure Result Responsibility
+
+The Python `allure-pytest` integration collects structured result data.
+
+Current result location:
+
+```text
+reports/allure-results/
+```
+
+Local result collection may use:
+
+```bash
+pytest -v \
+  --alluredir=reports/allure-results \
+  --clean-alluredir
+```
+
+or:
+
+```bash
+pytest -n auto -v \
+  --alluredir=reports/allure-results \
+  --clean-alluredir
+```
+
+Allure result collection is compatible with both sequential and parallel execution.
+
+### Allure CLI Responsibility
+
+The standalone Allure CLI converts result data into a browsable HTML report.
+
+Current command:
+
+```bash
+allure generate reports/allure-results \
+  --clean \
+  -o reports/allure-report
+```
+
+Current output location:
+
+```text
+reports/allure-report/
+```
+
+The Allure CLI is separate from the Python plugin.
+
+Installing `allure-pytest` does not itself provide the standalone HTML report generator.
+
+### Failure Evidence Responsibility
+
+Failure screenshots remain independent runtime evidence.
+
+Current screenshot location:
+
+```text
+reports/screenshots/
+```
+
+The same successfully captured PNG may additionally be embedded in Allure.
+
+This avoids duplicate browser capture logic while providing richer report context.
+
+### Reporting Scope Boundaries
+
+Current reporting architecture does not include:
+
+* Allure history persistence
+* trend-history storage
+* hosted Allure reports
+* GitHub Pages report publishing
+* trace policy
+* video policy
+* retry architecture
+* cross-browser reporting
+
+Those capabilities remain outside the implemented Phase 4D reporting scope.
+
 ## Local And CI Execution Architecture
 
 Local execution supports:
@@ -978,6 +1286,8 @@ Local execution supports:
 * selective marker-based validation
 * parallel Smoke validation
 * parallel Regression validation
+* local Allure result generation
+* local Allure HTML report generation
 
 Sequential full local execution:
 
@@ -1014,6 +1324,8 @@ Sequential execution remains a supported execution mode.
 
 Parallel execution is an additional validated capability rather than a replacement for sequential execution.
 
+Reporting is layered on top of either execution mode rather than defining a separate test implementation.
+
 ### Phase 4B CI Architecture
 
 GitHub Actions separates code-quality validation from browser-test execution.
@@ -1043,7 +1355,7 @@ needs: quality
 
 After successful quality validation, the three browser jobs are independently executable and do not depend on each other.
 
-This Phase 4B job structure remains unchanged after Phase 4C.
+This Phase 4B job structure remains unchanged after Phase 4C and Phase 4D.
 
 ### Phase 4C Worker-Level Execution
 
@@ -1068,35 +1380,90 @@ The two concurrency layers are separate:
 
 The `quality` job does not use xdist.
 
+### Phase 4D Reporting Layer
+
+Phase 4D adds reporting inside the existing execution architecture.
+
+Current reporting model:
+
+```text
+quality
+├── smoke
+│   └── xdist workers
+│       └── pytest-html
+├── regression
+│   └── xdist workers
+│       └── pytest-html
+└── full-suite
+    └── xdist workers
+        ├── pytest-html
+        ├── Allure results
+        ├── failure screenshots
+        └── Allure HTML report
+```
+
+Phase 4D does not add another browser job.
+
 ### Smoke CI Execution
 
-Smoke executes the approved Smoke marker suite:
+Smoke executes:
 
 ```bash
 pytest -m smoke -n auto -v
 ```
 
-The actual CI command also generates a self-contained pytest HTML report.
+The actual CI command also generates:
+
+```text
+reports/smoke-report.html
+```
+
+Smoke remains pytest-html-focused and does not generate a dedicated Allure report.
 
 ### Regression CI Execution
 
-Regression executes the approved Regression marker suite:
+Regression executes:
 
 ```bash
 pytest -m regression -n auto -v
 ```
 
-The actual CI command also generates a self-contained pytest HTML report.
+The actual CI command also generates:
+
+```text
+reports/regression-report.html
+```
+
+Regression remains pytest-html-focused and does not generate a dedicated Allure report.
 
 ### Full-Suite CI Execution
 
 The full-suite job executes the complete unfiltered Pytest suite:
 
 ```bash
-pytest -n auto -v
+pytest -n auto -v \
+  --html=reports/report.html \
+  --self-contained-html \
+  --alluredir=reports/allure-results \
+  --clean-alluredir
 ```
 
 The full-suite job remains the complete automated regression gate.
+
+The execution generates:
+
+```text
+reports/report.html
+reports/allure-results/
+```
+
+CI then attempts to generate:
+
+```text
+reports/allure-report/
+```
+
+when usable Allure result data exists.
 
 Smoke and Regression provide dedicated targeted feedback without replacing full-suite execution.
 
@@ -1112,15 +1479,75 @@ The quality job does not prepare a browser environment.
 
 Current local and CI browser scope remains Chromium-only.
 
-Parallel execution does not introduce a cross-browser execution architecture.
+Parallel execution and Allure reporting do not introduce a cross-browser execution architecture.
 
-### CI Artifacts
+## CI Artifact Architecture
 
-Each browser job generates its own pytest HTML report and uses non-conflicting GitHub Actions artifact names.
+Each browser job uses non-conflicting GitHub Actions artifact names.
 
-Artifact uploads use `if: always()` so available runtime evidence can still be published when an executing browser-test command fails.
+### Smoke
 
-The existing report paths, artifact names, upload behavior, and retention strategy were preserved when xdist was integrated.
+```text
+smoke-pytest-html-report
+smoke-test-artifacts
+```
+
+### Regression
+
+```text
+regression-pytest-html-report
+regression-test-artifacts
+```
+
+### Full Suite
+
+```text
+pytest-html-report
+full-suite-allure-report
+test-artifacts
+```
+
+The dedicated Allure artifact publishes:
+
+```text
+reports/allure-report/
+```
+
+The existing broader full-suite artifact continues to publish:
+
+```text
+reports/
+```
+
+Artifact uploads use:
+
+```yaml
+if: always()
+```
+
+so available runtime evidence can still be published when an executing browser-test command fails.
+
+The Allure report-generation step also uses failure-tolerant workflow control.
+
+It checks whether usable result data exists before calling the Allure CLI.
+
+Therefore a failed full-suite test run may still produce:
+
+* pytest-html output
+* failure screenshots
+* Allure result data
+* generated Allure HTML
+* downloadable artifacts
+
+The failed test command still fails the full-suite job.
+
+Reporting does not change the quality-gate result.
+
+Current artifact retention remains:
+
+```text
+7 days
+```
 
 Detailed CI commands, triggers, report paths, artifact names, and retention are documented in:
 
@@ -1158,7 +1585,21 @@ Parallel-safe expectations include:
 
 Cart, Checkout, logout/re-login persistence, E2E checkpoints, and parametrized all-product scenarios were validated under worker-level execution.
 
-No stabilization change was required during AQA-0092 because the existing suite already satisfied the validated parallel-safety requirements.
+No sequential-only execution exception is required for the current suite.
+
+### Reporting Under Parallel Execution
+
+The reporting architecture is designed to operate with the same worker-level execution model.
+
+Validated reporting behavior includes:
+
+* pytest-html generation during xdist execution
+* Allure result collection during xdist execution
+* failure screenshot generation during xdist execution
+* reuse of failure screenshots as Allure attachments
+* generated Allure HTML reports based on the collected results
+
+No separate sequential-only reporting architecture is maintained.
 
 ### Sequential Compatibility
 
@@ -1180,9 +1621,11 @@ parallel Pytest execution through pytest-xdist
 
 without maintaining separate test implementations.
 
+The same reporting components can be applied to either mode where needed.
+
 ## CI Execution Boundaries
 
-The current execution architecture combines Phase 4B and Phase 4C.
+The current execution architecture combines Phase 4B, Phase 4C, and implemented Phase 4D reporting capabilities.
 
 Phase 4B includes:
 
@@ -1206,15 +1649,24 @@ Phase 4C includes:
 * validated E2E and parametrized-case independence
 * preservation of existing reporting and failure-artifact behavior
 
-GitHub Actions job-level concurrency and pytest-xdist worker-level parallelism are distinct architectural layers.
+Phase 4D reporting includes:
 
-Advanced Allure reporting is not currently implemented and belongs to Phase 4D.
+* Allure Pytest integration
+* local Allure result collection
+* local Allure HTML generation
+* failure screenshot attachment to Allure
+* sequential reporting compatibility
+* parallel reporting compatibility
+* full-suite CI Allure result collection
+* full-suite CI Allure HTML generation
+* dedicated `full-suite-allure-report` artifact
+* preservation of pytest-html
+* preservation of existing screenshot capture
+* preservation of existing artifact behavior
 
-The current reporting architecture uses:
+GitHub Actions job-level concurrency and pytest-xdist worker-level parallelism remain distinct architectural layers.
 
-* `pytest-html`
-* screenshots on failure
-* GitHub Actions artifacts
+Reporting is a separate concern layered on top of test execution.
 
 Runtime environment configuration and other later framework maturity capabilities remain outside the current implemented architecture.
 
@@ -1233,10 +1685,15 @@ The framework follows a modular architecture where:
 * manual test cases define documented scenario coverage
 * markers organize selective test suites
 * pytest-xdist provides worker-level parallel execution
+* pytest-html provides lightweight reporting
+* Allure provides advanced execution reporting
+* failure screenshots provide browser evidence
+* GitHub Actions artifacts preserve CI runtime evidence
 * CI validates code quality before browser execution
 * CI provides dedicated Smoke and Regression feedback
 * CI preserves complete full-suite regression validation
 * GitHub Actions job concurrency remains separate from Pytest worker concurrency
+* generated runtime outputs remain separate from repository source content
 * documentation describes implemented framework behavior
 
 Future framework maturity work may improve:
@@ -1245,11 +1702,16 @@ Future framework maturity work may improve:
 * environment configuration
 * logging
 * diagnostics
-* reporting
+* reporting analytics
 
-Phase 4C parallel execution is implemented.
+Current Phase 4D reporting does not include:
 
-Phase 4D Allure reporting is not part of the current implementation.
+* Allure history persistence
+* report hosting
+* GitHub Pages reporting
+* retries
+* trace/video policy
+* cross-browser reporting
 
 Future API, cross-browser, Docker, Selenium, or Jenkins extensions remain separate from the current architecture.
 
@@ -1262,6 +1724,7 @@ The framework should prioritize:
 * deterministic execution
 * test independence
 * sequential and parallel execution compatibility
+* reporting compatibility with both execution modes
 * clear responsibility boundaries
 * reusable components
 * centralized test data
@@ -1272,6 +1735,8 @@ The framework should prioritize:
 * complete full-suite CI validation
 * staged quality-gate execution
 * clear separation of CI job concurrency and Pytest worker parallelism
+* clear separation of execution from reporting
+* clear separation of generated output from repository content
 * incremental framework growth
 
 The framework should avoid:
@@ -1282,6 +1747,8 @@ The framework should avoid:
 * shared test-state dependencies
 * execution-order dependencies
 * worker-specific test dependencies
+* reporting-specific duplicate test implementations
+* duplicate screenshot capture mechanisms
 * mixing detailed Checkout behavior into Cart ownership
 * moving page-specific behavior into generic helpers prematurely
 * moving authenticated shared behavior out of `AppPage`
@@ -1289,7 +1756,8 @@ The framework should avoid:
 * assigning Regression mechanically to every non-Smoke test
 * treating CI job-level concurrency as Pytest parallel execution
 * describing pytest-xdist as future-only functionality after Phase 4C
-* describing Allure as active reporting before Phase 4D
+* describing Allure as unimplemented after AQA-0096 and AQA-0097
+* describing Allure history or hosted reporting as implemented
 * describing future framework capabilities as already implemented
 
 ## Current Architecture Status
@@ -1330,9 +1798,13 @@ Current architecture capabilities include:
 * dedicated parallel Smoke CI execution
 * dedicated parallel Regression CI execution
 * parallel complete full-suite CI validation
-* HTML reporting
-* screenshot capture
+* pytest-html reporting
+* Allure result collection
+* Allure HTML generation
+* failure screenshot capture
+* Allure failure screenshot attachments
 * job-specific CI artifacts
+* dedicated full-suite Allure artifact
 
 Current CI architecture:
 
@@ -1340,10 +1812,16 @@ Current CI architecture:
 quality
 ├── smoke
 │   └── xdist workers
+│       └── pytest-html
 ├── regression
 │   └── xdist workers
+│       └── pytest-html
 └── full-suite
     └── xdist workers
+        ├── pytest-html
+        ├── Allure results
+        ├── failure screenshots
+        └── Allure HTML report
 ```
 
 The `quality` job is the prerequisite gate.
@@ -1354,12 +1832,20 @@ UI, Security, Sorting, Navigation, and E2E do not currently have dedicated CI jo
 
 Pytest-xdist parallel execution is implemented locally and in the three existing CI browser-test jobs.
 
-No sequential-only test exceptions were identified during current Phase 4C validation.
+Allure reporting is implemented locally and in the complete full-suite CI reporting path.
 
-Advanced Allure reporting is not currently implemented.
+Smoke and Regression retain their pytest-html-focused reporting behavior.
+
+No sequential-only test or reporting exceptions were identified for the current implemented execution model.
 
 The `main` branch represents the stable portfolio version of the project.
 
 The `develop` branch and active workstream branches may contain newer validated changes before promotion.
 
-The current architecture direction remains Phase 4 Framework Maturity, with Phase 4B CI Execution Strategy and Phase 4C Parallel Execution Strategy implemented while later maturity capabilities remain separate until their approved tasks are completed.
+The current architecture direction remains Phase 4 Framework Maturity.
+
+Phase 4B CI Execution Strategy and Phase 4C Parallel Execution Strategy are implemented.
+
+Phase 4D reporting capabilities implemented through the active workstream include local Allure reporting, failure screenshot integration, and full-suite CI Allure reporting.
+
+The Phase 4D workstream should not be treated as fully completed until its remaining approved work and final checkpoint are completed.
