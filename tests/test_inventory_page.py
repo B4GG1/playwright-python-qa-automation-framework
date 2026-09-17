@@ -24,7 +24,7 @@ SECOND_EXAMPLE_PRODUCT = LIST_OF_PRODUCTS[1]
 def test_inventory_page_is_visible_after_successful_login(
     logged_in_inventory_page: InventoryPage, _case_id: str
 ):
-    expect(logged_in_inventory_page.page).to_have_url(InventoryPage.URL)
+    expect(logged_in_inventory_page.page).to_have_url(InventoryPage.build_url())
     expect(logged_in_inventory_page.get_inventory_container()).to_be_visible()
     expect(logged_in_inventory_page.get_product_list()).to_be_visible()
 
@@ -78,7 +78,7 @@ def test_open_cart_page_from_inventory(logged_in_inventory_page: InventoryPage, 
 
     cart_page = logged_in_inventory_page.open_cart()
 
-    expect(cart_page.page).to_have_url(CartPage.URL)
+    expect(cart_page.page).to_have_url(CartPage.build_url())
     expect(cart_page.get_cart_contents_container()).to_be_visible()
 
 

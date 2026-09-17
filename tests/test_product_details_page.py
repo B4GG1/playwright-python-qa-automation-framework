@@ -71,11 +71,11 @@ def test_return_from_product_details_to_inventory_page(
 
     product_details = logged_in_inventory_page.open_product_details_by_name(product["product_name"])
 
-    expect(product_details.page).to_have_url(f"{product_details.URL}{product['product_id']}")
+    expect(product_details.page).to_have_url(product_details.build_url(product["product_id"]))
 
     inventory_page = product_details.return_to_inventory()
 
-    expect(inventory_page.page).to_have_url(InventoryPage.URL)
+    expect(inventory_page.page).to_have_url(InventoryPage.build_url())
     expect(inventory_page.get_inventory_container()).to_be_visible()
     expect(inventory_page.get_product_list()).to_be_visible()
 
@@ -105,7 +105,7 @@ def test_add_to_cart_button_changes_to_remove_after_adding_product_from_details_
     expect(details_page.get_add_to_cart_button_from_item(product_item)).to_be_hidden()
 
     expect(details_page.page).to_have_url(
-        f'{ProductDetailsPage.URL}{FIRST_EXAMPLE_PRODUCT["product_id"]}'
+        ProductDetailsPage.build_url(FIRST_EXAMPLE_PRODUCT["product_id"])
     )
 
 
@@ -126,7 +126,7 @@ def test_product_can_be_added_to_cart_from_product_details_page(
     details_page.add_product_to_cart()
 
     expect(details_page.page).to_have_url(
-        f'{ProductDetailsPage.URL}{FIRST_EXAMPLE_PRODUCT["product_id"]}'
+        ProductDetailsPage.build_url(FIRST_EXAMPLE_PRODUCT["product_id"])
     )
     expect(details_page.get_shopping_cart_badge()).to_have_text("1")
 
@@ -151,7 +151,7 @@ def test_all_products_can_be_added_to_cart_from_product_details_page(
 
     details_page.add_product_to_cart()
 
-    expect(details_page.page).to_have_url(f'{ProductDetailsPage.URL}{product["product_id"]}')
+    expect(details_page.page).to_have_url(ProductDetailsPage.build_url(product["product_id"]))
     expect(details_page.get_shopping_cart_badge()).to_have_text("1")
 
     cart_page = details_page.open_cart()
@@ -178,7 +178,7 @@ def test_product_can_be_removed_from_cart_from_product_details_page(
 
     details_page.remove_product_from_cart()
 
-    expect(details_page.page).to_have_url(f'{ProductDetailsPage.URL}{product["product_id"]}')
+    expect(details_page.page).to_have_url(ProductDetailsPage.build_url(product["product_id"]))
     expect(details_page.get_shopping_cart_badge()).not_to_be_visible()
 
     cart_page = details_page.open_cart()
@@ -213,7 +213,7 @@ def test_remove_button_changes_to_add_to_cart_after_removing_product_from_detail
     expect(details_page.get_add_to_cart_button_from_item(product_item)).to_be_visible()
 
     expect(details_page.page).to_have_url(
-        f'{ProductDetailsPage.URL}{FIRST_EXAMPLE_PRODUCT["product_id"]}'
+        ProductDetailsPage.build_url(FIRST_EXAMPLE_PRODUCT["product_id"])
     )
 
 
@@ -343,7 +343,7 @@ def test_cart_page_can_be_opened_from_product_details_page(
 
     cart_page = details_page.open_cart()
 
-    expect(cart_page.page).to_have_url(CartPage.URL)
+    expect(cart_page.page).to_have_url(CartPage.build_url())
     expect(cart_page.get_cart_contents_container()).to_be_visible()
 
 
@@ -384,9 +384,9 @@ def test_cart_page_can_be_opened_from_product_details_page_for_each_product(
 ):
     details_page = logged_in_inventory_page.open_product_details_by_name(product["product_name"])
 
-    expect(details_page.page).to_have_url(f'{ProductDetailsPage.URL}{product["product_id"]}')
+    expect(details_page.page).to_have_url(ProductDetailsPage.build_url(product["product_id"]))
 
     cart_page = details_page.open_cart()
 
-    expect(cart_page.page).to_have_url(CartPage.URL)
+    expect(cart_page.page).to_have_url(CartPage.build_url())
     expect(cart_page.get_cart_contents_container()).to_be_visible()

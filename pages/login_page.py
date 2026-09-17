@@ -4,7 +4,7 @@ from pages.base_page import BasePage
 
 
 class LoginPage(BasePage):
-    URL = "https://www.saucedemo.com/"
+    ROUTE = "/"
 
     def login(self, username: str, password: str) -> None:
         self.get_username_input().fill(username)

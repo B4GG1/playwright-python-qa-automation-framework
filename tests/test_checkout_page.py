@@ -97,7 +97,7 @@ def test_checkout_information_form_requires_first_name(
 
     checkout_step_two_page = checkout_step_one_page.continue_checkout()
 
-    expect(checkout_step_one_page.page).to_have_url(CheckoutInformationPage.URL)
+    expect(checkout_step_one_page.page).to_have_url(CheckoutInformationPage.build_url())
     expect(checkout_step_two_page.get_checkout_summary_container()).not_to_be_visible()
     expect(checkout_step_one_page.get_error_message()).to_be_visible()
     expect(checkout_step_one_page.get_error_message()).to_have_text(
@@ -129,7 +129,7 @@ def test_checkout_information_form_requires_last_name(
 
     checkout_step_two_page = checkout_step_one_page.continue_checkout()
 
-    expect(checkout_step_one_page.page).to_have_url(CheckoutInformationPage.URL)
+    expect(checkout_step_one_page.page).to_have_url(CheckoutInformationPage.build_url())
     expect(checkout_step_two_page.get_checkout_summary_container()).not_to_be_visible()
     expect(checkout_step_one_page.get_error_message()).to_be_visible()
     expect(checkout_step_one_page.get_error_message()).to_have_text(
@@ -161,7 +161,7 @@ def test_checkout_information_form_requires_postal_code(
 
     checkout_step_two_page = checkout_step_one_page.continue_checkout()
 
-    expect(checkout_step_one_page.page).to_have_url(CheckoutInformationPage.URL)
+    expect(checkout_step_one_page.page).to_have_url(CheckoutInformationPage.build_url())
     expect(checkout_step_two_page.get_checkout_summary_container()).not_to_be_visible()
     expect(checkout_step_one_page.get_error_message()).to_be_visible()
     expect(checkout_step_one_page.get_error_message()).to_have_text(
@@ -193,7 +193,7 @@ def test_input_error_icons_are_displayed_after_failed_checkout_information_submi
 
     checkout_step_one_page.continue_checkout()
 
-    expect(checkout_step_one_page.page).to_have_url(CheckoutInformationPage.URL)
+    expect(checkout_step_one_page.page).to_have_url(CheckoutInformationPage.build_url())
     expect(checkout_step_one_page.get_error_message()).to_be_visible()
     expect(checkout_step_one_page.get_input_error_icon(first_name_input)).to_be_visible()
     expect(checkout_step_one_page.get_input_error_icon(last_name_input)).to_be_visible()
@@ -221,7 +221,7 @@ def test_checkout_information_error_message_can_be_closed_after_validation_failu
     checkout_step_two_page = checkout_step_one_page.continue_checkout()
 
     expect(checkout_step_one_page.get_error_message()).to_be_visible()
-    expect(checkout_step_one_page.page).to_have_url(CheckoutInformationPage.URL)
+    expect(checkout_step_one_page.page).to_have_url(CheckoutInformationPage.build_url())
     expect(checkout_step_two_page.get_checkout_summary_container()).not_to_be_visible()
 
     checkout_step_one_page.close_error_message()
@@ -246,7 +246,7 @@ def test_checkout_information_form_continues_to_overview_when_valid_data_is_prov
 ):
     checkout_step_two, product = checkout_step_two_page_with_one_product
 
-    expect(checkout_step_two.page).to_have_url(CheckoutOverviewPage.URL)
+    expect(checkout_step_two.page).to_have_url(CheckoutOverviewPage.build_url())
     expect(checkout_step_two.get_checkout_summary_container()).to_be_visible()
     expect(checkout_step_two.get_product_item_by_name(product["product_name"])).to_be_visible()
     expect(checkout_step_two.get_finish_button()).to_be_visible()
@@ -270,11 +270,11 @@ def test_checkout_information_cancel_returns_to_cart_and_preserves_cart_item(
 ):
     checkout_step_one, product = checkout_step_one_page_with_one_product
 
-    expect(checkout_step_one.page).to_have_url(CheckoutInformationPage.URL)
+    expect(checkout_step_one.page).to_have_url(CheckoutInformationPage.build_url())
 
     cart_page = checkout_step_one.cancel_checkout()
 
-    expect(cart_page.page).to_have_url(CartPage.URL)
+    expect(cart_page.page).to_have_url(CartPage.build_url())
     expect(cart_page.get_product_item_by_name(product["product_name"])).to_be_visible()
     expect(checkout_step_one.get_checkout_info_block()).not_to_be_visible()
 
@@ -424,7 +424,7 @@ def test_checkout_overview_cancel_returns_to_inventory_page(
 
     inventory_page = checkout_step_two.cancel_checkout()
 
-    expect(inventory_page.page).to_have_url(InventoryPage.URL)
+    expect(inventory_page.page).to_have_url(InventoryPage.build_url())
     expect(inventory_page.get_inventory_container()).to_be_visible()
     expect(checkout_step_two.get_checkout_summary_container()).not_to_be_visible()
 
@@ -525,7 +525,7 @@ def test_finish_button_completes_checkout_and_opens_order_confirmation_page(
 
     checkout_last_step = checkout_step_two.finish_checkout()
 
-    expect(checkout_last_step.page).to_have_url(CheckoutCompletePage.URL)
+    expect(checkout_last_step.page).to_have_url(CheckoutCompletePage.build_url())
     expect(checkout_last_step.get_checkout_complete_header()).to_be_visible()
     expect(checkout_last_step.get_checkout_complete_text()).to_be_visible()
     expect(checkout_last_step.get_back_home_button()).to_be_visible()
@@ -605,7 +605,7 @@ def test_back_home_returns_to_inventory_page_after_order_completion(
 
     inventory_page = checkout_last_step_page.back_home()
 
-    expect(inventory_page.page).to_have_url(InventoryPage.URL)
+    expect(inventory_page.page).to_have_url(InventoryPage.build_url())
     expect(checkout_last_step_page.get_checkout_complete_container()).not_to_be_visible()
     expect(inventory_page.get_inventory_container()).to_be_visible()
 

@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 class CheckoutCompletePage(AppPage):
-    URL = "https://www.saucedemo.com/checkout-complete.html"
+    ROUTE = "/checkout-complete.html"
 
     def get_checkout_complete_container(self) -> Locator:
         return self.page.locator("[data-test='checkout-complete-container']")
@@ -38,7 +38,7 @@ class CheckoutCompletePage(AppPage):
 
 
 class CheckoutOverviewPage(AppPage):
-    URL = "https://www.saucedemo.com/checkout-step-two.html"
+    ROUTE = "/checkout-step-two.html"
 
     def get_cart_list(self) -> Locator:
         return self.page.locator("[data-test='cart-list']")
@@ -98,7 +98,7 @@ class CheckoutOverviewPage(AppPage):
 
 
 class CheckoutInformationPage(AppPage):
-    URL = "https://www.saucedemo.com/checkout-step-one.html"
+    ROUTE = "/checkout-step-one.html"
 
     def get_first_name_input(self) -> Locator:
         return self.page.locator('[data-test="firstName"]')
