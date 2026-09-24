@@ -1,17 +1,43 @@
 import os
 from datetime import UTC, datetime
+from typing import Callable
 
 import allure
 import pytest
-from playwright.sync_api import Page
+from playwright.sync_api import BrowserContext, Page, expect
 
+from config.settings import settings
 from pages.cart_page import CartPage
-from pages.checkout_page import CheckoutCompletePage, CheckoutInformationPage, CheckoutOverviewPage
+from pages.checkout_page import (
+    CheckoutCompletePage,
+    CheckoutInformationPage,
+    CheckoutOverviewPage,
+)
 from pages.inventory_page import InventoryPage
 from pages.login_page import LoginPage
 from test_data.checkout_test_data import VALID_CHECKOUT_CUSTOMER
 from test_data.login_test_data import VALID_USER_CASES
 from test_data.product_test_data import LIST_OF_PRODUCTS
+
+
+def pytest_configure(config: pytest.Config) -> None:
+    if not config.getoption("--browser"):
+        config.option.browser = [settings.browser]
+
+    if settings.headed and not config.getoption("--headed"):
+        config.option.headed = True
+
+    expect.set_options(timeout=settings.expect_timeout_ms)
+
+
+@pytest.fixture()
+def context(
+    new_context: Callable[..., BrowserContext],
+) -> BrowserContext:
+    browser_context = new_context()
+    browser_context.set_default_timeout(settings.timeout_ms)
+    browser_context.set_default_navigation_timeout(settings.timeout_ms)
+    return browser_context
 
 
 @pytest.hookimpl(hookwrapper=True)
@@ -102,7 +128,10 @@ def checkout_step_one_page_with_one_product(
 
 @pytest.fixture()
 def checkout_step_two_page_with_one_product(
-    checkout_step_one_page_with_one_product: tuple[CheckoutInformationPage, dict[str, str]],
+    checkout_step_one_page_with_one_product: tuple[
+        CheckoutInformationPage,
+        dict[str, str],
+    ],
 ) -> tuple[CheckoutOverviewPage, dict[str, str]]:
     checkout_step_one, product = checkout_step_one_page_with_one_product
     checkout_step_one.fill_checkout_info_form(
@@ -116,7 +145,10 @@ def checkout_step_two_page_with_one_product(
 
 @pytest.fixture()
 def checkout_last_step_page_with_one_product(
-    checkout_step_two_page_with_one_product: tuple[CheckoutOverviewPage, dict[str, str]],
+    checkout_step_two_page_with_one_product: tuple[
+        CheckoutOverviewPage,
+        dict[str, str],
+    ],
 ) -> tuple[CheckoutCompletePage, dict[str, str]]:
     checkout_step_two, product = checkout_step_two_page_with_one_product
     checkout_last_step = checkout_step_two.finish_checkout()
