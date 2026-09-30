@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 class CartPage(AppPage):
-    URL = "https://www.saucedemo.com/cart.html"
+    ROUTE = "/cart.html"
 
     def get_cart_contents_container(self) -> Locator:
         return self.page.locator("[data-test='cart-contents-container']")

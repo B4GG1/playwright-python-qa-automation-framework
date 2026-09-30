@@ -20,7 +20,7 @@ def assert_failed_login_input_error_icons_are_displayed(
     username_input_parent = login_page.page.locator("div .form_group").filter(has=username_input)
     password_input_parent = login_page.page.locator("div .form_group").filter(has=password_input)
 
-    expect(login_page.page).to_have_url(LoginPage.URL)
+    expect(login_page.page).to_have_url(LoginPage.build_url())
     expect(login_page.get_input_error_icon(username_input_parent)).to_be_visible()
     expect(login_page.get_input_error_icon(password_input_parent)).to_be_visible()
 
@@ -96,7 +96,7 @@ def assert_product_details_page_displays_expected_product(
     product_item = product_details_page.get_product_item_or_items()
 
     expect(product_details_page.page).to_have_url(
-        f"{product_details_page.URL}{product['product_id']}"
+        product_details_page.build_url(product["product_id"])
     )
 
     assert_catalog_product_item_displays_expected_product(

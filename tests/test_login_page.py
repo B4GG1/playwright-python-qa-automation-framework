@@ -224,7 +224,7 @@ def test_direct_inventory_access_without_login_is_blocked(
 
     inventory_page.open()
 
-    expect(page).to_have_url(login_page.URL)
+    expect(page).to_have_url(login_page.build_url())
     expect(inventory_page.get_inventory_container()).not_to_be_visible()
     expect(login_page.get_error_message()).to_have_text(
         ACCESS_DENIED_TEMPLATE_ERROR.format(url_suffix=INVENTORY_URL_SUFFIX)
@@ -246,7 +246,7 @@ def test_direct_cart_access_without_login_is_blocked(
 
     cart_page.open()
 
-    expect(page).to_have_url(login_page.URL)
+    expect(page).to_have_url(login_page.build_url())
     expect(cart_page.get_cart_contents_container()).not_to_be_visible()
     expect(login_page.get_error_message()).to_have_text(
         ACCESS_DENIED_TEMPLATE_ERROR.format(url_suffix=CART_URL_SUFFIX)
@@ -269,7 +269,7 @@ def test_direct_item_page_access_without_login_is_blocked(
 
     item_page.open(product["product_id"])
 
-    expect(page).to_have_url(login_page.URL)
+    expect(page).to_have_url(login_page.build_url())
     expect(item_page.get_product_item_or_items()).not_to_be_visible()
     expect(login_page.get_error_message()).to_have_text(
         ACCESS_DENIED_TEMPLATE_ERROR.format(url_suffix=ITEM_URL_SUFFIX)
@@ -291,7 +291,7 @@ def test_direct_access_to_check_out_information_page_without_login_is_blocked(
 
     checkout_step_one.open()
 
-    expect(page).to_have_url(login_page.URL)
+    expect(page).to_have_url(login_page.build_url())
     expect(checkout_step_one.get_checkout_info_block()).not_to_be_visible()
     expect(login_page.get_error_message()).to_have_text(
         ACCESS_DENIED_TEMPLATE_ERROR.format(url_suffix=CHECKOUT_STEP_ONE_URL_SUFFIX)
@@ -313,7 +313,7 @@ def test_direct_access_to_check_out_overview_page_without_login_is_blocked(
 
     checkout_step_two.open()
 
-    expect(page).to_have_url(login_page.URL)
+    expect(page).to_have_url(login_page.build_url())
     expect(checkout_step_two.get_checkout_summary_container()).not_to_be_visible()
     expect(login_page.get_error_message()).to_have_text(
         ACCESS_DENIED_TEMPLATE_ERROR.format(url_suffix=CHECKOUT_STEP_TWO_URL_SUFFIX)
@@ -335,7 +335,7 @@ def test_direct_access_to_check_out_complete_page_without_login_is_blocked(
 
     checkout_last_step.open()
 
-    expect(page).to_have_url(login_page.URL)
+    expect(page).to_have_url(login_page.build_url())
     expect(checkout_last_step.get_checkout_complete_container()).not_to_be_visible()
     expect(login_page.get_error_message()).to_have_text(
         ACCESS_DENIED_TEMPLATE_ERROR.format(url_suffix=CHECKOUT_COMPLETE_URL_SUFFIX)

@@ -111,7 +111,7 @@ def test_user_can_continue_shopping_from_cart_page(
 
     inventory_page = cart_page.continue_shopping()
 
-    expect(inventory_page.page).to_have_url(InventoryPage.URL)
+    expect(inventory_page.page).to_have_url(InventoryPage.build_url())
     expect(inventory_page.get_product_list()).to_be_visible()
 
 
@@ -152,7 +152,7 @@ def test_cart_state_persists_after_logout_and_relogin(
     relogged_inventory_page = InventoryPage(login_page.page)
     relogged_product_item = relogged_inventory_page.get_product_item_by_name(tested_product_name)
 
-    expect(relogged_inventory_page.page).to_have_url(InventoryPage.URL)
+    expect(relogged_inventory_page.page).to_have_url(InventoryPage.build_url())
     expect(
         relogged_inventory_page.get_remove_button_from_item(relogged_product_item)
     ).to_be_visible()
@@ -240,7 +240,7 @@ def test_product_details_can_be_opened_from_cart_item_name(
     product_details_page = cart_page.open_product_details_by_name(product["product_name"])
 
     expect(product_details_page.page).to_have_url(
-        f"{ProductDetailsPage.URL}{product['product_id']}"
+        ProductDetailsPage.build_url(product["product_id"])
     )
     expect(product_details_page.get_product_item_or_items()).to_be_visible()
     expect(product_details_page.get_back_to_products_button()).to_be_visible()
@@ -271,7 +271,7 @@ def test_continue_shopping_preserves_cart_state(
 
     inventory_page = cart_page.continue_shopping()
 
-    expect(inventory_page.page).to_have_url(InventoryPage.URL)
+    expect(inventory_page.page).to_have_url(InventoryPage.build_url())
     expect(inventory_page.get_inventory_container()).to_be_visible()
     expect(inventory_page.get_product_list()).to_be_visible()
     expect(inventory_page.get_shopping_cart_badge()).to_have_text("1")
@@ -325,7 +325,7 @@ def test_checkout_button_opens_checkout_information_page_with_product_in_cart(
 
     checkout_step_one = cart_page.checkout()
 
-    expect(checkout_step_one.page).to_have_url(CheckoutInformationPage.URL)
+    expect(checkout_step_one.page).to_have_url(CheckoutInformationPage.build_url())
     expect(checkout_step_one.get_checkout_info_block()).to_be_visible()
     expect(cart_page.get_cart_contents_container()).not_to_be_visible()
 
@@ -350,7 +350,7 @@ def test_product_details_can_be_opened_from_cart_item_name_for_each_product(
     product_details_page = cart_page.open_product_details_by_name(product["product_name"])
 
     expect(product_details_page.page).to_have_url(
-        f"{ProductDetailsPage.URL}{product['product_id']}"
+        ProductDetailsPage.build_url(product["product_id"])
     )
     expect(product_details_page.get_product_item_or_items()).to_be_visible()
     expect(product_details_page.get_back_to_products_button()).to_be_visible()

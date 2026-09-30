@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 
 class InventoryPage(AppPage):
-    URL = "https://www.saucedemo.com/inventory.html"
+    ROUTE = "/inventory.html"
 
     SORT_NAME_ASC = "az"
     SORT_NAME_DESC = "za"
