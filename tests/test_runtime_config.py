@@ -7,10 +7,16 @@ from config.settings import (
     DEFAULT_BROWSER,
     DEFAULT_EXPECT_TIMEOUT_MS,
     DEFAULT_HEADED,
+    DEFAULT_SCREENSHOT_POLICY,
     DEFAULT_TIMEOUT_MS,
+    DEFAULT_TRACE_POLICY,
+    DEFAULT_VIDEO_POLICY,
     EXPECT_TIMEOUT_MS_ENV_VAR,
     HEADED_ENV_VAR,
+    SCREENSHOT_POLICY_ENV_VAR,
     TIMEOUT_MS_ENV_VAR,
+    TRACE_POLICY_ENV_VAR,
+    VIDEO_POLICY_ENV_VAR,
     load_settings,
 )
 
@@ -24,6 +30,9 @@ def test_default_runtime_configuration_is_used_when_environment_variables_are_no
         HEADED_ENV_VAR,
         TIMEOUT_MS_ENV_VAR,
         EXPECT_TIMEOUT_MS_ENV_VAR,
+        SCREENSHOT_POLICY_ENV_VAR,
+        TRACE_POLICY_ENV_VAR,
+        VIDEO_POLICY_ENV_VAR,
     ):
         monkeypatch.delenv(env_var, raising=False)
 
@@ -34,6 +43,9 @@ def test_default_runtime_configuration_is_used_when_environment_variables_are_no
     assert settings.headed is DEFAULT_HEADED
     assert settings.timeout_ms == DEFAULT_TIMEOUT_MS
     assert settings.expect_timeout_ms == DEFAULT_EXPECT_TIMEOUT_MS
+    assert settings.screenshot_policy == DEFAULT_SCREENSHOT_POLICY
+    assert settings.trace_policy == DEFAULT_TRACE_POLICY
+    assert settings.video_policy == DEFAULT_VIDEO_POLICY
 
 
 @pytest.mark.parametrize(
@@ -228,6 +240,108 @@ def test_invalid_timeout_raises_clear_configuration_error(
     invalid_timeout: str,
 ) -> None:
     monkeypatch.setenv(env_var, invalid_timeout)
+
+    with pytest.raises(
+        ValueError,
+        match=rf"Invalid value for environment variable {env_var}",
+    ):
+        load_settings()
+
+
+@pytest.mark.parametrize(
+    ("configured_policy", "expected_policy"),
+    [
+        ("only-on-failure", "only-on-failure"),
+        ("OFF", "off"),
+        ("  only-on-failure  ", "only-on-failure"),
+    ],
+)
+def test_screenshot_policy_override_is_loaded_and_normalized(
+    monkeypatch: pytest.MonkeyPatch,
+    configured_policy: str,
+    expected_policy: str,
+) -> None:
+    monkeypatch.setenv(SCREENSHOT_POLICY_ENV_VAR, configured_policy)
+
+    settings = load_settings()
+
+    assert settings.screenshot_policy == expected_policy
+
+
+@pytest.mark.parametrize(
+    "invalid_policy",
+    [
+        "",
+        "on",
+        "retain-on-failure",
+        "always",
+    ],
+)
+def test_invalid_screenshot_policy_raises_clear_configuration_error(
+    monkeypatch: pytest.MonkeyPatch,
+    invalid_policy: str,
+) -> None:
+    monkeypatch.setenv(SCREENSHOT_POLICY_ENV_VAR, invalid_policy)
+
+    with pytest.raises(
+        ValueError,
+        match=rf"Invalid value for environment variable {SCREENSHOT_POLICY_ENV_VAR}",
+    ):
+        load_settings()
+
+
+@pytest.mark.parametrize(
+    ("env_var", "setting_name"),
+    [
+        (TRACE_POLICY_ENV_VAR, "trace_policy"),
+        (VIDEO_POLICY_ENV_VAR, "video_policy"),
+    ],
+)
+@pytest.mark.parametrize(
+    ("configured_policy", "expected_policy"),
+    [
+        ("off", "off"),
+        ("ON", "on"),
+        ("retain-on-failure", "retain-on-failure"),
+        ("  retain-on-failure  ", "retain-on-failure"),
+    ],
+)
+def test_recording_policy_override_is_loaded_and_normalized(
+    monkeypatch: pytest.MonkeyPatch,
+    env_var: str,
+    setting_name: str,
+    configured_policy: str,
+    expected_policy: str,
+) -> None:
+    monkeypatch.setenv(env_var, configured_policy)
+
+    settings = load_settings()
+
+    assert getattr(settings, setting_name) == expected_policy
+
+
+@pytest.mark.parametrize(
+    "env_var",
+    [
+        TRACE_POLICY_ENV_VAR,
+        VIDEO_POLICY_ENV_VAR,
+    ],
+)
+@pytest.mark.parametrize(
+    "invalid_policy",
+    [
+        "",
+        "only-on-failure",
+        "always",
+        "enabled",
+    ],
+)
+def test_invalid_recording_policy_raises_clear_configuration_error(
+    monkeypatch: pytest.MonkeyPatch,
+    env_var: str,
+    invalid_policy: str,
+) -> None:
+    monkeypatch.setenv(env_var, invalid_policy)
 
     with pytest.raises(
         ValueError,

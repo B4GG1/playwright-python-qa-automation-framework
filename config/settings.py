@@ -8,14 +8,22 @@ DEFAULT_BROWSER = "chromium"
 DEFAULT_HEADED = False
 DEFAULT_TIMEOUT_MS = 30000
 DEFAULT_EXPECT_TIMEOUT_MS = 5000
+DEFAULT_SCREENSHOT_POLICY = "only-on-failure"
+DEFAULT_TRACE_POLICY = "off"
+DEFAULT_VIDEO_POLICY = "off"
 
 BASE_URL_ENV_VAR = "QA_BASE_URL"
 BROWSER_ENV_VAR = "QA_BROWSER"
 HEADED_ENV_VAR = "QA_HEADED"
 TIMEOUT_MS_ENV_VAR = "QA_TIMEOUT_MS"
 EXPECT_TIMEOUT_MS_ENV_VAR = "QA_EXPECT_TIMEOUT_MS"
+SCREENSHOT_POLICY_ENV_VAR = "QA_SCREENSHOT_POLICY"
+TRACE_POLICY_ENV_VAR = "QA_TRACE_POLICY"
+VIDEO_POLICY_ENV_VAR = "QA_VIDEO_POLICY"
 
 SUPPORTED_BROWSERS = {"chromium", "firefox", "webkit"}
+SUPPORTED_SCREENSHOT_POLICIES = {"only-on-failure", "off"}
+SUPPORTED_RECORDING_POLICIES = {"off", "retain-on-failure", "on"}
 
 T = TypeVar("T")
 
@@ -114,6 +122,44 @@ def _parse_timeout_ms(value: str) -> int:
     return timeout_ms
 
 
+def _parse_policy(
+    value: str,
+    policy_name: str,
+    supported_values: set[str],
+) -> str:
+    normalized_value = value.strip().lower()
+
+    if normalized_value not in supported_values:
+        allowed_values = ", ".join(sorted(supported_values))
+        raise ValueError(f"{policy_name} must be one of: {allowed_values}.")
+
+    return normalized_value
+
+
+def _parse_screenshot_policy(value: str) -> str:
+    return _parse_policy(
+        value,
+        "Screenshot policy",
+        SUPPORTED_SCREENSHOT_POLICIES,
+    )
+
+
+def _parse_trace_policy(value: str) -> str:
+    return _parse_policy(
+        value,
+        "Trace policy",
+        SUPPORTED_RECORDING_POLICIES,
+    )
+
+
+def _parse_video_policy(value: str) -> str:
+    return _parse_policy(
+        value,
+        "Video policy",
+        SUPPORTED_RECORDING_POLICIES,
+    )
+
+
 @dataclass(frozen=True, slots=True)
 class Settings:
     base_url: str
@@ -121,6 +167,9 @@ class Settings:
     headed: bool
     timeout_ms: int
     expect_timeout_ms: int
+    screenshot_policy: str
+    trace_policy: str
+    video_policy: str
 
 
 def load_settings() -> Settings:
@@ -149,6 +198,21 @@ def load_settings() -> Settings:
             EXPECT_TIMEOUT_MS_ENV_VAR,
             DEFAULT_EXPECT_TIMEOUT_MS,
             _parse_timeout_ms,
+        ),
+        screenshot_policy=_read_env(
+            SCREENSHOT_POLICY_ENV_VAR,
+            DEFAULT_SCREENSHOT_POLICY,
+            _parse_screenshot_policy,
+        ),
+        trace_policy=_read_env(
+            TRACE_POLICY_ENV_VAR,
+            DEFAULT_TRACE_POLICY,
+            _parse_trace_policy,
+        ),
+        video_policy=_read_env(
+            VIDEO_POLICY_ENV_VAR,
+            DEFAULT_VIDEO_POLICY,
+            _parse_video_policy,
         ),
     )
 

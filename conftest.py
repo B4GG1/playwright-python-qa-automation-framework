@@ -20,12 +20,27 @@ from test_data.login_test_data import VALID_USER_CASES
 from test_data.product_test_data import LIST_OF_PRODUCTS
 
 
+def _cli_option_was_provided(config: pytest.Config, option: str) -> bool:
+    option_with_value = f"{option}="
+
+    return any(
+        argument == option or argument.startswith(option_with_value)
+        for argument in config.invocation_params.args
+    )
+
+
 def pytest_configure(config: pytest.Config) -> None:
     if not config.getoption("--browser"):
         config.option.browser = [settings.browser]
 
     if settings.headed and not config.getoption("--headed"):
         config.option.headed = True
+
+    if not _cli_option_was_provided(config, "--tracing"):
+        config.option.tracing = settings.trace_policy
+
+    if not _cli_option_was_provided(config, "--video"):
+        config.option.video = settings.video_policy
 
     expect.set_options(timeout=settings.expect_timeout_ms)
 
@@ -48,6 +63,9 @@ def pytest_runtest_makereport(item, call):
     report = outcome.get_result()
 
     if report.when != "call" or not report.failed:
+        return
+
+    if settings.screenshot_policy == "off":
         return
 
     page = item.funcargs.get("page")
