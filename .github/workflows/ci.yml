@@ -45,6 +45,16 @@ jobs:
     needs: quality
     runs-on: ubuntu-latest
 
+    env:
+      QA_BASE_URL: "https://www.saucedemo.com"
+      QA_BROWSER: "chromium"
+      QA_HEADED: "false"
+      QA_TIMEOUT_MS: "30000"
+      QA_EXPECT_TIMEOUT_MS: "5000"
+      QA_SCREENSHOT_POLICY: "only-on-failure"
+      QA_TRACE_POLICY: "off"
+      QA_VIDEO_POLICY: "off"
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -89,6 +99,16 @@ jobs:
     needs: quality
     runs-on: ubuntu-latest
 
+    env:
+      QA_BASE_URL: "https://www.saucedemo.com"
+      QA_BROWSER: "chromium"
+      QA_HEADED: "false"
+      QA_TIMEOUT_MS: "30000"
+      QA_EXPECT_TIMEOUT_MS: "5000"
+      QA_SCREENSHOT_POLICY: "only-on-failure"
+      QA_TRACE_POLICY: "off"
+      QA_VIDEO_POLICY: "off"
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -132,6 +152,16 @@ jobs:
   full-suite:
     needs: quality
     runs-on: ubuntu-latest
+
+    env:
+      QA_BASE_URL: "https://www.saucedemo.com"
+      QA_BROWSER: "chromium"
+      QA_HEADED: "false"
+      QA_TIMEOUT_MS: "30000"
+      QA_EXPECT_TIMEOUT_MS: "5000"
+      QA_SCREENSHOT_POLICY: "only-on-failure"
+      QA_TRACE_POLICY: "off"
+      QA_VIDEO_POLICY: "off"
 
     steps:
       - name: Checkout repository
