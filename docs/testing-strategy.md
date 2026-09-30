@@ -4,16 +4,26 @@ This document defines the testing approach for the QA automation framework.
 
 The current focus is UI automation testing for the Sauce Demo application using Playwright and Pytest. The project follows an iterative testing strategy: manual test design is created before or alongside automation, selected scenarios are automated, and repeated interactions are gradually refactored into reusable framework components.
 
-The strategy documented here reflects the current implemented test structure, normalized pytest marker behavior, Phase 4B CI execution strategy, Phase 4C Pytest parallel execution strategy, and Phase 4D reporting strategy.
+The strategy documented here reflects the current implemented test structure, normalized pytest marker behavior, Phase 4B CI execution strategy, Phase 4C Pytest parallel execution strategy, Phase 4D reporting strategy, and Phase 4E runtime configuration strategy.
 
 The `main` branch represents the stable portfolio version, while `develop` and active workstream branches may contain newer validated changes before they are promoted to `main`.
 
 ## System Under Test
 
 * Application: Sauce Demo
-* URL: `https://www.saucedemo.com/`
+* Default URL: `https://www.saucedemo.com`
 
-Sauce Demo is used as a stable training application for practicing UI automation, test design, Page Object Model, test data management, parametrization, selective suite execution, parallel test execution, CI validation, reporting, and framework development.
+The default application origin is supplied through the centralized runtime configuration layer.
+
+The application origin can be overridden for a test process through:
+
+```text
+QA_BASE_URL
+```
+
+without editing functional tests or Page Objects.
+
+Sauce Demo is used as a stable training application for practicing UI automation, test design, Page Object Model, test data management, parametrization, selective suite execution, parallel test execution, runtime configuration, CI validation, reporting, and framework development.
 
 ## Testing Approach
 
@@ -30,13 +40,16 @@ The project follows a progressive testing approach:
 9. Use fixtures to reduce repeated setup.
 10. Use parametrization for repeated data-driven scenarios.
 11. Categorize tests with explicit pytest markers.
-12. Validate relevant marker suites and test modules locally.
-13. Validate the complete test suite locally when required.
-14. Validate supported parallel execution when execution behavior or isolation is affected.
-15. Collect reporting and failure evidence appropriate to the execution context.
-16. Validate code quality and automated suites through GitHub Actions.
-17. Update test case and project documentation when coverage or strategy changes.
-18. Promote stable validated snapshots from `develop` to `main` when they are ready for portfolio presentation.
+12. Keep environment-specific execution behavior outside functional tests.
+13. Use centralized runtime configuration for supported execution overrides.
+14. Validate relevant marker suites and test modules locally.
+15. Validate the complete test suite locally when required.
+16. Validate supported parallel execution when execution behavior or isolation is affected.
+17. Validate runtime configuration behavior when execution settings change.
+18. Collect reporting and failure evidence appropriate to the execution context.
+19. Validate code quality and automated suites through GitHub Actions.
+20. Update test case and project documentation when coverage or strategy changes.
+21. Promote stable validated snapshots from `develop` to `main` when they are ready for portfolio presentation.
 
 This approach supports both QA thinking and automation engineering practice.
 
@@ -88,9 +101,11 @@ A documented test case may be marked as `Planned` before dedicated automation is
 
 The corresponding test case file remains the authoritative source for individual automation status.
 
+Runtime configuration tests do not represent new product-facing manual test cases and therefore do not require separate test case automation metadata.
+
 ## Current Automated Test Modules
 
-Current automated test modules follow the one-test-file-per-covered-page-area principle:
+Current functional automated test modules follow the one-test-file-per-covered-page-area principle:
 
 ```text
 tests/test_login_page.py
@@ -100,10 +115,10 @@ tests/test_cart_page.py
 tests/test_checkout_page.py
 ```
 
-Each automated test module maps to the corresponding manual test case file:
+Each functional automated test module maps to the corresponding manual test case file:
 
 | Automated Test Module                | Manual Test Case File                | Documented Test Case Range     |
-| ------------------------------------ | ------------------------------------ | ------------------------------ |
+|--------------------------------------|--------------------------------------|--------------------------------|
 | `tests/test_login_page.py`           | `test_cases/login-page.md`           | `TC-LOGIN-001`–`019`           |
 | `tests/test_inventory_page.py`       | `test_cases/inventory-page.md`       | `TC-INVENTORY-001`–`022`       |
 | `tests/test_product_details_page.py` | `test_cases/product-details-page.md` | `TC-PRODUCT-DETAILS-001`–`015` |
@@ -114,9 +129,19 @@ The documented test case ranges above are currently fully covered by automation.
 
 Individual coverage details and automation metadata remain authoritative in the corresponding test case files.
 
+The framework additionally includes focused runtime configuration validation:
+
+```text
+tests/test_runtime_config.py
+```
+
+This module validates configuration defaults, supported overrides, normalization, and invalid-value behavior.
+
+It is framework validation rather than page-level product coverage.
+
 ## Current Test Coverage
 
-The current automated test coverage focuses on Sauce Demo Login, Inventory, Product Details, Cart, and Checkout behavior.
+The current automated functional test coverage focuses on Sauce Demo Login, Inventory, Product Details, Cart, and Checkout behavior.
 
 ### Login Coverage
 
@@ -275,6 +300,8 @@ The project uses:
 ```
 
 so unknown or unregistered markers should fail collection rather than silently creating accidental test categories.
+
+Runtime configuration does not change marker meaning or marker assignment.
 
 ### Smoke
 
@@ -473,7 +500,7 @@ CI execution responsibility is separate from marker meaning.
 
 The existence or absence of a dedicated CI job does not change the semantic meaning of a marker.
 
-Parallel execution also does not change marker meaning or assignment.
+Parallel execution and runtime configuration also do not change marker meaning or assignment.
 
 ## Marker-Based Suite Execution
 
@@ -561,6 +588,14 @@ pytest tests/test_checkout_page.py -m e2e -v
 
 This is useful when validating one workstream without executing every matching test in the repository.
 
+Runtime environment variables can be combined with the same marker commands without changing marker behavior.
+
+Example:
+
+```bash
+QA_TIMEOUT_MS=45000 pytest -m smoke -v
+```
+
 ## Parallel Execution Strategy
 
 Pytest worker-level parallel execution is implemented through `pytest-xdist`.
@@ -585,6 +620,8 @@ pytest -m regression -v
 
 Parallel execution is an additional supported execution mode rather than a replacement for sequential execution.
 
+Runtime configuration applies to both sequential and parallel execution.
+
 ### Parallel Test Independence
 
 Tests executed through xdist must remain independent.
@@ -599,6 +636,7 @@ The current suite follows these expectations:
 * parametrized cases remain independently executable
 * E2E checkpoints remain independently executable
 * no shared order-dependent purchase flow is used
+* runtime configuration is process-level execution configuration rather than test-to-test state
 
 The existing fixture chains were validated under parallel execution during Phase 4C stabilization.
 
@@ -647,13 +685,371 @@ pytest -n auto -v \
   --clean-alluredir
 ```
 
-The existing pytest-html reporting and failure screenshot behavior also remain compatible with the supported parallel execution model.
+The existing pytest-html reporting and configurable failure screenshot behavior remain compatible with the supported parallel execution model.
 
 Phase 4D does not introduce any sequential-only reporting requirement.
 
+Phase 4E does not introduce a separate parallel runtime configuration path.
+
+## Runtime Configuration Strategy
+
+Phase 4E introduces centralized process-level runtime configuration through:
+
+```text
+config/settings.py
+```
+
+Runtime configuration controls execution settings without requiring changes to functional tests or Page Objects.
+
+The supported configuration surface is:
+
+| Environment Variable   | Default                     | Accepted Values / Behavior                          |
+|------------------------|-----------------------------|-----------------------------------------------------|
+| `QA_BASE_URL`          | `https://www.saucedemo.com` | valid HTTP/HTTPS application origin                 |
+| `QA_BROWSER`           | `chromium`                  | `chromium`, `firefox`, `webkit`                     |
+| `QA_HEADED`            | `false`                     | `true`, `false`, `1`, `0`, `yes`, `no`, `on`, `off` |
+| `QA_TIMEOUT_MS`        | `30000`                     | non-negative integer milliseconds                   |
+| `QA_EXPECT_TIMEOUT_MS` | `5000`                      | non-negative integer milliseconds                   |
+| `QA_SCREENSHOT_POLICY` | `only-on-failure`           | `only-on-failure`, `off`                            |
+| `QA_TRACE_POLICY`      | `off`                       | `off`, `retain-on-failure`, `on`                    |
+| `QA_VIDEO_POLICY`      | `off`                       | `off`, `retain-on-failure`, `on`                    |
+
+### Runtime Configuration Defaults
+
+When no supported environment variables are provided, local execution uses:
+
+```text
+QA_BASE_URL=https://www.saucedemo.com
+QA_BROWSER=chromium
+QA_HEADED=false
+QA_TIMEOUT_MS=30000
+QA_EXPECT_TIMEOUT_MS=5000
+QA_SCREENSHOT_POLICY=only-on-failure
+QA_TRACE_POLICY=off
+QA_VIDEO_POLICY=off
+```
+
+These defaults preserve the approved framework behavior.
+
+### Base URL Strategy
+
+`QA_BASE_URL` defines the application origin.
+
+Page Objects define relative routes and use the configured application origin through `BasePage`.
+
+Example:
+
+```bash
+QA_BASE_URL="http://localhost:8000" pytest -m smoke -v
+```
+
+A configured base URL must:
+
+* use `http` or `https`
+* contain a valid host
+* contain only the application origin rather than an application path
+* not contain credentials
+* not contain query parameters
+* not contain a fragment
+* not contain whitespace
+* contain a valid port when a port is specified
+
+A trailing slash is normalized away.
+
+This keeps environment-specific application origins outside functional test logic.
+
+### Browser Strategy
+
+`QA_BROWSER` supports:
+
+```text
+chromium
+firefox
+webkit
+```
+
+Browser values are normalized by trimming surrounding whitespace and converting supported values to lowercase.
+
+Example:
+
+```bash
+QA_BROWSER=chromium pytest -m smoke -v
+```
+
+The configuration layer recognizes Playwright browser engines.
+
+Recognition does not guarantee that the requested browser is installed in the execution environment.
+
+The current project CI installs Chromium only.
+
+Explicit native pytest-playwright `--browser` options remain usable and take precedence over the project environment-derived browser when supplied explicitly.
+
+Example:
+
+```bash
+QA_BROWSER=firefox pytest -m smoke -v --browser chromium
+```
+
+uses the explicit native Chromium option.
+
+### Headed And Headless Strategy
+
+The default is headless:
+
+```text
+QA_HEADED=false
+```
+
+Headed local execution can be requested with:
+
+```bash
+QA_HEADED=true pytest -m smoke -v
+```
+
+Accepted true values are:
+
+```text
+true
+1
+yes
+on
+```
+
+Accepted false values are:
+
+```text
+false
+0
+no
+off
+```
+
+Values are normalized case-insensitively.
+
+The native pytest-playwright `--headed` option remains available.
+
+CI explicitly uses `QA_HEADED=false`.
+
+### Timeout Strategy
+
+`QA_TIMEOUT_MS` configures:
+
+* Playwright default action timeout
+* Playwright default navigation timeout
+
+Default:
+
+```text
+30000
+```
+
+Example:
+
+```bash
+QA_TIMEOUT_MS=45000 pytest -m regression -v
+```
+
+`QA_EXPECT_TIMEOUT_MS` configures the Playwright assertion timeout.
+
+Default:
+
+```text
+5000
+```
+
+Example:
+
+```bash
+QA_EXPECT_TIMEOUT_MS=7000 pytest -m smoke -v
+```
+
+Both timeout values must be non-negative integer numbers of milliseconds.
+
+A value of `0` is accepted and follows Playwright timeout semantics.
+
+### Screenshot Policy
+
+The project-level screenshot policy is controlled through:
+
+```text
+QA_SCREENSHOT_POLICY
+```
+
+Supported values:
+
+```text
+only-on-failure
+off
+```
+
+Default:
+
+```text
+only-on-failure
+```
+
+The default preserves the existing custom failure screenshot mechanism.
+
+When a browser test fails during the Pytest call phase and screenshot policy is enabled:
+
+* one screenshot is captured
+* the PNG is written under `reports/screenshots/`
+* the same PNG is attached to Allure when Allure result collection is active
+
+The framework does not create a second project-level screenshot mechanism through pytest-playwright.
+
+To disable project failure screenshots:
+
+```bash
+QA_SCREENSHOT_POLICY=off pytest -m smoke -v
+```
+
+With screenshot policy disabled:
+
+* the custom PNG is not created
+* the corresponding Allure screenshot attachment is not created
+
+### Trace Policy
+
+Trace policy is controlled through:
+
+```text
+QA_TRACE_POLICY
+```
+
+Supported values:
+
+```text
+off
+retain-on-failure
+on
+```
+
+Default:
+
+```text
+off
+```
+
+Example:
+
+```bash
+QA_TRACE_POLICY=retain-on-failure pytest -m regression -v
+```
+
+Trace generation uses pytest-playwright / Playwright-supported runtime behavior rather than custom project recording logic.
+
+When enabled, generated trace output uses the pytest-playwright runtime artifact structure rooted under:
+
+```text
+test-results/
+```
+
+Explicit native pytest-playwright tracing options remain usable and take precedence when supplied directly.
+
+### Video Policy
+
+Video policy is controlled through:
+
+```text
+QA_VIDEO_POLICY
+```
+
+Supported values:
+
+```text
+off
+retain-on-failure
+on
+```
+
+Default:
+
+```text
+off
+```
+
+Example:
+
+```bash
+QA_VIDEO_POLICY=on pytest tests/test_login_page.py -v
+```
+
+Video generation uses pytest-playwright / Playwright-supported runtime behavior rather than custom project recording logic.
+
+Generated video output uses the pytest-playwright runtime artifact structure rooted under:
+
+```text
+test-results/
+```
+
+Explicit native pytest-playwright video options remain usable and take precedence when supplied directly.
+
+### Combined Runtime Overrides
+
+Several runtime values can be supplied for one execution.
+
+Example:
+
+```bash
+QA_BASE_URL="https://www.saucedemo.com" \
+QA_BROWSER="chromium" \
+QA_HEADED="false" \
+QA_TIMEOUT_MS="45000" \
+QA_EXPECT_TIMEOUT_MS="7000" \
+QA_SCREENSHOT_POLICY="only-on-failure" \
+QA_TRACE_POLICY="retain-on-failure" \
+QA_VIDEO_POLICY="off" \
+pytest -m smoke -n auto -v
+```
+
+This does not require modification of functional test code.
+
+### Invalid Configuration Strategy
+
+Invalid explicit runtime configuration fails early.
+
+Examples include:
+
+* unsupported browser names
+* unsupported artifact policy values
+* invalid boolean values
+* negative timeout values
+* non-integer timeout values
+* malformed base URLs
+
+The configuration error identifies the affected environment variable.
+
+The framework should not silently replace an invalid explicit value with a default.
+
+Focused runtime configuration behavior is validated in:
+
+```text
+tests/test_runtime_config.py
+```
+
+### Runtime Configuration Scope Boundaries
+
+Phase 4E does not implement:
+
+* named environment profiles
+* automatic `.env` loading
+* browser matrices
+* cross-browser CI execution
+* Firefox or WebKit CI installation
+* device emulation
+* mobile emulation
+* browser channels
+* slow motion configuration
+* retries
+* Phase 4F logging redesign
+* Phase 4F fixture cleanup
+
+The runtime configuration layer should remain focused on approved execution concerns.
+
 ## Dedicated CI Marker Execution
 
-The GitHub Actions job structure established in Phase 4B and extended with xdist in Phase 4C is preserved:
+The GitHub Actions job structure established in Phase 4B and extended with xdist, reporting, and runtime configuration is preserved:
 
 ```text
 quality
@@ -730,6 +1126,8 @@ quality
 
 The `quality` job does not execute browser tests and does not use xdist.
 
+Runtime configuration does not introduce an additional concurrency layer.
+
 ## Test Design Principles
 
 Automated tests should follow:
@@ -744,12 +1142,15 @@ Automated tests should follow:
 * no hardcoded waits
 * independent test execution
 * compatibility with supported sequential and parallel execution
+* environment-specific execution behavior kept outside functional tests
 * readable failure output
 * useful reporting and failure evidence
 * explicit marker intent
 * clear mapping to manual test cases where practical
 
 Tests should focus on behavior, while page-specific UI interactions should be handled by Page Object classes.
+
+Runtime configuration should configure execution rather than change the functional intent of a test.
 
 ## Page Object Model Strategy
 
@@ -770,8 +1171,11 @@ pages/checkout_page.py
 The `BasePage` object is responsible for:
 
 * storing the Playwright `Page` instance
-* storing page URL metadata where applicable
+* storing application-relative page route metadata through `ROUTE`
+* composing page URLs using `settings.base_url`
 * opening page URLs through a shared `open()` method
+
+The application origin should not be hardcoded independently in functional Page Objects.
 
 The `AppPage` object is responsible for shared authenticated-page behavior, including:
 
@@ -802,6 +1206,8 @@ They own checkout form interaction, checkout summary behavior, checkout completi
 
 Page Objects should be introduced or expanded when they reduce duplication and improve readability.
 
+Page Objects should not independently parse environment variables or own browser runtime policies.
+
 ## Reusable Assertion Strategy
 
 Reusable assertions are used when the same product-related or checkout-related validation appears across multiple page areas.
@@ -830,12 +1236,14 @@ They should not contain:
 * test setup logic
 * fixture responsibilities
 * Page Object responsibilities
+* runtime configuration parsing
+* reporting configuration
 
 ## Fixture Strategy
 
 Fixtures are used to prepare reusable and isolated test setup.
 
-Current fixtures include:
+Current application fixtures include:
 
 ```text
 opened_login_page
@@ -862,13 +1270,19 @@ Examples:
 
 This fixture structure is especially important for both the E2E checkpoint strategy and parallel execution because tests must not rely on state created by another test.
 
-The Playwright `page` fixture used by the current tests provides isolated browser state for individual test execution.
+The browser lifecycle continues to use the pytest-playwright fixture model.
+
+The project-level browser context fixture is built on pytest-playwright's `new_context` fixture and applies the configured action and navigation timeout values.
+
+The Playwright `page` fixture used by the functional tests therefore receives the configured context behavior without functional tests needing to know how configuration is applied.
 
 The current fixture chains were validated successfully under pytest-xdist worker-level parallel execution.
 
 Fixtures should be added when setup logic becomes meaningfully repeated.
 
 Avoid unnecessary fixture growth when a scenario is clearer with direct setup.
+
+Phase 4F may later review fixture organization, but Phase 4E does not redesign fixture ownership.
 
 ## Test Data Strategy
 
@@ -918,6 +1332,14 @@ Test data should support:
 * parametrized execution
 * traceability to manual test case IDs
 
+Runtime configuration is not test data.
+
+It belongs to:
+
+```text
+config/settings.py
+```
+
 ## Parametrization Strategy
 
 Parametrization is used for repeated scenarios with the same test flow and different input data.
@@ -937,8 +1359,9 @@ Current parametrized areas include:
 * Checkout Overview item validation
 * Checkout Overview → Product Details navigation
 * selected single-case tests where test case ID visibility in `pytest -v` is useful
+* focused runtime configuration input validation
 
-Parametrized test IDs should use manual test case IDs where practical.
+Parametrized test IDs should use manual test case IDs where practical for functional product coverage.
 
 Examples:
 
@@ -965,6 +1388,8 @@ Individual `pytest.param()` cases may receive different markers when one represe
 
 Parametrized cases must remain independent because xdist may execute separate cases on different workers and in an order different from sequential execution.
 
+Runtime configuration parametrization does not use manual product test case IDs because it validates framework configuration rather than product scenarios.
+
 ## Assertion Strategy
 
 Assertions should be stable, meaningful, and focused on user-observable behavior where possible.
@@ -989,6 +1414,8 @@ Current assertion patterns include:
 * Checkout Overview product content matches expected data
 * Checkout Overview price calculations match selected products
 * checkout completion content matches expected values
+* runtime configuration values normalize to expected settings
+* invalid explicit runtime values raise clear configuration errors
 
 Use Playwright assertions for browser and UI state when possible because they include built-in waiting behavior.
 
@@ -998,6 +1425,7 @@ Use plain Python assertions when comparing extracted or calculated values such a
 * product prices
 * sorted lists
 * calculated checkout totals
+* configuration values
 
 Use reusable assertion helpers when the same meaningful validation is shared across multiple tests or page areas.
 
@@ -1012,6 +1440,7 @@ Automation should focus on:
 * high-value validation
 * scenarios that benefit from repeated local or CI execution
 * scenarios with clear expected results and stable selectors
+* framework behavior whose failure would affect broad execution reliability
 
 Not every possible scenario needs dedicated automation.
 
@@ -1031,7 +1460,7 @@ Current page-level automation boundaries include:
 * Cart → Checkout Information entry belongs to Cart coverage.
 * Checkout Information, Checkout Overview, and Checkout Complete behavior belong to Checkout coverage.
 
-Current excluded areas include:
+Current functional coverage exclusions include:
 
 * browser restart persistence
 * storage clearing behavior
@@ -1040,6 +1469,8 @@ Current excluded areas include:
 * unapproved edge-case expansion
 
 Cart coverage should not own detailed Checkout Information, Checkout Overview, or Checkout Complete validation.
+
+Runtime configuration is a framework execution concern and should not create duplicate functional page-level test ownership.
 
 ## Reporting And Debugging
 
@@ -1051,8 +1482,10 @@ Current reporting and debugging capabilities include:
 * pytest-html
 * Allure result collection
 * generated Allure HTML reports
-* screenshots on browser-test failure
+* configurable screenshots on browser-test failure
 * Allure failure screenshot attachments
+* optional Playwright traces
+* optional Playwright videos
 * GitHub Actions artifacts
 
 ### pytest-html
@@ -1129,6 +1562,12 @@ The Allure CLI is a report-generation prerequisite and is separate from the Pyth
 
 Browser-test failures during the Pytest call phase use the existing screenshot mechanism in `conftest.py`.
 
+The default screenshot policy is:
+
+```text
+QA_SCREENSHOT_POLICY=only-on-failure
+```
+
 Failure screenshots are written to:
 
 ```text
@@ -1151,6 +1590,59 @@ The same failure evidence is reused for both the normal runtime screenshot outpu
 
 If screenshot capture itself fails, there is no Allure screenshot attachment because no screenshot file was produced.
 
+When:
+
+```text
+QA_SCREENSHOT_POLICY=off
+```
+
+the custom failure screenshot is not written and the corresponding Allure attachment is not created.
+
+### Trace And Video Diagnostics
+
+Trace and video use pytest-playwright / Playwright-supported runtime mechanisms.
+
+Trace policy:
+
+```text
+QA_TRACE_POLICY
+```
+
+Video policy:
+
+```text
+QA_VIDEO_POLICY
+```
+
+Both support:
+
+```text
+off
+retain-on-failure
+on
+```
+
+and both default to:
+
+```text
+off
+```
+
+When enabled, pytest-playwright-generated files use its runtime artifact structure rooted under:
+
+```text
+test-results/
+```
+
+Representative output includes:
+
+```text
+trace.zip
+video.webm
+```
+
+The project does not implement duplicate custom trace or video recording systems.
+
 ### Reporting Compatibility
 
 Current reporting behavior supports both:
@@ -1160,11 +1652,13 @@ Current reporting behavior supports both:
 
 No sequential-only reporting exception is required.
 
-The existing failure screenshot mechanism and Allure attachment behavior were validated with the current parallel execution model.
+The existing failure screenshot mechanism and Allure attachment behavior are compatible with the current parallel execution model.
+
+Trace and video are runtime policies and do not require alternate functional test implementations.
 
 ### Generated Runtime Outputs
 
-Generated reports, screenshots, and Allure outputs are runtime data.
+Generated reports, screenshots, traces, videos, and Allure outputs are runtime data.
 
 Current generated locations include:
 
@@ -1173,6 +1667,7 @@ reports/
 reports/screenshots/
 reports/allure-results/
 reports/allure-report/
+test-results/
 ```
 
 These outputs are used for:
@@ -1180,11 +1675,11 @@ These outputs are used for:
 * local debugging
 * failure analysis
 * execution evidence
-* CI artifact publishing
+* CI artifact publishing where configured
 
 They are not repository source content and should not be committed to Git.
 
-The repository ignore policy excludes generated `reports/` content and Allure output locations from version control.
+The repository ignore policy excludes these generated runtime areas from version control.
 
 ### CI Reporting
 
@@ -1262,7 +1757,9 @@ Detailed CI artifact behavior is documented in:
 docs/ci-cd-pipeline.md
 ```
 
-Allure history persistence, report hosting, GitHub Pages publishing, trace/video policy, retries, and cross-browser reporting are not part of the current implemented reporting scope.
+Trace and video are disabled in CI by default and are therefore not introduced as default retained CI artifacts.
+
+Allure history persistence, report hosting, GitHub Pages publishing, retries, and cross-browser reporting are not part of the current implemented scope.
 
 ## Local Validation Strategy
 
@@ -1310,7 +1807,31 @@ allure generate reports/allure-results \
   -o reports/allure-report
 ```
 
-For normal implementation work, run the relevant test module before the full suite where useful.
+### Runtime Configuration Validation
+
+Focused runtime configuration validation uses:
+
+```bash
+pytest tests/test_runtime_config.py
+```
+
+Representative environment overrides may be validated through normal suite execution.
+
+Example:
+
+```bash
+QA_BROWSER=chromium \
+QA_HEADED=false \
+QA_TIMEOUT_MS=20000 \
+QA_EXPECT_TIMEOUT_MS=4000 \
+pytest -m smoke -v
+```
+
+Runtime artifact policies may be validated with representative controlled executions where required.
+
+Intentionally failing validation scenarios should remain temporary and should not be committed as permanent failing tests.
+
+Generated runtime artifacts should be cleaned before final Git status validation.
 
 ### Login Changes
 
@@ -1426,6 +1947,8 @@ Phase 4C integrates pytest-xdist worker-level parallel execution into the three 
 
 Phase 4D adds advanced Allure reporting to the existing `full-suite` job without adding another browser job.
 
+Phase 4E adds explicit runtime configuration defaults to the three existing browser-test jobs without changing the job topology.
+
 ### Quality Validation
 
 The `quality` job validates:
@@ -1446,7 +1969,45 @@ The quality job does not install Playwright Chromium.
 
 It does not use pytest-xdist.
 
+It does not require browser runtime configuration.
+
 A quality failure prevents all browser-test jobs from executing.
+
+### CI Runtime Defaults
+
+Smoke, Regression, and full-suite use:
+
+```text
+QA_BASE_URL=https://www.saucedemo.com
+QA_BROWSER=chromium
+QA_HEADED=false
+QA_TIMEOUT_MS=30000
+QA_EXPECT_TIMEOUT_MS=5000
+QA_SCREENSHOT_POLICY=only-on-failure
+QA_TRACE_POLICY=off
+QA_VIDEO_POLICY=off
+```
+
+These values intentionally match the approved local defaults.
+
+The CI runtime strategy therefore remains:
+
+* Chromium-only
+* headless
+* parallel through pytest-xdist
+* failure screenshot capture enabled
+* tracing disabled by default
+* video disabled by default
+
+The runtime configuration integration does not create:
+
+* browser matrices
+* Firefox installation
+* WebKit installation
+* retries
+* `continue-on-error`
+* default trace retention
+* default video retention
 
 ### Smoke CI Validation
 
@@ -1542,7 +2103,15 @@ A failed `quality` job prevents browser-test jobs from starting, so no browser-t
 
 ### Current Browser Scope
 
-Current local and CI Playwright execution is based on Chromium.
+The runtime configuration layer recognizes:
+
+```text
+chromium
+firefox
+webkit
+```
+
+Current GitHub Actions browser execution remains Chromium-only.
 
 The CI browser-test jobs install:
 
@@ -1550,14 +2119,14 @@ The CI browser-test jobs install:
 playwright install --with-deps chromium
 ```
 
-The current parallel and reporting strategy does not introduce:
+The current runtime, parallel, and reporting strategies do not introduce:
 
 * Firefox CI execution
 * WebKit CI execution
 * cross-browser matrices
 * cross-browser parallel execution
 
-Cross-browser execution remains outside the current implemented scope.
+Cross-browser CI remains outside the current implemented scope.
 
 ## Phase 4C Execution Boundaries
 
@@ -1611,14 +2180,66 @@ Phase 4D does not implement:
 * Allure history or trend persistence
 * hosted Allure reports
 * GitHub Pages reporting
-* trace or video policy
 * retries
 * additional browser jobs
 * cross-browser reporting
 * CI matrices
-* runtime environment configuration
 
 Allure complements pytest-html and the existing screenshot evidence rather than replacing them.
+
+Trace and video policies are implemented separately through Phase 4E runtime configuration and remain disabled by default.
+
+## Phase 4E Runtime Configuration Boundaries
+
+Phase 4E extends the existing framework with centralized runtime execution configuration.
+
+Implemented Phase 4E behavior includes:
+
+* centralized configuration in `config/settings.py`
+* `QA_BASE_URL`
+* `QA_BROWSER`
+* `QA_HEADED`
+* `QA_TIMEOUT_MS`
+* `QA_EXPECT_TIMEOUT_MS`
+* `QA_SCREENSHOT_POLICY`
+* `QA_TRACE_POLICY`
+* `QA_VIDEO_POLICY`
+* approved default values
+* string normalization where applicable
+* predictable boolean parsing
+* non-negative integer timeout validation
+* base URL validation and normalization
+* fail-fast handling for invalid explicit values
+* application URL composition through `BasePage`
+* browser/runtime integration through `conftest.py`
+* use of the existing pytest-playwright fixture model
+* action and navigation timeout integration
+* assertion timeout integration
+* preservation of existing failure screenshot and Allure attachment behavior
+* screenshot disable policy
+* trace integration through pytest-playwright
+* video integration through pytest-playwright
+* preservation of explicit native pytest-playwright runtime options where applicable
+* explicit runtime defaults in Smoke, Regression, and full-suite CI jobs
+* preservation of Chromium-only CI
+* preservation of existing Phase 4B–4D CI topology, parallelization, reporting, and artifact behavior
+
+Phase 4E does not implement:
+
+* named environment profiles
+* `.env` loading
+* browser matrices
+* cross-browser CI
+* Firefox or WebKit CI installation
+* device emulation
+* mobile emulation
+* browser channels
+* slow motion configuration
+* retries
+* Phase 4F logging redesign
+* Phase 4F fixture cleanup
+
+Formal Phase 4E completion in `docs/roadmap.md` remains deferred to the dedicated final Phase 4E checkpoint.
 
 ## Portfolio Promotion Validation
 
@@ -1631,9 +2252,12 @@ Before promoting `develop` to `main`, validate that:
 * test case documentation remains aligned with automated test modules
 * marker definitions remain aligned with test usage
 * sequential and parallel execution documentation remains aligned with actual behavior
-* reporting documentation remains aligned with actual pytest-html, Allure, screenshot, and artifact behavior
+* runtime configuration documentation remains aligned with `config/settings.py`, `conftest.py`, Page Objects, and CI
+* local runtime defaults remain aligned with documented defaults
+* CI runtime defaults remain aligned with the approved Phase 4E strategy
+* reporting documentation remains aligned with actual pytest-html, Allure, screenshot, trace, video, and artifact behavior
 * CI documentation remains aligned with actual workflow behavior
-* generated reports, screenshots, Allure outputs, cache files, and virtual environment files are not tracked
+* generated reports, screenshots, traces, videos, Allure outputs, cache files, and virtual environment files are not tracked
 * the promoted state is suitable as a stable portfolio snapshot
 
 After promotion, `main` should represent the polished portfolio version of the project.
@@ -1645,15 +2269,16 @@ Future implementation work should continue from `develop`.
 Planned improvements include:
 
 * broader framework maturity work
-* improved diagnostics and logs
-* environment-based configuration
+* improved diagnostics and lightweight logging
+* fixture organization review and cleanup
 * API testing layer
-* multi-browser execution
+* multi-browser execution when explicitly approved
 * additional suite-specific CI jobs where justified
 * advanced reporting extensions only when explicitly approved
+* environment profiles only if approved by future scope
 
-Dedicated Smoke and Regression CI jobs, pytest-xdist parallel execution, pytest-html reporting, and current Allure reporting are already implemented and should not be treated as future scope.
+Dedicated Smoke and Regression CI jobs, pytest-xdist parallel execution, pytest-html reporting, current Allure reporting, and Phase 4E environment-based runtime configuration are already implemented and should not be treated as future scope.
 
-Allure history persistence, hosted reports, GitHub Pages reporting, and other advanced reporting capabilities remain future possibilities rather than current implemented behavior.
+Allure history persistence, hosted reports, GitHub Pages reporting, `.env` loading, browser matrices, cross-browser CI, retries, device emulation, and other advanced capabilities remain future possibilities rather than current implemented behavior.
 
 Future capabilities should not be described as implemented until their corresponding project tasks are completed and validated.

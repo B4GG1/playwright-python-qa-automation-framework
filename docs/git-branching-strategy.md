@@ -11,9 +11,9 @@ The branching strategy supports two stable branch roles:
 
 When this document is read from `main`, the `develop` branch may already contain newer integration work that has not yet been promoted to the stable portfolio branch.
 
-For detailed pytest marker semantics and sequential/parallel suite execution strategy, see [Testing Strategy](testing-strategy.md).
+For detailed pytest marker semantics, sequential/parallel suite execution strategy, and runtime configuration behavior, see [Testing Strategy](testing-strategy.md).
 
-For detailed GitHub Actions execution, job dependencies, pytest-xdist execution, reports, and artifacts, see [CI/CD Pipeline](ci-cd-pipeline.md).
+For detailed GitHub Actions execution, job dependencies, pytest-xdist execution, runtime defaults, reports, and artifacts, see [CI/CD Pipeline](ci-cd-pipeline.md).
 
 ## Branching Model
 
@@ -161,6 +161,7 @@ Examples:
 refactor/login-fixtures
 refactor/page-object-cleanup
 refactor/test-data-structure
+refactor/runtime-configuration
 ```
 
 ### Promotion Branches
@@ -212,6 +213,11 @@ chore(AQA-0082): finalize checkout automation workstream
 feat(AQA-0096): integrate local allure reporting
 chore(AQA-0097): integrate allure reporting into ci
 docs(AQA-0098): document phase 4d reporting strategy
+refactor(AQA-0100): add runtime base url configuration
+feat(AQA-0101): add browser and timeout runtime options
+feat(AQA-0102): add runtime artifact policies
+chore(AQA-0103): integrate runtime configuration into ci
+docs(AQA-0104): document phase 4e runtime configuration
 ```
 
 For portfolio promotion work that is not tied to a single implementation task, the commit message may omit a task ID if no approved task ID exists.
@@ -245,6 +251,7 @@ feature/cart-page
 feature/structure-cleanup
 feature/checkout
 feature/allure-reporting
+refactor/runtime-configuration
 ```
 
 In this approach:
@@ -264,6 +271,8 @@ The `feature/structure-cleanup` branch is an example of a workstream branch used
 The `feature/checkout` branch is an example of a functional workstream branch used for checkout automation, related coverage completion, final validation, and documentation synchronization before integration into `develop`.
 
 The `feature/allure-reporting` branch is an example of a framework-maturity workstream branch used for reporting implementation, CI integration, documentation synchronization, and final Phase 4D validation before integration into `develop`.
+
+The `refactor/runtime-configuration` branch is an example of a framework-maturity workstream branch used for Phase 4E runtime configuration implementation and CI integration before integration into `develop`.
 
 ## Merge Strategy
 
@@ -296,6 +305,7 @@ chore(AQA-0064): review and stabilize cart workstream
 docs(AQA-0064): update project documentation after cart workstream
 chore(AQA-0073): finalize phase 3c structure cleanup
 chore(AQA-0082): finalize checkout automation workstream
+docs(AQA-0104): document phase 4e runtime configuration
 chore: promote phase 3 portfolio state to main
 ```
 
@@ -462,6 +472,42 @@ Parallel execution is an additional supported mode and does not replace sequenti
 
 The current suite was validated under pytest-xdist execution without identified sequential-only test exceptions.
 
+### Runtime Configuration Validation
+
+Phase 4E provides focused runtime configuration validation through:
+
+```bash
+pytest tests/test_runtime_config.py
+```
+
+Runtime configuration validation should be included when a task or workstream changes:
+
+* supported environment variables
+* runtime defaults
+* base URL behavior
+* browser selection
+* headed/headless behavior
+* action or navigation timeout behavior
+* assertion timeout behavior
+* screenshot policy
+* trace policy
+* video policy
+* pytest-playwright runtime integration
+
+Representative environment-driven execution should additionally be used when the changed behavior requires it.
+
+Example:
+
+```bash
+QA_BROWSER=chromium \
+QA_HEADED=false \
+QA_TIMEOUT_MS=20000 \
+QA_EXPECT_TIMEOUT_MS=4000 \
+pytest -m smoke -v
+```
+
+Invalid explicit runtime configuration should fail early rather than silently fall back to default values.
+
 ### Reporting Validation
 
 When the task or workstream changes reporting behavior, local validation should cover the implemented report generation path.
@@ -496,6 +542,36 @@ reports/screenshots/
 The standalone Allure CLI must be available when local Allure HTML generation is required.
 
 Generated reports and screenshots remain runtime output and should not be committed to Git.
+
+### Trace And Video Runtime Artifacts
+
+Phase 4E provides optional Playwright trace and video policies through:
+
+```text
+QA_TRACE_POLICY
+QA_VIDEO_POLICY
+```
+
+Both default to:
+
+```text
+off
+```
+
+When enabled, pytest-playwright runtime output is generated under:
+
+```text
+test-results/
+```
+
+Representative files include:
+
+```text
+trace.zip
+video.webm
+```
+
+Generated traces and videos are runtime outputs and should not be committed to Git.
 
 ### Marker-Based Validation
 
@@ -532,7 +608,7 @@ pytest tests/test_checkout_page.py -m e2e -v
 
 All current marker suites remain available for selective local validation.
 
-Detailed marker semantics, test-independence expectations, parallel execution behavior, and reporting compatibility are documented in [Testing Strategy](testing-strategy.md).
+Detailed marker semantics, test-independence expectations, parallel execution behavior, runtime configuration behavior, and reporting compatibility are documented in [Testing Strategy](testing-strategy.md).
 
 ### Marker Execution In CI
 
@@ -558,6 +634,8 @@ Smoke, Regression, and full-suite CI execution use pytest-xdist worker-level par
 Smoke and Regression remain pytest-html-focused.
 
 The complete full-suite job additionally provides the advanced Allure reporting path.
+
+All three browser-test jobs use explicit Phase 4E runtime defaults.
 
 ## CI Validation
 
@@ -616,6 +694,32 @@ quality
         ├── Allure results
         └── Allure HTML report
 ```
+
+Phase 4E adds explicit runtime configuration to the same three browser-test jobs without changing the CI topology.
+
+Current CI runtime defaults are:
+
+```text
+QA_BASE_URL=https://www.saucedemo.com
+QA_BROWSER=chromium
+QA_HEADED=false
+QA_TIMEOUT_MS=30000
+QA_EXPECT_TIMEOUT_MS=5000
+QA_SCREENSHOT_POLICY=only-on-failure
+QA_TRACE_POLICY=off
+QA_VIDEO_POLICY=off
+```
+
+These values intentionally match the approved local defaults.
+
+Current CI therefore remains:
+
+* Chromium-only
+* headless
+* pytest-xdist parallel
+* screenshot-on-failure enabled
+* trace disabled by default
+* video disabled by default
 
 ### Smoke CI
 
@@ -703,6 +807,7 @@ The current execution model combines:
 * Phase 4B CI job structure
 * Phase 4C pytest-xdist worker-level parallelism
 * Phase 4D reporting
+* Phase 4E runtime configuration
 
 GitHub Actions may schedule Smoke, Regression, and full-suite concurrently after `quality`.
 
@@ -716,21 +821,29 @@ The two mechanisms are separate and should not be treated as interchangeable.
 
 Reporting is a separate concern layered on top of execution.
 
-Phase 4D does not introduce:
+Runtime configuration is another separate concern layered on top of execution.
+
+Phase 4E does not introduce:
 
 * additional browser jobs
 * CI matrices
+* Firefox or WebKit CI installation
 * cross-browser execution
 * Docker execution
-* runtime environment configuration
+* workflow-dispatch runtime forms
+* secrets for non-secret runtime values
 * retries
+* `continue-on-error`
+* default trace retention
+* default video retention
 * Allure history persistence
 * report hosting
 * GitHub Pages reporting
+* Phase 4F logging or fixture cleanup
 
 Current browser-test execution remains Chromium-only.
 
-Detailed CI behavior, reports, artifacts, retention, and failure handling are documented in [CI/CD Pipeline](ci-cd-pipeline.md).
+Detailed CI behavior, runtime defaults, reports, artifacts, retention, and failure handling are documented in [CI/CD Pipeline](ci-cd-pipeline.md).
 
 ### Workstream-Specific Validation
 
@@ -744,6 +857,12 @@ pytest -v tests/test_inventory_page.py
 pytest -v tests/test_product_details_page.py
 pytest -v tests/test_cart_page.py
 pytest -v tests/test_checkout_page.py
+```
+
+For runtime-configuration work:
+
+```bash
+pytest tests/test_runtime_config.py
 ```
 
 For a single-page task, running the relevant module before the full suite is usually appropriate.
@@ -763,7 +882,11 @@ pytest -m regression -n auto -v
 pytest -n auto -v
 ```
 
+When a workstream affects runtime configuration, validate the focused configuration tests and relevant environment-driven execution.
+
 When a workstream affects reporting behavior, validate the implemented reporting path and expected report outputs.
+
+When a workstream affects screenshot, trace, or video policy behavior, validate the relevant runtime artifacts.
 
 The full test suite should still pass before a workstream is considered ready for merge unless a scoped validation exception is explicitly accepted.
 
@@ -779,15 +902,17 @@ Before merging a Pull Request, verify:
 * complete full-suite CI validation passed
 * expected reports and artifacts are available when required by the workstream
 * no unrelated files are included
-* no generated reports, screenshots, Allure outputs, cache files, or virtual environment files are tracked
+* no generated reports, screenshots, traces, videos, Allure outputs, cache files, or virtual environment files are tracked
 * changed files match the intended task, workstream, cleanup, or promotion scope
 * documentation is updated when needed
 * test cases and automated tests are aligned
 * marker documentation reflects current executable marker behavior when marker usage changes
 * execution documentation reflects current sequential and parallel behavior when execution strategy changes
-* reporting documentation reflects current pytest-html, Allure, screenshot, and artifact behavior when reporting changes
-* CI documentation reflects current workflow behavior when CI execution changes
+* runtime configuration documentation reflects current settings, defaults, and CI behavior when runtime configuration changes
+* reporting documentation reflects current pytest-html, Allure, screenshot, trace, video, and artifact behavior when reporting or diagnostic behavior changes
+* CI documentation reflects current workflow behavior and runtime defaults when CI execution changes
 * GitHub Actions job concurrency is not confused with pytest-xdist worker parallelism
+* Chromium-only CI scope remains clear unless explicitly changed by approved scope
 * Page Object responsibilities remain logically separated
 * shared authenticated-page behavior remains owned by the correct abstraction
 * reusable assertion helpers remain focused on shared validation logic
@@ -821,11 +946,12 @@ Before promoting `develop` to `main`, verify:
 * documentation does not contain stale workstream-finalization wording
 * documentation reflects current marker definitions and execution commands
 * documentation reflects current sequential and parallel execution behavior
+* documentation reflects current runtime configuration behavior
 * documentation reflects current reporting behavior
-* documentation reflects current CI execution behavior
+* documentation reflects current CI execution behavior and runtime defaults
 * documentation clearly separates implemented scope from planned future scope
 * test case documentation is aligned with automated coverage
-* generated reports, screenshots, Allure outputs, cache files, and virtual environment files are not tracked
+* generated reports, screenshots, traces, videos, Allure outputs, cache files, and virtual environment files are not tracked
 * the promoted state is suitable for recruiters or technical reviewers
 * future work remains directed through `develop`
 
@@ -877,8 +1003,10 @@ A checkpoint task should verify:
 * local validation
 * relevant scoped test execution
 * relevant marker suite execution where applicable
+* runtime configuration validation where applicable
 * parallel validation where required by the active scope
 * reporting validation where required by the active scope
+* screenshot, trace, or video artifact validation where required by the active scope
 * full suite execution or accepted scoped validation
 * CI status
 * expected reports and artifacts
@@ -915,12 +1043,16 @@ This strategy ensures:
 * parallel complete full-suite CI regression validation
 * consistent sequential local validation
 * supported pytest-xdist parallel validation
+* centralized runtime configuration validation
+* explicit local and CI runtime defaults
+* configurable screenshot, trace, and video policies
 * complementary pytest-html and Allure reporting
 * normalized marker-based selective execution
 * clear separation between GitHub Actions job concurrency and Pytest worker parallelism
+* clear separation between runtime configuration and functional test logic
 * clear separation between generated runtime outputs and repository content
 * professional repository standards
 * scalable workflow for future collaboration
 * clear separation between active work, integration, and stable portfolio state
 
-The detailed CI and reporting implementation remains documented in [CI/CD Pipeline](ci-cd-pipeline.md).
+The detailed CI, runtime configuration, and reporting implementation remains documented in [CI/CD Pipeline](ci-cd-pipeline.md).
