@@ -145,7 +145,7 @@ Completed work:
 * test data expansion for product and checkout scenarios
 * documentation synchronization after Checkout workstream
 * PR review, CI validation, and squash merge into `develop`
-* promotion of the completed Phase 3 state to `main` as the stable Phase 3 portfolio snapshot
+* promotion of the completed Phase 3 state to `main` as the stable portfolio snapshot
 
 Main learning goals completed:
 
@@ -974,3 +974,24 @@ Recommended use:
 * broader recruiter-facing portfolio presentation
 * demonstration of framework maturity beyond feature-level test automation
 * demonstration of scalable test execution and reporting strategy
+
+---
+
+## Strategic Vision
+
+The long-term objective is to evolve this repository into a scalable, portfolio-ready QA automation framework that demonstrates:
+
+* practical QA automation skills
+* test design ability
+* maintainable test architecture
+* CI/CD workflow understanding
+* modern Python tooling
+* Playwright expertise
+* ability to work with Page Object Model
+* ability to organize test data and parametrized tests
+* ability to design independent marker-based suites
+* ability to design independent E2E journey checkpoints
+* ability to keep scope controlled across workstreams
+* ability to maintain documentation alongside automation
+* stable Git and Pull Request workflow
+* readiness for junior and junior+/mid QA automation roles
