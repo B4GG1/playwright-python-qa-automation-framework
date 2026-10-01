@@ -2238,7 +2238,7 @@ The current Phase 4E implementation does not introduce:
 * retries
 * Phase 4F logging or fixture cleanup
 
-Formal Phase 4E completion in `docs/roadmap.md` remains deferred to the dedicated Phase 4E checkpoint.
+Phase 4E was completed through AQA-0105 after final runtime-configuration validation, sequential and pytest-xdist parallel suite validation, controlled screenshot/trace/video policy validation, pytest-html and Allure reporting validation, successful GitHub Actions validation, and roadmap synchronization.
 
 ## Architecture Goals
 
@@ -2381,9 +2381,9 @@ Current CI remains Chromium-only and headless by default.
 
 Trace and video policies are implemented but disabled by default.
 
-Phase 4E implementation through AQA-0100–AQA-0103 is integrated into `develop`.
+Phase 4E Runtime Configuration through AQA-0100–AQA-0105 is implemented, validated, and synchronized on `develop`.
 
-Formal Phase 4E roadmap completion remains deferred to the dedicated Phase 4E checkpoint.
+Phase 4F Diagnostics And Fixture Cleanup remains planned.
 
 Future improvements may include:
 
