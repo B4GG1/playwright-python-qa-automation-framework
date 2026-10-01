@@ -145,7 +145,7 @@ Completed work:
 * test data expansion for product and checkout scenarios
 * documentation synchronization after Checkout workstream
 * PR review, CI validation, and squash merge into `develop`
-* promotion of the completed Phase 3 state to `main` as the stable portfolio snapshot
+* promotion of the completed Phase 3 state to `main` as the stable Phase 3 portfolio snapshot
 
 Main learning goals completed:
 
@@ -399,7 +399,7 @@ Workstreams:
 * Phase 4B — CI Execution Strategy — Completed
 * Phase 4C — Parallel Execution — Completed
 * Phase 4D — Reporting Upgrade — Completed
-* Phase 4E — Runtime Configuration — Planned
+* Phase 4E — Runtime Configuration — Completed
 * Phase 4F — Diagnostics And Fixture Cleanup — Planned
 * Phase 4 Checkpoint — Planned
 
@@ -702,24 +702,120 @@ Phase 4D completes the reporting layer required before Phase 4E Runtime Configur
 
 ## Phase 4E: Runtime Configuration
 
-**Status:** Planned
+**Status:** Completed
 
-Phase 4E will introduce environment-based runtime configuration.
+Phase 4E introduced centralized environment-based runtime configuration while preserving the existing Pytest, Playwright, parallel execution, reporting, and CI strategies.
 
-Planned areas may include:
+Completed work:
 
-* base URL configuration
-* browser selection
-* headed or headless execution mode
-* timeout configuration
-* screenshot policy
-* trace policy
-* video policy
-* sensible local defaults
-* environment variable handling
-* documented configuration usage
+* AQA-0100 — Runtime Configuration Foundation And Base URL
+* AQA-0101 — Browser Mode And Timeout Runtime Configuration
+* AQA-0102 — Screenshot Trace And Video Runtime Policies
+* AQA-0103 — Integrate Runtime Configuration Into CI
+* AQA-0104 — Document Phase 4E Runtime Configuration Strategy
+* AQA-0105 — Validate And Integrate Phase 4E Runtime Configuration
 
-The goal is to reduce hardcoded runtime assumptions and make framework execution more flexible.
+Completed runtime configuration scope:
+
+* introduced the centralized `config/settings.py` configuration module
+* introduced environment-based base URL configuration through `QA_BASE_URL`
+* preserved `https://www.saucedemo.com` as the default application base URL
+* added base URL normalization and validation
+* removed hardcoded application origins from Page Object navigation
+* integrated runtime base URL resolution into `BasePage`
+* introduced browser selection through `QA_BROWSER`
+* supported `chromium`, `firefox`, and `webkit` runtime browser values
+* preserved Chromium as the default browser
+* introduced headed and headless execution configuration through `QA_HEADED`
+* preserved headless execution as the default
+* introduced Playwright action and navigation timeout configuration through `QA_TIMEOUT_MS`
+* introduced Playwright assertion timeout configuration through `QA_EXPECT_TIMEOUT_MS`
+* preserved `30000` ms as the default action and navigation timeout
+* preserved `5000` ms as the default Playwright assertion timeout
+* introduced failure screenshot policy configuration through `QA_SCREENSHOT_POLICY`
+* supported `only-on-failure` and `off` screenshot policy values
+* preserved `only-on-failure` as the default screenshot policy
+* preserved the existing custom failure screenshot mechanism
+* preserved reuse of the same failure screenshot as the Allure `Failure screenshot` attachment
+* introduced trace policy configuration through `QA_TRACE_POLICY`
+* introduced video policy configuration through `QA_VIDEO_POLICY`
+* supported `off`, `retain-on-failure`, and `on` for trace and video policies
+* preserved `off` as the default trace and video policy
+* delegated trace and video lifecycle handling to native `pytest-playwright` runtime options
+* preserved explicit pytest-playwright command-line browser, trace, and video options where provided
+* added clear validation errors for invalid runtime configuration values
+* preserved deterministic defaults when environment variables are not configured
+* added dedicated runtime configuration tests
+* integrated explicit Phase 4E runtime defaults into GitHub Actions browser-test jobs
+* preserved Chromium-only CI browser installation and execution
+* preserved the existing `quality`, Smoke, Regression, and full-suite CI structure
+* preserved pytest-xdist parallel execution in CI
+* preserved pytest-html and Allure reporting behavior
+* kept generated screenshots and reporting output under ignored repository paths
+* kept Playwright trace and video output under ignored `test-results/`
+* synchronized README and technical documentation with the implemented runtime configuration strategy
+
+Supported runtime environment variables:
+
+* `QA_BASE_URL`
+* `QA_BROWSER`
+* `QA_HEADED`
+* `QA_TIMEOUT_MS`
+* `QA_EXPECT_TIMEOUT_MS`
+* `QA_SCREENSHOT_POLICY`
+* `QA_TRACE_POLICY`
+* `QA_VIDEO_POLICY`
+
+Final local Phase 4E validation confirmed:
+
+* Ruff passes
+* Black validation passes
+* isort validation passes
+* dedicated runtime configuration tests pass
+* default runtime configuration remains functional
+* explicit `QA_BASE_URL` override and normalization behave correctly
+* Chromium and headless defaults remain unchanged
+* browser and headed configuration resolution behaves correctly
+* explicit pytest-playwright browser CLI configuration retains precedence over environment configuration
+* action, navigation, and assertion timeout overrides behave correctly
+* invalid configuration values produce clear configuration errors
+* default failure screenshot generation remains functional
+* captured failure screenshots remain available as Allure `Failure screenshot` attachments
+* `QA_SCREENSHOT_POLICY=off` disables the custom failure screenshot
+* representative trace generation through `QA_TRACE_POLICY=on` succeeds
+* representative video generation through `QA_VIDEO_POLICY=on` succeeds
+* parallel Smoke execution passes
+* parallel Regression execution passes
+* parallel complete full-suite execution passes
+* sequential complete full-suite execution passes
+* combined pytest-html and Allure reporting remains functional
+* generated runtime and reporting artifacts remain ignored by Git
+* controlled failure validation does not leave an intentionally failing test in the repository
+* working tree remains clean after temporary validation artifacts are removed
+
+Current Phase 4E CI boundaries remain explicit:
+
+* Chromium is the only browser installed and executed in CI
+* no cross-browser CI matrix is configured
+* runtime support for Firefox and WebKit does not imply current CI validation for those browsers
+* browser-test CI jobs use explicit Phase 4E default environment values
+* trace and video remain disabled by default in CI
+* pytest-html reporting remains available for Smoke, Regression, and full-suite execution
+* Allure result collection and HTML report generation remain part of the full-suite CI reporting path
+
+Phase 4E does not introduce:
+
+* environment profiles
+* project `.env` loading
+* cross-browser CI
+* browser matrices
+* device emulation
+* automatic retries
+* logging redesign
+* fixture cleanup or reorganization
+* Phase 4F diagnostics functionality
+
+Phase 4E completes the runtime configuration layer required before Phase 4F Diagnostics And Fixture Cleanup.
 
 ---
 
@@ -878,24 +974,3 @@ Recommended use:
 * broader recruiter-facing portfolio presentation
 * demonstration of framework maturity beyond feature-level test automation
 * demonstration of scalable test execution and reporting strategy
-
----
-
-## Strategic Vision
-
-The long-term objective is to evolve this repository into a scalable, portfolio-ready QA automation framework that demonstrates:
-
-* practical QA automation skills
-* test design ability
-* maintainable test architecture
-* CI/CD workflow understanding
-* modern Python tooling
-* Playwright expertise
-* ability to work with Page Object Model
-* ability to organize test data and parametrized tests
-* ability to design independent marker-based suites
-* ability to design independent E2E journey checkpoints
-* ability to keep scope controlled across workstreams
-* ability to maintain documentation alongside automation
-* stable Git and Pull Request workflow
-* readiness for junior and junior+/mid QA automation roles
