@@ -7,6 +7,7 @@ import pytest
 from playwright.sync_api import BrowserContext, Page, expect
 
 from config.settings import settings
+from framework.diagnostics import format_runtime_summary
 from pages.cart_page import CartPage
 from pages.checkout_page import (
     CheckoutCompletePage,
@@ -21,11 +22,16 @@ from test_data.product_test_data import LIST_OF_PRODUCTS
 
 
 def _cli_option_was_provided(config: pytest.Config, option: str) -> bool:
+    invocation_params = config.invocation_params
+
+    if invocation_params is None:
+        return False
+
     option_with_value = f"{option}="
 
     return any(
         argument == option or argument.startswith(option_with_value)
-        for argument in config.invocation_params.args
+        for argument in invocation_params.args
     )
 
 
@@ -43,6 +49,22 @@ def pytest_configure(config: pytest.Config) -> None:
         config.option.video = settings.video_policy
 
     expect.set_options(timeout=settings.expect_timeout_ms)
+
+
+def pytest_report_header(config: pytest.Config) -> str | None:
+    if hasattr(config, "workerinput"):
+        return None
+
+    return format_runtime_summary(
+        base_url=settings.base_url,
+        browser=config.getoption("--browser"),
+        headed=config.getoption("--headed"),
+        timeout_ms=settings.timeout_ms,
+        expect_timeout_ms=settings.expect_timeout_ms,
+        screenshot_policy=settings.screenshot_policy,
+        trace_policy=config.getoption("--tracing"),
+        video_policy=config.getoption("--video"),
+    )
 
 
 @pytest.fixture()
