@@ -1,4 +1,9 @@
+import logging
 from collections.abc import Sequence
+
+DIAGNOSTICS_LOGGER_NAME = "qa_automation.diagnostics"
+
+logger = logging.getLogger(DIAGNOSTICS_LOGGER_NAME)
 
 
 def format_runtime_summary(
@@ -31,3 +36,59 @@ def format_runtime_summary(
     )
 
     return "[runtime] " + " | ".join(fields)
+
+
+def format_failure_summary(
+    *,
+    node_id: str,
+    phase: str,
+    page_url: str | None = None,
+    screenshot_path: str | None = None,
+) -> str:
+    fields = [
+        f"test={node_id}",
+        f"phase={phase}",
+    ]
+
+    if page_url is not None:
+        fields.append(f"url={page_url}")
+
+    if screenshot_path is not None:
+        fields.append(f"screenshot={screenshot_path}")
+
+    return "[failure] " + " | ".join(fields)
+
+
+def format_diagnostic_error(
+    *,
+    operation: str,
+    node_id: str,
+    phase: str,
+    error: Exception,
+) -> str:
+    return (
+        "[diagnostic-error] "
+        f"operation={operation} | "
+        f"test={node_id} | "
+        f"phase={phase} | "
+        f"error={error}"
+    )
+
+
+def log_diagnostic_error(
+    *,
+    operation: str,
+    node_id: str,
+    phase: str,
+    error: Exception,
+) -> str:
+    message = format_diagnostic_error(
+        operation=operation,
+        node_id=node_id,
+        phase=phase,
+        error=error,
+    )
+
+    logger.error(message)
+
+    return message

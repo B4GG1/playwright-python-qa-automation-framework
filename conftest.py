@@ -7,7 +7,11 @@ import pytest
 from playwright.sync_api import BrowserContext, Page, expect
 
 from config.settings import settings
-from framework.diagnostics import format_runtime_summary
+from framework.diagnostics import (
+    format_failure_summary,
+    format_runtime_summary,
+    log_diagnostic_error,
+)
 from pages.cart_page import CartPage
 from pages.checkout_page import (
     CheckoutCompletePage,
@@ -84,38 +88,76 @@ def pytest_runtest_makereport(item, call):
     outcome = yield
     report = outcome.get_result()
 
-    if report.when != "call" or not report.failed:
+    if not report.failed:
         return
 
-    if settings.screenshot_policy == "off":
-        return
-
+    node_id = item.nodeid
+    phase = report.when
     page = item.funcargs.get("page")
-    if page is None:
-        return
 
-    reports_dir = os.path.join("reports", "screenshots")
-    os.makedirs(reports_dir, exist_ok=True)
+    page_url = None
+    screenshot_path = None
 
-    timestamp = datetime.now(UTC).strftime("%Y-%m-%d_%H-%M-%S")
-    test_name = item.name.replace("/", "_").replace("::", "_")
+    if page is not None:
+        try:
+            page_url = page.url
+        except Exception as e:
+            message = log_diagnostic_error(
+                operation="page-url",
+                node_id=node_id,
+                phase=phase,
+                error=e,
+            )
+            report.sections.append(("failure diagnostics", message))
 
-    file_path = os.path.join(reports_dir, f"{test_name}_{timestamp}.png")
+    if phase == "call" and settings.screenshot_policy != "off" and page is not None:
+        reports_dir = os.path.join("reports", "screenshots")
+        os.makedirs(reports_dir, exist_ok=True)
 
-    try:
-        page.screenshot(path=file_path, full_page=True)
-    except Exception as e:
-        print(f"[screenshot-error] {test_name}: {e}")
-        return
+        timestamp = datetime.now(UTC).strftime("%Y-%m-%d_%H-%M-%S")
+        test_name = item.name.replace("/", "_").replace("::", "_")
 
-    try:
-        allure.attach.file(
-            file_path,
-            name="Failure screenshot",
-            attachment_type=allure.attachment_type.PNG,
+        file_path = os.path.join(
+            reports_dir,
+            f"{test_name}_{timestamp}.png",
         )
-    except Exception as e:
-        print(f"[allure-attachment-error] {test_name}: {e}")
+
+        try:
+            page.screenshot(path=file_path, full_page=True)
+        except Exception as e:
+            message = log_diagnostic_error(
+                operation="screenshot",
+                node_id=node_id,
+                phase=phase,
+                error=e,
+            )
+            report.sections.append(("failure diagnostics", message))
+        else:
+            screenshot_path = file_path
+
+            try:
+                allure.attach.file(
+                    file_path,
+                    name="Failure screenshot",
+                    attachment_type=allure.attachment_type.PNG,
+                )
+            except Exception as e:
+                message = log_diagnostic_error(
+                    operation="allure-attachment",
+                    node_id=node_id,
+                    phase=phase,
+                    error=e,
+                )
+                report.sections.append(("failure diagnostics", message))
+
+    summary = format_failure_summary(
+        node_id=node_id,
+        phase=phase,
+        page_url=page_url,
+        screenshot_path=screenshot_path,
+    )
+
+    report.sections.append(("failure diagnostics", summary))
 
 
 @pytest.fixture()
