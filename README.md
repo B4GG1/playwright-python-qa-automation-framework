@@ -79,7 +79,7 @@ The `main` branch represents the polished portfolio version of the completed Pha
 
 The `develop` branch remains the integration branch and may contain newer framework maturity work after this README is read from `main`.
 
-Current Phase 4 framework maturity progress includes:
+Completed Phase 4 framework maturity scope includes:
 
 * Phase 4A marker strategy normalization
 * explicit Smoke and Regression suite definitions
@@ -268,7 +268,7 @@ Completed Phase 3 finalization includes:
 * PR review, CI validation, and squash merge into `develop`
 * stable Phase 3 portfolio promotion to `main`
 
-The current roadmap direction is Phase 4 Framework Maturity.
+Phase 4 Framework Maturity is complete. Phase 5 Advanced Extensions remains future scope and is ready for planning.
 
 ## System Under Test
 
@@ -1796,7 +1796,7 @@ Current roadmap direction:
 * **Phase 3D:** Checkout Automation Workstream — completed
 * **Phase 3 Completion Review:** completed
 * **Phase 3 Portfolio Promotion:** completed Phase 3 state promoted to `main`
-* **Phase 4:** Framework Maturity — in progress
+* **Phase 4:** Framework Maturity — completed
 * **Phase 4A:** Marker Strategy And Test Suite Organization — implemented
 * **Phase 4B:** CI Execution Strategy — implemented
 * **Phase 4C:** Parallel Execution — implemented
@@ -1805,7 +1805,7 @@ Current roadmap direction:
 * **Phase 4F:** Diagnostics And Fixture Cleanup — completed
 * **Phase 5:** Advanced Extensions — future
 
-Current Phase 4 work focuses on framework maturity rather than expanding page-level functional coverage.
+Phase 4 focused on framework maturity rather than expanding page-level functional coverage.
 
 Phase 4A established the current marker and suite strategy.
 
@@ -1929,9 +1929,11 @@ Phase 4F deliberately does not introduce:
 * GitHub Pages report publishing
 * a new CI topology
 
-Phase 4F completes the Diagnostics And Fixture Cleanup workstream required before the broader Phase 4 checkpoint.
+Phase 4F completed the Diagnostics And Fixture Cleanup workstream required before the final Phase 4 checkpoint.
 
-The Phase 4 checkpoint itself remains a separate project milestone and is not represented as completed by this documentation update.
+The final Phase 4 checkpoint was completed through AQA-0111 after cross-workstream review of Phase 4A–4F. The validated AQA-0110 functional baseline remained unchanged, so its existing local and CI validation evidence was reused without unnecessary duplicate full-suite execution.
+
+Phase 4 is complete. Phase 5 remains future scope and is ready for planning.
 
 Future extension areas include:
 
