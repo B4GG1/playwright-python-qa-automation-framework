@@ -400,7 +400,7 @@ Workstreams:
 * Phase 4C — Parallel Execution — Completed
 * Phase 4D — Reporting Upgrade — Completed
 * Phase 4E — Runtime Configuration — Completed
-* Phase 4F — Diagnostics And Fixture Cleanup — Planned
+* Phase 4F — Diagnostics And Fixture Cleanup — Completed
 * Phase 4 Checkpoint — Planned
 
 Main learning goals:
@@ -821,23 +821,113 @@ Phase 4E completes the runtime configuration layer required before Phase 4F Diag
 
 ## Phase 4F: Diagnostics And Fixture Cleanup
 
-**Status:** Planned
+**Status:** Completed
 
-Phase 4F will review framework diagnostics and fixture organization after the previous maturity improvements.
+Phase 4F improved runtime and failed-test diagnostics and clarified fixture responsibility while preserving the existing Playwright, Pytest, reporting, parallel execution, and CI architecture.
 
-Planned areas:
+Completed work:
 
-* introduce or improve lightweight logging utilities
-* expose useful runtime information during test execution
-* improve failed-test diagnostics
-* review screenshot and trace diagnostics
-* review current fixture structure
-* identify fixture duplication or unclear responsibility
-* reorganize fixtures only where the current structure justifies it
-* keep fixture names explicit and scenario-oriented
-* avoid refactoring solely for structural complexity
+* AQA-0106 — Introduce Runtime Diagnostics
+* AQA-0107 — Improve Failed-Test Diagnostic Context
+* AQA-0108 — Separate Scenario Fixtures From Framework Hooks
+* AQA-0109 — Document Phase 4F Diagnostics And Fixture Strategy
+* AQA-0110 — Validate And Integrate Phase 4F Diagnostics And Fixture Cleanup
 
-This workstream will provide final framework cleanup before the Phase 4 checkpoint.
+Completed diagnostics scope:
+
+* introduced lightweight diagnostics through `framework/diagnostics.py`
+* added effective runtime configuration summary through `pytest_report_header`
+* exposed effective base URL
+* exposed browser and headed/headless mode
+* exposed action/navigation timeout
+* exposed assertion timeout
+* exposed screenshot policy
+* exposed trace policy
+* exposed video policy
+* prevented duplicate runtime headers from pytest-xdist workers
+* added failed-test diagnostics containing Pytest node ID
+* added failed-test phase reporting for `setup`, `call`, and `teardown`
+* added current Playwright page URL reporting when available
+* added successful project screenshot path reporting when available
+* added explicit diagnostic errors for page URL retrieval failures
+* added explicit diagnostic errors for screenshot creation failures
+* added explicit diagnostic errors for Allure attachment failures
+* preserved the original test or fixture failure as the primary failure
+* kept diagnostics lightweight without persistent project log files
+
+Completed artifact and reporting behavior:
+
+* preserved `QA_SCREENSHOT_POLICY=only-on-failure`
+* preserved custom screenshot capture for failed `call` phases
+* preserved screenshot storage under `reports/screenshots/`
+* reused the same PNG as the Allure `Failure screenshot` attachment
+* preserved `QA_SCREENSHOT_POLICY=off`
+* confirmed that screenshot-disabled execution does not create the project screenshot or related Allure attachment
+* preserved pytest-playwright ownership of trace lifecycle
+* preserved pytest-playwright ownership of video lifecycle
+* confirmed representative `retain-on-failure` Playwright trace generation
+* preserved pytest-html reporting
+* preserved Allure result and HTML report generation
+* kept generated reports, screenshots, traces, and other runtime artifacts outside version-controlled repository content
+
+Completed fixture organization scope:
+
+* kept framework-level Pytest responsibilities in the repository-level `conftest.py`
+* moved application scenario fixtures to `tests/conftest.py`
+* preserved explicit scenario-oriented fixture names
+* preserved existing fixture function scopes
+* preserved scenario behavior
+* preserved pytest-xdist compatibility
+* avoided a generic fixture factory
+* avoided a dependency-injection layer
+* avoided autouse redesign
+* avoided unnecessary multi-layer fixture packages
+* avoided fixture scope redesign
+
+Final local Phase 4F validation confirmed:
+
+* Ruff passes
+* Black validation passes
+* isort validation passes
+* parallel Smoke execution passes with 31 tests
+* parallel Regression execution passes with 109 tests
+* parallel complete full-suite execution passes with 236 tests
+* sequential complete full-suite execution passes with 236 tests
+* runtime diagnostic output is visible and correct
+* controlled failure diagnostics include node ID and failure phase
+* current Playwright page URL is included when available
+* default failed-test screenshot generation succeeds
+* the generated screenshot is reused as the Allure `Failure screenshot` attachment
+* `QA_SCREENSHOT_POLICY=off` disables the screenshot and related Allure attachment while preserving failure diagnostics
+* representative Playwright trace generation succeeds
+* pytest-html report generation succeeds
+* Allure result generation succeeds
+* Allure HTML report generation succeeds
+* generated diagnostic and reporting outputs remain covered by repository ignore rules
+* controlled validation does not leave intentionally failing tests in the repository
+
+Phase 4F deliberately does not introduce:
+
+* persistent project log files
+* browser console capture
+* automatic HTML or page-source dumps
+* network request or response capture
+* custom network tracing
+* automatic trace enablement after failure
+* automatic video enablement after failure
+* retries
+* hosted reports
+* GitHub Pages reporting
+* cross-browser CI
+* browser matrices
+* a new CI topology
+* Phase 4 checkpoint implementation
+
+Phase 4F completes the Diagnostics And Fixture Cleanup workstream required before the broader Phase 4 checkpoint.
+
+The overall Phase 4 remains In Progress.
+
+The Phase 4 Checkpoint remains Planned and is handled as a separate project milestone.
 
 ---
 

@@ -11,9 +11,9 @@ The branching strategy supports two stable branch roles:
 
 When this document is read from `main`, the `develop` branch may already contain newer integration work that has not yet been promoted to the stable portfolio branch.
 
-For detailed pytest marker semantics, sequential/parallel suite execution strategy, and runtime configuration behavior, see [Testing Strategy](testing-strategy.md).
+For detailed pytest marker semantics, sequential/parallel suite execution strategy, runtime configuration, diagnostics, and fixture responsibility behavior, see [Testing Strategy](testing-strategy.md).
 
-For detailed GitHub Actions execution, job dependencies, pytest-xdist execution, runtime defaults, reports, and artifacts, see [CI/CD Pipeline](ci-cd-pipeline.md).
+For detailed GitHub Actions execution, job dependencies, pytest-xdist execution, runtime defaults, diagnostics, reports, and artifacts, see [CI/CD Pipeline](ci-cd-pipeline.md).
 
 ## Branching Model
 
@@ -162,6 +162,7 @@ refactor/login-fixtures
 refactor/page-object-cleanup
 refactor/test-data-structure
 refactor/runtime-configuration
+refactor/diagnostics-fixture-cleanup
 ```
 
 ### Promotion Branches
@@ -218,6 +219,10 @@ feat(AQA-0101): add browser and timeout runtime options
 feat(AQA-0102): add runtime artifact policies
 chore(AQA-0103): integrate runtime configuration into ci
 docs(AQA-0104): document phase 4e runtime configuration
+refactor(AQA-0106): add runtime diagnostics
+refactor(AQA-0107): add failed-test diagnostics
+refactor(AQA-0108): separate scenario fixtures from framework hooks
+docs(AQA-0109): document phase 4f diagnostics and fixture strategy
 ```
 
 For portfolio promotion work that is not tied to a single implementation task, the commit message may omit a task ID if no approved task ID exists.
@@ -252,6 +257,7 @@ feature/structure-cleanup
 feature/checkout
 feature/allure-reporting
 refactor/runtime-configuration
+refactor/diagnostics-fixture-cleanup
 ```
 
 In this approach:
@@ -273,6 +279,8 @@ The `feature/checkout` branch is an example of a functional workstream branch us
 The `feature/allure-reporting` branch is an example of a framework-maturity workstream branch used for reporting implementation, CI integration, documentation synchronization, and final Phase 4D validation before integration into `develop`.
 
 The `refactor/runtime-configuration` branch is an example of a framework-maturity workstream branch used for Phase 4E runtime configuration implementation and CI integration before integration into `develop`.
+
+The `refactor/diagnostics-fixture-cleanup` branch is an example of a framework-maturity workstream branch used for Phase 4F runtime diagnostics, failed-test diagnostics, fixture responsibility cleanup, documentation synchronization, and final workstream validation before integration into `develop`.
 
 ## Merge Strategy
 
@@ -306,6 +314,7 @@ docs(AQA-0064): update project documentation after cart workstream
 chore(AQA-0073): finalize phase 3c structure cleanup
 chore(AQA-0082): finalize checkout automation workstream
 docs(AQA-0104): document phase 4e runtime configuration
+docs(AQA-0109): document phase 4f diagnostics and fixture strategy
 chore: promote phase 3 portfolio state to main
 ```
 
@@ -463,10 +472,12 @@ Parallel validation should be used when the task or workstream affects:
 
 * worker-level execution
 * fixture isolation
+* fixture responsibility or organization
 * shared-state assumptions
 * parametrized execution independence
 * E2E checkpoint independence
 * parallel reporting or failure-artifact behavior
+* runtime diagnostics under pytest-xdist
 
 Parallel execution is an additional supported mode and does not replace sequential validation.
 
@@ -507,6 +518,36 @@ pytest -m smoke -v
 ```
 
 Invalid explicit runtime configuration should fail early rather than silently fall back to default values.
+
+### Diagnostics Validation
+
+Phase 4F provides runtime and failed-test diagnostics through:
+
+```text
+framework/diagnostics.py
+```
+
+and the framework-level Pytest hooks in:
+
+```text
+conftest.py
+```
+
+When a task or workstream changes diagnostics behavior, controlled validation should verify the affected behavior.
+
+Relevant checks may include:
+
+* effective runtime header
+* xdist worker runtime-header de-duplication
+* Pytest node ID
+* `setup`, `call`, or `teardown` failure phase
+* current page URL when available
+* custom screenshot path after successful screenshot capture
+* diagnostic-error output
+
+Intentionally failing tests used only for diagnostics validation should remain temporary and should not be committed.
+
+Phase 4F diagnostics do not create persistent project log files.
 
 ### Reporting Validation
 
@@ -573,6 +614,8 @@ video.webm
 
 Generated traces and videos are runtime outputs and should not be committed to Git.
 
+Phase 4F does not change trace or video lifecycle ownership.
+
 ### Marker-Based Validation
 
 Selective marker-based checks may be used during implementation and review when relevant.
@@ -608,7 +651,7 @@ pytest tests/test_checkout_page.py -m e2e -v
 
 All current marker suites remain available for selective local validation.
 
-Detailed marker semantics, test-independence expectations, parallel execution behavior, runtime configuration behavior, and reporting compatibility are documented in [Testing Strategy](testing-strategy.md).
+Detailed marker semantics, test-independence expectations, parallel execution behavior, runtime configuration behavior, diagnostics, fixture responsibility, and reporting compatibility are documented in [Testing Strategy](testing-strategy.md).
 
 ### Marker Execution In CI
 
@@ -636,6 +679,8 @@ Smoke and Regression remain pytest-html-focused.
 The complete full-suite job additionally provides the advanced Allure reporting path.
 
 All three browser-test jobs use explicit Phase 4E runtime defaults.
+
+Phase 4F diagnostics operate through the normal Pytest execution path in all three browser-test jobs.
 
 ## CI Validation
 
@@ -712,6 +757,8 @@ QA_VIDEO_POLICY=off
 
 These values intentionally match the approved local defaults.
 
+Phase 4F adds runtime and failed-test diagnostics through the existing Pytest execution path without changing the CI topology.
+
 Current CI therefore remains:
 
 * Chromium-only
@@ -720,6 +767,8 @@ Current CI therefore remains:
 * screenshot-on-failure enabled
 * trace disabled by default
 * video disabled by default
+* runtime diagnostics enabled through normal Pytest execution
+* failed-test diagnostics enabled through normal Pytest execution
 
 ### Smoke CI
 
@@ -808,6 +857,7 @@ The current execution model combines:
 * Phase 4C pytest-xdist worker-level parallelism
 * Phase 4D reporting
 * Phase 4E runtime configuration
+* Phase 4F diagnostics and fixture responsibility cleanup
 
 GitHub Actions may schedule Smoke, Regression, and full-suite concurrently after `quality`.
 
@@ -823,7 +873,9 @@ Reporting is a separate concern layered on top of execution.
 
 Runtime configuration is another separate concern layered on top of execution.
 
-Phase 4E does not introduce:
+Diagnostics are also layered onto the existing execution path without introducing another concurrency level or CI job.
+
+The current execution model does not introduce:
 
 * additional browser jobs
 * CI matrices
@@ -839,11 +891,14 @@ Phase 4E does not introduce:
 * Allure history persistence
 * report hosting
 * GitHub Pages reporting
-* Phase 4F logging or fixture cleanup
+* persistent project log files
+* browser console capture
+* network capture
+* diagnostic-specific CI jobs
 
 Current browser-test execution remains Chromium-only.
 
-Detailed CI behavior, runtime defaults, reports, artifacts, retention, and failure handling are documented in [CI/CD Pipeline](ci-cd-pipeline.md).
+Detailed CI behavior, runtime defaults, diagnostics, reports, artifacts, retention, and failure handling are documented in [CI/CD Pipeline](ci-cd-pipeline.md).
 
 ### Workstream-Specific Validation
 
@@ -874,7 +929,7 @@ pytest -v tests/test_checkout_page.py
 pytest -v
 ```
 
-When a workstream affects parallel-safety assumptions, additionally run:
+When a workstream affects parallel-safety assumptions, fixture responsibility, or xdist-compatible diagnostics, additionally run:
 
 ```bash
 pytest -m smoke -n auto -v
@@ -883,6 +938,8 @@ pytest -n auto -v
 ```
 
 When a workstream affects runtime configuration, validate the focused configuration tests and relevant environment-driven execution.
+
+When a workstream affects diagnostics, validate the relevant runtime and failed-test diagnostic behavior through controlled failures.
 
 When a workstream affects reporting behavior, validate the implemented reporting path and expected report outputs.
 
@@ -909,7 +966,9 @@ Before merging a Pull Request, verify:
 * marker documentation reflects current executable marker behavior when marker usage changes
 * execution documentation reflects current sequential and parallel behavior when execution strategy changes
 * runtime configuration documentation reflects current settings, defaults, and CI behavior when runtime configuration changes
-* reporting documentation reflects current pytest-html, Allure, screenshot, trace, video, and artifact behavior when reporting or diagnostic behavior changes
+* diagnostics documentation reflects current runtime summary, failed-test context, and diagnostic-error behavior when diagnostics change
+* fixture documentation reflects the current framework-hook and application-scenario responsibility boundary when fixture organization changes
+* reporting documentation reflects current pytest-html, Allure, screenshot, trace, video, diagnostics, and artifact behavior when reporting or diagnostic behavior changes
 * CI documentation reflects current workflow behavior and runtime defaults when CI execution changes
 * GitHub Actions job concurrency is not confused with pytest-xdist worker parallelism
 * Chromium-only CI scope remains clear unless explicitly changed by approved scope
@@ -947,6 +1006,8 @@ Before promoting `develop` to `main`, verify:
 * documentation reflects current marker definitions and execution commands
 * documentation reflects current sequential and parallel execution behavior
 * documentation reflects current runtime configuration behavior
+* documentation reflects current diagnostics behavior
+* documentation reflects current fixture responsibility boundaries
 * documentation reflects current reporting behavior
 * documentation reflects current CI execution behavior and runtime defaults
 * documentation clearly separates implemented scope from planned future scope
@@ -970,6 +1031,12 @@ Then optionally delete the completed local source branch if it is no longer requ
 
 ```bash
 git branch -d feature/<short-description>
+```
+
+For a refactor workstream branch:
+
+```bash
+git branch -d refactor/<short-description>
 ```
 
 If the remote branch was deleted on GitHub, clean stale remote references:
@@ -1004,6 +1071,8 @@ A checkpoint task should verify:
 * relevant scoped test execution
 * relevant marker suite execution where applicable
 * runtime configuration validation where applicable
+* diagnostics validation where applicable
+* fixture responsibility and isolation where applicable
 * parallel validation where required by the active scope
 * reporting validation where required by the active scope
 * screenshot, trace, or video artifact validation where required by the active scope
@@ -1045,14 +1114,17 @@ This strategy ensures:
 * supported pytest-xdist parallel validation
 * centralized runtime configuration validation
 * explicit local and CI runtime defaults
+* lightweight runtime and failed-test diagnostics
+* clear framework-hook and application-fixture responsibility separation
 * configurable screenshot, trace, and video policies
 * complementary pytest-html and Allure reporting
 * normalized marker-based selective execution
 * clear separation between GitHub Actions job concurrency and Pytest worker parallelism
 * clear separation between runtime configuration and functional test logic
+* clear separation between diagnostics and persistent logging
 * clear separation between generated runtime outputs and repository content
 * professional repository standards
 * scalable workflow for future collaboration
 * clear separation between active work, integration, and stable portfolio state
 
-The detailed CI, runtime configuration, and reporting implementation remains documented in [CI/CD Pipeline](ci-cd-pipeline.md).
+The detailed CI, runtime configuration, diagnostics, and reporting implementation remains documented in [CI/CD Pipeline](ci-cd-pipeline.md).

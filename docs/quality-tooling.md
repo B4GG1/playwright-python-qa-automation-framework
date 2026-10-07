@@ -11,13 +11,14 @@ The tooling described here supports:
 * selective test execution
 * sequential and parallel Pytest execution
 * centralized runtime configuration
+* lightweight runtime diagnostics
+* failed-test diagnostics
 * reporting
-* failure diagnostics
 * Pull Request validation
 * CI quality gates
 * stable portfolio promotion
 
-The current implementation combines the Phase 4B CI execution strategy, Phase 4C parallel execution strategy, Phase 4D reporting strategy, and Phase 4E runtime configuration strategy.
+The current implementation combines the Phase 4B CI execution strategy, Phase 4C parallel execution strategy, Phase 4D reporting strategy, Phase 4E runtime configuration strategy, and Phase 4F diagnostics and fixture-responsibility cleanup.
 
 ## Tooling Overview
 
@@ -32,6 +33,8 @@ The project currently uses:
 * pytest-xdist for worker-level parallel execution
 * Playwright assertions for browser and UI validation
 * centralized runtime configuration through `config/settings.py`
+* lightweight diagnostic formatting through `framework/diagnostics.py`
+* Pytest hooks for runtime and failed-test diagnostics
 * pytest-html for lightweight HTML reporting
 * allure-pytest for Allure result collection
 * Allure CLI for Allure HTML generation
@@ -42,6 +45,10 @@ The project currently uses:
 * GitHub Actions artifacts for temporary CI report and runtime-output retention
 
 These tools support both local development and CI validation.
+
+Phase 4F diagnostics use Python's standard `logging` module.
+
+No additional logging dependency or persistent logging subsystem is introduced.
 
 ## Ruff
 
@@ -80,7 +87,9 @@ select = ["E", "F", "I"]
 known-first-party = ["config", "framework", "pages", "test_data", "tests"]
 ```
 
-The `config` package is treated as first-party project code.
+The `config` and `framework` packages are treated as first-party project code.
+
+Phase 4F does not require additional Ruff-specific rules.
 
 ## Black
 
@@ -176,6 +185,8 @@ Current hook sources include:
 
 The purpose of pre-commit is to catch formatting, linting, and import-order problems before changes are committed.
 
+Phase 4F does not introduce another pre-commit tool.
+
 ## Pytest
 
 Pytest is the main automated test runner.
@@ -193,6 +204,8 @@ Current responsibilities include:
 * integrating with pytest-playwright
 * integrating with pytest-html
 * integrating with allure-pytest
+* providing framework hooks used by runtime diagnostics
+* providing failed-test reports used by Phase 4F diagnostics
 * producing results used by local and CI validation
 
 Run the complete suite sequentially:
@@ -210,6 +223,56 @@ pytest -n auto -v
 Sequential execution remains supported.
 
 Parallel execution is an additional validated execution mode rather than a replacement for the sequential baseline.
+
+## Pytest Responsibility Boundary
+
+Phase 4F separates framework-level Pytest integration from application scenario setup.
+
+Framework-level integration remains in:
+
+```text
+conftest.py
+```
+
+Application scenario fixtures are located in:
+
+```text
+tests/conftest.py
+```
+
+The root `conftest.py` owns:
+
+* runtime configuration integration
+* effective runtime header
+* Playwright BrowserContext timeout configuration
+* failed-test diagnostic handling
+* custom failure screenshot integration
+* Allure failure screenshot integration
+
+`tests/conftest.py` owns scenario-oriented fixtures such as:
+
+```text
+opened_login_page
+standard_user
+logged_in_inventory_page
+inventory_page_with_one_product_in_cart
+cart_page_with_one_product
+checkout_step_one_page_with_one_product
+checkout_step_two_page_with_one_product
+checkout_last_step_page_with_one_product
+```
+
+This separation is a responsibility cleanup rather than a fixture-system redesign.
+
+Phase 4F does not introduce:
+
+* generic fixture factories
+* dependency-injection infrastructure
+* autouse redesign
+* multi-layer fixture packages
+* fixture scope redesign
+
+Existing fixture names remain explicit and scenario-oriented.
 
 ## pytest-playwright
 
@@ -231,6 +294,8 @@ The project does not manually start and own Playwright browser processes.
 
 Phase 4E integrates project runtime configuration with the existing pytest-playwright model instead of replacing it.
 
+Phase 4F preserves this ownership model.
+
 The framework-level integration occurs primarily through:
 
 ```text
@@ -247,6 +312,11 @@ Current runtime integration includes:
 * configured trace policy
 * configured video policy
 * preservation of explicit native pytest-playwright runtime options where applicable
+* runtime diagnostic summary of effective values
+
+Trace and video lifecycle remains owned by pytest-playwright.
+
+Phase 4F does not introduce custom trace or video recording logic.
 
 ## pytest-xdist
 
@@ -263,6 +333,9 @@ Current implemented usage includes:
 * compatibility with Allure result collection
 * compatibility with configurable failure screenshots
 * compatibility with Phase 4E runtime configuration
+* compatibility with Phase 4F runtime diagnostics
+* compatibility with Phase 4F failed-test diagnostics
+* compatibility with separated framework and scenario fixture responsibilities
 
 Approved commands:
 
@@ -274,9 +347,9 @@ pytest -n auto -v
 
 `-n auto` allows pytest-xdist to determine the worker count according to the available environment.
 
-The current test suite was validated for worker-safe execution during Phase 4C.
+The current test suite uses worker-safe execution based on test independence.
 
-Validated areas included:
+Validated areas include:
 
 * Playwright fixture isolation
 * browser-state independence
@@ -287,10 +360,28 @@ Validated areas included:
 * parametrized scenario independence
 * failure screenshot behavior
 * report output behavior
+* runtime configuration
+* Phase 4F fixture responsibility separation
+* runtime diagnostic header behavior
+* failed-test diagnostic context
 
-No sequential-only test exceptions were identified.
+No sequential-only test, diagnostic, or reporting exceptions are required.
 
-Phase 4D reporting and Phase 4E runtime configuration remain compatible with the same worker-level execution model.
+### Runtime Header Under pytest-xdist
+
+The effective runtime summary is emitted through:
+
+```text
+pytest_report_header
+```
+
+The Phase 4F hook suppresses the header when execution occurs inside an xdist worker.
+
+This prevents one runtime summary from being printed by each worker.
+
+The controlling Pytest process therefore provides the execution-level runtime summary.
+
+Failed-test diagnostics remain associated with the corresponding failed Pytest reports.
 
 ## Current Executable Markers
 
@@ -324,7 +415,7 @@ Detailed semantics are documented in:
 docs/testing-strategy.md
 ```
 
-Runtime configuration and reporting do not change marker semantics.
+Runtime configuration, diagnostics, and reporting do not change marker semantics.
 
 ## Marker-Based Test Execution
 
@@ -409,6 +500,10 @@ Runtime configuration changes execution settings.
 
 It does not change marker semantics.
 
+Diagnostics add runtime and failure context.
+
+They do not change marker semantics.
+
 Reporting consumes execution results.
 
 It also does not change marker semantics.
@@ -430,6 +525,8 @@ Both suites have dedicated GitHub Actions jobs.
 Both dedicated jobs use pytest-xdist.
 
 Both remain focused on pytest-html reporting.
+
+Phase 4F diagnostics run through their normal Pytest execution path without requiring separate Smoke or Regression implementations.
 
 ## UI
 
@@ -487,7 +584,7 @@ The E2E suite does not rely on:
 * execution order
 * one monolithic browser journey
 
-Each checkpoint prepares its own state through fixtures or test-local setup.
+Each checkpoint prepares its own state through scenario fixtures or test-local setup.
 
 Run:
 
@@ -503,9 +600,11 @@ Because the full-suite job uses pytest-xdist, those tests may execute on differe
 
 Because the full-suite job also collects Allure results, those tests participate in the advanced full-suite report.
 
+Phase 4F fixture separation preserves this independent-checkpoint model.
+
 ## Runtime Configuration
 
-Phase 4E introduces centralized environment-based runtime configuration through:
+Phase 4E provides centralized environment-based runtime configuration through:
 
 ```text
 config/settings.py
@@ -547,6 +646,8 @@ The settings layer owns:
 * validation
 * immutable runtime settings consumed by the framework
 
+Phase 4F does not add another runtime configuration layer or additional environment variables.
+
 ## Base URL Quality Boundary
 
 `QA_BASE_URL` controls the application origin.
@@ -580,6 +681,8 @@ The configured application origin is consumed through `BasePage`.
 
 Page Objects keep their application-relative `ROUTE` definitions.
 
+The effective value is also included in the Phase 4F runtime summary.
+
 ## Browser Runtime Quality Boundary
 
 `QA_BROWSER` supports:
@@ -607,6 +710,8 @@ Current CI remains Chromium-only.
 Explicit native pytest-playwright browser options remain supported.
 
 When an explicit native browser selection is supplied, the project configuration does not silently replace it.
+
+The effective Pytest browser selection is included in the Phase 4F runtime summary.
 
 ## Headed And Headless Runtime Configuration
 
@@ -652,6 +757,8 @@ Current CI explicitly uses:
 QA_HEADED=false
 ```
 
+The effective headed/headless mode is included in the Phase 4F runtime summary.
+
 ## Timeout Runtime Configuration
 
 ### Action And Navigation Timeout
@@ -679,6 +786,8 @@ Example:
 QA_TIMEOUT_MS=45000 pytest -m regression -v
 ```
 
+The effective value is included in the Phase 4F runtime summary.
+
 ### Assertion Timeout
 
 Configured through:
@@ -704,6 +813,8 @@ Timeout values:
 * are expressed in milliseconds
 * must be non-negative integers
 * may use `0`, following Playwright timeout semantics
+
+The effective assertion timeout is included in the Phase 4F runtime summary.
 
 ## Runtime Configuration Validation
 
@@ -768,6 +879,122 @@ pytest -m smoke -n auto -v
 The override affects the current execution process.
 
 No functional test or Page Object modification is required.
+
+The effective resulting configuration is visible through the runtime summary.
+
+## Runtime Diagnostic Tooling
+
+Phase 4F introduces lightweight diagnostic support through:
+
+```text
+framework/diagnostics.py
+```
+
+and framework-level Pytest integration in:
+
+```text
+conftest.py
+```
+
+The diagnostics implementation uses:
+
+```text
+logging
+```
+
+from the Python standard library.
+
+It does not introduce an additional third-party logging dependency.
+
+### Runtime Summary Formatting
+
+`framework/diagnostics.py` provides shared runtime summary formatting.
+
+The runtime summary reports:
+
+* application base URL
+* effective browser
+* headed/headless mode
+* action/navigation timeout
+* assertion timeout
+* screenshot policy
+* trace policy
+* video policy
+
+Representative format:
+
+```text
+[runtime] base_url=... | browser=... | mode=... | action_navigation_timeout_ms=... | assertion_timeout_ms=... | screenshot=... | trace=... | video=...
+```
+
+The summary is emitted through:
+
+```text
+pytest_report_header
+```
+
+The purpose is execution observability rather than persistent logging.
+
+### Failed-Test Summary Formatting
+
+Phase 4F provides failed-test summaries for failed Pytest reports.
+
+Supported failure phases are:
+
+```text
+setup
+call
+teardown
+```
+
+Every summary identifies:
+
+* Pytest node ID
+* failure phase
+
+When available, it additionally identifies:
+
+* current page URL
+* successfully created custom screenshot path
+
+Representative format:
+
+```text
+[failure] test=<node-id> | phase=<phase> | url=<current-url> | screenshot=<path>
+```
+
+Optional fields are omitted when the corresponding evidence is unavailable.
+
+### Diagnostic Error Formatting And Logging
+
+The diagnostics module also formats errors produced while collecting diagnostic evidence.
+
+Current diagnostic operations include:
+
+```text
+page-url
+screenshot
+allure-attachment
+```
+
+Representative format:
+
+```text
+[diagnostic-error] operation=<operation> | test=<node-id> | phase=<phase> | error=<error>
+```
+
+Diagnostic errors are:
+
+* logged through the project diagnostics logger
+* added to the failed Pytest report diagnostic sections
+
+The logger name is:
+
+```text
+qa_automation.diagnostics
+```
+
+The project does not configure persistent log-file output for this logger.
 
 ## Playwright Assertions
 
@@ -838,6 +1065,8 @@ The full-suite job preserves pytest-html while also collecting Allure result dat
 
 Allure does not replace pytest-html.
 
+Phase 4F diagnostics operate alongside pytest-html rather than replacing it.
+
 ## Allure Pytest Integration
 
 `allure-pytest` provides the Python-side integration between Pytest and Allure.
@@ -873,6 +1102,8 @@ Allure result collection supports:
 
 `--clean-alluredir` prevents stale result data from previous runs from being mixed into the current execution.
 
+Phase 4F keeps Allure ownership separate from diagnostics.
+
 ## Allure CLI
 
 The standalone Allure CLI converts result data into a browsable HTML report.
@@ -907,7 +1138,7 @@ In CI, the full-suite job prepares the required Java and Allure CLI environment.
 
 ## Failure Screenshot Policy
 
-Browser-test failures use the existing screenshot mechanism in:
+Browser-test failures use the existing custom screenshot mechanism in:
 
 ```text
 conftest.py
@@ -932,7 +1163,11 @@ Default:
 only-on-failure
 ```
 
-With the default policy, the screenshot hook operates on failed Pytest test calls.
+With the default policy, screenshot capture occurs when:
+
+* the Pytest report failed
+* the failure phase is `call`
+* a Playwright page is available
 
 Current output:
 
@@ -955,15 +1190,21 @@ Failure screenshot
 
 when Allure result collection is active.
 
+The successful screenshot path is also included in the Phase 4F failed-test summary.
+
 The framework does not introduce a second project-level screenshot capture implementation.
 
-If screenshot capture fails, no Allure screenshot attachment is attempted because no screenshot file exists.
+If screenshot capture fails:
 
-If the Allure attachment fails after successful screenshot capture, the original PNG remains available under:
+* the failure is reported through the Phase 4F diagnostic mechanism
+* no screenshot path is added
+* no Allure screenshot attachment is attempted because no screenshot file exists
 
-```text
-reports/screenshots/
-```
+If the Allure attachment fails after successful screenshot capture:
+
+* the attachment failure is reported through the Phase 4F diagnostic mechanism
+* the original PNG remains available under `reports/screenshots/`
+* the screenshot path remains available in the failed-test summary
 
 When:
 
@@ -973,9 +1214,7 @@ QA_SCREENSHOT_POLICY=off
 
 the custom failure screenshot is not written and the corresponding Allure screenshot attachment is not created.
 
-The project screenshot hook reacts to test-call failures.
-
-It does not provide the same screenshot behavior for setup or teardown failures.
+Setup-phase and teardown-phase failures receive Phase 4F failure diagnostics but do not trigger the custom project screenshot.
 
 ## Playwright Trace Policy
 
@@ -1031,6 +1270,8 @@ QA_TRACE_POLICY=off
 
 and therefore does not retain traces by default.
 
+Phase 4F does not change trace ownership or automatically enable traces.
+
 ## Playwright Video Policy
 
 Video policy is controlled through:
@@ -1085,12 +1326,16 @@ QA_VIDEO_POLICY=off
 
 and therefore does not retain video by default.
 
+Phase 4F does not change video ownership or automatically enable video capture.
+
 ## Reporting And Diagnostic Compatibility
 
 Current reporting and diagnostic behavior supports:
 
 * sequential Pytest execution
 * pytest-xdist worker-level execution
+* one non-duplicated runtime header during xdist execution
+* setup/call/teardown failure diagnostics
 * pytest-html generation
 * Allure result collection
 * configurable failure screenshots
@@ -1099,10 +1344,13 @@ Current reporting and diagnostic behavior supports:
 * optional Playwright trace generation
 * optional Playwright video generation
 * centralized runtime configuration
+* separated framework and scenario fixture responsibilities
 
-No sequential-only reporting exception is required.
+No sequential-only diagnostic or reporting exception is required.
 
 Reporting does not change test-isolation requirements.
+
+Diagnostics do not change test-isolation requirements.
 
 Runtime configuration does not change test-isolation requirements.
 
@@ -1110,11 +1358,12 @@ Tests must remain independent regardless of:
 
 * execution mode
 * reporting mode
+* diagnostic context
 * artifact policies
 
 ## Generated Runtime Output
 
-Reports and diagnostics are generated runtime data rather than repository source content.
+Reports and persistent browser artifacts are generated runtime data rather than repository source content.
 
 Current generated areas include:
 
@@ -1161,6 +1410,10 @@ The additional root-level Allure entries protect against alternate local Allure 
 
 `test-results/` protects pytest-playwright-generated trace and video content.
 
+Phase 4F runtime and failed-test summaries do not create another generated-output directory.
+
+Persistent diagnostic log files are not implemented.
+
 ## Local Quality Workflow
 
 Before pushing changes or opening a Pull Request where full validation is required, the standard sequential validation is:
@@ -1192,7 +1445,7 @@ Sequential execution remains the supported baseline for normal local validation.
 
 ## Parallel Validation
 
-When worker safety, fixture isolation, or execution behavior is part of the scope, use:
+When worker safety, fixture isolation, execution behavior, or xdist-compatible diagnostics are part of the scope, use:
 
 ```bash
 pytest -m smoke -n auto -v
@@ -1200,11 +1453,11 @@ pytest -m regression -n auto -v
 pytest -n auto -v
 ```
 
-The current suite passed these validation paths during Phase 4C stabilization.
-
 Parallel validation is not automatically required for every unrelated code or documentation task.
 
 It should be used when the active scope can affect execution isolation or parallel behavior.
+
+Phase 4F fixture separation and diagnostics were validated under pytest-xdist execution.
 
 ## Runtime Configuration Validation
 
@@ -1229,6 +1482,27 @@ pytest -m smoke -v
 For changes affecting screenshot, trace, or video policies, controlled runtime artifact validation may additionally be required.
 
 Temporary intentionally failing tests used only to validate artifact behavior should not be committed.
+
+## Diagnostic Validation
+
+When Phase 4F diagnostic behavior changes, controlled failure validation should verify the relevant failure context.
+
+Expected diagnostic behavior includes:
+
+* runtime summary visibility
+* effective runtime values
+* no duplicate runtime header from xdist workers
+* failed-test node ID
+* failure phase
+* current URL when the Playwright page is available
+* screenshot path after successful custom screenshot capture
+* diagnostic error visibility if evidence collection itself fails
+
+Screenshot-specific controlled failure validation should use a failed test-call when screenshot-path behavior must be verified.
+
+Setup and teardown failures should be treated separately because the custom project screenshot is intentionally call-phase-only.
+
+Temporary tests introduced solely to trigger controlled failure behavior should not be committed.
 
 ## Reporting Validation
 
@@ -1266,6 +1540,7 @@ Failure screenshot behavior should additionally be validated when changes affect
 * screenshot policy
 * screenshot capture
 * Allure screenshot attachments
+* failed-test screenshot path diagnostics
 
 Trace and video behavior should be validated when changes affect:
 
@@ -1382,7 +1657,33 @@ allure generate reports/allure-results \
   -o reports/allure-report
 ```
 
+When diagnostics are relevant, controlled failure validation should verify the applicable Phase 4F runtime and failed-test context.
+
 Validation scope should remain aligned with the active task rather than automatically running every possible check after every documentation-only change.
+
+## Phase 4F Validation Status
+
+Phase 4F implementation was validated with:
+
+```text
+Smoke: 31 passed
+Regression: 109 passed
+Full sequential: 236 passed
+Full pytest-xdist: 236 passed
+Ruff: passed
+Black check: passed
+isort: passed
+```
+
+Controlled failure validation also confirmed that after fixture responsibility separation the framework still provides:
+
+* runtime header
+* failure phase
+* Pytest node ID
+* current page URL
+* screenshot diagnostic path
+
+These results validate the implemented Phase 4F framework behavior rather than creating new permanent validation commands or test suites.
 
 ## CI Quality Checks
 
@@ -1394,6 +1695,7 @@ The current pipeline combines:
 * Phase 4C parallel execution
 * Phase 4D reporting
 * Phase 4E runtime configuration
+* Phase 4F diagnostics through the existing Pytest execution path
 
 Current structure:
 
@@ -1420,7 +1722,9 @@ Inside each browser job, pytest-xdist distributes tests between workers.
 
 These are separate concurrency layers.
 
-Reporting and runtime configuration are layered on top of those execution layers.
+Reporting, runtime configuration, and diagnostics are layered on top of those execution layers.
+
+Phase 4F does not introduce another CI job or concurrency layer.
 
 ## Quality CI Job
 
@@ -1473,6 +1777,7 @@ Current CI therefore remains:
 * failure screenshot enabled
 * trace disabled by default
 * video disabled by default
+* Phase 4F runtime diagnostics enabled through normal Pytest execution
 
 The current CI runtime configuration does not introduce:
 
@@ -1485,6 +1790,7 @@ The current CI runtime configuration does not introduce:
 * `continue-on-error`
 * default trace retention
 * default video retention
+* diagnostic-specific environment variables
 
 ## Smoke CI Job
 
@@ -1510,6 +1816,8 @@ It does not generate a dedicated Allure report.
 
 The job uses the explicit Phase 4E CI runtime defaults.
 
+Phase 4F runtime diagnostics operate through the same Pytest execution.
+
 ## Regression CI Job
 
 Regression executes through pytest-xdist.
@@ -1533,6 +1841,8 @@ Regression remains pytest-html-focused.
 It does not generate a dedicated Allure report.
 
 The job uses the explicit Phase 4E CI runtime defaults.
+
+Phase 4F runtime diagnostics operate through the same Pytest execution.
 
 ## Full-Suite CI Job
 
@@ -1576,6 +1886,8 @@ when usable result data exists.
 
 The full-suite job uses the same Phase 4E defaults as Smoke and Regression.
 
+Phase 4F does not change the full-suite topology or command structure.
+
 ## Allure CI Tooling
 
 The full-suite job prepares:
@@ -1602,6 +1914,8 @@ These prerequisites are used only for Allure HTML generation.
 
 They are not added to Smoke or Regression.
 
+Phase 4F diagnostics do not require Java or the Allure CLI.
+
 ## Allure Generation After Test Failure
 
 The Allure HTML generation step uses:
@@ -1623,6 +1937,8 @@ This allows report generation to be attempted after a failed full-suite test com
 A failed Pytest command still fails the full-suite job.
 
 Reporting does not convert failed test execution into successful CI validation.
+
+Diagnostics also do not change the failure result.
 
 ## CI Marker Coverage
 
@@ -1677,6 +1993,8 @@ These mechanisms should not be treated as equivalent.
 Reporting does not add another concurrency layer.
 
 Runtime configuration does not add another concurrency layer.
+
+Diagnostics do not add another concurrency layer.
 
 ## CI Reports And Artifacts
 
@@ -1734,6 +2052,8 @@ Current retention:
 
 Trace and video are disabled under the default CI runtime configuration and are therefore not added as dedicated retained CI artifacts.
 
+Phase 4F does not introduce a persistent diagnostic artifact or log-file artifact.
+
 Detailed behavior is documented in:
 
 ```text
@@ -1757,7 +2077,7 @@ pytest -v
 
 ### Parallel Execution Gate
 
-When the active scope affects test isolation or worker-level execution:
+When the active scope affects test isolation, fixture ownership, worker-level execution, or parallel diagnostic behavior:
 
 ```bash
 pytest -m smoke -n auto -v
@@ -1774,6 +2094,23 @@ pytest tests/test_runtime_config.py
 ```
 
 The relevant environment-driven execution should additionally be validated when required.
+
+### Diagnostic Gate
+
+When Phase 4F diagnostic behavior changes, controlled failure validation should confirm the affected diagnostic fields and failure phase.
+
+Relevant checks may include:
+
+* runtime header
+* effective runtime values
+* xdist header de-duplication
+* node ID
+* failure phase
+* page URL
+* screenshot path
+* diagnostic-operation errors
+
+Controlled failing tests created only for this validation should not remain committed.
 
 ### Reporting Gate
 
@@ -1798,6 +2135,7 @@ Validation should confirm:
 * Allure HTML generation succeeds
 * failure screenshots remain available when expected
 * Allure attachments reuse the existing PNG
+* failed-test screenshot path diagnostics remain correct when applicable
 * generated output remains untracked
 
 When trace or video behavior changes, the corresponding runtime policies and generated pytest-playwright output should additionally be validated.
@@ -1839,6 +2177,7 @@ Before merging a Pull Request:
 * expected full-suite Allure artifact should be available
 * runtime artifacts should remain available for failure investigation when generated
 * CI runtime defaults should remain aligned with `config/settings.py`
+* diagnostics should remain consistent with `framework/diagnostics.py` and root `conftest.py`
 * Chromium-only CI boundaries should remain intact unless explicitly changed by approved scope
 
 The current dependency model is:
@@ -1863,7 +2202,9 @@ Before promoting `develop` to `main`:
 * local validation should pass when required and practical
 * CI on the promotion Pull Request should pass
 * documentation should match implementation
-* runtime configuration documentation should match `config/settings.py`, `conftest.py`, Page Objects, and CI
+* runtime configuration documentation should match `config/settings.py`, root `conftest.py`, Page Objects, and CI
+* diagnostic documentation should match `framework/diagnostics.py` and root `conftest.py`
+* fixture documentation should reflect the root `conftest.py` / `tests/conftest.py` responsibility boundary
 * reporting documentation should match pytest-html, Allure, screenshot, trace, and video behavior
 * planned functionality should not be presented as implemented
 * generated reports, screenshots, traces, videos, caches, and virtual-environment files should not be tracked
@@ -1899,8 +2240,8 @@ It does not implement:
 * browser channels
 * slow-motion configuration
 * retries
-* Phase 4F logging redesign
-* Phase 4F fixture cleanup
+
+Phase 4F diagnostics and fixture cleanup are implemented and are not part of the remaining runtime-configuration scope.
 
 These boundaries should remain explicit in project documentation.
 
@@ -1908,6 +2249,14 @@ These boundaries should remain explicit in project documentation.
 
 The current implemented reporting and diagnostic stack includes:
 
+* effective runtime summary
+* xdist runtime-header de-duplication
+* failed-test node ID reporting
+* setup/call/teardown failure-phase reporting
+* current page URL diagnostics when available
+* custom screenshot path diagnostics when available
+* diagnostic error reporting
+* lightweight project diagnostics logger
 * pytest-html
 * allure-pytest
 * Allure CLI
@@ -1919,6 +2268,13 @@ The current implemented reporting and diagnostic stack includes:
 
 Current reporting and diagnostics do not implement:
 
+* persistent project log files
+* browser console capture
+* network capture
+* custom network tracing beyond Playwright trace
+* HTML or page-source dumps
+* automatic trace enablement
+* automatic video enablement
 * Allure history persistence
 * trend-history storage
 * report hosting
@@ -1927,13 +2283,16 @@ Current reporting and diagnostics do not implement:
 * cross-browser reporting
 * default trace retention in CI
 * default video retention in CI
-* Phase 4F logging redesign
 
 Trace and video policies are implemented.
 
 They are not future-only functionality.
 
 They remain disabled by default.
+
+Phase 4F runtime and failed-test diagnostics are implemented.
+
+They should not be described as future-only functionality.
 
 ## Current Quality Status
 
@@ -1950,7 +2309,8 @@ Current capabilities include:
 * Page Object Model
 * shared authenticated behavior through `AppPage`
 * reusable assertions
-* reusable fixtures
+* reusable scenario-oriented fixtures
+* separated framework-level and scenario fixture responsibilities
 * centralized test data
 * parametrization
 * normalized marker categorization
@@ -1977,6 +2337,14 @@ Current capabilities include:
 * video policy
 * fail-fast invalid configuration behavior
 * focused runtime configuration tests
+* lightweight runtime summary diagnostics
+* effective runtime value visibility
+* xdist runtime-header de-duplication
+* failed-test node ID diagnostics
+* setup/call/teardown failure-phase diagnostics
+* current page URL diagnostics
+* custom screenshot path diagnostics
+* diagnostic-operation error reporting
 * local quality validation
 * dedicated CI quality validation
 * dedicated parallel Smoke CI
@@ -2000,6 +2368,8 @@ Current CI model:
 ```text
 Phase 4E runtime defaults
         ↓
+Phase 4F runtime diagnostics
+        ↓
 quality
 ├── smoke
 │   └── pytest-xdist workers
@@ -2011,6 +2381,7 @@ quality
     └── pytest-xdist workers
         ├── pytest-html
         ├── Allure results
+        ├── failure screenshots
         └── Allure HTML report
 ```
 
@@ -2022,7 +2393,7 @@ UI, Security, Sorting, Navigation, and E2E remain selectively executable without
 
 The full-suite job remains the complete unfiltered regression gate and primary CI source for the Allure HTML report.
 
-No sequential-only test or reporting exceptions are required for the current implementation.
+No sequential-only test, diagnostic, or reporting exceptions are required for the current implementation.
 
 ## Quality Goals
 
@@ -2040,6 +2411,9 @@ The quality tooling supports:
 * centralized and validated runtime settings
 * fail-fast configuration errors
 * reproducible local and CI defaults
+* lightweight runtime observability
+* useful failed-test context
+* explicit framework and scenario fixture responsibilities
 * lightweight pytest-html reporting
 * advanced Allure reporting
 * configurable browser failure evidence
@@ -2078,7 +2452,7 @@ Implemented capabilities include:
 * local parallel Smoke
 * local parallel Regression
 * local parallel full-suite
-* sequential execution as a supported fallback
+* sequential execution as a supported mode
 * fixture and test-independence validation
 * parametrized and E2E independence validation
 * parallel Smoke CI
@@ -2138,7 +2512,7 @@ Implemented capabilities include:
 * fail-fast invalid configuration behavior
 * focused configuration tests
 * runtime application URL composition through `BasePage`
-* browser/runtime integration through `conftest.py`
+* browser/runtime integration through root `conftest.py`
 * action/navigation timeout integration
 * assertion timeout integration
 * configurable failure screenshot policy
@@ -2157,10 +2531,63 @@ Phase 4E does not implement:
 * cross-browser CI
 * device emulation
 * retries
-* Phase 4F logging redesign
-* Phase 4F fixture cleanup
 
-Phase 4E was completed through AQA-0105 after final runtime-configuration validation, sequential and pytest-xdist parallel suite validation, controlled artifact-policy validation, pytest-html and Allure reporting validation, successful GitHub Actions validation, and roadmap synchronization.
+### Phase 4F — Diagnostics And Fixture Cleanup
+
+Implemented capabilities include:
+
+* shared diagnostics implementation in `framework/diagnostics.py`
+* runtime summary formatting
+* failed-test summary formatting
+* diagnostic error formatting
+* project diagnostics logger
+* effective runtime summary through `pytest_report_header`
+* base URL visibility
+* browser visibility
+* headed/headless mode visibility
+* action/navigation timeout visibility
+* assertion timeout visibility
+* screenshot policy visibility
+* trace policy visibility
+* video policy visibility
+* runtime-header suppression on pytest-xdist workers
+* failed-test Pytest node ID reporting
+* setup/call/teardown failure-phase reporting
+* current page URL reporting when a Playwright page is available
+* custom screenshot path reporting after successful capture
+* diagnostic error reporting for page URL retrieval
+* diagnostic error reporting for screenshot creation
+* diagnostic error reporting for Allure attachment
+* framework-level Pytest responsibilities retained in root `conftest.py`
+* application scenario fixtures separated into `tests/conftest.py`
+* preservation of explicit scenario fixture names
+* preservation of function-scoped fixture behavior
+* preservation of pytest-playwright browser lifecycle
+* preservation of pytest-playwright trace lifecycle
+* preservation of pytest-playwright video lifecycle
+* preservation of custom failure screenshot behavior
+* preservation of Allure failure screenshot reuse
+* sequential execution compatibility
+* pytest-xdist execution compatibility
+* Ruff validation
+* Black validation
+* isort validation
+
+Phase 4F does not implement:
+
+* persistent project log files
+* browser console capture
+* network capture
+* HTML or page-source dumps
+* automatic trace enablement
+* automatic video enablement
+* retries
+* new CI topology
+* generic fixture factories
+* dependency-injection infrastructure
+* autouse redesign
+* multi-layer fixture packages
+* fixture scope redesign
 
 ## Future Improvements
 
@@ -2171,8 +2598,8 @@ Possible future quality-tooling improvements include:
 * test coverage reporting
 * JUnit XML output
 * refined pre-commit configuration
-* stronger failure diagnostics
-* structured logging
+* persistent structured logging if justified by approved scope
+* additional diagnostic evidence when justified
 * Allure history and trend reporting
 * hosted reporting
 * additional CI execution improvements where justified
@@ -2191,5 +2618,9 @@ The following are already implemented and should not be described as future-only
 * trace policy
 * video policy
 * explicit Phase 4E CI runtime defaults
+* Phase 4F runtime diagnostics
+* Phase 4F failed-test diagnostics
+* diagnostic error reporting
+* separation of framework-level hooks and application scenario fixtures
 
 Future capabilities should not be described as implemented until their approved project scope has been completed and validated.

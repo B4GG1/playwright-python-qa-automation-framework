@@ -4,28 +4,27 @@ from typing import Callable
 
 import allure
 import pytest
-from playwright.sync_api import BrowserContext, Page, expect
+from playwright.sync_api import BrowserContext, expect
 
 from config.settings import settings
-from pages.cart_page import CartPage
-from pages.checkout_page import (
-    CheckoutCompletePage,
-    CheckoutInformationPage,
-    CheckoutOverviewPage,
+from framework.diagnostics import (
+    format_failure_summary,
+    format_runtime_summary,
+    log_diagnostic_error,
 )
-from pages.inventory_page import InventoryPage
-from pages.login_page import LoginPage
-from test_data.checkout_test_data import VALID_CHECKOUT_CUSTOMER
-from test_data.login_test_data import VALID_USER_CASES
-from test_data.product_test_data import LIST_OF_PRODUCTS
 
 
 def _cli_option_was_provided(config: pytest.Config, option: str) -> bool:
+    invocation_params = config.invocation_params
+
+    if invocation_params is None:
+        return False
+
     option_with_value = f"{option}="
 
     return any(
         argument == option or argument.startswith(option_with_value)
-        for argument in config.invocation_params.args
+        for argument in invocation_params.args
     )
 
 
@@ -45,6 +44,22 @@ def pytest_configure(config: pytest.Config) -> None:
     expect.set_options(timeout=settings.expect_timeout_ms)
 
 
+def pytest_report_header(config: pytest.Config) -> str | None:
+    if hasattr(config, "workerinput"):
+        return None
+
+    return format_runtime_summary(
+        base_url=settings.base_url,
+        browser=config.getoption("--browser"),
+        headed=config.getoption("--headed"),
+        timeout_ms=settings.timeout_ms,
+        expect_timeout_ms=settings.expect_timeout_ms,
+        screenshot_policy=settings.screenshot_policy,
+        trace_policy=config.getoption("--tracing"),
+        video_policy=config.getoption("--video"),
+    )
+
+
 @pytest.fixture()
 def context(
     new_context: Callable[..., BrowserContext],
@@ -62,112 +77,73 @@ def pytest_runtest_makereport(item, call):
     outcome = yield
     report = outcome.get_result()
 
-    if report.when != "call" or not report.failed:
+    if not report.failed:
         return
 
-    if settings.screenshot_policy == "off":
-        return
-
+    node_id = item.nodeid
+    phase = report.when
     page = item.funcargs.get("page")
-    if page is None:
-        return
 
-    reports_dir = os.path.join("reports", "screenshots")
-    os.makedirs(reports_dir, exist_ok=True)
+    page_url = None
+    screenshot_path = None
 
-    timestamp = datetime.now(UTC).strftime("%Y-%m-%d_%H-%M-%S")
-    test_name = item.name.replace("/", "_").replace("::", "_")
+    if page is not None:
+        try:
+            page_url = page.url
+        except Exception as e:
+            message = log_diagnostic_error(
+                operation="page-url",
+                node_id=node_id,
+                phase=phase,
+                error=e,
+            )
+            report.sections.append(("failure diagnostics", message))
 
-    file_path = os.path.join(reports_dir, f"{test_name}_{timestamp}.png")
+    if phase == "call" and settings.screenshot_policy != "off" and page is not None:
+        reports_dir = os.path.join("reports", "screenshots")
+        os.makedirs(reports_dir, exist_ok=True)
 
-    try:
-        page.screenshot(path=file_path, full_page=True)
-    except Exception as e:
-        print(f"[screenshot-error] {test_name}: {e}")
-        return
+        timestamp = datetime.now(UTC).strftime("%Y-%m-%d_%H-%M-%S")
+        test_name = item.name.replace("/", "_").replace("::", "_")
 
-    try:
-        allure.attach.file(
-            file_path,
-            name="Failure screenshot",
-            attachment_type=allure.attachment_type.PNG,
+        file_path = os.path.join(
+            reports_dir,
+            f"{test_name}_{timestamp}.png",
         )
-    except Exception as e:
-        print(f"[allure-attachment-error] {test_name}: {e}")
 
+        try:
+            page.screenshot(path=file_path, full_page=True)
+        except Exception as e:
+            message = log_diagnostic_error(
+                operation="screenshot",
+                node_id=node_id,
+                phase=phase,
+                error=e,
+            )
+            report.sections.append(("failure diagnostics", message))
+        else:
+            screenshot_path = file_path
 
-@pytest.fixture()
-def opened_login_page(page: Page) -> LoginPage:
-    login_page = LoginPage(page)
-    login_page.open()
-    return login_page
+            try:
+                allure.attach.file(
+                    file_path,
+                    name="Failure screenshot",
+                    attachment_type=allure.attachment_type.PNG,
+                )
+            except Exception as e:
+                message = log_diagnostic_error(
+                    operation="allure-attachment",
+                    node_id=node_id,
+                    phase=phase,
+                    error=e,
+                )
+                report.sections.append(("failure diagnostics", message))
 
-
-@pytest.fixture()
-def standard_user() -> dict[str, str]:
-    return VALID_USER_CASES[0]
-
-
-@pytest.fixture()
-def logged_in_inventory_page(
-    opened_login_page: LoginPage,
-    standard_user: dict[str, str],
-) -> InventoryPage:
-    opened_login_page.login(standard_user["username"], standard_user["password"])
-    return InventoryPage(opened_login_page.page)
-
-
-@pytest.fixture()
-def inventory_page_with_one_product_in_cart(
-    logged_in_inventory_page: InventoryPage,
-) -> tuple[InventoryPage, dict[str, str]]:
-    product = LIST_OF_PRODUCTS[0]
-    logged_in_inventory_page.add_product_to_cart(product["product_name"])
-    return logged_in_inventory_page, product
-
-
-@pytest.fixture()
-def cart_page_with_one_product(
-    inventory_page_with_one_product_in_cart: tuple[InventoryPage, dict[str, str]],
-) -> tuple[CartPage, dict[str, str]]:
-    inventory_page, product = inventory_page_with_one_product_in_cart
-    cart_page = inventory_page.open_cart()
-    return cart_page, product
-
-
-@pytest.fixture()
-def checkout_step_one_page_with_one_product(
-    cart_page_with_one_product: tuple[CartPage, dict[str, str]],
-) -> tuple[CheckoutInformationPage, dict[str, str]]:
-    cart_page, product = cart_page_with_one_product
-    checkout_page = cart_page.checkout()
-    return checkout_page, product
-
-
-@pytest.fixture()
-def checkout_step_two_page_with_one_product(
-    checkout_step_one_page_with_one_product: tuple[
-        CheckoutInformationPage,
-        dict[str, str],
-    ],
-) -> tuple[CheckoutOverviewPage, dict[str, str]]:
-    checkout_step_one, product = checkout_step_one_page_with_one_product
-    checkout_step_one.fill_checkout_info_form(
-        VALID_CHECKOUT_CUSTOMER["first_name"],
-        VALID_CHECKOUT_CUSTOMER["last_name"],
-        VALID_CHECKOUT_CUSTOMER["postal_code"],
+    summary = format_failure_summary(
+        node_id=node_id,
+        phase=phase,
+        page_url=page_url,
+        screenshot_path=screenshot_path,
     )
-    checkout_step_two = checkout_step_one.continue_checkout()
-    return checkout_step_two, product
 
-
-@pytest.fixture()
-def checkout_last_step_page_with_one_product(
-    checkout_step_two_page_with_one_product: tuple[
-        CheckoutOverviewPage,
-        dict[str, str],
-    ],
-) -> tuple[CheckoutCompletePage, dict[str, str]]:
-    checkout_step_two, product = checkout_step_two_page_with_one_product
-    checkout_last_step = checkout_step_two.finish_checkout()
-    return checkout_last_step, product
+    report.sections.append(("failure diagnostics", summary))
