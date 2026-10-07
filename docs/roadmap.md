@@ -957,31 +957,340 @@ Phase 5 remains future scope. No Phase 5 functionality is introduced by this che
 
 ---
 
-## Phase 5: Advanced Extensions
+## Phase 5: Advanced Browser Automation And Execution
 
 **Status:** Future
 
-Phase 5 will introduce advanced framework extensions.
+Phase 5 is the final implementation phase of the project.
 
-Potential work:
+Its purpose is to extend the mature Playwright-based framework with advanced browser automation capabilities that are directly relevant to the tested Sauce Demo application and to the portfolio goals of the project.
 
-* API testing layer using Requests
-* hybrid UI + API scenarios
-* Docker-based execution environment
-* cross-browser execution strategy
-* Selenium WebDriver comparison module
-* Jenkins pipeline integration
-* test analytics and history tracking
-* framework packaging as reusable template
+Unlike earlier phases, Phase 5 does not primarily expand general functional coverage.
+
+The phase focuses on:
+
+* validating the existing Playwright framework across multiple browser engines
+* introducing reproducible containerized execution
+* adding visual regression testing
+* demonstrating practical Selenium WebDriver automation through a complete representative E2E purchase journey
+* optionally extending reporting with execution history and trend data where the additional complexity remains justified
+
+Phase 5 deliberately avoids adding unrelated technologies only for portfolio breadth.
+
+The project remains primarily a Python, Pytest, and Playwright UI automation framework, with Selenium included as a separate representative automation capability rather than as a replacement for the existing Playwright implementation.
+
+Workstreams:
+
+* Phase 5A — Playwright Cross-Browser Validation — Future
+* Phase 5B — Containerized Playwright Execution — Future
+* Phase 5C — Visual Regression Testing — Future
+* Phase 5D — Selenium WebDriver E2E Showcase — Future
+* Phase 5E — Reporting History And Trend Evaluation — Optional
+* Phase 5 Checkpoint — Future
 
 Main learning goals:
 
-* broader QA automation tooling
-* API testing fundamentals
-* CI/CD maturity
-* cross-browser strategy
-* framework extensibility
-* portfolio differentiation
+* practical cross-browser validation strategy
+* browser-engine compatibility analysis
+* reproducible browser-test execution
+* Docker-based test environment usage
+* visual regression testing fundamentals
+* controlled screenshot baseline management
+* Selenium WebDriver fundamentals
+* Selenium Page Object Model design
+* explicit wait and browser lifecycle management
+* maintaining clear boundaries between Playwright and Selenium implementations
+* advanced CI and reporting maturity
+* portfolio differentiation through multiple browser automation approaches
+* final project scope control before portfolio stabilization
+
+Phase 5 does not introduce:
+
+* REST API automation
+* hybrid UI and API testing
+* Jenkins integration
+* Selenium Grid
+* full Selenium regression coverage
+* Selenium cross-browser matrices
+* complete duplication of the existing Playwright suite in Selenium
+* framework packaging as a reusable library
+* mobile or device-emulation workstreams
+* a redesign of the existing Playwright Page Object architecture solely to share implementation with Selenium
+
+---
+
+## Phase 5A: Playwright Cross-Browser Validation
+
+**Status:** Future
+
+Phase 5A will validate the existing Playwright framework beyond the currently primary Chromium execution path.
+
+The framework already supports runtime browser selection for:
+
+* Chromium
+* Firefox
+* WebKit
+
+Phase 5A will determine and implement an appropriate cross-browser validation strategy without unnecessarily multiplying the complete regression workload across every browser engine.
+
+The workstream will focus on:
+
+* validating representative application behavior in Chromium, Firefox, and WebKit
+* confirming that existing Page Objects and fixtures remain browser-engine independent where expected
+* identifying browser-specific behavior or limitations
+* defining the appropriate cross-browser execution scope
+* preserving Chromium as the primary complete regression browser unless validation demonstrates a reason to change that strategy
+* integrating selected cross-browser validation into CI where justified
+* preserving the existing marker, reporting, runtime configuration, diagnostic, and pytest-xdist strategies
+
+The workstream should prefer representative cross-browser validation over blindly executing the complete test suite against every supported browser.
+
+Existing functional coverage should not be duplicated solely to create browser-specific test files.
+
+Phase 5A does not introduce Selenium-based cross-browser testing.
+
+Cross-browser compatibility remains owned by the Playwright execution strategy.
+
+---
+
+## Phase 5B: Containerized Playwright Execution
+
+**Status:** Future
+
+Phase 5B will introduce Docker-based execution for the existing Playwright framework.
+
+The goal is to provide a reproducible test environment with controlled:
+
+* Python dependencies
+* Playwright version
+* browser binaries
+* system browser dependencies
+* execution environment
+
+Containerized execution will complement the existing local WSL and GitHub Actions workflows rather than replace them.
+
+The workstream will focus on:
+
+* defining a minimal Playwright-compatible Docker environment
+* keeping container versions aligned with the project's locked Playwright dependency
+* supporting normal Pytest execution inside the container
+* validating representative sequential and parallel execution
+* preserving runtime configuration through the existing environment-variable interface
+* preserving report and artifact generation
+* keeping generated outputs outside version-controlled repository content
+* documenting the relationship between local, containerized, and GitHub Actions execution
+
+The Docker implementation should remain focused on test reproducibility.
+
+It should not become a general infrastructure platform or introduce unnecessary service orchestration.
+
+The workstream does not require:
+
+* replacing GitHub Actions
+* introducing Kubernetes
+* introducing Docker Compose without a demonstrated need
+* packaging every project tool into one large general-purpose container
+* changing the Sauce Demo application deployment model
+
+---
+
+## Phase 5C: Visual Regression Testing
+
+**Status:** Future
+
+Phase 5C will add controlled visual regression testing to complement the existing functional UI automation.
+
+Sauce Demo provides suitable visual-defect behavior that allows the project to demonstrate meaningful screenshot comparison rather than simple screenshot capture.
+
+The workstream will focus on:
+
+* defining a stable visual testing environment
+* selecting a limited set of meaningful visual checkpoints
+* creating and maintaining approved screenshot baselines
+* implementing deterministic screenshot comparison
+* producing useful visual difference evidence when a mismatch occurs
+* keeping visual regression separate from normal functional assertions
+* using controlled viewport and rendering conditions
+* integrating visual validation into an appropriate execution workflow
+* keeping baseline and generated-difference ownership explicit
+
+The existing Playwright failure screenshot mechanism remains diagnostic evidence and should not be repurposed as the visual baseline system.
+
+Visual regression should use a dedicated comparison responsibility.
+
+The workstream should avoid creating a large visual matrix across every browser engine.
+
+A controlled primary visual environment should be preferred to reduce rendering noise and baseline maintenance.
+
+The Sauce Demo `visual_user` may be used where appropriate to validate that intentionally introduced visual differences can be detected.
+
+Permanent CI tests should remain passing under the approved baseline.
+
+Controlled mismatch validation may be used during implementation and review without committing intentionally failing permanent tests.
+
+---
+
+## Phase 5D: Selenium WebDriver E2E Showcase
+
+**Status:** Future
+
+Phase 5D will demonstrate practical Selenium WebDriver automation alongside the primary Playwright framework.
+
+Selenium is intentionally included to show that the project owner can design and implement browser automation using more than one major automation technology.
+
+The Selenium implementation will not duplicate the complete existing Playwright regression suite.
+
+Instead, it will implement one complete representative end-to-end Sauce Demo purchase journey.
+
+The Selenium E2E flow will cover:
+
+1. opening the Login page
+2. logging in with a valid user
+3. selecting a product from Inventory
+4. opening the product's Product Details page
+5. validating the selected product
+6. adding the product to Cart from Product Details
+7. opening Cart
+8. validating the selected Cart item
+9. opening Checkout Information
+10. submitting valid customer information
+11. validating Checkout Overview
+12. completing the order
+13. validating Checkout Complete
+14. using Back Home
+15. confirming successful return to the Inventory page
+
+The Selenium workstream will demonstrate:
+
+* WebDriver lifecycle management
+* Selenium locator strategy
+* explicit waits
+* Page Object Model usage
+* page-to-page navigation
+* reusable test data
+* Pytest integration
+* deterministic E2E setup
+* assertion strategy
+* browser cleanup
+* CI execution where appropriate
+
+Selenium should use its own automation-specific Page Object layer.
+
+Existing Playwright Page Objects should not be redesigned into a generic abstraction merely to support both tools.
+
+Automation-engine-independent data may be reused where appropriate, including:
+
+* valid credentials
+* product expectations
+* checkout customer data
+* expected application values
+* application base URL
+
+The Selenium implementation should remain deliberately limited to the approved E2E showcase.
+
+It does not introduce:
+
+* complete Selenium page-level coverage
+* duplication of all Playwright tests
+* Selenium Grid
+* Selenium cross-browser matrices
+* replacement of Playwright as the primary framework
+* a second complete regression architecture
+
+Chrome is the expected primary Selenium browser unless implementation analysis identifies a concrete reason to expand that scope.
+
+Playwright remains responsible for the project's primary regression and cross-browser strategy.
+
+---
+
+## Phase 5E: Reporting History And Trend Evaluation
+
+**Status:** Optional
+
+Phase 5E is an optional extension rather than a mandatory requirement for Phase 5 completion.
+
+After the core Phase 5 workstreams are implemented, the project will evaluate whether persistent reporting history or execution trend information provides enough portfolio and technical value to justify the additional CI state-management complexity.
+
+Potential areas include:
+
+* Allure execution history
+* result trends across CI runs
+* duration trends
+* test stability visibility
+* preserved history between report generations
+
+This workstream should proceed only if the implementation remains lightweight and consistent with the existing GitHub Actions and Allure architecture.
+
+The project should not introduce a separate analytics platform solely for this capability.
+
+Phase 5 may be considered complete without Phase 5E if the evaluation concludes that its maintenance cost exceeds its practical value.
+
+---
+
+## Phase 5 Checkpoint
+
+**Status:** Future
+
+The Phase 5 checkpoint will perform the final implementation-phase review of the project.
+
+The checkpoint will confirm that the approved Phase 5 capabilities are integrated without compromising the framework maturity established during Phase 4.
+
+Checkpoint scope will include:
+
+* review of completed Phase 5 workstreams
+* Playwright cross-browser validation status
+* containerized execution status
+* visual regression behavior
+* Selenium E2E showcase validation
+* optional reporting-history decision or implementation status
+* local and CI execution strategy review
+* reporting and artifact review
+* dependency and configuration review
+* documentation synchronization
+* repository cleanup
+* Git status
+* confirmation that no unnecessary framework redesign was introduced
+* confirmation that the project is ready to end active feature development
+
+After successful completion of the Phase 5 checkpoint:
+
+* Phase 5 will be marked Completed
+* active framework capability development will end
+* no Phase 6 implementation phase will be created
+* the project will move into Final Project Stabilization And Portfolio Cleanup
+
+---
+
+## After Phase 5: Final Project Stabilization And Portfolio Cleanup
+
+Final Project Stabilization And Portfolio Cleanup is not a new implementation phase.
+
+Its purpose is to prepare the completed project for final portfolio presentation after all planned framework capabilities have been implemented.
+
+This final cleanup stage may include:
+
+* removing unused dependencies
+* removing obsolete configuration
+* removing dead or superseded code
+* simplifying project structure where justified
+* reviewing comments and stale implementation notes
+* reducing documentation duplication
+* removing development-history details that no longer help the final reader
+* removing unnecessary commit-message examples from general documentation
+* reducing detailed historical descriptions of individual completed phases and workstreams
+* simplifying README and technical documentation for recruiter and technical-review readability
+* ensuring current implementation is clearly separated from historical development process
+* reviewing generated-artifact ignore rules
+* final local quality validation
+* final automated test validation
+* final CI validation
+* final Git and branch cleanup
+* final portfolio-facing repository review
+* promotion of the finished project state to the stable portfolio branch where appropriate
+
+This stage must not introduce new framework capabilities.
+
+Any change discovered during final stabilization should be treated as cleanup, correction, simplification, or portfolio presentation work rather than the beginning of another implementation phase.
 
 ---
 
