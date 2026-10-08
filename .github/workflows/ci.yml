@@ -238,3 +238,65 @@ jobs:
           path: reports/
           if-no-files-found: warn
           retention-days: 7
+  cross-browser-smoke:
+    needs: quality
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        browser:
+          - firefox
+          - webkit
+
+    env:
+      QA_BASE_URL: "https://www.saucedemo.com"
+      QA_BROWSER: ${{ matrix.browser }}
+      QA_HEADED: "false"
+      QA_TIMEOUT_MS: "30000"
+      QA_EXPECT_TIMEOUT_MS: "5000"
+      QA_SCREENSHOT_POLICY: "only-on-failure"
+      QA_TRACE_POLICY: "off"
+      QA_VIDEO_POLICY: "off"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install project dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-lock.txt
+
+      - name: Install Playwright browser
+        run: playwright install --with-deps ${{ matrix.browser }}
+
+      - name: Run cross-browser Smoke suite with HTML report
+        run: |
+          mkdir -p reports
+          pytest -m smoke -n auto -v \
+            --html=reports/${{ matrix.browser }}-smoke-report.html \
+            --self-contained-html
+
+      - name: Upload cross-browser pytest HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.browser }}-smoke-pytest-html-report
+          path: reports/${{ matrix.browser }}-smoke-report.html
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Upload cross-browser test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.browser }}-smoke-test-artifacts
+          path: reports/
+          if-no-files-found: warn
+          retention-days: 7
