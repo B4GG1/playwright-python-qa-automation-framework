@@ -959,7 +959,7 @@ Phase 5 remains future scope. No Phase 5 functionality is introduced by this che
 
 ## Phase 5: Advanced Browser Automation And Execution
 
-**Status:** Future
+**Status:** In Progress
 
 Phase 5 is the final implementation phase of the project.
 
@@ -981,7 +981,7 @@ The project remains primarily a Python, Pytest, and Playwright UI automation fra
 
 Workstreams:
 
-* Phase 5A — Playwright Cross-Browser Validation — Future
+* Phase 5A — Playwright Cross-Browser Validation — Completed
 * Phase 5B — Containerized Playwright Execution — Future
 * Phase 5C — Visual Regression Testing — Future
 * Phase 5D — Selenium WebDriver E2E Showcase — Future
@@ -1021,35 +1021,98 @@ Phase 5 does not introduce:
 
 ## Phase 5A: Playwright Cross-Browser Validation
 
-**Status:** Future
+**Status:** Completed
 
-Phase 5A will validate the existing Playwright framework beyond the currently primary Chromium execution path.
+Phase 5A extends the existing Playwright framework with representative cross-browser Smoke validation while preserving Chromium as the primary complete regression browser.
 
-The framework already supports runtime browser selection for:
+The implemented strategy validates the existing framework across three Playwright browser engines:
 
-* Chromium
-* Firefox
-* WebKit
+* Chromium — primary complete regression browser
+* Firefox — representative Smoke compatibility validation
+* WebKit — representative Smoke compatibility validation
 
-Phase 5A will determine and implement an appropriate cross-browser validation strategy without unnecessarily multiplying the complete regression workload across every browser engine.
+### Implemented Scope
 
-The workstream will focus on:
+Phase 5A includes:
 
-* validating representative application behavior in Chromium, Firefox, and WebKit
-* confirming that existing Page Objects and fixtures remain browser-engine independent where expected
-* identifying browser-specific behavior or limitations
-* defining the appropriate cross-browser execution scope
-* preserving Chromium as the primary complete regression browser unless validation demonstrates a reason to change that strategy
-* integrating selected cross-browser validation into CI where justified
-* preserving the existing marker, reporting, runtime configuration, diagnostic, and pytest-xdist strategies
+* preservation of the existing Chromium Smoke, Regression, and full-suite CI jobs
+* representative Firefox and WebKit Smoke validation using the existing functional tests
+* reuse of existing Page Objects, assertions, test data, and scenario fixtures
+* preservation of existing pytest marker semantics
+* browser selection through `QA_BROWSER` and explicit pytest-playwright `--browser` options
+* pytest-xdist worker-level parallel execution across supported browser runs
+* a dedicated GitHub Actions `cross-browser-smoke` matrix for Firefox and WebKit
+* `quality` as the prerequisite CI job
+* `fail-fast: false` to allow independent Firefox and WebKit matrix execution
+* installation of the selected Playwright browser engine in each matrix job
+* independent browser-specific pytest-html reports and CI artifacts
+* preservation of the existing Chromium full-suite Allure reporting strategy
+* reuse of existing runtime and failed-test diagnostics
+* preservation of screenshot, trace, and video runtime policies
 
-The workstream should prefer representative cross-browser validation over blindly executing the complete test suite against every supported browser.
+The existing `smoke` marker is reused without introducing browser-specific test modules or duplicate test cases.
 
-Existing functional coverage should not be duplicated solely to create browser-specific test files.
+### Validation
 
-Phase 5A does not introduce Selenium-based cross-browser testing.
+AQA-0114 local validation confirmed:
 
-Cross-browser compatibility remains owned by the Playwright execution strategy.
+* Chromium Smoke: 31 passed
+* Firefox Smoke: 31 passed
+* WebKit Smoke: 31 passed in three consecutive repeat runs
+* Firefox Smoke through `QA_BROWSER`: 31 passed
+* WebKit Smoke through `QA_BROWSER`: 31 passed
+* runtime configuration and diagnostics: 82 passed
+* Chromium complete full suite: 236 passed
+* pytest-xdist execution remained functional
+
+One initial WebKit Smoke execution encountered a timeout in `TC-CHECKOUT-015` during checkout navigation.
+
+The failure was not reproduced in the subsequent environment-based WebKit run or three consecutive complete WebKit Smoke runs.
+
+Existing failure diagnostics correctly captured the failing test, execution phase, current page URL, and screenshot path.
+
+The exact cause of the initial timeout was not established. No browser-specific workaround, retry mechanism, or functional test modification was introduced.
+
+Final Pull Request CI validation and workstream integration are required to complete the AQA-0114 checkpoint.
+
+### Cross-Browser CI Strategy
+
+The implemented CI structure preserves Chromium as the complete regression gate.
+
+Firefox and WebKit execute the existing representative Smoke suite independently through the `cross-browser-smoke` matrix.
+
+The matrix generates:
+
+* `reports/firefox-smoke-report.html`
+* `reports/webkit-smoke-report.html`
+
+Browser-specific GitHub Actions artifacts use distinct names:
+
+* `firefox-smoke-pytest-html-report`
+* `firefox-smoke-test-artifacts`
+* `webkit-smoke-pytest-html-report`
+* `webkit-smoke-test-artifacts`
+
+The existing Chromium Smoke, Regression, full-suite, and Allure reporting responsibilities remain unchanged.
+
+### Scope Boundaries
+
+Phase 5A does not implement:
+
+* complete Firefox Regression or full-suite execution
+* complete WebKit Regression or full-suite execution
+* full three-browser regression parity
+* new cross-browser pytest markers
+* duplicated browser-specific functional tests
+* Selenium WebDriver automation
+* Docker-based execution
+* visual regression testing
+* reporting history or trend persistence
+* unrelated Phase 5B+ capabilities
+
+Chromium remains the primary complete regression browser, while Firefox and WebKit provide representative compatibility coverage.
+
+Cross-browser execution is integrated into the existing Playwright, Pytest, runtime configuration, diagnostics, and CI architecture without redesigning the framework.
 
 ---
 
