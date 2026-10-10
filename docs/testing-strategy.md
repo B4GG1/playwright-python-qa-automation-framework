@@ -4,7 +4,7 @@ This document defines the testing approach for the QA automation framework.
 
 The current focus is UI automation testing for the Sauce Demo application using Playwright and Pytest. The project follows an iterative testing strategy: manual test design is created before or alongside automation, selected scenarios are automated, and repeated interactions are gradually refactored into reusable framework components.
 
-The strategy documented here reflects the current implemented test structure, normalized pytest marker behavior, Phase 4B CI execution strategy, Phase 4C Pytest parallel execution strategy, Phase 4D reporting strategy, Phase 4E runtime configuration strategy, and Phase 4F diagnostics and fixture responsibility cleanup.
+The strategy documented here reflects the current implemented test structure, normalized pytest marker behavior, Phase 4B CI execution strategy, Phase 4C Pytest parallel execution strategy, Phase 4D reporting strategy, Phase 4E runtime configuration strategy, Phase 4F diagnostics and fixture responsibility cleanup, and the Phase 5A Playwright cross-browser Smoke validation strategy.
 
 The `main` branch represents the stable portfolio version, while `develop` and active workstream branches may contain newer validated changes before they are promoted to `main`.
 
@@ -21,7 +21,7 @@ The application origin can be overridden for a test process through:
 
 without editing functional tests or Page Objects.
 
-Sauce Demo is used as a stable training application for practicing UI automation, test design, Page Object Model, test data management, fixtures, parametrization, selective suite execution, parallel test execution, runtime configuration, diagnostics, CI validation, reporting, and framework development.
+Sauce Demo is used as a stable training application for practicing UI automation, test design, Page Object Model, test data management, fixtures, parametrization, selective suite execution, parallel test execution, runtime configuration, diagnostics, representative cross-browser compatibility validation, CI validation, reporting, and framework development.
 
 ## Testing Approach
 
@@ -46,12 +46,13 @@ The project follows a progressive testing approach:
 17. Validate relevant marker suites and test modules locally.
 18. Validate the complete test suite locally when required.
 19. Validate supported parallel execution when execution behavior or isolation is affected.
-20. Validate runtime configuration behavior when execution settings change.
-21. Validate diagnostic behavior with controlled failures when diagnostic hooks change.
-22. Collect reporting and failure evidence appropriate to the execution context.
-23. Validate code quality and automated suites through GitHub Actions.
-24. Update test case and project documentation when coverage or strategy changes.
-25. Promote stable validated snapshots from `develop` to `main` when they are ready for portfolio presentation.
+20. Validate representative cross-browser Smoke behavior on Firefox and WebKit when browser compatibility or execution strategy is affected.
+21. Validate runtime configuration behavior when execution settings change.
+22. Validate diagnostic behavior with controlled failures when diagnostic hooks change.
+23. Collect reporting and failure evidence appropriate to the execution context.
+24. Validate code quality and automated suites through GitHub Actions.
+25. Update test case and project documentation when coverage or strategy changes.
+26. Promote stable validated snapshots from `develop` to `main` when they are ready for portfolio presentation.
 
 This approach supports both QA thinking and automation engineering practice.
 
@@ -100,6 +101,8 @@ A documented test case may be marked as `Planned` before dedicated automation is
 The corresponding test case file remains the authoritative source for individual automation status.
 
 Runtime configuration validation and Phase 4F framework diagnostics do not represent new product-facing manual test cases and therefore do not require separate test case automation metadata.
+
+Phase 5A cross-browser execution also changes execution coverage rather than functional test case coverage. Firefox and WebKit reuse the existing representative Smoke suite and therefore do not require separate browser-specific test cases or automation metadata.
 
 ## Current Automated Test Modules
 
@@ -241,6 +244,10 @@ Implemented Checkout coverage includes:
 * representative lightweight Smoke validation of Checkout Complete page availability
 * Back Home navigation to Inventory
 
+The existing Smoke coverage across Login, Inventory, Product Details, Cart, and Checkout is also the representative functional set used for Phase 5A Firefox and WebKit compatibility validation.
+
+Cross-browser execution does not introduce additional product-facing functional coverage or duplicate browser-specific test modules.
+
 ## Marker Strategy
 
 Pytest markers are used to create meaningful, selectively executable test suites.
@@ -289,7 +296,9 @@ The project uses:
 
 so unknown or unregistered markers should fail collection rather than silently creating accidental test categories.
 
-Runtime configuration, diagnostics, reporting, and parallel execution do not change marker meaning or marker assignment.
+Runtime configuration, diagnostics, reporting, browser selection, and parallel execution do not change marker meaning or marker assignment.
+
+Phase 5A does not introduce a dedicated cross-browser marker. Browser compatibility validation intentionally reuses the existing `smoke` suite.
 
 ### Smoke
 
@@ -311,7 +320,9 @@ Where both representative and broader coverage exist, the representative scenari
 
 A Smoke marker should not automatically imply Regression.
 
-Smoke currently has a dedicated GitHub Actions CI job.
+Smoke has a dedicated Chromium GitHub Actions CI job.
+
+The same existing Smoke suite is additionally executed through the Phase 5A Firefox/WebKit cross-browser matrix for representative browser-engine compatibility validation.
 
 ### Regression
 
@@ -334,7 +345,9 @@ Regression is not a default marker for every test that is not Smoke.
 
 Dedicated categories such as `security`, `sorting`, or `navigation` may stand alone when they already describe the scenario accurately.
 
-Regression currently has a dedicated GitHub Actions CI job.
+Regression has a dedicated Chromium GitHub Actions CI job.
+
+Firefox and WebKit do not execute the complete Regression suite as part of the Phase 5A strategy.
 
 ### UI
 
@@ -460,7 +473,7 @@ The E2E marker therefore describes membership in the logical primary journey, no
 
 E2E remains selectively executable but does not currently have a dedicated CI job.
 
-Its tests are still included in complete full-suite CI execution.
+Its tests are still included in complete Chromium full-suite CI execution. Individual E2E tests carrying the `smoke` marker also participate in representative Firefox and WebKit Smoke validation.
 
 ## Marker Assignment Principles
 
@@ -486,7 +499,7 @@ CI execution responsibility is separate from marker meaning.
 
 The existence or absence of a dedicated CI job does not change the semantic meaning of a marker.
 
-Parallel execution, runtime configuration, diagnostics, and reporting also do not change marker meaning or assignment.
+Parallel execution, runtime configuration, diagnostics, browser selection, and reporting also do not change marker meaning or assignment.
 
 ## Marker-Based Suite Execution
 
@@ -531,29 +544,44 @@ Examples:
     pytest -m "smoke and navigation" -v
     pytest -m "regression and navigation" -v
 
-Parallel Smoke:
+Parallel Smoke on the default Chromium browser:
 
     pytest -m smoke -n auto -v
 
-Parallel Regression:
+Parallel Regression on Chromium:
 
     pytest -m regression -n auto -v
 
-Parallel complete suite:
+Parallel complete Chromium suite:
 
     pytest -n auto -v
 
+Representative Firefox Smoke:
+
+    QA_BROWSER=firefox pytest -m smoke -n auto -v
+
+Representative WebKit Smoke:
+
+    QA_BROWSER=webkit pytest -m smoke -n auto -v
+
 Parallel execution changes distribution, not suite membership.
+
+Browser selection changes the Playwright engine used for the selected tests, not marker semantics.
 
 ## Parallel Execution Strategy
 
 pytest-xdist provides the implemented worker-level parallel execution model.
 
-The approved parallel execution commands are:
+The approved primary Chromium parallel execution commands are:
 
     pytest -m smoke -n auto -v
     pytest -m regression -n auto -v
     pytest -n auto -v
+
+The approved representative cross-browser Smoke commands are:
+
+    QA_BROWSER=firefox pytest -m smoke -n auto -v
+    QA_BROWSER=webkit pytest -m smoke -n auto -v
 
 Sequential execution remains supported:
 
@@ -570,36 +598,50 @@ The current suite is designed so that tests:
 * keep parametrized cases independent
 * keep E2E checkpoints independent
 * keep runtime configuration process-oriented rather than test-state-oriented
+* remain engine-neutral unless a genuine browser limitation is explicitly identified
 
 Phase 4F preserves this execution model.
+
+Phase 5A reuses the same test independence and xdist model on Firefox and WebKit Smoke execution.
 
 Moving application scenario fixtures from the root `conftest.py` to `tests/conftest.py` does not change their functional intent or introduce shared state.
 
 ## GitHub Actions Concurrency Versus Pytest Parallelism
 
-GitHub Actions job-level concurrency and pytest-xdist worker-level parallelism are separate execution mechanisms.
+GitHub Actions job-level concurrency, matrix expansion, and pytest-xdist worker-level parallelism are separate execution mechanisms.
 
 After `quality` succeeds, GitHub Actions may schedule these jobs independently:
 
 * `smoke`
 * `regression`
 * `full-suite`
+* `cross-browser-smoke`
 
-This is **job-level concurrency**.
+The `cross-browser-smoke` job expands into:
 
-Inside each of those browser-test jobs, pytest-xdist distributes collected tests between workers.
+* Firefox
+* WebKit
+
+This is **job-level and matrix-level GitHub Actions execution**.
+
+Inside every browser-test job, pytest-xdist distributes collected tests between workers.
 
 This is **Pytest worker-level parallelism**.
 
 The execution model can therefore be represented as:
 
     quality
-    ├── smoke
+    ├── smoke [Chromium]
     │   └── xdist workers
-    ├── regression
+    ├── regression [Chromium]
     │   └── xdist workers
-    └── full-suite
-        └── xdist workers
+    ├── full-suite [Chromium]
+    │   └── xdist workers
+    └── cross-browser-smoke
+        ├── Firefox
+        │   └── xdist workers
+        └── WebKit
+            └── xdist workers
 
 The `quality` job does not execute browser tests and does not use xdist.
 
@@ -680,11 +722,39 @@ Example:
 
     QA_BROWSER=chromium pytest -m smoke -v
 
-The configuration layer recognizes Playwright browser engines.
+The configuration layer recognizes all three Playwright browser engines.
 
-Recognition does not guarantee that the requested browser is installed in the execution environment.
+The implemented validation strategy is intentionally asymmetric:
 
-The current project CI installs Chromium only.
+* Chromium is the primary browser for Smoke, Regression, and complete full-suite validation.
+* Firefox provides representative compatibility validation through the existing Smoke suite.
+* WebKit provides representative compatibility validation through the existing Smoke suite.
+
+Representative local cross-browser execution uses:
+
+    QA_BROWSER=firefox pytest -m smoke -n auto -v
+
+and:
+
+    QA_BROWSER=webkit pytest -m smoke -n auto -v
+
+GitHub Actions follows the same responsibility split.
+
+The Chromium Smoke, Regression, and full-suite jobs explicitly use:
+
+    QA_BROWSER=chromium
+
+The Phase 5A cross-browser matrix supplies either:
+
+    QA_BROWSER=firefox
+
+or:
+
+    QA_BROWSER=webkit
+
+through the matrix browser value.
+
+Cross-browser support therefore does not imply complete Regression or full-suite execution on all three engines.
 
 Explicit native pytest-playwright `--browser` options remain usable and take precedence over the project environment-derived browser when supplied explicitly.
 
@@ -722,7 +792,7 @@ Values are normalized case-insensitively.
 
 The native pytest-playwright `--headed` option remains available.
 
-CI explicitly uses `QA_HEADED=false`.
+All current CI browser-test executions explicitly use `QA_HEADED=false`.
 
 ### Timeout Strategy
 
@@ -885,18 +955,24 @@ Focused runtime configuration behavior is validated in:
 
 ### Runtime Configuration Scope Boundaries
 
-Phase 4E does not implement:
+The runtime configuration layer does not implement:
 
 * named environment profiles
 * automatic `.env` loading
-* browser matrices
-* cross-browser CI execution
-* Firefox or WebKit CI installation
 * device emulation
 * mobile emulation
 * browser channels
 * slow motion configuration
 * retries
+
+The current Phase 5A execution strategy does not introduce:
+
+* complete Firefox Regression execution
+* complete WebKit Regression execution
+* complete Firefox full-suite execution
+* complete WebKit full-suite execution
+* browser-specific functional test modules
+* browser-specific runtime conditionals for application coverage
 
 Phase 4F diagnostics and fixture responsibility cleanup are implemented separately and are not part of the remaining runtime configuration scope.
 
@@ -946,6 +1022,8 @@ Representative format:
 The browser, headed mode, trace policy, and video policy reflect effective Pytest / pytest-playwright configuration.
 
 This is especially relevant when explicit native command-line options override environment-derived defaults.
+
+The same runtime summary mechanism applies to Chromium, Firefox, and WebKit execution.
 
 ### Runtime Summary Under pytest-xdist
 
@@ -1030,24 +1108,145 @@ Trace and video remain pytest-playwright-owned runtime capabilities.
 
 The custom failure screenshot remains the project-owned screenshot mechanism.
 
+## Phase 5A Cross-Browser Strategy
+
+Phase 5A extends the mature Playwright execution model with representative browser-engine compatibility validation.
+
+The strategy deliberately separates complete regression responsibility from compatibility validation.
+
+### Browser Responsibilities
+
+Chromium is the primary complete regression browser.
+
+It executes:
+
+* the dedicated Smoke suite
+* the dedicated Regression suite
+* the complete unfiltered full suite
+
+Firefox is a representative compatibility browser.
+
+It executes:
+
+* the existing Smoke suite only
+
+WebKit is a representative compatibility browser.
+
+It executes:
+
+* the existing Smoke suite only
+
+This model provides coverage across Chromium, Firefox, and WebKit without multiplying complete Regression and full-suite execution across all three engines.
+
+### Test Ownership
+
+Cross-browser execution reuses the existing test suite.
+
+Phase 5A does not introduce:
+
+* a `cross-browser` pytest marker
+* Firefox-specific functional test modules
+* WebKit-specific functional test modules
+* duplicated browser-specific product coverage
+* browser-specific application assertions
+* browser-specific skip logic without a demonstrated engine limitation
+
+The existing `smoke` marker remains the source of representative scenarios used for compatibility validation.
+
+### Local Cross-Browser Execution
+
+Representative Firefox validation:
+
+    QA_BROWSER=firefox pytest -m smoke -n auto -v
+
+Representative WebKit validation:
+
+    QA_BROWSER=webkit pytest -m smoke -n auto -v
+
+The same centralized runtime configuration, fixture model, Page Objects, assertions, diagnostics, and pytest-xdist strategy are used across the supported engines.
+
+### CI Cross-Browser Execution
+
+GitHub Actions provides a dedicated:
+
+    cross-browser-smoke
+
+job using a matrix limited to:
+
+    firefox
+    webkit
+
+Each matrix execution:
+
+* depends on `quality`
+* installs only the selected Playwright browser engine
+* executes headless
+* sets `QA_BROWSER` from the matrix browser value
+* executes `pytest -m smoke -n auto -v`
+* generates a browser-specific self-contained pytest-html report
+* uploads browser-specific GitHub Actions artifacts
+
+Chromium is not duplicated in this matrix because its existing Smoke, Regression, and full-suite jobs already provide Chromium execution.
+
+### Reporting And Artifact Responsibilities
+
+The cross-browser matrix produces browser-specific pytest-html files:
+
+    reports/firefox-smoke-report.html
+    reports/webkit-smoke-report.html
+
+Firefox artifacts:
+
+    firefox-smoke-pytest-html-report
+    firefox-smoke-test-artifacts
+
+WebKit artifacts:
+
+    webkit-smoke-pytest-html-report
+    webkit-smoke-test-artifacts
+
+Browser-specific naming prevents collisions between matrix executions.
+
+Allure remains focused on complete-suite reporting and is generated by the Chromium `full-suite` job.
+
+Phase 5A does not introduce duplicate Firefox or WebKit Allure report generation.
+
+### Cross-Browser Boundaries
+
+The implemented strategy does not claim:
+
+* complete three-browser Regression coverage
+* complete three-browser full-suite coverage
+* equal coverage depth on every engine
+* browser-specific application functionality
+* Selenium execution
+* browser-specific workaround logic without a demonstrated compatibility requirement
+
+Cross-browser validation should remain engine-neutral by default.
+
+If a genuine browser compatibility issue is discovered, the preferred solution is an engine-independent framework or test correction where technically appropriate.
+
 ## Dedicated CI Marker Execution
 
-The GitHub Actions job structure established in Phase 4B and extended with xdist, reporting, runtime configuration, and diagnostics is preserved:
+The GitHub Actions execution model combines the existing Chromium jobs with the Phase 5A representative cross-browser matrix:
 
     quality
-    ├── smoke
-    ├── regression
-    └── full-suite
+    ├── smoke [Chromium]
+    ├── regression [Chromium]
+    ├── full-suite [Chromium]
+    └── cross-browser-smoke
+        ├── Firefox
+        └── WebKit
 
-Smoke CI uses:
+Chromium Smoke CI uses:
 
     pytest -m smoke -n auto -v
 
-Regression CI uses:
+Chromium Regression CI uses:
 
     pytest -m regression -n auto -v
 
-The complete full-suite CI execution uses pytest-xdist and additionally collects Allure result data:
+The complete Chromium full-suite CI execution uses pytest-xdist and additionally collects Allure result data:
 
     pytest -n auto -v \
       --html=reports/report.html \
@@ -1055,11 +1254,19 @@ The complete full-suite CI execution uses pytest-xdist and additionally collects
       --alluredir=reports/allure-results \
       --clean-alluredir
 
-Smoke and Regression retain their existing self-contained pytest-html reporting.
+Firefox and WebKit cross-browser CI use:
 
-Allure reporting is intentionally generated only for the complete `full-suite` CI job.
+    pytest -m smoke -n auto -v
 
-Phase 4F diagnostics operate through these existing Pytest executions.
+with `QA_BROWSER` supplied from the corresponding matrix value.
+
+Chromium Smoke and Regression retain their existing self-contained pytest-html reporting.
+
+Firefox and WebKit produce independent browser-specific pytest-html reports.
+
+Allure reporting is intentionally generated only for the complete Chromium `full-suite` CI job.
+
+Phase 4F diagnostics operate through all normal Pytest browser executions.
 
 Dedicated CI jobs do not currently exist for:
 
@@ -1071,7 +1278,7 @@ Dedicated CI jobs do not currently exist for:
 
 These marker suites remain selectively executable locally.
 
-Tests assigned to them still participate in the complete unfiltered full-suite CI execution.
+Tests assigned to them still participate in the complete unfiltered Chromium full-suite CI execution, while any tests that also carry `smoke` participate in representative Firefox and WebKit validation.
 
 ## Test Design Principles
 
@@ -1087,6 +1294,7 @@ Automated tests should follow:
 * no hardcoded waits
 * independent test execution
 * compatibility with supported sequential and parallel execution
+* browser-engine-neutral functional behavior where possible
 * environment-specific execution behavior kept outside functional tests
 * diagnostic behavior kept outside functional test logic
 * readable failure output
@@ -1097,6 +1305,8 @@ Automated tests should follow:
 Tests should focus on behavior, while page-specific UI interactions should be handled by Page Object classes.
 
 Runtime configuration should configure execution rather than change the functional intent of a test.
+
+Browser selection should select the execution engine rather than create separate functional test ownership.
 
 Diagnostics should describe execution and failure context rather than become functional test assertions.
 
@@ -1152,7 +1362,7 @@ They own checkout form interaction, checkout summary behavior, checkout completi
 
 Page Objects should be introduced or expanded when they reduce duplication and improve readability.
 
-Page Objects should not independently parse environment variables, own browser runtime policies, collect framework diagnostics, or own failure reporting.
+Page Objects should not independently parse environment variables, own browser runtime policies, contain browser-specific compatibility branching without demonstrated need, collect framework diagnostics, or own failure reporting.
 
 ## Reusable Assertion Strategy
 
@@ -1181,6 +1391,7 @@ They should not contain:
 * fixture responsibilities
 * Page Object responsibilities
 * runtime configuration parsing
+* browser-specific execution branching without demonstrated need
 * diagnostic hook logic
 * reporting configuration
 
@@ -1232,6 +1443,8 @@ It is built on pytest-playwright's `new_context` fixture and applies configured 
 
 The Playwright `page` fixture used by functional tests therefore receives configured context behavior without functional tests needing to know how runtime configuration is applied.
 
+The same fixture structure is reused on Chromium, Firefox, and WebKit.
+
 Application fixtures remain explicit and scenario-oriented.
 
 Phase 4F does not introduce:
@@ -1241,6 +1454,8 @@ Phase 4F does not introduce:
 * autouse redesign
 * a multi-layer fixture package
 * fixture scope redesign
+
+Phase 5A does not introduce separate fixtures for individual browser engines.
 
 The current fixture chains remain compatible with pytest-xdist worker-level parallel execution.
 
@@ -1300,7 +1515,9 @@ It belongs to:
 
     config/settings.py
 
-Diagnostics are also not test data.
+Browser selection is also runtime configuration rather than test data.
+
+Diagnostics are not test data.
 
 Shared diagnostic formatting belongs to:
 
@@ -1353,6 +1570,8 @@ Individual `pytest.param()` cases may receive different markers when one represe
 
 Parametrized cases must remain independent because xdist may execute separate cases on different workers and in an order different from sequential execution.
 
+The same parametrized Smoke cases can execute on Chromium, Firefox, or WebKit without creating separate browser-specific parameter data.
+
 Runtime configuration parametrization does not use manual product test case IDs because it validates framework configuration rather than product scenarios.
 
 ## Assertion Strategy
@@ -1394,6 +1613,8 @@ Use plain Python assertions when comparing extracted or calculated values such a
 
 Use reusable assertion helpers when the same meaningful validation is shared across multiple tests or page areas.
 
+Functional assertions should remain browser-engine-neutral unless a genuine product or engine limitation requires otherwise.
+
 Diagnostic output should not replace functional assertions.
 
 ## Automation Priority
@@ -1412,6 +1633,8 @@ Automation should focus on:
 Not every possible scenario needs dedicated automation.
 
 Some scenarios may remain manual, exploratory, or planned when automation would currently add limited value or when the scenario belongs to later approved scope.
+
+Representative cross-browser execution should reuse valuable existing scenarios rather than duplicate the same functional coverage per browser engine.
 
 ## Scope Boundaries
 
@@ -1439,6 +1662,8 @@ Cart coverage should not own detailed Checkout Information, Checkout Overview, o
 
 Runtime configuration is a framework execution concern and should not create duplicate functional page-level test ownership.
 
+Cross-browser execution is also an execution concern and should not create duplicate functional page-level ownership or duplicate browser-specific test cases.
+
 Runtime and failed-test diagnostics are framework execution concerns and should not create duplicate functional test ownership.
 
 Fixture organization should preserve scenario readability and independent state preparation rather than introduce abstraction solely for architectural complexity.
@@ -1460,6 +1685,7 @@ Current reporting and debugging capabilities include:
 * Allure failure screenshot attachments
 * optional Playwright traces
 * optional Playwright videos
+* browser-specific Firefox and WebKit Smoke reports
 * GitHub Actions artifacts
 
 ### pytest-html
@@ -1468,15 +1694,24 @@ Current reporting and debugging capabilities include:
 
 It is used by the existing CI browser jobs and can also be used during local execution.
 
-Current CI report paths are:
+Current Chromium CI report paths are:
 
     reports/smoke-report.html
     reports/regression-report.html
     reports/report.html
 
-Smoke and Regression remain pytest-html-focused CI jobs.
+Current cross-browser Smoke report paths are:
 
-Phase 4D does not add duplicate Allure report generation to those dedicated marker jobs.
+    reports/firefox-smoke-report.html
+    reports/webkit-smoke-report.html
+
+Chromium Smoke and Regression remain pytest-html-focused CI jobs.
+
+Firefox and WebKit Smoke also use self-contained pytest-html reports.
+
+Phase 4D does not add duplicate Allure report generation to the dedicated Chromium marker jobs.
+
+Phase 5A does not add duplicate Allure report generation to Firefox or WebKit Smoke.
 
 Phase 4F diagnostics operate through the same Pytest reports without replacing pytest-html.
 
@@ -1519,6 +1754,8 @@ The generated report is written to:
     reports/allure-report/
 
 The Allure CLI is a report-generation prerequisite and is separate from the Python `allure-pytest` dependency.
+
+The current CI Allure strategy remains attached to the complete Chromium `full-suite` job.
 
 ### Failure Screenshots
 
@@ -1600,12 +1837,15 @@ Phase 4F does not change trace or video lifecycle ownership.
 
 ### Reporting And Diagnostic Compatibility
 
-Current reporting and diagnostic behavior supports both:
+Current reporting and diagnostic behavior supports:
 
 * sequential Pytest execution
 * pytest-xdist worker-level parallel execution
+* Chromium execution
+* representative Firefox Smoke execution
+* representative WebKit Smoke execution
 
-No sequential-only reporting or diagnostic exception is required.
+No sequential-only or browser-specific reporting exception is required for the implemented Phase 5A strategy.
 
 The existing failure screenshot mechanism and Allure attachment behavior remain compatible with the current parallel execution model.
 
@@ -1644,21 +1884,29 @@ Persistent project diagnostic log files are not implemented.
 
 ### CI Reporting
 
-GitHub Actions preserves the existing pytest-html reporting strategy while adding advanced Allure reporting to the complete `full-suite` job.
+GitHub Actions preserves the existing Chromium pytest-html reporting strategy, keeps advanced Allure reporting on the complete `full-suite` job, and adds independent browser-specific pytest-html reports for representative Firefox and WebKit Smoke validation.
 
-Smoke CI generates:
+Chromium Smoke CI generates:
 
     reports/smoke-report.html
 
-Regression CI generates:
+Chromium Regression CI generates:
 
     reports/regression-report.html
 
-The `full-suite` job generates:
+The Chromium `full-suite` job generates:
 
     reports/report.html
     reports/allure-results/
     reports/allure-report/
+
+Firefox Smoke generates:
+
+    reports/firefox-smoke-report.html
+
+WebKit Smoke generates:
+
+    reports/webkit-smoke-report.html
 
 The full-suite Pytest command is:
 
@@ -1692,7 +1940,27 @@ and the broader runtime-output artifact remains:
 
     test-artifacts
 
-Smoke and Regression retain their existing pytest-html and runtime artifact behavior.
+Chromium Smoke artifacts are:
+
+    smoke-pytest-html-report
+    smoke-test-artifacts
+
+Chromium Regression artifacts are:
+
+    regression-pytest-html-report
+    regression-test-artifacts
+
+Firefox cross-browser Smoke artifacts are:
+
+    firefox-smoke-pytest-html-report
+    firefox-smoke-test-artifacts
+
+WebKit cross-browser Smoke artifacts are:
+
+    webkit-smoke-pytest-html-report
+    webkit-smoke-test-artifacts
+
+Browser-specific artifact names prevent conflicts between the Firefox and WebKit matrix executions.
 
 Detailed CI artifact behavior is documented in:
 
@@ -1702,29 +1970,34 @@ Trace and video are disabled in CI by default and are therefore not introduced a
 
 Phase 4F does not add a dedicated persistent diagnostic artifact.
 
-Allure history persistence, report hosting, GitHub Pages publishing, retries, and cross-browser reporting are not part of the current implemented scope.
+Allure history persistence, report hosting, GitHub Pages publishing, retries, and cross-browser Allure reporting are not part of the current implemented scope.
 
 ## Local Validation Strategy
 
-Recommended standard sequential local validation:
+Recommended standard sequential local validation on the primary Chromium browser:
 
     ruff check .
     black --check .
     isort . --check-only
     pytest -v
 
-Parallel execution is additionally available for execution validation:
+Parallel Chromium execution is additionally available for execution validation:
 
     pytest -n auto -v
 
-The approved parallel marker-suite validation commands are:
+The approved parallel Chromium marker-suite validation commands are:
 
     pytest -m smoke -n auto -v
     pytest -m regression -n auto -v
 
+The approved Phase 5A cross-browser compatibility validation commands are:
+
+    QA_BROWSER=firefox pytest -m smoke -n auto -v
+    QA_BROWSER=webkit pytest -m smoke -n auto -v
+
 Sequential execution remains supported and may be used for normal development, focused debugging, or when parallel execution is not required.
 
-For reporting validation, Allure result collection can be added to either sequential or parallel execution.
+For reporting validation, Allure result collection can be added to either sequential or parallel Chromium complete-suite execution.
 
 Example parallel full-suite reporting validation:
 
@@ -1755,6 +2028,8 @@ Example:
     QA_TIMEOUT_MS=20000 \
     QA_EXPECT_TIMEOUT_MS=4000 \
     pytest -m smoke -v
+
+Browser-selection validation may also use representative Firefox or WebKit Smoke execution when required.
 
 Runtime artifact policies may be validated with representative controlled executions where required.
 
@@ -1820,7 +2095,7 @@ When changes affect checkpoints in the main purchase journey, run:
 
 This validates the complete logical checkpoint suite across the covered page areas.
 
-For checkpoint, stabilization, or portfolio-promotion tasks, run relevant scoped modules and full validation when possible:
+For checkpoint, stabilization, or portfolio-promotion tasks, run relevant scoped modules and full Chromium validation when possible:
 
     pytest -v tests/test_login_page.py
     pytest -v tests/test_inventory_page.py
@@ -1829,13 +2104,18 @@ For checkpoint, stabilization, or portfolio-promotion tasks, run relevant scoped
     pytest -v tests/test_checkout_page.py
     pytest -v
 
-When parallel safety, fixture responsibility, diagnostics, or execution behavior is part of the validation scope, additionally run:
+When parallel safety, fixture responsibility, diagnostics, or Chromium execution behavior is part of the validation scope, additionally run:
 
     pytest -m smoke -n auto -v
     pytest -m regression -n auto -v
     pytest -n auto -v
 
-The full test suite should pass before a workstream is considered ready for merge unless a scoped validation exception is explicitly accepted.
+When cross-browser compatibility or the Phase 5A execution path is affected, additionally run:
+
+    QA_BROWSER=firefox pytest -m smoke -n auto -v
+    QA_BROWSER=webkit pytest -m smoke -n auto -v
+
+The full Chromium test suite should pass before a workstream is considered ready for merge unless a scoped validation exception is explicitly accepted.
 
 ## Phase 4F Validation Status
 
@@ -1859,6 +2139,34 @@ Controlled failure validation after fixture responsibility separation also confi
 
 These validation results confirm that diagnostics and fixture responsibility cleanup preserve the existing test execution model.
 
+## Phase 5A Cross-Browser Validation Status
+
+Phase 5A validation confirmed that the existing Smoke suite runs without browser-specific test changes on both additional Playwright engines.
+
+Local validation confirmed:
+
+    Firefox Smoke: 31 passed
+    WebKit Smoke: 31 passed
+    Chromium full-suite: 236 passed
+    Ruff: passed
+    Black check: passed
+    isort: passed
+
+No Firefox- or WebKit-specific compatibility workaround was required.
+
+GitHub Actions validation confirmed successful execution of:
+
+* `quality`
+* Chromium `smoke`
+* Chromium `regression`
+* Chromium `full-suite`
+* `cross-browser-smoke (firefox)`
+* `cross-browser-smoke (webkit)`
+
+The CI validation also confirmed independent Firefox and WebKit pytest-html reports and browser-specific artifact names.
+
+These results validate the representative compatibility strategy without expanding complete Regression or full-suite execution beyond Chromium.
+
 ## CI Validation Strategy
 
 GitHub Actions validates the project automatically according to the configured workflow triggers.
@@ -1878,28 +2186,37 @@ Regular pushes to feature, refactor, fix, or documentation branches do not autom
 
 ### Current Job Structure
 
-The current CI pipeline retains the job structure introduced in Phase 4B:
+The current CI pipeline extends the Phase 4 execution topology with the Phase 5A representative cross-browser matrix:
 
     quality
-    ├── smoke
-    ├── regression
-    └── full-suite
+    ├── smoke [Chromium]
+    ├── regression [Chromium]
+    ├── full-suite [Chromium]
+    └── cross-browser-smoke
+        ├── Firefox
+        └── WebKit
 
 The `quality` job executes first.
 
-Smoke, Regression, and full-suite all declare:
+The Chromium Smoke, Regression, and full-suite jobs declare:
 
     needs: quality
 
-After successful quality validation, those three browser jobs are independently executable and do not depend on each other.
+The `cross-browser-smoke` matrix also declares:
 
-Phase 4C integrates pytest-xdist worker-level parallel execution into the three existing browser-test jobs.
+    needs: quality
 
-Phase 4D adds advanced Allure reporting to the existing `full-suite` job without adding another browser job.
+After successful quality validation, the browser-test jobs may execute independently.
 
-Phase 4E adds explicit runtime configuration defaults to the three existing browser-test jobs without changing the job topology.
+Phase 4C provides pytest-xdist worker-level parallel execution inside browser-test jobs.
 
-Phase 4F adds runtime and failed-test diagnostics through the existing Pytest execution path without adding another job or changing the topology.
+Phase 4D provides advanced Allure reporting to the existing Chromium `full-suite` job.
+
+Phase 4E provides explicit runtime configuration defaults.
+
+Phase 4F provides runtime and failed-test diagnostics through the existing Pytest execution path.
+
+Phase 5A adds representative Firefox and WebKit Smoke execution without replacing or expanding the complete Chromium Regression/full-suite strategy.
 
 ### Quality Validation
 
@@ -1915,7 +2232,7 @@ It also performs:
 * Python 3.12 setup
 * dependency installation
 
-The quality job does not install Playwright Chromium.
+The quality job does not install Playwright browsers.
 
 It does not use pytest-xdist.
 
@@ -1925,7 +2242,7 @@ A quality failure prevents all browser-test jobs from executing.
 
 ### CI Runtime Defaults
 
-Smoke, Regression, and full-suite use:
+The Chromium Smoke, Regression, and full-suite jobs use:
 
     QA_BASE_URL=https://www.saucedemo.com
     QA_BROWSER=chromium
@@ -1936,54 +2253,77 @@ Smoke, Regression, and full-suite use:
     QA_TRACE_POLICY=off
     QA_VIDEO_POLICY=off
 
-These values intentionally match the approved local defaults.
+The Firefox/WebKit matrix uses the same values except that `QA_BROWSER` is supplied from:
 
-The CI runtime strategy therefore remains:
+    matrix.browser
 
-* Chromium-only
-* headless
-* parallel through pytest-xdist
+and therefore resolves to:
+
+    firefox
+
+or:
+
+    webkit
+
+The CI runtime strategy therefore is:
+
+* Chromium Smoke
+* Chromium Regression
+* Chromium complete full suite
+* Firefox representative Smoke
+* WebKit representative Smoke
+* headless execution
+* parallel execution through pytest-xdist
 * failure screenshot capture enabled
 * tracing disabled by default
 * video disabled by default
 * Phase 4F runtime diagnostics active through normal Pytest execution
 
-The runtime configuration integration does not create:
+The execution strategy does not introduce:
 
-* browser matrices
-* Firefox installation
-* WebKit installation
+* complete Firefox Regression
+* complete WebKit Regression
+* Firefox complete full-suite execution
+* WebKit complete full-suite execution
 * retries
 * `continue-on-error`
 * default trace retention
 * default video retention
 * diagnostic-specific runtime configuration
 
-### Smoke CI Validation
+### Chromium Smoke CI Validation
 
-The dedicated Smoke job executes:
+The dedicated Chromium Smoke job executes:
 
     pytest -m smoke -n auto -v
 
-The actual CI command additionally generates a self-contained pytest HTML report.
+The actual CI command additionally generates:
 
-Smoke failure fails the Smoke job.
+    reports/smoke-report.html
 
-Smoke does not generate an Allure report.
+as a self-contained pytest HTML report.
 
-### Regression CI Validation
+Smoke failure fails the Chromium Smoke job.
 
-The dedicated Regression job executes:
+The job does not generate an Allure report.
+
+### Chromium Regression CI Validation
+
+The dedicated Chromium Regression job executes:
 
     pytest -m regression -n auto -v
 
-The actual CI command additionally generates a self-contained pytest HTML report.
+The actual CI command additionally generates:
 
-Regression failure fails the Regression job.
+    reports/regression-report.html
 
-Regression does not generate an Allure report.
+as a self-contained pytest HTML report.
 
-### Full-Suite CI Validation
+Regression failure fails the Chromium Regression job.
+
+The job does not generate an Allure report.
+
+### Chromium Full-Suite CI Validation
 
 The full-suite job executes the complete unfiltered automated test suite through pytest-xdist and collects both pytest-html and Allure result data:
 
@@ -2005,9 +2345,38 @@ from:
 
 when usable Allure result data exists.
 
-The full-suite job remains the complete automated regression gate and the primary CI source for the advanced Allure report.
+The full-suite job remains the complete automated Chromium regression gate and the primary CI source for the advanced Allure report.
 
-Smoke and Regression provide targeted CI feedback but do not replace full-suite execution.
+Chromium Smoke and Regression provide targeted CI feedback but do not replace full-suite execution.
+
+### Firefox And WebKit Cross-Browser Smoke CI Validation
+
+The `cross-browser-smoke` job uses a matrix limited to:
+
+    firefox
+    webkit
+
+Each matrix entry installs only its selected browser:
+
+    playwright install --with-deps ${{ matrix.browser }}
+
+Each entry then executes:
+
+    pytest -m smoke -n auto -v
+
+with a browser-specific HTML report:
+
+    reports/${{ matrix.browser }}-smoke-report.html
+
+The matrix uses:
+
+    fail-fast: false
+
+so a failure on one additional browser does not prevent the other matrix entry from producing its validation result.
+
+Firefox and WebKit Smoke failures fail their corresponding matrix jobs.
+
+Neither matrix entry generates an Allure report.
 
 ### Marker Suites Without Dedicated CI Jobs
 
@@ -2021,7 +2390,9 @@ Dedicated CI jobs do not currently exist for:
 
 These suites remain available for selective local execution.
 
-Tests assigned to those markers still participate in complete full-suite CI validation.
+Tests assigned to those markers still participate in complete Chromium full-suite CI validation.
+
+Tests that also carry `smoke` participate in representative Firefox/WebKit Smoke execution.
 
 ### CI Failure Behavior
 
@@ -2035,7 +2406,7 @@ Browser-job artifact upload steps use:
 
 so available reports and runtime outputs can still be published after a browser-test failure.
 
-The Allure generation step in the full-suite job also uses failure-tolerant workflow control so report generation can be attempted after failed test execution when usable result data exists.
+The Allure generation step in the Chromium full-suite job also uses failure-tolerant workflow control so report generation can be attempted after failed test execution when usable result data exists.
 
 Diagnostics do not convert failed execution into successful validation.
 
@@ -2049,24 +2420,39 @@ The runtime configuration layer recognizes:
     firefox
     webkit
 
-Current GitHub Actions browser execution remains Chromium-only.
+Current GitHub Actions browser execution uses an intentionally asymmetric strategy.
 
-The CI browser-test jobs install:
+Chromium executes:
+
+* Smoke
+* Regression
+* complete full suite
+
+Its jobs install:
 
     playwright install --with-deps chromium
 
-The current runtime, parallel, reporting, and diagnostic strategies do not introduce:
+Firefox executes representative Smoke coverage through the Phase 5A matrix.
 
-* Firefox CI execution
-* WebKit CI execution
-* cross-browser matrices
-* cross-browser parallel execution
+Its matrix entry installs:
 
-Cross-browser CI remains outside the current implemented scope.
+    playwright install --with-deps firefox
+
+WebKit executes representative Smoke coverage through the Phase 5A matrix.
+
+Its matrix entry installs:
+
+    playwright install --with-deps webkit
+
+Every browser-test CI execution uses pytest-xdist with:
+
+    -n auto
+
+Cross-browser CI therefore represents compatibility validation rather than complete three-browser regression coverage.
 
 ## Phase 4C Execution Boundaries
 
-Phase 4C extends the existing Phase 4B execution model without changing its job architecture.
+Phase 4C extended the existing Phase 4B execution model without changing its job architecture at the time of implementation.
 
 Implemented Phase 4C behavior includes:
 
@@ -2077,20 +2463,22 @@ Implemented Phase 4C behavior includes:
 * sequential execution remaining supported
 * validation of fixture and test independence under worker-level execution
 * validation of parametrized and E2E checkpoint independence
-* xdist integration into existing Smoke, Regression, and full-suite CI jobs
+* xdist integration into the existing Smoke, Regression, and full-suite CI jobs
 * preservation of the `quality` prerequisite
 * preservation of existing pytest-html reporting
 * preservation of existing GitHub Actions artifact behavior
-* Chromium-only browser scope
+* Chromium-only browser scope for the Phase 4C implementation
 * explicit distinction between GitHub Actions job concurrency and pytest-xdist worker concurrency
 
 No sequential-only test exceptions are required.
 
 `pytest-xdist` is an implemented execution capability and should not be described as a future-only dependency.
 
+Phase 5A later reuses the Phase 4C worker-level execution model for representative Firefox and WebKit Smoke validation.
+
 ## Phase 4D Reporting Boundaries
 
-Phase 4D extends the existing execution model with complementary reporting capabilities.
+Phase 4D extended the existing execution model with complementary reporting capabilities.
 
 Implemented Phase 4D behavior includes:
 
@@ -2111,7 +2499,7 @@ Implemented Phase 4D behavior includes:
 * Smoke and Regression remaining pytest-html-focused
 * generated reporting output remaining outside version-controlled repository content
 
-Phase 4D does not implement:
+Phase 4D did not implement:
 
 * Allure history or trend persistence
 * hosted Allure reports
@@ -2121,13 +2509,15 @@ Phase 4D does not implement:
 * cross-browser reporting
 * CI matrices
 
+Those statements describe the Phase 4D implementation boundary. Phase 5A later adds browser-specific pytest-html reporting for Firefox and WebKit Smoke without changing the Chromium full-suite Allure responsibility.
+
 Allure complements pytest-html and the existing screenshot evidence rather than replacing them.
 
 Trace and video policies are implemented separately through Phase 4E runtime configuration and remain disabled by default.
 
 ## Phase 4E Runtime Configuration Boundaries
 
-Phase 4E extends the existing framework with centralized runtime execution configuration.
+Phase 4E extended the existing framework with centralized runtime execution configuration.
 
 Implemented Phase 4E behavior includes:
 
@@ -2157,10 +2547,10 @@ Implemented Phase 4E behavior includes:
 * video integration through pytest-playwright
 * preservation of explicit native pytest-playwright runtime options where applicable
 * explicit runtime defaults in Smoke, Regression, and full-suite CI jobs
-* preservation of Chromium-only CI
+* preservation of Chromium-only CI for the Phase 4E implementation
 * preservation of existing Phase 4B–4D CI topology, parallelization, reporting, and artifact behavior
 
-Phase 4E does not implement:
+Phase 4E did not implement:
 
 * named environment profiles
 * `.env` loading
@@ -2173,11 +2563,15 @@ Phase 4E does not implement:
 * slow motion configuration
 * retries
 
-Phase 4E is implemented and remains the current runtime configuration foundation.
+Those statements describe the Phase 4E implementation boundary.
+
+Phase 5A later consumes the browser selection capability already provided by Phase 4E to run representative Firefox and WebKit Smoke validation.
+
+Phase 4E remains the current runtime configuration foundation.
 
 ## Phase 4F Diagnostics And Fixture Cleanup Boundaries
 
-Phase 4F extends the existing framework without changing functional test coverage, marker semantics, fixture scopes, browser lifecycle ownership, or CI topology.
+Phase 4F extended the existing framework without changing functional test coverage, marker semantics, fixture scopes, browser lifecycle ownership, or the Phase 4 CI topology at the time of implementation.
 
 Implemented Phase 4F behavior includes:
 
@@ -2212,11 +2606,11 @@ Implemented Phase 4F behavior includes:
 * preserved pytest-playwright trace ownership
 * preserved pytest-playwright video ownership
 * preserved reporting architecture
-* preserved CI topology
+* preserved Phase 4 CI topology
 * sequential execution compatibility
 * pytest-xdist execution compatibility
 
-Phase 4F does not implement:
+Phase 4F did not implement:
 
 * persistent project log files
 * browser console capture
@@ -2233,23 +2627,30 @@ Phase 4F does not implement:
 * multi-layer fixture packages
 * fixture scope redesign
 
+Those statements describe the Phase 4F workstream boundary.
+
+Phase 5A later adds the cross-browser Smoke matrix while preserving the Phase 4F runtime diagnostic and fixture behavior.
+
 ## Portfolio Promotion Validation
 
 Before promoting `develop` to `main`, validate that:
 
-* the full test suite passes locally when possible
+* the full Chromium test suite passes locally when possible
+* representative Firefox and WebKit Smoke validation passes when cross-browser behavior is part of the promoted state
 * CI on the promotion Pull Request passes
 * implemented test coverage is accurately described
 * planned coverage is not described as already automated
 * test case documentation remains aligned with automated test modules
 * marker definitions remain aligned with test usage
 * sequential and parallel execution documentation remains aligned with actual behavior
+* cross-browser execution documentation reflects Chromium complete regression responsibility and Firefox/WebKit representative Smoke responsibility
 * runtime configuration documentation remains aligned with `config/settings.py`, root `conftest.py`, Page Objects, and CI
 * diagnostic documentation remains aligned with `framework/diagnostics.py` and root `conftest.py`
 * fixture documentation reflects the root `conftest.py` / `tests/conftest.py` responsibility boundary
 * local runtime defaults remain aligned with documented defaults
-* CI runtime defaults remain aligned with the approved Phase 4E strategy
+* CI runtime defaults remain aligned with the approved runtime and browser strategies
 * reporting documentation remains aligned with actual pytest-html, Allure, screenshot, trace, video, and artifact behavior
+* browser-specific CI report and artifact names remain non-conflicting
 * CI documentation remains aligned with actual workflow behavior
 * generated reports, screenshots, traces, videos, Allure outputs, cache files, and virtual environment files are not tracked
 * the promoted state is suitable as a stable portfolio snapshot
@@ -2264,7 +2665,7 @@ Possible future improvements include:
 
 * broader framework maturity work where justified
 * API testing layer
-* multi-browser execution when explicitly approved
+* complete Firefox or WebKit Regression/full-suite execution only if future scope justifies it
 * additional suite-specific CI jobs where justified
 * advanced reporting extensions only when explicitly approved
 * environment profiles only if approved by future scope
@@ -2273,18 +2674,24 @@ Possible future improvements include:
 
 The following are already implemented and should not be treated as future scope:
 
-* dedicated Smoke CI
-* dedicated Regression CI
+* dedicated Chromium Smoke CI
+* dedicated Chromium Regression CI
+* Chromium complete full-suite CI
+* representative Firefox Smoke CI
+* representative WebKit Smoke CI
+* Firefox/WebKit cross-browser Smoke matrix
 * pytest-xdist parallel execution
+* browser-specific Firefox/WebKit pytest-html reports and artifacts
 * pytest-html reporting
 * current Allure reporting
 * centralized Phase 4E environment-based runtime configuration
+* configurable Chromium, Firefox, and WebKit runtime browser selection
 * configurable screenshot, trace, and video policies
 * Phase 4F runtime diagnostics
 * Phase 4F failed-test diagnostics
 * diagnostic error reporting
 * separation of framework-level Pytest responsibilities from application scenario fixtures
 
-Allure history persistence, hosted reports, GitHub Pages reporting, `.env` loading, browser matrices, cross-browser CI, retries, device emulation, persistent project log files, browser console capture, network capture, and other advanced capabilities remain future possibilities rather than current implemented behavior.
+Allure history persistence, hosted reports, GitHub Pages reporting, `.env` loading, complete three-browser Regression/full-suite execution, retries, device emulation, persistent project log files, browser console capture, network capture, and other advanced capabilities remain future possibilities rather than current implemented behavior.
 
 Future capabilities should not be described as implemented until their corresponding project tasks are completed and validated.
