@@ -982,7 +982,7 @@ The project remains primarily a Python, Pytest, and Playwright UI automation fra
 Workstreams:
 
 * Phase 5A — Playwright Cross-Browser Validation — Completed
-* Phase 5B — Containerized Playwright Execution — Future
+* Phase 5B — Containerized Playwright Execution — Completed
 * Phase 5C — Visual Regression Testing — Future
 * Phase 5D — Selenium WebDriver E2E Showcase — Future
 * Phase 5E — Reporting History And Trend Evaluation — Optional
@@ -1118,42 +1118,57 @@ Cross-browser execution is integrated into the existing Playwright, Pytest, runt
 
 ## Phase 5B: Containerized Playwright Execution
 
-**Status:** Future
+**Status:** Completed
 
-Phase 5B will introduce Docker-based execution for the existing Playwright framework.
+Phase 5B provides reproducible Docker-based execution for the existing Python, Pytest, and Playwright framework. Docker is an additional execution path alongside direct WSL/Linux execution and the native GitHub Actions workflow; it does not replace either approach.
 
-The goal is to provide a reproducible test environment with controlled:
+### Implemented Scope
 
-* Python dependencies
-* Playwright version
-* browser binaries
-* system browser dependencies
-* execution environment
+Phase 5B includes:
 
-Containerized execution will complement the existing local WSL and GitHub Actions workflows rather than replace them.
+* repository-root `Dockerfile` and `.dockerignore`
+* official Playwright Python image `mcr.microsoft.com/playwright/python:v1.60.0-noble`, aligned with `playwright==1.60.0` in `requirements-lock.txt`
+* locked project Python dependencies installed within the image
+* reuse of the existing Pytest configuration, fixtures, markers, Page Objects, test data, and assertions
+* sequential and pytest-xdist parallel test execution without Docker-specific test modules
+* browser selection through the existing `QA_BROWSER` variable for Chromium, Firefox, and WebKit
+* reuse of existing `QA_*` runtime configuration, including timeout, trace, video, and screenshot policies
+* host-persistent pytest-html reports, raw Allure results, Playwright traces, videos, and failure screenshots through Docker bind mounts
+* `.dockerignore` and `.gitignore` exclusions for generated files and local environment content
+* documentation of image builds, container execution, output persistence, and the separation between Docker, local execution, and native GitHub Actions CI
 
-The workstream will focus on:
+The official Playwright image provides browser binaries and required Linux system dependencies. Docker uses the same existing browser test implementations; no separate test automation framework or browser-specific duplicate suite was introduced.
 
-* defining a minimal Playwright-compatible Docker environment
-* keeping container versions aligned with the project's locked Playwright dependency
-* supporting normal Pytest execution inside the container
-* validating representative sequential and parallel execution
-* preserving runtime configuration through the existing environment-variable interface
-* preserving report and artifact generation
-* keeping generated outputs outside version-controlled repository content
-* documenting the relationship between local, containerized, and GitHub Actions execution
+### Validation
 
-The Docker implementation should remain focused on test reproducibility.
+AQA-0115 implementation validation confirmed image build, Chromium Smoke sequential and parallel execution, Firefox Smoke execution, and host-persistent reports and diagnostic artifacts.
 
-It should not become a general infrastructure platform or introduce unnecessary service orchestration.
+AQA-0117 final container validation confirmed:
 
-The workstream does not require:
+* Docker image build from the pinned Playwright Python base image and locked project dependencies: passed (dependency installation reused a cached layer)
+* Chromium Smoke sequential: 31 passed
+* Chromium complete full suite with pytest-xdist (`-n 2`): 236 passed
+* Firefox Smoke through `QA_BROWSER=firefox`: 31 passed
+* WebKit Smoke through `QA_BROWSER=webkit`: 31 passed
+* Chromium Smoke with runtime overrides and host bind mounts: 31 passed
+* `QA_TIMEOUT_MS=45000`, `QA_TRACE_POLICY=on`, and `QA_VIDEO_POLICY=on`: effective values confirmed in the runtime header
+* host-persistent pytest-html report: generated successfully
+* raw Allure result files, Playwright traces, and videos: present on the WSL/Linux host after container execution
+* generated report and artifact paths: ignored by Git; local working tree clean after validation
 
-* replacing GitHub Actions
-* introducing Kubernetes
-* introducing Docker Compose without a demonstrated need
-* packaging every project tool into one large general-purpose container
-* changing the Sauce Demo application deployment model
+An initial pytest-html write attempt failed because the existing `reports/docker-smoke.html` was owned by `root` while the container ran with the host user's UID/GID. Removing that stale generated file resolved the permission conflict; the repeated Smoke and report-generation run passed. No changes to Dockerfile or test implementation were required.
+
+These results validate the container execution path. AQA-0117 still requires the final native GitHub Actions Pull Request checks and approved integration into `develop` before the task Definition of Done is satisfied.
+
+### Execution And CI Boundaries
+
+Chromium remains the primary full-suite browser; Firefox and WebKit require only representative Smoke validation inside Docker.
+
+GitHub Actions continues to run natively on Ubuntu runners. Its existing quality, Chromium Smoke, Regression, full-suite, and Firefox/WebKit cross-browser Smoke jobs are preserved. No dedicated Docker CI job is introduced.
+
+Phase 5B does not introduce Docker Compose, Kubernetes, Selenium, visual regression testing, Allure reporting history, a Docker-specific CI replacement, or changes to the Sauce Demo application deployment.
+
+Standalone Allure HTML generation remains outside the Docker image; the container produces raw Allure results. Generated output stays outside version-controlled content.
 
 ---
 

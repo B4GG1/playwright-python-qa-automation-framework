@@ -2,7 +2,7 @@
 
 This document describes the repository structure and the responsibility of each major directory and configuration file.
 
-The framework is structured to support maintainable Playwright UI automation, Page Object Model components, shared framework utilities, centralized test data, reusable scenario-oriented pytest fixtures, centralized runtime configuration, lightweight runtime and failed-test diagnostics, marker-based test organization, sequential and pytest-xdist parallel execution, pytest-html and Allure reporting, configurable failure evidence, optional Playwright trace and video output, representative Playwright cross-browser validation, documentation, staged CI execution, and future framework expansion.
+The framework is structured to support maintainable Playwright UI automation, Page Object Model components, shared framework utilities, centralized test data, reusable scenario-oriented pytest fixtures, centralized runtime configuration, lightweight runtime and failed-test diagnostics, marker-based test organization, sequential and pytest-xdist parallel execution, reproducible Docker-based Playwright execution, pytest-html and Allure reporting, configurable failure evidence, optional Playwright trace and video output, representative Playwright cross-browser validation, documentation, staged native GitHub Actions CI execution, and future framework expansion.
 
 The `main` branch represents the stable portfolio version of the project, while `develop` and active workstream branches may contain newer validated changes before promotion.
 
@@ -42,6 +42,8 @@ playwright-python-qa-automation-framework/
 ├── pyproject.toml              # Ruff, Black, and isort configuration
 ├── requirements.txt            # Project dependency declaration
 ├── requirements-lock.txt       # Locked dependency versions
+├── Dockerfile                  # Containerized Playwright/Pytest execution environment
+├── .dockerignore               # Docker build-context exclusions
 ├── .gitignore                  # Git ignore rules
 ├── .pre-commit-config.yaml     # Local automated quality hooks
 ├── LICENSE                     # Project license
@@ -88,6 +90,10 @@ Current responsibilities:
 * validation for `main`
 * Pull Request validation
 * manual workflow execution
+
+GitHub Actions continues to execute the framework natively on GitHub-hosted Ubuntu runners.
+
+The current workflow does not build or run the Phase 5B Docker image. Docker execution is a separate reproducible execution path and does not replace or modify the existing CI job topology.
 
 Phase 4B introduced the Chromium job structure:
 
@@ -1738,9 +1744,24 @@ It does not require an additional Python dependency.
 Contains locked dependency versions for reproducible:
 
 * local setup
+* Docker dependency installation
 * CI installation
 
 The locked dependency set includes the active Playwright/Pytest execution, parallelization, reporting, and quality-tool dependencies.
+
+The Phase 5B Docker image is pinned to:
+
+```text
+mcr.microsoft.com/playwright/python:v1.60.0-noble
+```
+
+and is aligned with:
+
+```text
+playwright==1.60.0
+```
+
+in `requirements-lock.txt`.
 
 pytest-playwright provides the Playwright/Pytest integration used by the runtime configuration layer.
 
@@ -1752,7 +1773,55 @@ Phase 4F diagnostics do not require a new external runtime dependency.
 
 Phase 5A does not require a new external runtime dependency.
 
-The standalone Allure CLI remains separate from the Python dependency lock.
+Phase 5B does not introduce a separate Python dependency set. The Docker image installs the same locked project dependencies from `requirements-lock.txt`.
+
+The standalone Allure CLI remains separate from the Python dependency lock and is not installed in the Phase 5B Docker image.
+
+### `Dockerfile`
+
+Defines the implemented Phase 5B containerized Playwright/Pytest execution environment.
+
+Current responsibilities:
+
+* use the official Playwright Python base image
+* pin the image to `mcr.microsoft.com/playwright/python:v1.60.0-noble`
+* use `/app` as the container working directory
+* copy `requirements-lock.txt` before the remaining project source
+* install locked Python dependencies before copying application source
+* preserve Docker dependency-layer caching when the lockfile is unchanged
+* reuse browser binaries already included in the official Playwright image
+* avoid a redundant `playwright install` build step
+* copy the remaining project source after dependency installation
+* expose Pytest as the container entry point
+
+Current execution definition:
+
+```text
+ENTRYPOINT ["python", "-m", "pytest"]
+CMD ["-v"]
+```
+
+The Docker image reuses the existing tests, Page Objects, fixtures, assertions, runtime configuration, diagnostics, markers, and reporting integrations.
+
+It does not define a Docker-specific test framework or runtime configuration layer.
+
+### `.dockerignore`
+
+Defines files and directories excluded from the Docker build context.
+
+Current exclusions cover:
+
+* Git metadata
+* local Python virtual environments
+* Python caches
+* Pytest and Ruff caches
+* IDE configuration
+* generated reports
+* Allure outputs
+* Playwright and test result artifacts
+* local environment files
+
+This prevents local development state and generated runtime outputs from being copied into the Docker image.
 
 ### `.gitignore`
 
@@ -2545,7 +2614,7 @@ Phase 4F does not add persistent log-file or diagnostic-specific artifacts.
 
 Allure history persistence, report hosting, and GitHub Pages reporting are not implemented.
 
-## Local And CI Execution Structure
+## Local, Containerized, And CI Execution Structure
 
 Local validation supports:
 
@@ -2629,6 +2698,52 @@ Then:
 allure generate reports/allure-results \
   --clean \
   -o reports/allure-report
+```
+
+Containerized execution is an additional supported execution path alongside direct WSL/Linux execution and native GitHub Actions CI.
+
+Build the Phase 5B image from the repository root:
+
+```bash
+docker build -t playwright-qa-framework:local .
+```
+
+Sequential Chromium Smoke execution:
+
+```bash
+docker run --rm --init --ipc=host \
+  playwright-qa-framework:local \
+  -m smoke -v
+```
+
+Controlled pytest-xdist execution:
+
+```bash
+docker run --rm --init --ipc=host \
+  -e PYTEST_XDIST_AUTO_NUM_WORKERS=2 \
+  playwright-qa-framework:local \
+  -m smoke -n auto -v
+```
+
+Existing runtime variables are passed through normal Docker environment configuration.
+
+Example Firefox execution:
+
+```bash
+docker run --rm --init --ipc=host \
+  -e QA_BROWSER=firefox \
+  playwright-qa-framework:local \
+  -m smoke -v
+```
+
+Generated reports and browser artifacts that must survive container removal are persisted through bind mounts.
+
+Validated host-side output roots include:
+
+```text
+reports/
+allure-results/
+test-results/
 ```
 
 ### Phase 4B CI Structure
@@ -2890,6 +3005,107 @@ Phase 5A does not introduce:
 * browser-specific conditional logic without a demonstrated limitation
 
 Chromium is intentionally not added to the cross-browser matrix because it already has dedicated Smoke, Regression, and complete full-suite execution.
+
+### Phase 5B Containerized Execution Layer
+
+Phase 5B adds a reproducible containerized execution boundary around the existing Playwright/Pytest framework.
+
+The implemented execution model is:
+
+```text
+Dockerfile
+    ↓
+mcr.microsoft.com/playwright/python:v1.60.0-noble
+    ↓
+requirements-lock.txt
+    ↓
+existing project source
+    ↓
+python -m pytest
+```
+
+The image reuses:
+
+* existing functional tests
+* existing Page Objects
+* existing application scenario fixtures
+* existing assertion helpers
+* existing pytest markers
+* existing `QA_*` runtime configuration
+* existing diagnostics
+* pytest-html integration
+* Allure Pytest integration
+* pytest-playwright trace and video behavior
+
+Supported container execution includes:
+
+* sequential Pytest execution
+* pytest-xdist parallel execution
+* Chromium execution
+* Firefox execution through `QA_BROWSER=firefox`
+* existing marker-based test selection
+* existing runtime configuration overrides
+
+Validated Phase 5B execution includes:
+
+```text
+Chromium Smoke sequential: 31 passed
+Chromium Smoke parallel: 31 passed
+Firefox Smoke: 31 passed
+```
+
+Recommended runtime flags are:
+
+```text
+--rm
+--init
+--ipc=host
+```
+
+Host-persistent outputs are supported through bind mounts.
+
+Validated persisted outputs include:
+
+* pytest-html reports
+* raw Allure result data
+* failure screenshots
+* Playwright traces
+* Playwright videos
+
+When mounted files should be owned by the invoking WSL/Linux user, execution can use:
+
+```bash
+--user "$(id -u):$(id -g)"
+```
+
+with Pytest cache redirected to:
+
+```bash
+-o cache_dir=/tmp/pytest_cache
+```
+
+The image includes the Python-side `allure-pytest` dependency through the locked project requirements.
+
+The image does not include:
+
+* the standalone Allure CLI
+* Java for Allure HTML generation
+* Node.js for Allure CLI installation
+
+Allure HTML generation therefore remains outside the container.
+
+Phase 5B does not introduce:
+
+* Docker Compose
+* Kubernetes
+* Dockerized Sauce Demo
+* Selenium
+* visual regression testing
+* Docker-specific functional tests
+* Docker-specific runtime configuration
+* Docker-based GitHub Actions jobs
+
+GitHub Actions continues to execute natively and does not build or run this image.
 
 ### Smoke CI Execution
 
@@ -3170,7 +3386,7 @@ Phase 5A reuses these execution and reporting foundations for representative Fir
 
 ## Current Phase Boundaries
 
-The current framework combines implemented Phase 4B, Phase 4C, Phase 4D, Phase 4E, Phase 4F, and Phase 5A behavior.
+The current framework combines implemented Phase 4B, Phase 4C, Phase 4D, Phase 4E, Phase 4F, Phase 5A, and Phase 5B behavior.
 
 Implemented Phase 4B capabilities include:
 
@@ -3289,7 +3505,30 @@ Implemented Phase 5A cross-browser capabilities include:
 * preservation of existing failure screenshot behavior
 * no required browser-specific compatibility workaround
 
-GitHub Actions job-level concurrency, GitHub Actions matrix expansion, and pytest-xdist worker-level parallelism remain separate execution mechanisms.
+Implemented Phase 5B containerized execution capabilities include:
+
+* repository-root `Dockerfile`
+* repository-root `.dockerignore`
+* pinned official Playwright Python Docker image
+* Playwright image version aligned with `requirements-lock.txt`
+* locked Python dependency installation
+* dependency-layer caching through lockfile-first copying
+* sequential Pytest execution inside Docker
+* pytest-xdist execution inside Docker
+* reuse of the existing `QA_*` runtime configuration
+* validated Chromium Smoke execution
+* validated Firefox Smoke execution
+* bind-mounted pytest-html persistence
+* bind-mounted Allure result persistence
+* bind-mounted screenshot persistence
+* bind-mounted Playwright trace persistence
+* bind-mounted Playwright video persistence
+* optional host UID/GID mapping
+* temporary Pytest cache redirection when required
+* preservation of native GitHub Actions execution
+* no Docker-specific CI topology
+
+GitHub Actions job-level concurrency, GitHub Actions matrix expansion, pytest-xdist worker-level parallelism, and Docker container execution remain separate execution mechanisms.
 
 Runtime configuration, diagnostics, reporting, and browser selection are separate concerns layered on top of test execution.
 
@@ -3310,7 +3549,6 @@ The current implementation does not include:
 * HTML or page-source dumps
 * custom trace/video lifecycle
 * Selenium execution
-* Docker-based execution
 
 ## Architecture Goals
 
@@ -3335,6 +3573,9 @@ The project structure is designed to support:
 * test independence
 * sequential execution
 * pytest-xdist parallel execution
+* reproducible Docker-based Playwright execution
+* reuse of the same framework across local WSL/Linux, Docker, and native GitHub Actions
+* clear separation of container execution from CI infrastructure
 * explicit marker semantics
 * selective local suite execution
 * representative browser-engine compatibility validation
@@ -3409,6 +3650,15 @@ Implemented structure includes:
 * parallel Chromium full-suite validation
 * local Firefox Smoke validation
 * local WebKit Smoke validation
+* repository-root `Dockerfile`
+* repository-root `.dockerignore`
+* pinned official Playwright Python Docker image
+* sequential Docker Pytest execution
+* pytest-xdist Docker execution
+* Docker reuse of existing `QA_*` runtime configuration
+* validated Chromium Smoke Docker execution
+* validated Firefox Smoke Docker execution
+* host-persistent Docker reports and browser artifacts through bind mounts
 * centralized runtime configuration
 * configurable base URL
 * configurable browser selection
@@ -3513,6 +3763,8 @@ Phase 4F Diagnostics And Fixture Cleanup is implemented and validated.
 
 Phase 5A Playwright Cross-Browser Smoke Validation is implemented and validated.
 
+Phase 5B Containerized Playwright Execution is implemented and validated.
+
 Future improvements may include:
 
 * additional scenario fixtures when repeated setup justifies them
@@ -3547,6 +3799,7 @@ The following remain outside the current implemented scope:
 * complete WebKit full-suite execution
 * complete three-browser regression parity
 * Selenium execution
-* Docker-based execution
 
-Formal Phase 5A roadmap completion remains owned by the dedicated Phase 5A closing checkpoint task.
+Phase 5B containerized Playwright execution is an implemented and validated framework capability.
+
+Formal Phase 5B roadmap completion and the Phase 5B closing checkpoint remain owned by AQA-0117.

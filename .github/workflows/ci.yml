@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   quality:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout repository
@@ -43,7 +43,7 @@ jobs:
 
   smoke:
     needs: quality
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     env:
       QA_BASE_URL: "https://www.saucedemo.com"
@@ -97,7 +97,7 @@ jobs:
 
   regression:
     needs: quality
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     env:
       QA_BASE_URL: "https://www.saucedemo.com"
@@ -151,7 +151,7 @@ jobs:
 
   full-suite:
     needs: quality
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     env:
       QA_BASE_URL: "https://www.saucedemo.com"
@@ -240,7 +240,7 @@ jobs:
           retention-days: 7
   cross-browser-smoke:
     needs: quality
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     strategy:
       fail-fast: false
