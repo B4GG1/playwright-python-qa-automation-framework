@@ -10,6 +10,23 @@ def pytest_addoption(parser: pytest.Parser) -> None:
     )
 
 
+def pytest_collection_modifyitems(config: pytest.Config) -> None:
+    browsers = config.getoption("browser")
+
+    if isinstance(browsers, str):
+        browsers = [browsers]
+
+    if tuple(browsers or ()) != ("chromium",):
+        raise pytest.UsageError(
+            "Visual regression supports Chromium only. "
+            "Use --browser chromium. "
+            "Firefox/WebKit must not use Chromium baselines."
+        )
+
+    if config.getoption("headed"):
+        raise pytest.UsageError("Visual regression requires headless execution.")
+
+
 @pytest.fixture()
 def browser_context_args(
     browser_context_args: dict[str, object],

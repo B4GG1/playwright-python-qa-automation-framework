@@ -238,6 +238,7 @@ jobs:
           path: reports/
           if-no-files-found: warn
           retention-days: 7
+
   cross-browser-smoke:
     needs: quality
     runs-on: ubuntu-24.04
@@ -298,5 +299,40 @@ jobs:
         with:
           name: ${{ matrix.browser }}-smoke-test-artifacts
           path: reports/
+          if-no-files-found: warn
+          retention-days: 7
+
+
+  visual-regression:
+    name: Visual Regression (Chromium Docker)
+    needs: quality
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build project Docker image
+        run: docker build -t playwright-qa-framework:visual .
+
+      - name: Run controlled visual regression suite
+        run: |
+          mkdir -p reports/visual
+
+          docker run --rm --init --ipc=host \
+            -v "$PWD/visual_baselines:/app/visual_baselines:ro" \
+            -v "$PWD/reports/visual:/app/reports/visual" \
+            -e QA_BASE_URL=https://www.saucedemo.com \
+            -e QA_BROWSER=chromium \
+            -e QA_HEADED=false \
+            playwright-qa-framework:visual \
+            visual_tests -m visual --browser chromium -v
+
+      - name: Upload visual regression artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-regression-artifacts
+          path: reports/visual/
           if-no-files-found: warn
           retention-days: 7
