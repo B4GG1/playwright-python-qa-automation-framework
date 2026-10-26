@@ -7,10 +7,15 @@ def compare_png_images(
     baseline_path: str | Path,
     actual_path: str | Path,
     diff_path: str | Path,
+    *,
+    max_different_pixels: int = 0,
 ) -> None:
     baseline_path = Path(baseline_path)
     actual_path = Path(actual_path)
     diff_path = Path(diff_path)
+
+    if max_different_pixels < 0:
+        raise ValueError("max_different_pixels must be greater than or equal to 0")
 
     if not baseline_path.is_file():
         raise FileNotFoundError(f"Visual regression baseline not found: {baseline_path}")
@@ -54,6 +59,10 @@ def compare_png_images(
 
     binary_mask = mask.point(lambda value: 255 if value else 0)
     different_pixels = binary_mask.histogram()[255]
+
+    if different_pixels <= max_different_pixels:
+        return
+
     total_pixels = baseline.width * baseline.height
 
     diff = actual.convert("RGB")
@@ -65,6 +74,7 @@ def compare_png_images(
         "Visual regression mismatch: "
         f"{different_pixels}/{total_pixels} pixels differ "
         f"({100 * different_pixels / total_pixels:.2f}%). "
+        f"Allowed pixel difference: {max_different_pixels}. "
         f"Changed bounds (left, top, right, bottom): {bounds}. "
         f"Baseline: {baseline_path}; Actual: {actual_path}; Diff: {diff_path}"
     )

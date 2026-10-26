@@ -139,3 +139,77 @@ def test_diff_path_cannot_overwrite_approved_baseline(tmp_path: Path) -> None:
 
     with Image.open(baseline) as approved:
         assert approved.getpixel((0, 0)) == (255, 255, 255, 255)
+
+
+def test_difference_within_pixel_tolerance_passes_without_creating_diff(
+    tmp_path: Path,
+) -> None:
+    baseline = tmp_path / "baseline.png"
+    actual = tmp_path / "actual.png"
+    diff = tmp_path / "diff.png"
+
+    _save_png(baseline)
+    _save_png(actual)
+
+    with Image.open(actual) as image:
+        changed = image.copy()
+
+    changed.putpixel((1, 1), (0, 0, 0, 255))
+    changed.save(actual, format="PNG")
+
+    compare_png_images(
+        baseline,
+        actual,
+        diff,
+        max_different_pixels=1,
+    )
+
+    assert not diff.exists()
+
+
+def test_difference_above_pixel_tolerance_fails_and_creates_diff(
+    tmp_path: Path,
+) -> None:
+    baseline = tmp_path / "baseline.png"
+    actual = tmp_path / "actual.png"
+    diff = tmp_path / "diff.png"
+
+    _save_png(baseline)
+    _save_png(actual)
+
+    with Image.open(actual) as image:
+        changed = image.copy()
+
+    changed.putpixel((1, 1), (0, 0, 0, 255))
+    changed.putpixel((2, 2), (0, 0, 0, 255))
+    changed.save(actual, format="PNG")
+
+    with pytest.raises(AssertionError, match="Allowed pixel difference: 1"):
+        compare_png_images(
+            baseline,
+            actual,
+            diff,
+            max_different_pixels=1,
+        )
+
+    assert diff.is_file()
+
+
+def test_negative_pixel_tolerance_is_rejected(tmp_path: Path) -> None:
+    baseline = tmp_path / "baseline.png"
+    actual = tmp_path / "actual.png"
+    diff = tmp_path / "diff.png"
+
+    _save_png(baseline)
+    _save_png(actual)
+
+    with pytest.raises(
+        ValueError,
+        match="max_different_pixels must be greater than or equal to 0",
+    ):
+        compare_png_images(
+            baseline,
+            actual,
+            diff,
+            max_different_pixels=-1,
+        )

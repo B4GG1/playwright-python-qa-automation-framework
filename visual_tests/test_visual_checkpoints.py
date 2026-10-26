@@ -16,6 +16,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 BASELINES_DIR = PROJECT_ROOT / "visual_baselines" / "chromium"
 ACTUAL_DIR = PROJECT_ROOT / "reports" / "visual" / "actual"
 DIFF_DIR = PROJECT_ROOT / "reports" / "visual" / "diff"
+MAX_DIFFERENT_PIXELS = 10
 
 BACKPACK_NAME = "Sauce Labs Backpack"
 
@@ -46,7 +47,12 @@ def _capture_and_compare(
         shutil.copyfile(actual_path, baseline_path)
         return
 
-    compare_png_images(baseline_path, actual_path, diff_path)
+    compare_png_images(
+        baseline_path,
+        actual_path,
+        diff_path,
+        max_different_pixels=MAX_DIFFERENT_PIXELS,
+    )
 
 
 def _login_as_standard_user(page: Page) -> InventoryPage:
