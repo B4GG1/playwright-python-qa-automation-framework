@@ -20,6 +20,7 @@ mypy_extensions==1.1.0
 nodeenv==1.10.0
 packaging==26.2
 pathspec==1.1.1
+Pillow==13.0.0
 platformdirs==4.9.6
 playwright==1.60.0
 pluggy==1.6.0

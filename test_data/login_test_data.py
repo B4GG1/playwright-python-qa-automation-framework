@@ -71,3 +71,8 @@ EMPTY_LOGIN_CASES = [
         "expected_error": USERNAME_REQUIRED_ERROR,
     },
 ]
+
+VISUAL_USER = {
+    "username": "visual_user",
+    "password": "secret_sauce",
+}

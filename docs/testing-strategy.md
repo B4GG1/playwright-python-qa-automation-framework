@@ -4,7 +4,7 @@ This document defines the testing approach for the QA automation framework.
 
 The current focus is UI automation testing for the Sauce Demo application using Playwright and Pytest. The project follows an iterative testing strategy: manual test design is created before or alongside automation, selected scenarios are automated, and repeated interactions are gradually refactored into reusable framework components.
 
-The strategy documented here reflects the current implemented test structure, normalized pytest marker behavior, Phase 4B CI execution strategy, Phase 4C Pytest parallel execution strategy, Phase 4D reporting strategy, Phase 4E runtime configuration strategy, Phase 4F diagnostics and fixture responsibility cleanup, the Phase 5A Playwright cross-browser Smoke validation strategy, and the Phase 5B containerized Playwright execution strategy.
+The strategy documented here reflects the current implemented test structure, normalized pytest marker behavior, Phase 4B CI execution strategy, Phase 4C Pytest parallel execution strategy, Phase 4D reporting strategy, Phase 4E runtime configuration strategy, Phase 4F diagnostics and fixture responsibility cleanup, the Phase 5A Playwright cross-browser Smoke validation strategy, the Phase 5B containerized Playwright execution strategy, and the Phase 5C controlled visual regression strategy.
 
 The `main` branch represents the stable portfolio version, while `develop` and active workstream branches may contain newer validated changes before they are promoted to `main`.
 
@@ -21,7 +21,7 @@ The application origin can be overridden for a test process through:
 
 without editing functional tests or Page Objects.
 
-Sauce Demo is used as a stable training application for practicing UI automation, test design, Page Object Model, test data management, fixtures, parametrization, selective suite execution, parallel test execution, runtime configuration, diagnostics, representative cross-browser compatibility validation, reproducible Docker-based execution, native CI validation, reporting, and framework development.
+Sauce Demo is used as a stable training application for practicing UI automation, test design, Page Object Model, test data management, fixtures, parametrization, selective suite execution, parallel test execution, runtime configuration, diagnostics, representative cross-browser compatibility validation, reproducible Docker-based execution, controlled visual regression testing, native functional CI validation, Docker-based visual CI validation, reporting, and framework development.
 
 ## Testing Approach
 
@@ -51,9 +51,10 @@ The project follows a progressive testing approach:
 22. Validate diagnostic behavior with controlled failures when diagnostic hooks change.
 23. Collect reporting and failure evidence appropriate to the execution context.
 24. Validate the containerized execution path when Docker behavior, reproducibility, runtime configuration, or artifact persistence is affected.
-25. Validate code quality and automated suites through native GitHub Actions CI.
-26. Update test case and project documentation when coverage or strategy changes.
-27. Promote stable validated snapshots from `develop` to `main` when they are ready for portfolio presentation.
+25. Validate visual regression in the canonical Docker/Chromium environment when screenshot comparison, baseline management, or visual rendering behavior is affected.
+26. Validate code quality and automated suites through GitHub Actions CI, preserving native functional jobs and the dedicated Docker-based visual job.
+27. Update test case and project documentation when coverage or strategy changes.
+28. Promote stable validated snapshots from `develop` to `main` when they are ready for portfolio presentation.
 
 This approach supports both QA thinking and automation engineering practice.
 
@@ -105,6 +106,8 @@ Runtime configuration validation and Phase 4F framework diagnostics do not repre
 
 Phase 5A cross-browser execution also changes execution coverage rather than functional test case coverage. Firefox and WebKit reuse the existing representative Smoke suite and therefore do not require separate browser-specific test cases or automation metadata.
 
+Phase 5C visual regression adds presentation-level checkpoints for already automated application states. It does not introduce a new product-facing functional test case and therefore does not require new functional test case metadata or coverage-table entries.
+
 ## Current Automated Test Modules
 
 Current functional automated test modules follow the one-test-file-per-covered-page-area principle:
@@ -136,6 +139,12 @@ The framework additionally includes focused runtime configuration validation:
 This module validates configuration defaults, supported overrides, normalization, and invalid-value behavior.
 
 It is framework validation rather than page-level product coverage.
+
+The framework additionally includes a dedicated visual regression suite:
+
+    visual_tests/test_visual_checkpoints.py
+
+This suite validates selected rendered UI checkpoints and remains outside normal functional test collection.
 
 ## Current Test Coverage
 
@@ -249,6 +258,13 @@ The existing Smoke coverage across Login, Inventory, Product Details, Cart, and 
 
 Cross-browser execution does not introduce additional product-facing functional coverage or duplicate browser-specific test modules.
 
+Phase 5C adds two approved visual checkpoints for already automated states:
+
+* Inventory default page
+* Cart containing one Sauce Labs Backpack
+
+These are presentation-level regression checkpoints rather than new functional coverage.
+
 ## Marker Strategy
 
 Pytest markers are used to create meaningful, selectively executable test suites.
@@ -282,6 +298,7 @@ Current executable markers are:
 * `security`
 * `sorting`
 * `navigation`
+* `visual`
 
 Marker definitions are registered in:
 
@@ -300,6 +317,8 @@ so unknown or unregistered markers should fail collection rather than silently c
 Runtime configuration, diagnostics, reporting, browser selection, and parallel execution do not change marker meaning or marker assignment.
 
 Phase 5A does not introduce a dedicated cross-browser marker. Browser compatibility validation intentionally reuses the existing `smoke` suite.
+
+Phase 5C introduces the `visual` marker for isolated screenshot-regression checkpoints. It is not a browser-selection marker and is intentionally Chromium-only.
 
 ### Smoke
 
@@ -476,6 +495,27 @@ E2E remains selectively executable but does not currently have a dedicated CI jo
 
 Its tests are still included in complete Chromium full-suite CI execution. Individual E2E tests carrying the `smoke` marker also participate in representative Firefox and WebKit Smoke validation.
 
+### Visual
+
+`visual` identifies dedicated screenshot-regression checkpoints that compare the rendered UI against approved Chromium baselines.
+
+Visual tests are intentionally separate from normal functional collection and live under:
+
+    visual_tests/
+
+Current permanent visual checkpoints validate:
+
+* Inventory default page
+* Cart containing one Sauce Labs Backpack
+
+The `visual` marker does not replace `ui`, `smoke`, or `regression`.
+
+Functional markers describe application behavior and functional validation depth. `visual` identifies the separate presentation-comparison responsibility.
+
+The visual suite has its own dedicated Docker-based Chromium CI job.
+
+Firefox and WebKit do not currently execute visual regression.
+
 ## Marker Assignment Principles
 
 Markers should be assigned according to test intent rather than mechanically.
@@ -491,6 +531,7 @@ The following principles apply:
 * Sorting is used for product sorting behavior
 * Navigation is used for meaningful page transitions
 * E2E is used for checkpoints forming the primary purchase journey
+* Visual is used for approved screenshot-comparison checkpoints
 * dedicated marker categories may stand alone
 * a test should not receive Regression only because it is not Smoke
 * markers should remain explicit and readable in test code
@@ -535,6 +576,10 @@ Run Navigation:
 Run the primary E2E checkpoint suite:
 
     pytest -m e2e -v
+
+Run the dedicated visual regression suite:
+
+    python -m pytest visual_tests -m visual --browser chromium -v
 
 Markers can be combined using normal pytest marker expressions.
 
@@ -607,6 +652,8 @@ Phase 5A reuses the same test independence and xdist model on Firefox and WebKit
 
 Phase 5B reuses the same independence model inside Docker. Sequential execution and pytest-xdist execution remain the same test-distribution choices; the container changes the execution environment rather than test semantics.
 
+Phase 5C visual regression deliberately does not use pytest-xdist. Visual checkpoints execute sequentially to reduce screenshot nondeterminism and preserve deterministic comparison conditions.
+
 Phase 5B validated explicit `-n 2` execution and a controlled `-n auto` execution capped to two workers through `PYTEST_XDIST_AUTO_NUM_WORKERS=2`. This should not be described as unrestricted automatic worker scaling validation.
 
 Moving application scenario fixtures from the root `conftest.py` to `tests/conftest.py` does not change their functional intent or introduce shared state.
@@ -621,6 +668,7 @@ After `quality` succeeds, GitHub Actions may schedule these jobs independently:
 * `regression`
 * `full-suite`
 * `cross-browser-smoke`
+* `visual-regression`
 
 The `cross-browser-smoke` job expands into:
 
@@ -629,30 +677,34 @@ The `cross-browser-smoke` job expands into:
 
 This is **job-level and matrix-level GitHub Actions execution**.
 
-Inside every browser-test job, pytest-xdist distributes collected tests between workers.
+Inside every functional browser-test job, pytest-xdist distributes collected tests between workers.
 
-This is **Pytest worker-level parallelism**.
+The dedicated `visual-regression` job intentionally runs sequentially.
+
+This distinguishes **Pytest worker-level parallelism** from the separate sequential visual execution model.
 
 The execution model can therefore be represented as:
 
     quality
-    ├── smoke [Chromium]
+    ├── smoke [Chromium, native]
     │   └── xdist workers
-    ├── regression [Chromium]
+    ├── regression [Chromium, native]
     │   └── xdist workers
-    ├── full-suite [Chromium]
+    ├── full-suite [Chromium, native]
     │   └── xdist workers
-    └── cross-browser-smoke
-        ├── Firefox
-        │   └── xdist workers
-        └── WebKit
-            └── xdist workers
+    ├── cross-browser-smoke [native]
+    │   ├── Firefox
+    │   │   └── xdist workers
+    │   └── WebKit
+    │       └── xdist workers
+    └── visual-regression [Chromium, Docker]
+        └── sequential visual checkpoints
 
 The `quality` job does not execute browser tests and does not use xdist.
 
 Runtime configuration, diagnostics, and reporting do not introduce additional concurrency layers.
 
-Docker container execution is also a separate execution environment, not another GitHub Actions concurrency layer. The current GitHub Actions workflow remains native and does not build or run the Phase 5B Docker image.
+Docker container execution is also a separate execution environment, not another GitHub Actions concurrency layer. Existing functional GitHub Actions jobs remain native, while Phase 5C reuses the existing Docker image for the dedicated `visual-regression` job.
 
 ## Runtime Configuration Strategy
 
@@ -733,7 +785,8 @@ The configuration layer recognizes all three Playwright browser engines.
 
 The implemented validation strategy is intentionally asymmetric:
 
-* Chromium is the primary browser for Smoke, Regression, and complete full-suite validation.
+* Chromium is the primary browser for Smoke, Regression, and complete functional full-suite validation.
+* Chromium is the only current visual-regression browser.
 * Firefox provides representative compatibility validation through the existing Smoke suite.
 * WebKit provides representative compatibility validation through the existing Smoke suite.
 
@@ -799,7 +852,7 @@ Values are normalized case-insensitively.
 
 The native pytest-playwright `--headed` option remains available.
 
-All current CI browser-test executions explicitly use `QA_HEADED=false`.
+All current CI browser-test executions explicitly use `QA_HEADED=false`. The Phase 5C visual suite additionally rejects headed execution.
 
 ### Timeout Strategy
 
@@ -852,7 +905,9 @@ When a browser test fails during the Pytest `call` phase and a Playwright page i
 * the same PNG is attached to Allure when Allure result collection is active
 * the successfully created screenshot path is added to the Phase 4F failed-test diagnostic summary
 
-The framework does not create a second project-level screenshot mechanism through pytest-playwright.
+The framework does not create a second project-level **failure screenshot** mechanism through pytest-playwright.
+
+Phase 5C visual checkpoint screenshots are a separate intentional screenshot-comparison lifecycle and are not controlled by `QA_SCREENSHOT_POLICY`.
 
 Setup-phase and teardown-phase failures still receive Phase 4F failure diagnostics but do not trigger the custom project screenshot.
 
@@ -1115,7 +1170,7 @@ Phase 4F diagnostics do not implement:
 
 Trace and video remain pytest-playwright-owned runtime capabilities.
 
-The custom failure screenshot remains the project-owned screenshot mechanism.
+The custom failure screenshot remains the project-owned failure-diagnostic screenshot mechanism. Phase 5C visual regression owns a separate intentional comparison lifecycle.
 
 ## Phase 5A Cross-Browser Strategy
 
@@ -1131,7 +1186,9 @@ It executes:
 
 * the dedicated Smoke suite
 * the dedicated Regression suite
-* the complete unfiltered full suite
+* the complete unfiltered functional full suite
+
+Phase 5C additionally assigns Chromium the dedicated visual-regression responsibility.
 
 Firefox is a representative compatibility browser.
 
@@ -1242,7 +1299,7 @@ Phase 5B adds a reproducible Docker execution path around the existing Playwrigh
 The containerized path complements two existing execution environments:
 
 * direct WSL/Linux execution
-* native GitHub Actions execution
+* native functional GitHub Actions execution
 
 It does not replace either path and does not create a separate functional test suite.
 
@@ -1394,16 +1451,11 @@ This avoids write-permission warnings under the image-owned `/app` directory.
 
 Phase 5B Docker execution is an additional reproducible execution path.
 
-GitHub Actions remains native on GitHub-hosted Ubuntu runners. The existing workflow:
+The existing functional GitHub Actions jobs remain native on GitHub-hosted Ubuntu runners and continue to install dependencies and selected Playwright browsers directly.
 
-* installs Python dependencies directly
-* installs the selected Playwright browser directly
-* invokes Pytest directly
-* publishes GitHub Actions artifacts directly
+Phase 5C later reuses the existing Phase 5B Docker image only for the dedicated `visual-regression` CI job.
 
-The workflow does not build or run the Phase 5B Docker image.
-
-Phase 5B does not introduce:
+Phase 5B itself does not introduce:
 
 * Docker Compose
 * Kubernetes
@@ -1417,17 +1469,232 @@ Phase 5B does not introduce:
 
 Phase 5B changes the execution environment, not product-facing automation coverage. It therefore does not require new manual test cases or browser/container-specific automation metadata.
 
+## Phase 5C Visual Regression Strategy
+
+Phase 5C introduces controlled visual regression as a separate validation responsibility alongside functional UI assertions.
+
+Functional tests continue to validate application behavior, navigation, state, content, and user-visible outcomes.
+
+Visual regression validates rendered presentation at selected stable checkpoints.
+
+### Visual Comparison Responsibility
+
+Dedicated comparison logic is implemented in:
+
+    framework/visual_regression.py
+
+The module uses Pillow to:
+
+* open baseline and actual PNG files
+* verify matching image dimensions
+* perform strict pixel comparison
+* count changed pixels
+* calculate changed-region bounds
+* generate highlighted diff PNGs on mismatch
+* fail normal comparison when an approved baseline is missing
+
+The comparison module does not own browser navigation, state preparation, screenshot timing, or baseline approval.
+
+### Visual Regression Versus Functional Assertions
+
+The visual suite first prepares and validates meaningful application state through normal Playwright behavior.
+
+Screenshot comparison is then applied to the already-valid state.
+
+The responsibilities remain distinct:
+
+    functional assertions
+        → application behavior and state
+
+    visual regression
+        → rendered appearance at approved checkpoints
+
+Visual regression does not replace functional assertions.
+
+### Visual Regression Versus Failure Screenshots
+
+The existing failure screenshot mechanism is diagnostic evidence:
+
+    reports/screenshots/
+
+It is controlled by:
+
+    QA_SCREENSHOT_POLICY
+
+Phase 5C visual screenshots are intentional regression artifacts:
+
+    reports/visual/actual/
+    reports/visual/diff/
+
+Actual screenshots are captured for comparison.
+
+Diff screenshots are generated when Pillow detects image differences.
+
+Visual screenshots are independent of the failure screenshot policy and Allure failure attachment lifecycle.
+
+### Approved Visual Checkpoints
+
+The permanent visual suite currently validates two `standard_user` checkpoints:
+
+* Inventory default page
+* Cart containing one Sauce Labs Backpack
+
+Approved baselines:
+
+    visual_baselines/chromium/inventory-default.png
+    visual_baselines/chromium/cart-one-product.png
+
+These baselines are reviewed repository assets.
+
+Generated actual and diff images remain runtime output.
+
+### Visual Suite Isolation
+
+Visual tests live under:
+
+    visual_tests/
+
+Current files:
+
+    visual_tests/conftest.py
+    visual_tests/test_visual_checkpoints.py
+
+Normal functional collection remains rooted at:
+
+    testpaths = tests
+
+so visual tests are not collected by normal Smoke, Regression, or full-suite commands.
+
+The suite uses the registered:
+
+    visual
+
+marker.
+
+### Canonical Visual Environment
+
+Canonical visual execution uses the existing Phase 5B Docker environment:
+
+    mcr.microsoft.com/playwright/python:v1.60.0-noble
+
+with:
+
+* Playwright 1.60.0
+* Chromium only
+* headless execution
+* 1280 × 720 viewport
+* device scale factor 1
+* light color scheme
+* reduced motion
+* disabled screenshot animations
+* hidden caret
+* CSS screenshot scale
+* PNG output
+* decoded product images before Inventory capture
+* sequential execution without pytest-xdist
+
+`visual_tests/conftest.py` rejects:
+
+* Firefox
+* WebKit
+* mixed/non-Chromium browser selection
+* headed execution
+
+This prevents Chromium baselines from being reused or refreshed by unsupported visual browser engines.
+
+### Canonical Visual Comparison
+
+Build:
+
+    docker build -t playwright-qa-framework:visual .
+
+Run normal comparison:
+
+    mkdir -p reports/visual
+
+    docker run --rm --init --ipc=host       -v "$PWD/visual_baselines:/app/visual_baselines:ro"       -v "$PWD/reports/visual:/app/reports/visual"       -e QA_BASE_URL=https://www.saucedemo.com       -e QA_BROWSER=chromium       -e QA_HEADED=false       playwright-qa-framework:visual       visual_tests -m visual --browser chromium -v
+
+The baseline mount is read-only during normal comparison.
+
+### Explicit Baseline Refresh
+
+Baseline replacement is never implicit.
+
+Intentional refresh requires:
+
+    --update-visual-baselines
+
+plus a writable baseline mount in the canonical Docker environment.
+
+Changed baseline PNGs require human review before commit.
+
+Permanent CI never refreshes baselines.
+
+### Controlled `visual_user` Mismatch Validation
+
+AQA-0119 used separate `VISUAL_USER` credentials for a deliberate one-off mismatch against the approved `standard_user` Inventory baseline.
+
+That controlled validation detected:
+
+    43,909 differing pixels
+    4.76% of the image
+
+and generated:
+
+    reports/visual/diff/inventory-visual-user.png
+
+This confirmed that meaningful visual differences fail comparison and create diff evidence.
+
+`visual_user` is not included in `VALID_USER_CASES`, is not part of the permanent passing visual suite, and is not a permanently failing CI test.
+
+### Visual Regression CI
+
+AQA-0120 adds the dedicated:
+
+    visual-regression
+
+GitHub Actions job.
+
+The job:
+
+* depends on `quality`
+* runs on `ubuntu-24.04`
+* builds the existing repository Dockerfile
+* executes only the isolated visual suite
+* uses Chromium
+* runs headless
+* executes sequentially
+* mounts approved baselines read-only
+* mounts `reports/visual/` for generated evidence
+* does not use `--update-visual-baselines`
+* has no Firefox/WebKit visual matrix
+
+Generated visual evidence is uploaded as:
+
+    visual-regression-artifacts
+
+with:
+
+    if: always()
+
+and seven-day retention.
+
+AQA-0120 CI validation completed successfully with all seven workflow job executions passing and the visual artifact upload verified.
+
+Formal Phase 5C roadmap completion remains reserved for AQA-0122.
+
 ## Dedicated CI Marker Execution
 
-The native GitHub Actions execution model combines the existing Chromium jobs with the Phase 5A representative cross-browser matrix. Phase 5B does not replace these jobs with containerized execution:
+The GitHub Actions execution model combines the existing native functional jobs with the Phase 5A representative cross-browser matrix and the Phase 5C dedicated visual job:
 
     quality
-    ├── smoke [Chromium]
-    ├── regression [Chromium]
-    ├── full-suite [Chromium]
-    └── cross-browser-smoke
-        ├── Firefox
-        └── WebKit
+    ├── smoke [Chromium, native]
+    ├── regression [Chromium, native]
+    ├── full-suite [Chromium, native]
+    ├── cross-browser-smoke [native]
+    │   ├── Firefox
+    │   └── WebKit
+    └── visual-regression [Chromium, Docker]
 
 Chromium Smoke CI uses:
 
@@ -1459,13 +1726,15 @@ Allure reporting is intentionally generated only for the complete Chromium `full
 
 Phase 4F diagnostics operate through all normal Pytest browser executions.
 
-Dedicated CI jobs do not currently exist for:
+Dedicated functional CI jobs do not currently exist for:
 
 * UI
 * Security
 * Sorting
 * Navigation
 * E2E
+
+The `visual` marker is intentionally excluded from this list because it has its own dedicated CI job.
 
 These marker suites remain selectively executable locally.
 
@@ -1484,7 +1753,8 @@ Automated tests should follow:
 * externalized test data where useful
 * no hardcoded waits
 * independent test execution
-* compatibility with supported sequential and parallel execution
+* compatibility with supported sequential and parallel functional execution
+* explicit sequential visual-regression execution
 * browser-engine-neutral functional behavior where possible
 * environment-specific execution behavior kept outside functional tests
 * diagnostic behavior kept outside functional test logic
@@ -1500,6 +1770,8 @@ Runtime configuration should configure execution rather than change the function
 Browser selection should select the execution engine rather than create separate functional test ownership.
 
 Diagnostics should describe execution and failure context rather than become functional test assertions.
+
+Visual regression should remain a separate presentation-comparison concern and should not replace behavioral assertions.
 
 ## Page Object Model Strategy
 
@@ -1648,7 +1920,9 @@ Phase 4F does not introduce:
 
 Phase 5A does not introduce separate fixtures for individual browser engines.
 
-The current fixture chains remain compatible with pytest-xdist worker-level parallel execution.
+Phase 5C adds `visual_tests/conftest.py` only for visual-specific execution guards and fixed rendering configuration. Application scenario fixture ownership remains unchanged.
+
+The current functional fixture chains remain compatible with pytest-xdist worker-level parallel execution.
 
 Fixtures should be added when setup logic becomes meaningfully repeated.
 
@@ -1672,6 +1946,7 @@ Current Login test data includes:
 * locked out user cases
 * expected error messages
 * protected route URL suffixes
+* separate `VISUAL_USER` credentials for controlled visual mismatch validation
 
 Current product test data includes:
 
@@ -1707,6 +1982,8 @@ It belongs to:
     config/settings.py
 
 Browser selection is also runtime configuration rather than test data.
+
+`VISUAL_USER` is not part of `VALID_USER_CASES` and is not normal product test data; it exists only for controlled visual-regression validation.
 
 Diagnostics are not test data.
 
@@ -1791,6 +2068,7 @@ Current assertion patterns include:
 * checkout completion content matches expected values
 * runtime configuration values normalize to expected settings
 * invalid explicit runtime values raise clear configuration errors
+* approved visual checkpoints match reviewed baseline images
 
 Use Playwright assertions for browser and UI state when possible because they include built-in waiting behavior.
 
@@ -1807,6 +2085,8 @@ Use reusable assertion helpers when the same meaningful validation is shared acr
 Functional assertions should remain browser-engine-neutral unless a genuine product or engine limitation requires otherwise.
 
 Diagnostic output should not replace functional assertions.
+
+Visual comparison should supplement, not replace, functional assertions.
 
 ## Automation Priority
 
@@ -1855,6 +2135,8 @@ Runtime configuration is a framework execution concern and should not create dup
 
 Cross-browser execution is also an execution concern and should not create duplicate functional page-level ownership or duplicate browser-specific test cases.
 
+Visual regression is a presentation-validation concern and should not create duplicate functional test ownership or new functional test case metadata.
+
 Runtime and failed-test diagnostics are framework execution concerns and should not create duplicate functional test ownership.
 
 Fixture organization should preserve scenario readability and independent state preparation rather than introduce abstraction solely for architectural complexity.
@@ -1879,6 +2161,9 @@ Current reporting and debugging capabilities include:
 * browser-specific Firefox and WebKit Smoke reports
 * GitHub Actions artifacts
 * Docker bind-mounted reporting and browser-artifact outputs
+* visual actual screenshots
+* visual diff screenshots
+* dedicated `visual-regression-artifacts`
 
 ### pytest-html
 
@@ -1994,6 +2279,30 @@ the custom failure screenshot is not written and the corresponding Allure attach
 
 Setup-phase and teardown-phase failures still receive failed-test diagnostics but do not trigger custom project screenshot capture.
 
+### Visual Regression Evidence
+
+Phase 5C visual evidence is separate from failure screenshots.
+
+Approved baselines:
+
+    visual_baselines/chromium/
+
+Generated actual screenshots:
+
+    reports/visual/actual/
+
+Generated diff screenshots:
+
+    reports/visual/diff/
+
+Actual screenshots are captured intentionally by the visual suite.
+
+Diff screenshots are created when Pillow detects image differences.
+
+Approved baselines are reviewed repository assets.
+
+Generated actual/diff evidence is runtime output and is not committed.
+
 ### Trace And Video Diagnostics
 
 Trace and video use pytest-playwright / Playwright-supported runtime mechanisms.
@@ -2059,6 +2368,8 @@ Current generated locations include:
     reports/screenshots/
     reports/allure-results/
     reports/allure-report/
+    reports/visual/actual/
+    reports/visual/diff/
     test-results/
 
 These outputs are used for:
@@ -2070,6 +2381,8 @@ These outputs are used for:
 * CI artifact publishing where configured
 
 They are not repository source content and should not be committed to Git.
+
+Approved visual baselines under `visual_baselines/chromium/` are the explicit exception because they are reviewed source assets rather than generated runtime output.
 
 The repository ignore policy excludes these generated runtime areas from version control.
 
@@ -2157,6 +2470,14 @@ WebKit cross-browser Smoke artifacts are:
     webkit-smoke-pytest-html-report
     webkit-smoke-test-artifacts
 
+Visual regression artifact:
+
+    visual-regression-artifacts
+
+Visual artifact source:
+
+    reports/visual/
+
 Browser-specific artifact names prevent conflicts between the Firefox and WebKit matrix executions.
 
 Detailed CI artifact behavior is documented in:
@@ -2241,6 +2562,31 @@ Firefox Smoke:
 Artifact persistence should be validated with bind mounts for the output category being tested.
 
 Phase 5B does not provide evidence of a complete Docker full-suite validation. Documentation and handoff material should therefore not claim that the complete suite was validated inside Docker.
+
+### Visual Regression Validation
+
+When visual comparison, baseline management, or visual CI behavior is in scope, validate the canonical Chromium Docker path.
+
+Normal comparison:
+
+    docker build -t playwright-qa-framework:visual .
+
+    mkdir -p reports/visual
+
+    docker run --rm --init --ipc=host       -v "$PWD/visual_baselines:/app/visual_baselines:ro"       -v "$PWD/reports/visual:/app/reports/visual"       -e QA_BASE_URL=https://www.saucedemo.com       -e QA_BROWSER=chromium       -e QA_HEADED=false       playwright-qa-framework:visual       visual_tests -m visual --browser chromium -v
+
+Validation should confirm:
+
+* both approved `standard_user` checkpoints pass
+* Chromium-only/headless guard behavior remains effective
+* normal comparison cannot overwrite baselines
+* actual PNGs are written under `reports/visual/actual/`
+* mismatch diff PNGs are written under `reports/visual/diff/`
+* baseline refresh occurs only when explicitly requested
+* Firefox/WebKit do not use Chromium baselines
+* permanent CI does not contain the intentional `visual_user` mismatch
+
+Intentionally failing visual validation should remain controlled and temporary.
 
 ### Runtime Configuration Validation
 
@@ -2346,6 +2692,8 @@ When cross-browser compatibility or the Phase 5A execution path is affected, add
 
 When the Phase 5B containerized execution path is affected, additionally run the relevant Docker build, sequential/parallel Smoke, browser-selection, or artifact-persistence checks described above.
 
+When Phase 5C visual regression is affected, additionally run the canonical visual Docker validation described above.
+
 The full Chromium test suite should pass before a workstream is considered ready for merge unless a scoped validation exception is explicitly accepted.
 
 ## Phase 4F Validation Status
@@ -2426,15 +2774,41 @@ The validation also confirmed:
 * host UID/GID mapping can prevent root-owned mounted outputs
 * Pytest cache can be redirected to `/tmp/pytest_cache`
 * raw Allure results can be produced without adding Allure CLI, Java, or Node.js to the image
-* GitHub Actions remains a separate native execution path
+* native functional GitHub Actions remains a separate execution path
 
 The validated Phase 5B scope does not include a complete Docker full-suite run or a separately validated Docker WebKit run.
 
-Phase 5B containerized Playwright execution functionality is implemented and complete. Formal Phase 5B roadmap closure and the closing checkpoint remain owned by AQA-0117.
+Phase 5B containerized Playwright execution functionality is implemented and complete. Phase 5B was formally closed through AQA-0117.
+
+## Phase 5C Visual Regression Validation Status
+
+Phase 5C validation confirmed:
+
+    canonical Docker image build: passed
+    approved Inventory visual checkpoint: passed
+    approved Cart visual checkpoint: passed
+    controlled visual_user mismatch detection: passed
+    full functional pytest suite after visual integration: 244 passed
+    Ruff: passed
+    Black check: passed
+    isort: passed
+    GitHub Actions workflow after AQA-0120: 7/7 job executions passed
+    visual-regression-artifacts upload: verified
+
+The controlled `visual_user` comparison produced:
+
+    43,909 differing pixels
+    4.76%
+
+and confirmed diff generation without introducing a permanent failing test.
+
+Phase 5C visual regression is implemented and CI-validated.
+
+Formal Phase 5C roadmap completion remains reserved for AQA-0122.
 
 ## CI Validation Strategy
 
-GitHub Actions validates the project automatically according to the configured workflow triggers. The current CI path is native on GitHub-hosted Ubuntu runners and does not build or run the Phase 5B Docker image.
+GitHub Actions validates the project automatically according to the configured workflow triggers. Existing functional jobs run natively on GitHub-hosted Ubuntu runners. Phase 5C adds one dedicated Docker-based `visual-regression` job using the existing Phase 5B image.
 
 Current triggers include:
 
@@ -2451,15 +2825,16 @@ Regular pushes to feature, refactor, fix, or documentation branches do not autom
 
 ### Current Job Structure
 
-The current CI pipeline extends the Phase 4 execution topology with the Phase 5A representative cross-browser matrix:
+The current CI pipeline extends the Phase 4 execution topology with the Phase 5A representative cross-browser matrix and the Phase 5C dedicated visual job:
 
     quality
-    ├── smoke [Chromium]
-    ├── regression [Chromium]
-    ├── full-suite [Chromium]
-    └── cross-browser-smoke
-        ├── Firefox
-        └── WebKit
+    ├── smoke [Chromium, native]
+    ├── regression [Chromium, native]
+    ├── full-suite [Chromium, native]
+    ├── cross-browser-smoke [native]
+    │   ├── Firefox
+    │   └── WebKit
+    └── visual-regression [Chromium, Docker]
 
 The `quality` job executes first.
 
@@ -2471,7 +2846,7 @@ The `cross-browser-smoke` matrix also declares:
 
     needs: quality
 
-After successful quality validation, the browser-test jobs may execute independently.
+After successful quality validation, the functional browser-test jobs and the visual regression job may execute independently.
 
 Phase 4C provides pytest-xdist worker-level parallel execution inside browser-test jobs.
 
@@ -2482,6 +2857,8 @@ Phase 4E provides explicit runtime configuration defaults.
 Phase 4F provides runtime and failed-test diagnostics through the existing Pytest execution path.
 
 Phase 5A adds representative Firefox and WebKit Smoke execution without replacing or expanding the complete Chromium Regression/full-suite strategy.
+
+Phase 5C adds controlled Chromium visual regression without moving the existing functional jobs into Docker.
 
 ### Quality Validation
 
@@ -2503,7 +2880,7 @@ It does not use pytest-xdist.
 
 It does not require browser runtime configuration.
 
-A quality failure prevents all browser-test jobs from executing.
+A quality failure prevents all functional browser-test jobs and the visual regression job from executing.
 
 ### CI Runtime Defaults
 
@@ -2530,11 +2907,11 @@ or:
 
     webkit
 
-The CI runtime strategy therefore is:
+The functional CI runtime strategy therefore is:
 
 * Chromium Smoke
 * Chromium Regression
-* Chromium complete full suite
+* Chromium complete functional full suite
 * Firefox representative Smoke
 * WebKit representative Smoke
 * headless execution
@@ -2543,6 +2920,15 @@ The CI runtime strategy therefore is:
 * tracing disabled by default
 * video disabled by default
 * Phase 4F runtime diagnostics active through normal Pytest execution
+
+The visual CI runtime strategy is:
+
+* Chromium only
+* Docker-based
+* headless
+* sequential
+* fixed rendering configuration
+* read-only approved baselines
 
 The execution strategy does not introduce:
 
@@ -2555,6 +2941,10 @@ The execution strategy does not introduce:
 * default trace retention
 * default video retention
 * diagnostic-specific runtime configuration
+* Firefox visual regression
+* WebKit visual regression
+* a visual browser matrix
+* automatic CI baseline refresh
 
 ### Chromium Smoke CI Validation
 
@@ -2643,15 +3033,46 @@ Firefox and WebKit Smoke failures fail their corresponding matrix jobs.
 
 Neither matrix entry generates an Allure report.
 
+### Visual Regression CI Validation
+
+The dedicated `visual-regression` job:
+
+* depends on `quality`
+* runs on `ubuntu-24.04`
+* builds the existing repository Docker image
+* executes `visual_tests -m visual --browser chromium -v`
+* runs headless
+* executes sequentially
+* mounts `visual_baselines/` read-only
+* mounts `reports/visual/` for generated output
+* never refreshes baselines
+* does not include Firefox or WebKit
+
+The permanent CI suite uses only the approved `standard_user` checkpoints.
+
+A visual mismatch or another visual test failure fails the `visual-regression` job.
+
+Available visual evidence is uploaded through:
+
+    visual-regression-artifacts
+
+using:
+
+    if: always()
+
+The one-off `visual_user` mismatch validation is intentionally excluded from permanent CI.
+
 ### Marker Suites Without Dedicated CI Jobs
 
-Dedicated CI jobs do not currently exist for:
+Dedicated functional CI jobs do not currently exist for:
 
 * UI
 * Security
 * Sorting
 * Navigation
 * E2E
+
+The `visual` marker is intentionally excluded because it owns the dedicated `visual-regression` job.
 
 These suites remain available for selective local execution.
 
@@ -2675,7 +3096,7 @@ The Allure generation step in the Chromium full-suite job also uses failure-tole
 
 Diagnostics do not convert failed execution into successful validation.
 
-A failed `quality` job prevents browser-test jobs from starting, so no browser-test artifacts are produced in that case.
+A failed `quality` job prevents functional browser-test jobs and the visual regression job from starting, so no downstream test artifacts are produced in that case.
 
 ### Current Browser Scope
 
@@ -2691,7 +3112,8 @@ Chromium executes:
 
 * Smoke
 * Regression
-* complete full suite
+* complete functional full suite
+* dedicated visual regression
 
 Its jobs install:
 
@@ -2709,9 +3131,11 @@ Its matrix entry installs:
 
     playwright install --with-deps webkit
 
-Every browser-test CI execution uses pytest-xdist with:
+Every functional browser-test CI execution uses pytest-xdist with:
 
     -n auto
+
+The visual regression job intentionally does not use pytest-xdist.
 
 Cross-browser CI therefore represents compatibility validation rather than complete three-browser regression coverage.
 
@@ -2900,7 +3324,7 @@ Phase 5A later adds the cross-browser Smoke matrix while preserving the Phase 4F
 
 ## Phase 5B Containerized Execution Boundaries
 
-Phase 5B extends the existing execution strategy with a reproducible Docker environment while preserving test ownership, marker semantics, runtime configuration, reporting responsibilities, and native GitHub Actions CI.
+Phase 5B extends the existing execution strategy with a reproducible Docker environment while preserving test ownership, marker semantics, runtime configuration, reporting responsibilities, and native functional GitHub Actions CI.
 
 Implemented Phase 5B behavior includes:
 
@@ -2923,7 +3347,7 @@ Implemented Phase 5B behavior includes:
 * host-persistent Playwright videos through bind mounts
 * optional host UID/GID mapping for mounted outputs
 * optional Pytest cache redirection to `/tmp/pytest_cache`
-* preservation of native GitHub Actions CI
+* preservation of native functional GitHub Actions CI
 
 Phase 5B does not implement:
 
@@ -2941,7 +3365,7 @@ Phase 5B does not implement:
 * complete Docker full-suite validation evidence
 * separately validated Docker WebKit execution
 
-These boundaries keep Docker as an execution-environment capability rather than a new product-testing layer or CI topology.
+These boundaries describe the Phase 5B implementation itself. Phase 5C later reuses this execution environment for visual regression and one dedicated Docker-based CI job.
 
 ## Portfolio Promotion Validation
 
@@ -2950,6 +3374,7 @@ Before promoting `develop` to `main`, validate that:
 * the full Chromium test suite passes locally when possible
 * representative Firefox and WebKit Smoke validation passes when cross-browser behavior is part of the promoted state
 * relevant Phase 5B Docker validation passes when containerized execution is part of the promoted state
+* relevant Phase 5C visual validation passes when visual regression is part of the promoted state
 * CI on the promotion Pull Request passes
 * implemented test coverage is accurately described
 * planned coverage is not described as already automated
@@ -2957,13 +3382,14 @@ Before promoting `develop` to `main`, validate that:
 * marker definitions remain aligned with test usage
 * sequential and parallel execution documentation remains aligned with actual behavior
 * cross-browser execution documentation reflects Chromium complete regression responsibility and Firefox/WebKit representative Smoke responsibility
-* containerized execution documentation reflects the implemented Docker path without implying that GitHub Actions is containerized
+* containerized execution documentation reflects the implemented Docker path while distinguishing native functional CI from the dedicated Phase 5C visual job
+* visual regression documentation reflects approved baseline ownership, explicit refresh workflow, Chromium-only execution, and visual CI behavior
 * runtime configuration documentation remains aligned with `config/settings.py`, root `conftest.py`, Page Objects, Docker execution, and CI
 * diagnostic documentation remains aligned with `framework/diagnostics.py` and root `conftest.py`
 * fixture documentation reflects the root `conftest.py` / `tests/conftest.py` responsibility boundary
 * local runtime defaults remain aligned with documented defaults
 * CI runtime defaults remain aligned with the approved runtime and browser strategies
-* reporting documentation remains aligned with actual pytest-html, Allure, screenshot, trace, video, and artifact behavior
+* reporting documentation remains aligned with actual pytest-html, Allure, failure screenshot, visual actual/diff, trace, video, and artifact behavior
 * browser-specific CI report and artifact names remain non-conflicting
 * CI documentation remains aligned with actual workflow behavior
 * generated reports, screenshots, traces, videos, Allure outputs, cache files, and virtual environment files are not tracked
@@ -2985,6 +3411,8 @@ Possible future improvements include:
 * environment profiles only if approved by future scope
 * persistent structured logging if future requirements justify it
 * additional diagnostic evidence such as browser console capture only if explicitly approved
+* additional visual checkpoints if future risk justifies their maintenance cost
+* browser-specific visual baselines only if future approved scope expands beyond Chromium
 
 The following are already implemented and should not be treated as future scope:
 
@@ -3011,8 +3439,19 @@ The following are already implemented and should not be treated as future scope:
 * reuse of existing `QA_*` runtime configuration inside Docker
 * validated Chromium and Firefox Smoke execution inside Docker
 * Docker bind-mounted report and browser-artifact persistence
-* native GitHub Actions remaining separate from Docker execution
+* native functional GitHub Actions remaining separate from general Docker execution
+* Pillow-based visual comparison
+* dedicated `visual_tests/` suite
+* registered `visual` marker
+* approved Chromium visual baselines
+* explicit visual baseline refresh workflow
+* generated visual actual/diff evidence
+* controlled `visual_user` mismatch validation
+* canonical Chromium Docker visual execution
+* dedicated Docker-based `visual-regression` CI job
+* independent `visual-regression-artifacts`
+* absence of a Firefox/WebKit visual matrix
 
-Allure history persistence, hosted reports, GitHub Pages reporting, `.env` loading, complete three-browser Regression/full-suite execution, retries, device emulation, persistent project log files, browser console capture, network capture, Docker Compose, Kubernetes, visual regression testing, and other advanced capabilities remain future possibilities rather than current implemented behavior.
+Allure history persistence, hosted reports, GitHub Pages reporting, `.env` loading, complete three-browser Regression/full-suite execution, retries, device emulation, persistent project log files, browser console capture, network capture, Docker Compose, Kubernetes, additional visual browser matrices, and other advanced capabilities remain future possibilities rather than current implemented behavior.
 
 Future capabilities should not be described as implemented until their corresponding project tasks are completed and validated.

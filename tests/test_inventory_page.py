@@ -41,12 +41,14 @@ def test_product_list_is_displayed_with_expected_products(
 ):
     expected_product_names = [product["product_name"] for product in LIST_OF_PRODUCTS]
 
-    actual_product_names = logged_in_inventory_page.get_product_names()
-
     expect(logged_in_inventory_page.get_product_list()).to_be_visible()
+
     expect(logged_in_inventory_page.get_product_item_or_items()).to_have_count(
         len(LIST_OF_PRODUCTS)
     )
+
+    actual_product_names = logged_in_inventory_page.get_product_names()
+
     assert set(actual_product_names) == set(expected_product_names), (
         f"Expected product names: {expected_product_names}, " f"but got: {actual_product_names}"
     )
