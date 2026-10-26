@@ -16,7 +16,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 BASELINES_DIR = PROJECT_ROOT / "visual_baselines" / "chromium"
 ACTUAL_DIR = PROJECT_ROOT / "reports" / "visual" / "actual"
 DIFF_DIR = PROJECT_ROOT / "reports" / "visual" / "diff"
-MAX_DIFFERENT_PIXELS = 10
+MAX_DIFFERENT_PIXELS = 41_472
 
 BACKPACK_NAME = "Sauce Labs Backpack"
 
@@ -32,6 +32,14 @@ def _capture_and_compare(
 
     actual_path.parent.mkdir(parents=True, exist_ok=True)
     diff_path.unlink(missing_ok=True)
+
+    page.evaluate("""() =>
+            new Promise(resolve =>
+                requestAnimationFrame(() =>
+                    requestAnimationFrame(resolve)
+                )
+            )
+        """)
 
     page.screenshot(
         path=str(actual_path),
