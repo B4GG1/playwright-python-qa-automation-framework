@@ -983,7 +983,7 @@ Workstreams:
 
 * Phase 5A — Playwright Cross-Browser Validation — Completed
 * Phase 5B — Containerized Playwright Execution — Completed
-* Phase 5C — Visual Regression Testing — Future
+* Phase 5C — Visual Regression Testing — Completed
 * Phase 5D — Selenium WebDriver E2E Showcase — Future
 * Phase 5E — Reporting History And Trend Evaluation — Optional
 * Phase 5 Checkpoint — Future
@@ -1174,37 +1174,103 @@ Standalone Allure HTML generation remains outside the Docker image; the containe
 
 ## Phase 5C: Visual Regression Testing
 
-**Status:** Future
+**Status:** Completed
 
-Phase 5C will add controlled visual regression testing to complement the existing functional UI automation.
+Phase 5C adds controlled visual regression testing to complement the existing functional UI automation without weakening or expanding the normal functional full-suite scope.
 
-Sauce Demo provides suitable visual-defect behavior that allows the project to demonstrate meaningful screenshot comparison rather than simple screenshot capture.
+The completed workstream uses a dedicated comparison responsibility and a controlled Chromium environment so visual validation remains deterministic, reviewable, and clearly separated from ordinary functional assertions and failure diagnostics.
 
-The workstream will focus on:
+### Implemented Scope
 
-* defining a stable visual testing environment
-* selecting a limited set of meaningful visual checkpoints
-* creating and maintaining approved screenshot baselines
-* implementing deterministic screenshot comparison
-* producing useful visual difference evidence when a mismatch occurs
-* keeping visual regression separate from normal functional assertions
-* using controlled viewport and rendering conditions
-* integrating visual validation into an appropriate execution workflow
-* keeping baseline and generated-difference ownership explicit
+Phase 5C includes:
 
-The existing Playwright failure screenshot mechanism remains diagnostic evidence and should not be repurposed as the visual baseline system.
+* pinned Pillow image-comparison dependency in the project dependency set
+* reusable PNG comparison logic in `framework/visual_regression.py`
+* strict pixel comparison with useful changed-pixel and changed-bounds diagnostics
+* highlighted diff PNG generation when a mismatch is detected
+* approved version-controlled Chromium baseline ownership under `visual_baselines/chromium/`
+* generated actual screenshot ownership under `reports/visual/actual/`
+* generated diff screenshot ownership under `reports/visual/diff/`
+* a dedicated visual suite under `visual_tests/`
+* registered `visual` Pytest marker
+* separation of `visual_tests/` from the normal functional suite through the existing `testpaths = tests` configuration
+* canonical Docker execution based on the existing pinned Playwright Python image
+* Chromium-only visual validation
+* headless visual execution
+* fixed viewport and rendering conditions
+* sequential visual execution without pytest-xdist
+* explicit baseline refresh through `--update-visual-baselines`
+* read-only approved baselines during normal comparison and CI execution
+* Inventory default visual checkpoint
+* one-product Cart visual checkpoint using Sauce Labs Backpack
+* controlled `visual_user` mismatch validation
+* dedicated Docker-based GitHub Actions `visual-regression` job
+* independent `visual-regression-artifacts` upload with seven-day retention
+* preservation of the existing native functional CI jobs
+* no Firefox/WebKit visual regression matrix
+* no intentionally failing permanent visual test
 
-Visual regression should use a dedicated comparison responsibility.
+The approved baselines are:
 
-The workstream should avoid creating a large visual matrix across every browser engine.
+```text
+visual_baselines/chromium/inventory-default.png
+visual_baselines/chromium/cart-one-product.png
+```
 
-A controlled primary visual environment should be preferred to reduce rendering noise and baseline maintenance.
+Generated visual evidence remains runtime output:
 
-The Sauce Demo `visual_user` may be used where appropriate to validate that intentionally introduced visual differences can be detected.
+```text
+reports/visual/actual/
+reports/visual/diff/
+```
 
-Permanent CI tests should remain passing under the approved baseline.
+The existing Playwright failure screenshot mechanism remains separate diagnostic evidence. It is not used as the visual baseline system and does not own baseline comparison.
 
-Controlled mismatch validation may be used during implementation and review without committing intentionally failing permanent tests.
+### Validation
+
+AQA-0122 local checkpoint validation confirmed:
+
+* Ruff validation passes
+* Black validation passes
+* isort validation passes
+* the normal functional Pytest suite passes without collecting `visual_tests/`
+* the canonical Docker image builds successfully
+* the approved Inventory visual checkpoint passes
+* the approved one-product Cart visual checkpoint passes
+* the dedicated visual suite completes with `2 passed`
+* a controlled `visual_user` run is detected as a visual mismatch
+* diff evidence is generated for the controlled mismatch
+* the temporary intentionally failing validation test is removed afterward
+* the working tree returns to a clean state after controlled validation
+
+The dedicated CI integration is designed around the final seven-job topology:
+
+```text
+quality
+Chromium Smoke
+Chromium Regression
+Chromium full-suite
+Firefox cross-browser Smoke
+WebKit cross-browser Smoke
+visual regression
+```
+
+Final Pull Request CI and merge into `develop` remain part of the AQA-0122 integration workflow.
+
+### Scope Boundaries
+
+Phase 5C does not introduce:
+
+* Firefox visual regression
+* WebKit visual regression
+* a cross-browser visual baseline matrix
+* automatic baseline approval or refresh in CI
+* Selenium WebDriver automation
+* reporting history or trend persistence
+* replacement of the existing functional Playwright suite
+* changes to Phase 5D+ scope
+
+Phase 5 remains **In Progress** after Phase 5C completion because Phase 5D remains future scope.
 
 ---
 
