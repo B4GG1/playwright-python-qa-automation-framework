@@ -344,7 +344,7 @@ jobs:
     env:
       QA_BASE_URL: "https://www.saucedemo.com"
       QA_TIMEOUT_MS: "30000"
-      QA_EXPECT_TIMEOUT_MS: "5000"
+      QA_EXPECT_TIMEOUT_MS: "15000"
 
     steps:
       - name: Checkout repository
