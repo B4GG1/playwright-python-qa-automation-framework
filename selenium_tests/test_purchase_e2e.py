@@ -1,12 +1,5 @@
 import pytest
 
-from selenium_pages.cart_page import SeleniumCartPage
-from selenium_pages.checkout_page import (
-    SeleniumCheckoutCompletePage,
-    SeleniumCheckoutOverviewPage,
-)
-from selenium_pages.inventory_page import SeleniumInventoryPage
-from selenium_pages.login_page import SeleniumLoginPage
 from test_data.checkout_test_data import (
     CHECKOUT_COMPLETE_HEADER,
     CHECKOUT_COMPLETE_MESSAGE,
@@ -18,42 +11,55 @@ from test_data.checkout_test_data import (
     TOTAL_PREFIX,
     VALID_CHECKOUT_CUSTOMER,
 )
-from test_data.login_test_data import VALID_USER_CASES
-from test_data.product_test_data import LIST_OF_PRODUCTS
+
+pytestmark = [
+    pytest.mark.selenium,
+    pytest.mark.e2e,
+]
 
 
-@pytest.mark.selenium
-@pytest.mark.e2e
-def test_complete_purchase_journey(selenium_driver) -> None:
-    user = VALID_USER_CASES[0]
-    product = LIST_OF_PRODUCTS[0]
-    customer = VALID_CHECKOUT_CUSTOMER
-
-    login_page = SeleniumLoginPage(selenium_driver)
-    login_page.open()
-
-    login_page.login(
-        user["username"],
-        user["password"],
+def test_valid_user_login_opens_inventory(
+    selenium_opened_login_page,
+    selenium_standard_user,
+) -> None:
+    selenium_opened_login_page.login(
+        selenium_standard_user["username"],
+        selenium_standard_user["password"],
     )
 
-    inventory_page = SeleniumInventoryPage(selenium_driver)
+    from selenium_pages.inventory_page import SeleniumInventoryPage
+
+    inventory_page = SeleniumInventoryPage(selenium_opened_login_page.driver)
     inventory_page.wait_until_loaded()
 
-    assert selenium_driver.current_url == inventory_page.build_url()
+    assert selenium_opened_login_page.driver.current_url == inventory_page.build_url()
 
-    product_details_page = inventory_page.open_product_details_by_name(product["product_name"])
 
-    assert selenium_driver.current_url == product_details_page.build_url(product["product_id"])
-    assert product_details_page.get_product_name() == product["product_name"]
-    assert product_details_page.get_product_description() == product["product_description"]
-    assert product_details_page.get_product_price() == product["product_price"]
+def test_inventory_product_opens_expected_product_details(
+    selenium_logged_in_inventory_page,
+    selenium_product,
+) -> None:
+    product_details_page = selenium_logged_in_inventory_page.open_product_details_by_name(
+        selenium_product["product_name"]
+    )
+
+    assert product_details_page.driver.current_url == product_details_page.build_url(
+        selenium_product["product_id"]
+    )
+    assert product_details_page.get_product_name() == selenium_product["product_name"]
+    assert product_details_page.get_product_description() == selenium_product["product_description"]
+    assert product_details_page.get_product_price() == selenium_product["product_price"]
+
+
+def test_product_added_from_details_is_visible_in_cart(
+    selenium_product_details_page,
+) -> None:
+    product_details_page, product = selenium_product_details_page
 
     product_details_page.add_product_to_cart()
-
     cart_page = product_details_page.open_cart()
 
-    assert selenium_driver.current_url == SeleniumCartPage.build_url()
+    assert cart_page.driver.current_url == cart_page.build_url()
 
     cart_item = cart_page.get_product_item_by_name(product["product_name"])
 
@@ -62,17 +68,41 @@ def test_complete_purchase_journey(selenium_driver) -> None:
     assert cart_page.get_product_price(cart_item) == product["product_price"]
     assert cart_page.get_product_quantity(cart_item) == "1"
 
+
+def test_cart_opens_checkout_information(
+    selenium_cart_page_with_product,
+) -> None:
+    cart_page, _ = selenium_cart_page_with_product
+
     checkout_information_page = cart_page.checkout()
 
+    assert checkout_information_page.driver.current_url == checkout_information_page.build_url()
+
+
+def test_valid_checkout_information_opens_overview(
+    selenium_checkout_information_page_with_product,
+) -> None:
+    checkout_information_page, product = selenium_checkout_information_page_with_product
+
     checkout_information_page.fill_checkout_info(
-        customer["first_name"],
-        customer["last_name"],
-        customer["postal_code"],
+        VALID_CHECKOUT_CUSTOMER["first_name"],
+        VALID_CHECKOUT_CUSTOMER["last_name"],
+        VALID_CHECKOUT_CUSTOMER["postal_code"],
     )
 
     checkout_overview_page = checkout_information_page.continue_checkout()
 
-    assert selenium_driver.current_url == SeleniumCheckoutOverviewPage.build_url()
+    assert checkout_overview_page.driver.current_url == checkout_overview_page.build_url()
+
+    overview_item = checkout_overview_page.get_product_item_by_name(product["product_name"])
+
+    assert checkout_overview_page.get_product_name(overview_item) == product["product_name"]
+
+
+def test_checkout_overview_displays_expected_order(
+    selenium_checkout_overview_page_with_product,
+) -> None:
+    checkout_overview_page, product = selenium_checkout_overview_page_with_product
 
     overview_item = checkout_overview_page.get_product_item_by_name(product["product_name"])
 
@@ -95,15 +125,27 @@ def test_complete_purchase_journey(selenium_driver) -> None:
     assert checkout_overview_page.get_tax() == f"{TAX_PREFIX}{expected_tax:.2f}"
     assert checkout_overview_page.get_total() == f"{TOTAL_PREFIX}{expected_total:.2f}"
 
+
+def test_finish_checkout_displays_order_confirmation(
+    selenium_checkout_overview_page_with_product,
+) -> None:
+    checkout_overview_page, _ = selenium_checkout_overview_page_with_product
+
     checkout_complete_page = checkout_overview_page.finish_checkout()
 
-    assert selenium_driver.current_url == SeleniumCheckoutCompletePage.build_url()
+    assert checkout_complete_page.driver.current_url == checkout_complete_page.build_url()
     assert checkout_complete_page.get_complete_header() == CHECKOUT_COMPLETE_HEADER
     assert checkout_complete_page.get_complete_message() == CHECKOUT_COMPLETE_MESSAGE
 
+
+def test_back_home_returns_to_inventory(
+    selenium_checkout_complete_page_with_product,
+) -> None:
+    checkout_complete_page, product = selenium_checkout_complete_page_with_product
+
     inventory_page = checkout_complete_page.back_home()
 
-    assert selenium_driver.current_url == SeleniumInventoryPage.build_url()
+    assert inventory_page.driver.current_url == inventory_page.build_url()
 
     inventory_item = inventory_page.get_product_item_by_name(product["product_name"])
 

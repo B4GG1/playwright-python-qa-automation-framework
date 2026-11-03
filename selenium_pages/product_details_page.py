@@ -13,6 +13,7 @@ class SeleniumProductDetailsPage(SeleniumBasePage):
     PRODUCT_PRICE = (By.CSS_SELECTOR, '[data-test="inventory-item-price"]')
     ADD_TO_CART_BUTTON = (By.CSS_SELECTOR, '[data-test^="add-to-cart"]')
     SHOPPING_CART_LINK = (By.CSS_SELECTOR, '[data-test="shopping-cart-link"]')
+    SHOPPING_CART_BADGE = (By.CSS_SELECTOR, '[data-test="shopping-cart-badge"]')
 
     def wait_until_loaded(self) -> WebElement:
         return self.wait_until_visible(self.PRODUCT_ITEM)
@@ -28,6 +29,7 @@ class SeleniumProductDetailsPage(SeleniumBasePage):
 
     def add_product_to_cart(self) -> None:
         self.wait_until_clickable(self.ADD_TO_CART_BUTTON).click()
+        self.wait_until_visible(self.SHOPPING_CART_BADGE)
 
     def open_cart(self):
         from selenium_pages.cart_page import SeleniumCartPage
