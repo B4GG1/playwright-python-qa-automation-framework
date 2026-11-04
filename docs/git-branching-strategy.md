@@ -11,9 +11,9 @@ The branching strategy supports two stable branch roles:
 
 When this document is read from `main`, the `develop` branch may already contain newer integration work that has not yet been promoted to the stable portfolio branch.
 
-For detailed pytest marker semantics, sequential/parallel suite execution strategy, runtime configuration, diagnostics, fixture responsibility behavior, cross-browser validation, containerized execution, and visual regression strategy, see [Testing Strategy](testing-strategy.md).
+For detailed pytest marker semantics, sequential/parallel suite execution strategy, runtime configuration, diagnostics, fixture responsibility behavior, cross-browser validation, containerized execution, visual regression strategy, and Selenium WebDriver E2E execution, see [Testing Strategy](testing-strategy.md).
 
-For detailed GitHub Actions execution, job dependencies, pytest-xdist execution, cross-browser Smoke matrix, runtime defaults, diagnostics, reports, artifacts, and the boundary between native functional CI and the dedicated Docker-based visual regression job, see [CI/CD Pipeline](ci-cd-pipeline.md).
+For detailed GitHub Actions execution, job dependencies, pytest-xdist execution, cross-browser Smoke matrix, runtime defaults, diagnostics, reports, artifacts, the Docker-based visual regression job, and the dedicated native Selenium E2E job, see [CI/CD Pipeline](ci-cd-pipeline.md).
 
 The current Phase 5A browser validation strategy uses:
 
@@ -25,11 +25,13 @@ Firefox and WebKit do not execute the complete Regression suite or complete full
 
 Phase 5B added Docker as an additional reproducible Playwright/Pytest execution path while preserving direct WSL/Linux execution and native functional GitHub Actions CI. Phase 5B was formally closed through AQA-0117.
 
-The active Phase 5C workstream uses `feature/visual-regression-testing`.
+Phase 5C Visual Regression Testing was formally closed through AQA-0122.
 
-Phase 5C reuses the Phase 5B Docker environment for one dedicated Chromium visual regression CI job while keeping the existing functional CI jobs native.
+The active Phase 5D workstream uses `feature/selenium-webdriver-foundation`.
 
-Formal Phase 5C roadmap closure remains owned by the AQA-0122 closing checkpoint.
+Phase 5D adds a deliberately limited secondary Selenium WebDriver capability while preserving Playwright as the primary regression and cross-browser framework. The Selenium scope is Chrome-only, uses a dedicated `selenium_pages/` Page Object layer and isolated `selenium_tests/`, and has its own native `selenium-e2e` GitHub Actions job.
+
+Formal Phase 5D roadmap closure remains owned by the AQA-0127 closing checkpoint.
 
 ## Branching Model
 
@@ -99,6 +101,7 @@ feature/allure-reporting
 feature/playwright-cross-browser-validation
 feature/containerized-playwright-execution
 feature/visual-regression-testing
+feature/selenium-webdriver-foundation
 feature/api-client
 ```
 
@@ -125,9 +128,10 @@ feature/allure-reporting
 feature/playwright-cross-browser-validation
 feature/containerized-playwright-execution
 feature/visual-regression-testing
+feature/selenium-webdriver-foundation
 ```
 
-These branches can be used for complete functional automation, structure cleanup, documentation synchronization, reporting upgrades, cross-browser validation, containerized execution, visual regression workstreams, or stabilization workstreams when the tasks are tightly related and easier to validate together.
+These branches can be used for complete functional automation, structure cleanup, documentation synchronization, reporting upgrades, cross-browser validation, containerized execution, visual regression workstreams, Selenium WebDriver showcase workstreams, or stabilization workstreams when the tasks are tightly related and easier to validate together.
 
 ### Fix Branches
 
@@ -253,6 +257,10 @@ test(AQA-0118): add visual regression comparison infrastructure
 test(AQA-0119): add controlled visual regression checkpoints
 ci(AQA-0120): add visual regression validation job
 docs(AQA-0121): document phase 5c visual regression strategy
+feat(AQA-0123): add selenium webdriver execution foundation
+test(AQA-0124): add selenium e2e purchase showcase
+ci(AQA-0125): add selenium e2e validation job
+docs(AQA-0126): document phase 5d selenium e2e strategy
 ```
 
 For portfolio promotion work that is not tied to a single implementation task, the commit message may omit a task ID if no approved task ID exists.
@@ -291,6 +299,7 @@ feature/allure-reporting
 feature/playwright-cross-browser-validation
 feature/containerized-playwright-execution
 feature/visual-regression-testing
+feature/selenium-webdriver-foundation
 refactor/runtime-configuration
 refactor/diagnostics-fixture-cleanup
 ```
@@ -321,9 +330,13 @@ The `feature/playwright-cross-browser-validation` branch is the Phase 5A workstr
 
 The `feature/containerized-playwright-execution` branch is the Phase 5B workstream branch used for Docker-based Playwright execution implementation, validation, documentation synchronization, and the final Phase 5B closing checkpoint. Phase 5B was completed through AQA-0117.
 
-The `feature/visual-regression-testing` branch is the Phase 5C workstream branch used for visual comparison infrastructure, approved visual checkpoints, Docker-based visual CI integration, documentation synchronization, and the final Phase 5C closing checkpoint.
+The `feature/visual-regression-testing` branch is the Phase 5C workstream branch used for visual comparison infrastructure, approved visual checkpoints, Docker-based visual CI integration, documentation synchronization, and the final Phase 5C closing checkpoint. Phase 5C was completed through AQA-0122.
 
-The workstream deliberately keeps the six existing functional CI executions native while adding one dedicated Docker-based Chromium `visual-regression` job.
+The Phase 5C workstream deliberately kept the six existing functional CI executions native while adding one dedicated Docker-based Chromium `visual-regression` job.
+
+The `feature/selenium-webdriver-foundation` branch is the Phase 5D workstream branch used for Selenium WebDriver foundation setup, the isolated Selenium E2E purchase showcase, dedicated Selenium CI integration, documentation synchronization, and the final Phase 5D closing checkpoint.
+
+The Phase 5D workstream preserves the seven pre-existing workflow executions and adds one dedicated native `selenium-e2e` execution, producing eight workflow executions in total.
 
 A workstream branch may remain unmerged while related implementation, documentation, and final checkpoint tasks are completed.
 
@@ -369,6 +382,7 @@ docs(AQA-0116): document containerized playwright execution
 chore(AQA-0117): close phase 5b containerized execution workstream
 docs(AQA-0121): document phase 5c visual regression strategy
 chore(AQA-0122): close phase 5c visual regression workstream
+docs(AQA-0126): document phase 5d selenium e2e strategy
 chore: promote phase 3 portfolio state to main
 ```
 
@@ -566,7 +580,7 @@ The representative Smoke suite reuses:
 
 No new cross-browser marker or duplicate browser-specific test modules are required.
 
-Current browser responsibilities:
+Current Playwright browser responsibilities:
 
 ```text
 Chromium
@@ -582,7 +596,9 @@ WebKit
 └── representative Smoke
 ```
 
-Complete Firefox or WebKit Regression/full-suite validation is not part of the current execution strategy.
+Selenium WebDriver is separate from this Playwright browser matrix. Phase 5D uses Chrome only for the dedicated Selenium E2E showcase.
+
+Complete Firefox or WebKit Regression/full-suite validation is not part of the current Playwright execution strategy. Selenium Grid and a Selenium browser matrix are not implemented.
 
 ### Containerized Playwright Validation
 
@@ -713,6 +729,71 @@ visual-regression-artifacts
 with `if: always()` and seven-day retention.
 
 AQA-0120 validation completed successfully with all seven workflow job executions passing and the visual artifact upload verified.
+
+### Selenium WebDriver E2E Validation
+
+Phase 5D adds an isolated Selenium WebDriver execution path for one representative purchase journey.
+
+Current Selenium validation uses:
+
+```text
+selenium_tests/
+```
+
+with the registered:
+
+```text
+selenium
+```
+
+marker.
+
+The permanent Selenium purchase showcase is split into eight independent checkpoints that collectively cover:
+
+```text
+Login
+  ↓
+Inventory
+  ↓
+Product Details
+  ↓
+Cart
+  ↓
+Checkout Information
+  ↓
+Checkout Overview
+  ↓
+Checkout Complete
+  ↓
+Back Home
+  ↓
+Inventory
+```
+
+Local Selenium E2E validation:
+
+```bash
+pytest selenium_tests -m "selenium and e2e" -v
+```
+
+The Selenium scope is intentionally constrained:
+
+* Chrome only
+* Selenium 4.51.0
+* built-in Selenium Manager driver lifecycle
+* dedicated `selenium_pages/` Page Object layer
+* isolated `selenium_tests/` collection outside normal `testpaths = tests`
+* explicit waits
+* independent WebDriver cleanup
+* engine-independent credentials, product data, and checkout customer data reused from `test_data/`
+* sequential execution without pytest-xdist
+* no Selenium Grid
+* no Selenium cross-browser matrix
+* no full Selenium duplication of the Playwright regression suite
+* no generic shared Playwright/Selenium Page Object abstraction
+* no replacement of Playwright as the primary framework
+
+The dedicated GitHub Actions `selenium-e2e` job depends on `quality`, runs natively on `ubuntu-24.04`, uses system Chrome, executes `pytest selenium_tests -m "selenium and e2e" -v`, and publishes `selenium-e2e-pytest-html-report` through `if: always()` with seven-day retention.
 
 ### Runtime Configuration Validation
 
@@ -879,6 +960,7 @@ pytest -m sorting -v
 pytest -m navigation -v
 pytest -m e2e -v
 python -m pytest visual_tests -m visual --browser chromium -v
+pytest selenium_tests -m "selenium and e2e" -v
 ```
 
 Useful marker combinations include:
@@ -914,7 +996,7 @@ The existing Smoke suite additionally executes through the Phase 5A matrix on:
 * Firefox
 * WebKit
 
-The following functional marker suites do not currently have dedicated CI jobs:
+The following Playwright functional marker suites do not currently have dedicated marker-filtered CI jobs:
 
 * UI
 * Security
@@ -924,13 +1006,15 @@ The following functional marker suites do not currently have dedicated CI jobs:
 
 The `visual` marker is intentionally excluded from this list because it owns the dedicated Docker-based `visual-regression` CI job.
 
+The `selenium` marker is also excluded from this list because Phase 5D owns the dedicated native `selenium-e2e` CI job. That job explicitly selects `selenium_tests/` with the combined marker expression `selenium and e2e`.
+
 Tests carrying these functional markers still participate in the complete unfiltered Chromium full-suite CI execution.
 
 Tests that also carry `smoke` additionally participate in representative Firefox and WebKit validation.
 
 Dedicated marker execution in CI does not change marker semantics or local execution availability.
 
-All functional browser-test CI executions use pytest-xdist worker-level parallelism. The dedicated visual regression job runs sequentially.
+All Playwright functional browser-test CI executions use pytest-xdist worker-level parallelism. The dedicated visual regression job and the dedicated Selenium E2E job both run sequentially.
 
 Chromium Smoke and Regression remain pytest-html-focused.
 
@@ -1025,6 +1109,8 @@ Phase 5B did not containerize the functional CI architecture. Those existing job
 
 Docker therefore remains a general reproducible execution path and also serves as the canonical environment for Phase 5C visual comparison.
 
+Phase 5D preserves those seven workflow executions and adds one separate native Selenium E2E job.
+
 Current CI structure:
 
 ```text
@@ -1047,8 +1133,11 @@ quality
 │   └── WebKit
 │       └── pytest-xdist
 │           └── browser-specific pytest-html
-└── visual-regression [Chromium, Docker]
-    └── sequential visual checkpoints
+├── visual-regression [Chromium, Docker]
+│   └── sequential visual checkpoints
+└── selenium-e2e [Chrome, native Selenium]
+    └── sequential Selenium E2E checkpoints
+        └── pytest-html
 ```
 
 The current CI strategy is:
@@ -1057,16 +1146,19 @@ The current CI strategy is:
 * Firefox — representative Smoke compatibility browser
 * WebKit — representative Smoke compatibility browser
 * Chromium-only visual regression in Docker
+* Chrome-only Selenium WebDriver E2E execution
 * headless browser execution
-* pytest-xdist parallel execution for functional browser jobs
+* pytest-xdist parallel execution for Playwright functional browser jobs
 * sequential visual regression execution
-* screenshot-on-failure enabled
-* trace disabled by default
-* video disabled by default
-* runtime diagnostics through normal Pytest execution
-* failed-test diagnostics through normal Pytest execution
+* sequential Selenium execution
+* Playwright functional screenshot-on-failure enabled
+* Playwright trace disabled by default
+* Playwright video disabled by default
+* Playwright runtime diagnostics through the normal Pytest execution path
+* Playwright failed-test diagnostics through the normal Pytest execution path
+* Selenium explicit waits and independent WebDriver cleanup through its dedicated fixture/Page Object layer
 
-All functional browser-test jobs and the dedicated visual regression job depend on `quality` but do not depend on each other.
+All Playwright browser-test jobs, the dedicated visual regression job, and the dedicated Selenium E2E job depend on `quality` but do not depend on each other.
 
 The Firefox/WebKit matrix uses `fail-fast: false` so one browser failure does not cancel the other matrix execution.
 
@@ -1254,6 +1346,31 @@ Permanent CI uses only the approved `standard_user` visual checkpoints.
 
 The controlled `visual_user` mismatch validation remains outside permanent CI.
 
+### Selenium E2E CI
+
+The Phase 5D `selenium-e2e` job executes the isolated Selenium purchase showcase on system Chrome.
+
+It:
+
+* depends on `quality`
+* runs on `ubuntu-24.04`
+* uses Python 3.12
+* installs dependencies from `requirements-lock.txt`
+* uses Selenium 4.51.0
+* relies on built-in Selenium Manager rather than a third-party driver manager
+* verifies system Chrome
+* runs headless through the existing Selenium fixture
+* executes `selenium_tests/` only
+* selects `selenium and e2e`
+* runs sequentially without pytest-xdist
+* generates `reports/selenium-e2e-report.html`
+* uploads `selenium-e2e-pytest-html-report` through `if: always()`
+* retains the artifact for seven days
+
+The job uses `QA_BASE_URL=https://www.saucedemo.com`, `QA_TIMEOUT_MS=30000`, and a CI-specific `QA_EXPECT_TIMEOUT_MS=15000`.
+
+The Selenium job does not install Playwright browsers, does not participate in the Firefox/WebKit matrix, and does not replace any Playwright CI execution.
+
 ### CI Triggers
 
 The current GitHub Actions workflow runs automatically for:
@@ -1283,8 +1400,9 @@ The current execution model combines:
 * Phase 5A representative Playwright cross-browser Smoke validation
 * Phase 5B containerized Playwright execution as a general reproducible execution path
 * Phase 5C dedicated Docker-based Chromium visual regression CI validation
+* Phase 5D dedicated native Chrome Selenium E2E validation
 
-GitHub Actions may schedule Chromium Smoke, Regression, full-suite, Firefox Smoke, WebKit Smoke, and visual regression independently after `quality`.
+GitHub Actions may schedule Chromium Smoke, Regression, full-suite, Firefox Smoke, WebKit Smoke, visual regression, and Selenium E2E independently after `quality`.
 
 This is **GitHub Actions job-level concurrency**.
 
@@ -1292,9 +1410,9 @@ The `cross-browser-smoke` matrix expands one job definition into Firefox and Web
 
 This is **GitHub Actions matrix expansion**.
 
-Inside every functional browser-test execution, pytest-xdist distributes collected tests between workers. The visual regression job intentionally runs sequentially.
+Inside every Playwright functional browser-test execution, pytest-xdist distributes collected tests between workers. The visual regression job and Selenium E2E job intentionally run sequentially.
 
-This is **Pytest worker-level parallelism**.
+This is **Pytest worker-level parallelism** for the Playwright functional suite; it does not apply to the dedicated Selenium or visual executions.
 
 These mechanisms are separate and should not be treated as interchangeable.
 
@@ -1329,7 +1447,10 @@ The current execution model does not introduce:
 * browser console capture
 * network capture
 * diagnostic-specific CI jobs
-* Selenium execution
+* Selenium Grid
+* Selenium cross-browser matrix
+* full Selenium regression duplication
+* generic shared Playwright/Selenium Page Object abstraction
 
 Detailed CI behavior, runtime defaults, diagnostics, reports, artifacts, retention, and failure handling are documented in [CI/CD Pipeline](ci-cd-pipeline.md).
 
@@ -1390,6 +1511,8 @@ Use the relevant bind mount when the scope affects report or browser-artifact pe
 
 When a workstream affects visual regression, validate the dedicated Chromium visual path in the canonical Docker environment and verify the expected baseline/actual/diff ownership.
 
+When a workstream affects Selenium WebDriver behavior, validate the isolated Selenium path with `pytest selenium_tests -m "selenium and e2e" -v` and verify dedicated Chrome lifecycle, explicit waits, sequential execution, and driver cleanup.
+
 When a workstream affects runtime configuration, validate the focused configuration tests and relevant environment-driven execution.
 
 When a workstream affects diagnostics, validate the relevant runtime and failed-test diagnostic behavior through controlled failures.
@@ -1412,6 +1535,8 @@ Before merging a Pull Request, verify:
 * required Firefox/WebKit representative Smoke matrix executions passed
 * dedicated visual regression CI execution passed when applicable
 * `visual-regression-artifacts` is available when visual validation is in scope
+* dedicated Selenium E2E CI execution passed when applicable
+* `selenium-e2e-pytest-html-report` is available when Selenium validation is in scope
 * complete Chromium full-suite CI validation passed
 * expected reports and artifacts are available when required by the workstream
 * browser-specific Firefox/WebKit reports and artifacts are available when applicable
@@ -1421,15 +1546,17 @@ Before merging a Pull Request, verify:
 * documentation is updated when needed
 * test cases and automated tests are aligned
 * marker documentation reflects current executable marker behavior when marker usage changes
-* execution documentation reflects current sequential, parallel, cross-browser, and containerized behavior when execution strategy changes
+* execution documentation reflects current sequential, parallel, cross-browser, containerized, visual, and Selenium behavior when execution strategy changes
 * Docker documentation reflects the implemented Phase 5B path while distinguishing native functional CI from the dedicated Phase 5C Docker-based visual job
 * Docker validation claims remain limited to the execution modes, browsers, and artifacts that were actually validated
+* Selenium documentation reflects the dedicated `selenium_pages/` and `selenium_tests/` boundaries, Chrome-only scope, Selenium Manager lifecycle, explicit waits, sequential execution, shared test data, and dedicated CI job
+* Selenium Grid, Selenium cross-browser matrices, full regression duplication, and generic shared Playwright/Selenium Page Object abstractions are not claimed
 * runtime configuration documentation reflects current settings, defaults, and CI behavior when runtime configuration changes
 * diagnostics documentation reflects current runtime summary, failed-test context, and diagnostic-error behavior when diagnostics change
 * fixture documentation reflects the current framework-hook and application-scenario responsibility boundary when fixture organization changes
 * reporting documentation reflects current pytest-html, Allure, failure screenshot, visual actual/diff, trace, video, diagnostics, and artifact behavior when reporting or diagnostic behavior changes
 * CI documentation reflects current workflow behavior and runtime defaults when CI execution changes
-* GitHub Actions job concurrency is not confused with GitHub Actions matrix expansion, pytest-xdist worker parallelism, or Docker container execution
+* GitHub Actions job concurrency is not confused with GitHub Actions matrix expansion, pytest-xdist worker parallelism, sequential Selenium/visual execution, or Docker container execution
 * Chromium remains documented as the primary complete regression browser
 * Firefox and WebKit are documented as representative Smoke compatibility browsers
 * complete three-browser Regression/full-suite coverage is not claimed
@@ -1473,7 +1600,9 @@ Before promoting `develop` to `main`, verify:
 * documentation reflects the implemented Phase 5B containerized Playwright execution path
 * documentation reflects the implemented Phase 5C visual regression strategy
 * documentation reflects the dedicated Docker-based Chromium visual CI job and `visual-regression-artifacts`
-* documentation distinguishes direct WSL/Linux execution, general Docker execution, native functional GitHub Actions CI, and the dedicated Docker-based visual regression CI job
+* documentation reflects the implemented Phase 5D Selenium WebDriver E2E strategy
+* documentation reflects the dedicated native `selenium-e2e` CI job and `selenium-e2e-pytest-html-report`
+* documentation distinguishes direct WSL/Linux Playwright execution, general Docker Playwright execution, native Playwright GitHub Actions CI, the dedicated Docker-based visual regression CI job, and the separate native Selenium E2E CI job
 * documentation distinguishes Chromium full regression from Firefox/WebKit representative Smoke
 * documentation reflects current runtime configuration behavior
 * documentation reflects current diagnostics behavior
@@ -1549,6 +1678,8 @@ A checkpoint task should verify:
 * Docker report and browser-artifact persistence where required by the active scope
 * visual baseline/actual/diff validation where required by the active scope
 * visual CI artifact validation where required by the active scope
+* Selenium E2E validation where required by the active scope
+* Selenium pytest-html artifact validation where required by the active scope
 * reporting validation where required by the active scope
 * screenshot, trace, or video artifact validation where required by the active scope
 * full suite execution or accepted scoped validation
@@ -1573,6 +1704,7 @@ AQA-0082 — Checkout Workstream Final Validation And Documentation Sync
 AQA-0114 — Phase 5A Cross-Browser Validation Checkpoint
 AQA-0117 — Phase 5B Containerized Execution Closing Checkpoint
 AQA-0122 — Phase 5C Visual Regression Closing Checkpoint
+AQA-0127 — Phase 5D Selenium WebDriver E2E Closing Checkpoint
 ```
 
 A separate portfolio promotion review may also be used when a completed phase is promoted from `develop` to `main`.
@@ -1600,6 +1732,11 @@ This strategy ensures:
 * explicit visual baseline refresh workflow
 * dedicated Docker-based `visual-regression` CI job
 * independent `visual-regression-artifacts`
+* isolated Chrome-only Selenium WebDriver E2E showcase
+* dedicated `selenium_pages/` and `selenium_tests/` boundaries
+* built-in Selenium Manager lifecycle
+* dedicated native `selenium-e2e` CI job
+* independent `selenium-e2e-pytest-html-report`
 * consistent sequential local validation
 * supported pytest-xdist parallel validation
 * centralized runtime configuration validation
@@ -1611,7 +1748,7 @@ This strategy ensures:
 * browser-specific Firefox/WebKit pytest-html reporting
 * independent browser-specific CI artifacts
 * normalized marker-based selective execution
-* clear separation between GitHub Actions job concurrency, matrix expansion, Pytest worker parallelism, sequential visual execution, and Docker container execution
+* clear separation between GitHub Actions job concurrency, matrix expansion, Pytest worker parallelism, sequential visual execution, sequential Selenium execution, and Docker container execution
 * clear separation between runtime configuration and functional test logic
 * clear separation between browser selection and marker semantics
 * clear separation between diagnostics and persistent logging
@@ -1626,8 +1763,8 @@ Firefox and WebKit execute representative Smoke compatibility validation without
 
 Phase 5B Docker execution is implemented as an additional reproducible path alongside direct WSL/Linux execution and native functional GitHub Actions CI. Phase 5B was formally closed through AQA-0117.
 
-Phase 5C Visual Regression Testing is implemented and CI-validated. It reuses the existing Docker environment for one dedicated Chromium visual job without moving the functional CI jobs into Docker.
+Phase 5C Visual Regression Testing is implemented, CI-validated, and formally closed through AQA-0122. It reuses the existing Docker environment for one dedicated Chromium visual job without moving the functional CI jobs into Docker.
 
-Formal Phase 5C roadmap closure remains owned by AQA-0122.
+Phase 5D Selenium WebDriver E2E is implemented and CI-validated on `feature/selenium-webdriver-foundation`. It remains a deliberately limited secondary Chrome-only capability; Playwright remains the primary regression and cross-browser framework. Formal Phase 5D roadmap closure remains owned by AQA-0127.
 
-The detailed CI, runtime configuration, diagnostics, reporting, containerized-execution, and visual-regression boundaries remain documented in [CI/CD Pipeline](ci-cd-pipeline.md).
+The detailed CI, runtime configuration, diagnostics, reporting, containerized-execution, visual-regression, and Selenium E2E boundaries remain documented in [CI/CD Pipeline](ci-cd-pipeline.md).
