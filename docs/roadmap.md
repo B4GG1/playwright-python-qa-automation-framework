@@ -984,7 +984,7 @@ Workstreams:
 * Phase 5A — Playwright Cross-Browser Validation — Completed
 * Phase 5B — Containerized Playwright Execution — Completed
 * Phase 5C — Visual Regression Testing — Completed
-* Phase 5D — Selenium WebDriver E2E Showcase — Future
+* Phase 5D — Selenium WebDriver E2E Showcase — Completed
 * Phase 5E — Reporting History And Trend Evaluation — Optional
 * Phase 5 Checkpoint — Future
 
@@ -1270,23 +1270,23 @@ Phase 5C does not introduce:
 * replacement of the existing functional Playwright suite
 * changes to Phase 5D+ scope
 
-Phase 5 remains **In Progress** after Phase 5C completion because Phase 5D remains future scope.
+Phase 5 remained **In Progress** after Phase 5C completion while Phase 5D was still pending.
 
 ---
 
 ## Phase 5D: Selenium WebDriver E2E Showcase
 
-**Status:** Future
+**Status:** Completed
 
-Phase 5D will demonstrate practical Selenium WebDriver automation alongside the primary Playwright framework.
+Phase 5D demonstrates practical Selenium WebDriver automation alongside the primary Playwright framework.
 
 Selenium is intentionally included to show that the project owner can design and implement browser automation using more than one major automation technology.
 
-The Selenium implementation will not duplicate the complete existing Playwright regression suite.
+The Selenium implementation does not duplicate the complete existing Playwright regression suite.
 
-Instead, it will implement one complete representative end-to-end Sauce Demo purchase journey.
+Instead, it implements one logical representative end-to-end Sauce Demo purchase journey, represented by eight independent Selenium E2E checkpoint tests.
 
-The Selenium E2E flow will cover:
+The Selenium E2E flow covers:
 
 1. opening the Login page
 2. logging in with a valid user
@@ -1304,7 +1304,7 @@ The Selenium E2E flow will cover:
 14. using Back Home
 15. confirming successful return to the Inventory page
 
-The Selenium workstream will demonstrate:
+The Selenium workstream demonstrates:
 
 * WebDriver lifecycle management
 * Selenium locator strategy
@@ -1316,13 +1316,13 @@ The Selenium workstream will demonstrate:
 * deterministic E2E setup
 * assertion strategy
 * browser cleanup
-* CI execution where appropriate
+* dedicated headless Chrome CI execution with pytest-html artifact upload
 
-Selenium should use its own automation-specific Page Object layer.
+Selenium uses its own automation-specific Page Object layer.
 
-Existing Playwright Page Objects should not be redesigned into a generic abstraction merely to support both tools.
+Existing Playwright Page Objects have not been redesigned into a generic abstraction merely to support both tools.
 
-Automation-engine-independent data may be reused where appropriate, including:
+Automation-engine-independent data is reused where appropriate, including:
 
 * valid credentials
 * product expectations
@@ -1330,7 +1330,7 @@ Automation-engine-independent data may be reused where appropriate, including:
 * expected application values
 * application base URL
 
-The Selenium implementation should remain deliberately limited to the approved E2E showcase.
+The Selenium implementation remains deliberately limited to the approved E2E showcase.
 
 It does not introduce:
 
@@ -1341,9 +1341,22 @@ It does not introduce:
 * replacement of Playwright as the primary framework
 * a second complete regression architecture
 
-Chrome is the expected primary Selenium browser unless implementation analysis identifies a concrete reason to expand that scope.
+Headless Chrome is the Selenium browser used for the approved showcase.
 
 Playwright remains responsible for the project's primary regression and cross-browser strategy.
+
+### Validation
+
+AQA-0127 local validation confirmed:
+
+* four consecutive headless Chrome Selenium E2E executions passed (8 tests per run, 32 passed in total)
+* the Selenium E2E checkpoint tests passed with both 5000 ms and 15000 ms explicit-wait configurations
+* the normal `pytest` suite passed independently of the dedicated Selenium suite
+* Ruff, Black, and isort quality checks passed
+* Selenium scenario fixtures use Page Object navigation for Cart and Checkout Information setup
+* Selenium browser cleanup remains owned by the function-scoped WebDriver fixture
+
+The dedicated `selenium-e2e` GitHub Actions job runs the showcase separately from Playwright and is configured to upload `selenium-e2e-pytest-html-report`. Final Pull Request CI results, artifact availability, and squash merge into `develop` still require verification during AQA-0127 integration.
 
 ---
 

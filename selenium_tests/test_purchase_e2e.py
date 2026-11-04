@@ -1,5 +1,6 @@
 import pytest
 
+from selenium_pages.inventory_page import SeleniumInventoryPage
 from test_data.checkout_test_data import (
     CHECKOUT_COMPLETE_HEADER,
     CHECKOUT_COMPLETE_MESSAGE,
@@ -26,8 +27,6 @@ def test_valid_user_login_opens_inventory(
         selenium_standard_user["username"],
         selenium_standard_user["password"],
     )
-
-    from selenium_pages.inventory_page import SeleniumInventoryPage
 
     inventory_page = SeleniumInventoryPage(selenium_opened_login_page.driver)
     inventory_page.wait_until_loaded()

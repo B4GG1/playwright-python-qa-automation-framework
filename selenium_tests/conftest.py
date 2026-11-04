@@ -1,4 +1,5 @@
 from collections.abc import Generator
+from pathlib import Path
 
 import pytest
 from selenium import webdriver
@@ -33,6 +34,39 @@ def selenium_driver() -> Generator[WebDriver, None, None]:
         yield driver
     finally:
         driver.quit()
+
+
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item: pytest.Item, call: pytest.CallInfo[object]):
+    outcome = yield
+    report = outcome.get_result()
+
+    if not report.failed or report.when not in {"setup", "call"}:
+        return
+
+    driver = item.funcargs.get("selenium_driver")
+    if not isinstance(driver, WebDriver):
+        return
+
+    details = []
+
+    try:
+        details.append(f"url={driver.current_url}")
+    except Exception as exc:
+        details.append(f"url_unavailable={type(exc).__name__}: {exc}")
+
+    try:
+        screenshots_dir = Path("reports/selenium/screenshots")
+        screenshots_dir.mkdir(parents=True, exist_ok=True)
+        screenshot_path = screenshots_dir / f"{item.name}_{report.when}.png"
+        if driver.save_screenshot(str(screenshot_path)):
+            details.append(f"screenshot={screenshot_path}")
+        else:
+            details.append("screenshot=not_saved")
+    except Exception as exc:
+        details.append(f"screenshot_error={type(exc).__name__}: {exc}")
+
+    report.sections.append(("selenium diagnostics", "\n".join(details)))
 
 
 @pytest.fixture()
@@ -93,10 +127,7 @@ def selenium_cart_page_with_product(
     product_details_page, product = selenium_product_details_page
 
     product_details_page.add_product_to_cart()
-
-    cart_page = SeleniumCartPage(product_details_page.driver)
-    cart_page.open()
-    cart_page.wait_until_loaded()
+    cart_page = product_details_page.open_cart()
 
     return cart_page, product
 
@@ -109,10 +140,7 @@ def selenium_checkout_information_page_with_product(
     ],
 ) -> tuple[SeleniumCheckoutInformationPage, dict]:
     cart_page, product = selenium_cart_page_with_product
-
-    checkout_information_page = SeleniumCheckoutInformationPage(cart_page.driver)
-    checkout_information_page.open()
-    checkout_information_page.wait_until_loaded()
+    checkout_information_page = cart_page.checkout()
 
     return checkout_information_page, product
 
