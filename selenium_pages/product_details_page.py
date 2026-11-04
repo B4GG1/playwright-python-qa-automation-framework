@@ -1,5 +1,6 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.support import expected_conditions as EC
 
 from selenium_pages.base_page import SeleniumBasePage
 
@@ -28,16 +29,21 @@ class SeleniumProductDetailsPage(SeleniumBasePage):
         return self.wait_until_visible(self.PRODUCT_PRICE).text
 
     def add_product_to_cart(self) -> None:
-        self.wait_until_clickable(self.ADD_TO_CART_BUTTON).click()
-        self.wait_until_visible(self.SHOPPING_CART_BADGE)
+        self.click_and_confirm(
+            lambda: self.wait_until_clickable(self.ADD_TO_CART_BUTTON),
+            EC.visibility_of_element_located(self.SHOPPING_CART_BADGE),
+            action="Add product to Cart",
+        )
 
     def open_cart(self):
         from selenium_pages.cart_page import SeleniumCartPage
 
-        self.wait_until_clickable(self.SHOPPING_CART_LINK).click()
-
         cart_page = SeleniumCartPage(self.driver)
-        cart_page.wait_until_url_is(cart_page.build_url())
+        self.click_and_confirm_url(
+            self.SHOPPING_CART_LINK,
+            cart_page.build_url(),
+            action="Open Cart from Product Details",
+        )
         cart_page.wait_until_loaded()
 
         return cart_page

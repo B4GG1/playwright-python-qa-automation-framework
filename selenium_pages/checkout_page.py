@@ -29,9 +29,12 @@ class SeleniumCheckoutInformationPage(SeleniumBasePage):
         self.wait_until_visible(self.POSTAL_CODE_INPUT).send_keys(postal_code)
 
     def continue_checkout(self) -> SeleniumCheckoutOverviewPage:
-        self.wait_until_clickable(self.CONTINUE_BUTTON).click()
-
         overview_page = SeleniumCheckoutOverviewPage(self.driver)
+        self.click_and_confirm_url(
+            self.CONTINUE_BUTTON,
+            overview_page.build_url(),
+            action="Continue Checkout",
+        )
         overview_page.wait_until_loaded()
 
         return overview_page
@@ -100,9 +103,12 @@ class SeleniumCheckoutOverviewPage(SeleniumBasePage):
         return self.wait_until_visible(self.TOTAL).text
 
     def finish_checkout(self) -> SeleniumCheckoutCompletePage:
-        self.wait_until_clickable(self.FINISH_BUTTON).click()
-
         complete_page = SeleniumCheckoutCompletePage(self.driver)
+        self.click_and_confirm_url(
+            self.FINISH_BUTTON,
+            complete_page.build_url(),
+            action="Finish Checkout",
+        )
         complete_page.wait_until_loaded()
 
         return complete_page
@@ -131,9 +137,12 @@ class SeleniumCheckoutCompletePage(SeleniumBasePage):
     def back_home(self):
         from selenium_pages.inventory_page import SeleniumInventoryPage
 
-        self.wait_until_clickable(self.BACK_HOME_BUTTON).click()
-
         inventory_page = SeleniumInventoryPage(self.driver)
+        self.click_and_confirm_url(
+            self.BACK_HOME_BUTTON,
+            inventory_page.build_url(),
+            action="Back Home",
+        )
         inventory_page.wait_until_loaded()
 
         return inventory_page

@@ -54,9 +54,12 @@ class SeleniumCartPage(SeleniumBasePage):
     def checkout(self) -> SeleniumCheckoutInformationPage:
         from selenium_pages.checkout_page import SeleniumCheckoutInformationPage
 
-        self.wait_until_clickable(self.CHECKOUT_BUTTON).click()
-
         checkout_page = SeleniumCheckoutInformationPage(self.driver)
+        self.click_and_confirm_url(
+            self.CHECKOUT_BUTTON,
+            checkout_page.build_url(),
+            action="Open Checkout Information",
+        )
         checkout_page.wait_until_loaded()
 
         return checkout_page

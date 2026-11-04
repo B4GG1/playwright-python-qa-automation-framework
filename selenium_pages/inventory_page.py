@@ -38,9 +38,11 @@ class SeleniumInventoryPage(SeleniumBasePage):
     ) -> SeleniumProductDetailsPage:
         from selenium_pages.product_details_page import SeleniumProductDetailsPage
 
-        product_item = self.get_product_item_by_name(product_name)
-        product_name_element = product_item.find_element(*self.PRODUCT_NAME)
-        product_name_element.click()
+        self.click_and_confirm(
+            lambda: self.get_product_item_by_name(product_name).find_element(*self.PRODUCT_NAME),
+            lambda driver: driver.current_url.startswith(SeleniumProductDetailsPage.build_url()),
+            action=f"Open Product Details for {product_name}",
+        )
 
         product_details_page = SeleniumProductDetailsPage(self.driver)
         product_details_page.wait_until_loaded()

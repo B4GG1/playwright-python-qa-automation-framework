@@ -11,6 +11,12 @@ class SeleniumLoginPage(SeleniumBasePage):
     LOGIN_BUTTON = (By.CSS_SELECTOR, '[data-test="login-button"]')
 
     def login(self, username: str, password: str) -> None:
+        from selenium_pages.inventory_page import SeleniumInventoryPage
+
         self.wait_until_visible(self.USERNAME_INPUT).send_keys(username)
         self.wait_until_visible(self.PASSWORD_INPUT).send_keys(password)
-        self.wait_until_clickable(self.LOGIN_BUTTON).click()
+        self.click_and_confirm_url(
+            self.LOGIN_BUTTON,
+            SeleniumInventoryPage.build_url(),
+            action="Log in",
+        )
