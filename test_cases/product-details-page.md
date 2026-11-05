@@ -8,23 +8,23 @@ The goal of this document is to define product-details-page-owned scenarios and 
 
 ## Test Case Overview And Automation Coverage
 
-| Test Case ID                                                                                                                          | Scenario                                                                           | Type                    | Priority | Automation Status | Automated In                         |
-|---------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------|-------------------------|----------|-------------------|--------------------------------------|
-| [TC-PRODUCT-DETAILS-001](#tc-product-details-001--product-details-content-is-displayed-for-selected-product)                          | Product details content is displayed for selected product                          | Smoke / UI              | High     | Automated         | `tests/test_product_details_page.py` |
-| [TC-PRODUCT-DETAILS-002](#tc-product-details-002--product-details-content-matches-product-data-for-each-product)                      | Product details content matches product data for each product                      | Regression / UI         | Medium   | Automated         | `tests/test_product_details_page.py` |
-| [TC-PRODUCT-DETAILS-003](#tc-product-details-003--user-can-return-from-product-details-to-inventory-page)                             | User can return from product details to inventory page                             | Navigation              | Medium   | Automated         | `tests/test_product_details_page.py` |
-| [TC-PRODUCT-DETAILS-004](#tc-product-details-004--add-to-cart-button-changes-to-remove-after-adding-product-from-details-page)        | Add to cart button changes to Remove after adding product from details page        | Regression / UI         | Medium   | Automated         | `tests/test_product_details_page.py` |
-| [TC-PRODUCT-DETAILS-005](#tc-product-details-005--product-can-be-added-to-cart-from-product-details-page)                             | Product can be added to cart from product details page                             | Smoke                   | High     | Automated         | `tests/test_product_details_page.py` |
-| [TC-PRODUCT-DETAILS-006](#tc-product-details-006--all-products-can-be-added-to-cart-from-product-details-page)                        | All products can be added to cart from product details page                        | Regression              | Medium   | Automated         | `tests/test_product_details_page.py` |
-| [TC-PRODUCT-DETAILS-007](#tc-product-details-007--product-can-be-removed-from-cart-from-product-details-page)                         | Product can be removed from cart from product details page                         | Smoke                   | High     | Automated         | `tests/test_product_details_page.py` |
-| [TC-PRODUCT-DETAILS-008](#tc-product-details-008--remove-button-changes-back-to-add-to-cart-after-removing-product-from-details-page) | Remove button changes back to Add to cart after removing product from details page | Regression / UI         | Medium   | Automated         | `tests/test_product_details_page.py` |
-| [TC-PRODUCT-DETAILS-009](#tc-product-details-009--cart-badge-is-displayed-after-adding-product-from-product-details-page)             | Cart badge is displayed after adding product from product details page             | Smoke / UI              | Medium   | Automated         | `tests/test_product_details_page.py` |
-| [TC-PRODUCT-DETAILS-010](#tc-product-details-010--cart-badge-count-updates-after-adding-product-from-details-when-cart-is-not-empty)  | Cart badge count updates after adding product from details when cart is not empty  | Regression / UI         | Medium   | Automated         | `tests/test_product_details_page.py` |
-| [TC-PRODUCT-DETAILS-011](#tc-product-details-011--cart-badge-count-updates-after-removing-one-of-multiple-products-from-details-page) | Cart badge count updates after removing one of multiple products from details page | Regression / UI         | Medium   | Automated         | `tests/test_product_details_page.py` |
-| [TC-PRODUCT-DETAILS-012](#tc-product-details-012--cart-badge-disappears-after-removing-last-product-from-product-details-page)        | Cart badge disappears after removing last product from product details page        | Smoke / UI              | Medium   | Automated         | `tests/test_product_details_page.py` |
-| [TC-PRODUCT-DETAILS-013](#tc-product-details-013--cart-page-can-be-opened-from-product-details-page)                                  | Cart page can be opened from product details page                                  | Smoke / Navigation      | Medium   | Automated         | `tests/test_product_details_page.py` |
-| [TC-PRODUCT-DETAILS-014](#tc-product-details-014--all-products-can-be-removed-from-cart-from-product-details-page)                    | All products can be removed from cart from product details page                    | Regression              | Medium   | Automated         | `tests/test_product_details_page.py` |
-| [TC-PRODUCT-DETAILS-015](#tc-product-details-015--cart-page-can-be-opened-from-product-details-page-for-each-product)                 | Cart page can be opened from product details page for each product                 | Regression / Navigation | Medium   | Automated         | `tests/test_product_details_page.py` |
+| Test Case ID                                                                                                                          | Scenario                                                                           | Type                    | Priority | Automation Status | Automated In                                                                |
+|---------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------|-------------------------|----------|-------------------|-----------------------------------------------------------------------------|
+| [TC-PRODUCT-DETAILS-001](#tc-product-details-001--product-details-content-is-displayed-for-selected-product)                          | Product details content is displayed for selected product                          | Smoke / UI              | High     | Automated         | `tests/test_product_details_page.py`, `selenium_tests/test_purchase_e2e.py` |
+| [TC-PRODUCT-DETAILS-002](#tc-product-details-002--product-details-content-matches-product-data-for-each-product)                      | Product details content matches product data for each product                      | Regression / UI         | Medium   | Automated         | `tests/test_product_details_page.py`                                        |
+| [TC-PRODUCT-DETAILS-003](#tc-product-details-003--user-can-return-from-product-details-to-inventory-page)                             | User can return from product details to inventory page                             | Navigation              | Medium   | Automated         | `tests/test_product_details_page.py`                                        |
+| [TC-PRODUCT-DETAILS-004](#tc-product-details-004--add-to-cart-button-changes-to-remove-after-adding-product-from-details-page)        | Add to cart button changes to Remove after adding product from details page        | Regression / UI         | Medium   | Automated         | `tests/test_product_details_page.py`                                        |
+| [TC-PRODUCT-DETAILS-005](#tc-product-details-005--product-can-be-added-to-cart-from-product-details-page)                             | Product can be added to cart from product details page                             | Smoke                   | High     | Automated         | `tests/test_product_details_page.py`, `selenium_tests/test_purchase_e2e.py` |
+| [TC-PRODUCT-DETAILS-006](#tc-product-details-006--all-products-can-be-added-to-cart-from-product-details-page)                        | All products can be added to cart from product details page                        | Regression              | Medium   | Automated         | `tests/test_product_details_page.py`                                        |
+| [TC-PRODUCT-DETAILS-007](#tc-product-details-007--product-can-be-removed-from-cart-from-product-details-page)                         | Product can be removed from cart from product details page                         | Smoke                   | High     | Automated         | `tests/test_product_details_page.py`                                        |
+| [TC-PRODUCT-DETAILS-008](#tc-product-details-008--remove-button-changes-back-to-add-to-cart-after-removing-product-from-details-page) | Remove button changes back to Add to cart after removing product from details page | Regression / UI         | Medium   | Automated         | `tests/test_product_details_page.py`                                        |
+| [TC-PRODUCT-DETAILS-009](#tc-product-details-009--cart-badge-is-displayed-after-adding-product-from-product-details-page)             | Cart badge is displayed after adding product from product details page             | Smoke / UI              | Medium   | Automated         | `tests/test_product_details_page.py`                                        |
+| [TC-PRODUCT-DETAILS-010](#tc-product-details-010--cart-badge-count-updates-after-adding-product-from-details-when-cart-is-not-empty)  | Cart badge count updates after adding product from details when cart is not empty  | Regression / UI         | Medium   | Automated         | `tests/test_product_details_page.py`                                        |
+| [TC-PRODUCT-DETAILS-011](#tc-product-details-011--cart-badge-count-updates-after-removing-one-of-multiple-products-from-details-page) | Cart badge count updates after removing one of multiple products from details page | Regression / UI         | Medium   | Automated         | `tests/test_product_details_page.py`                                        |
+| [TC-PRODUCT-DETAILS-012](#tc-product-details-012--cart-badge-disappears-after-removing-last-product-from-product-details-page)        | Cart badge disappears after removing last product from product details page        | Smoke / UI              | Medium   | Automated         | `tests/test_product_details_page.py`                                        |
+| [TC-PRODUCT-DETAILS-013](#tc-product-details-013--cart-page-can-be-opened-from-product-details-page)                                  | Cart page can be opened from product details page                                  | Smoke / Navigation      | Medium   | Automated         | `tests/test_product_details_page.py`, `selenium_tests/test_purchase_e2e.py` |
+| [TC-PRODUCT-DETAILS-014](#tc-product-details-014--all-products-can-be-removed-from-cart-from-product-details-page)                    | All products can be removed from cart from product details page                    | Regression              | Medium   | Automated         | `tests/test_product_details_page.py`                                        |
+| [TC-PRODUCT-DETAILS-015](#tc-product-details-015--cart-page-can-be-opened-from-product-details-page-for-each-product)                 | Cart page can be opened from product details page for each product                 | Regression / Navigation | Medium   | Automated         | `tests/test_product_details_page.py`                                        |
 
 ---
 
@@ -36,7 +36,7 @@ The goal of this document is to define product-details-page-owned scenarios and 
 **Priority:** High\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
-**Automated In:** `tests/test_product_details_page.py`
+**Automated In:** `tests/test_product_details_page.py`, `selenium_tests/test_purchase_e2e.py`
 
 **Preconditions:**
 
@@ -198,7 +198,7 @@ The goal of this document is to define product-details-page-owned scenarios and 
 **Priority:** High\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
-**Automated In:** `tests/test_product_details_page.py`
+**Automated In:** `tests/test_product_details_page.py`, `selenium_tests/test_purchase_e2e.py`
 
 **Preconditions:**
 
@@ -518,7 +518,7 @@ The goal of this document is to define product-details-page-owned scenarios and 
 **Priority:** Medium\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
-**Automated In:** `tests/test_product_details_page.py`
+**Automated In:** `tests/test_product_details_page.py`, `selenium_tests/test_purchase_e2e.py`
 
 **Preconditions:**
 

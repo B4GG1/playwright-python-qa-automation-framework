@@ -8,21 +8,21 @@ The goal of this document is to define cart-page-owned scenarios and track their
 
 ## Test Case Overview And Automation Coverage
 
-| Test Case ID                                                                                      | Scenario                                                             | Type                     | Priority | Automation Status | Automated In              |
-|---------------------------------------------------------------------------------------------------|----------------------------------------------------------------------|--------------------------|----------|-------------------|---------------------------|
-| [TC-CART-001](#tc-cart-001--cart-is-empty-before-adding-products)                                 | Cart is empty before adding products                                 | Smoke                    | Medium   | Automated         | `tests/test_cart_page.py` |
-| [TC-CART-002](#tc-cart-002--added-product-is-displayed-with-correct-content-on-cart-page)         | Added product is displayed with correct content on cart page         | Smoke / UI / E2E         | High     | Automated         | `tests/test_cart_page.py` |
-| [TC-CART-003](#tc-cart-003--product-can-be-removed-from-cart-page)                                | Product can be removed from cart page                                | Smoke                    | High     | Automated         | `tests/test_cart_page.py` |
-| [TC-CART-004](#tc-cart-004--cart-badge-is-removed-after-removing-last-product)                    | Cart badge is removed after removing last product                    | Regression / UI          | Medium   | Automated         | `tests/test_cart_page.py` |
-| [TC-CART-005](#tc-cart-005--user-can-continue-shopping-from-cart-page)                            | User can continue shopping from cart page                            | Navigation               | Medium   | Automated         | `tests/test_cart_page.py` |
-| [TC-CART-006](#tc-cart-006--cart-state-persists-after-logout-and-re-login)                        | Cart state persists after logout and re-login                        | Regression               | Medium   | Automated         | `tests/test_cart_page.py` |
-| [TC-CART-007](#tc-cart-007--all-added-products-are-displayed-with-correct-content-on-cart-page)   | All added products are displayed with correct content on cart page   | Regression / UI          | Medium   | Automated         | `tests/test_cart_page.py` |
-| [TC-CART-008](#tc-cart-008--cart-badge-decrements-after-removing-one-of-multiple-products)        | Cart badge decrements after removing one of multiple products        | Regression / UI          | Medium   | Automated         | `tests/test_cart_page.py` |
-| [TC-CART-009](#tc-cart-009--product-details-can-be-opened-from-cart-item-name)                    | Product details can be opened from cart item name                    | Smoke / Navigation       | Medium   | Automated         | `tests/test_cart_page.py` |
-| [TC-CART-010](#tc-cart-010--continue-shopping-preserves-cart-state)                               | Continue Shopping preserves cart state                               | Regression / UI          | Medium   | Automated         | `tests/test_cart_page.py` |
-| [TC-CART-011](#tc-cart-011--all-products-can-be-removed-from-cart-page)                           | All products can be removed from cart page                           | Regression               | Medium   | Automated         | `tests/test_cart_page.py` |
-| [TC-CART-012](#tc-cart-012--checkout-button-opens-checkout-information-page-with-product-in-cart) | Checkout button opens checkout information page with product in cart | Smoke / Navigation / E2E | High     | Automated         | `tests/test_cart_page.py` |
-| [TC-CART-013](#tc-cart-013--product-details-can-be-opened-from-cart-item-name-for-each-product)   | Product details can be opened from cart item name for each product   | Regression / Navigation  | Medium   | Automated         | `tests/test_cart_page.py` |
+| Test Case ID                                                                                      | Scenario                                                             | Type                     | Priority | Automation Status | Automated In                                                     |
+|---------------------------------------------------------------------------------------------------|----------------------------------------------------------------------|--------------------------|----------|-------------------|------------------------------------------------------------------|
+| [TC-CART-001](#tc-cart-001--cart-is-empty-before-adding-products)                                 | Cart is empty before adding products                                 | Smoke                    | Medium   | Automated         | `tests/test_cart_page.py`                                        |
+| [TC-CART-002](#tc-cart-002--added-product-is-displayed-with-correct-content-on-cart-page)         | Added product is displayed with correct content on cart page         | Smoke / UI / E2E         | High     | Automated         | `tests/test_cart_page.py`, `selenium_tests/test_purchase_e2e.py` |
+| [TC-CART-003](#tc-cart-003--product-can-be-removed-from-cart-page)                                | Product can be removed from cart page                                | Smoke                    | High     | Automated         | `tests/test_cart_page.py`                                        |
+| [TC-CART-004](#tc-cart-004--cart-badge-is-removed-after-removing-last-product)                    | Cart badge is removed after removing last product                    | Regression / UI          | Medium   | Automated         | `tests/test_cart_page.py`                                        |
+| [TC-CART-005](#tc-cart-005--user-can-continue-shopping-from-cart-page)                            | User can continue shopping from cart page                            | Navigation               | Medium   | Automated         | `tests/test_cart_page.py`                                        |
+| [TC-CART-006](#tc-cart-006--cart-state-persists-after-logout-and-re-login)                        | Cart state persists after logout and re-login                        | Regression               | Medium   | Automated         | `tests/test_cart_page.py`                                        |
+| [TC-CART-007](#tc-cart-007--all-added-products-are-displayed-with-correct-content-on-cart-page)   | All added products are displayed with correct content on cart page   | Regression / UI          | Medium   | Automated         | `tests/test_cart_page.py`                                        |
+| [TC-CART-008](#tc-cart-008--cart-badge-decrements-after-removing-one-of-multiple-products)        | Cart badge decrements after removing one of multiple products        | Regression / UI          | Medium   | Automated         | `tests/test_cart_page.py`                                        |
+| [TC-CART-009](#tc-cart-009--product-details-can-be-opened-from-cart-item-name)                    | Product details can be opened from cart item name                    | Smoke / Navigation       | Medium   | Automated         | `tests/test_cart_page.py`                                        |
+| [TC-CART-010](#tc-cart-010--continue-shopping-preserves-cart-state)                               | Continue Shopping preserves cart state                               | Regression / UI          | Medium   | Automated         | `tests/test_cart_page.py`                                        |
+| [TC-CART-011](#tc-cart-011--all-products-can-be-removed-from-cart-page)                           | All products can be removed from cart page                           | Regression               | Medium   | Automated         | `tests/test_cart_page.py`                                        |
+| [TC-CART-012](#tc-cart-012--checkout-button-opens-checkout-information-page-with-product-in-cart) | Checkout button opens checkout information page with product in cart | Smoke / Navigation / E2E | High     | Automated         | `tests/test_cart_page.py`, `selenium_tests/test_purchase_e2e.py` |
+| [TC-CART-013](#tc-cart-013--product-details-can-be-opened-from-cart-item-name-for-each-product)   | Product details can be opened from cart item name for each product   | Regression / Navigation  | Medium   | Automated         | `tests/test_cart_page.py`                                        |
 
 ---
 
@@ -71,7 +71,7 @@ The goal of this document is to define cart-page-owned scenarios and track their
 **Priority:** High\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
-**Automated In:** `tests/test_cart_page.py`
+**Automated In:** `tests/test_cart_page.py`, `selenium_tests/test_purchase_e2e.py`
 
 **Preconditions:**
 
@@ -480,7 +480,7 @@ The goal of this document is to define cart-page-owned scenarios and track their
 **Priority:** High\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
-**Automated In:** `tests/test_cart_page.py`
+**Automated In:** `tests/test_cart_page.py`, `selenium_tests/test_purchase_e2e.py`
 
 **Preconditions:**
 
