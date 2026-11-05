@@ -1,27 +1,25 @@
 import pytest
+from selenium.webdriver.support import expected_conditions as ec
 
+from selenium_pages.cart_page import SeleniumCartPage
+from selenium_pages.checkout_page import SeleniumCheckoutCompletePage, SeleniumCheckoutOverviewPage
 from selenium_pages.inventory_page import SeleniumInventoryPage
+from selenium_pages.login_page import SeleniumLoginPage
+from selenium_pages.product_details_page import SeleniumProductDetailsPage
 from test_data.checkout_test_data import (
-    CHECKOUT_COMPLETE_HEADER,
-    CHECKOUT_COMPLETE_MESSAGE,
     CHECKOUT_OVERVIEW_PAYMENT_INFO,
     CHECKOUT_OVERVIEW_SHIPPING_INFO,
     ITEM_TOTAL_PREFIX,
     TAX_PERCENTAGE,
     TAX_PREFIX,
     TOTAL_PREFIX,
-    VALID_CHECKOUT_CUSTOMER,
 )
 
-pytestmark = [
-    pytest.mark.selenium,
-    pytest.mark.e2e,
-]
 
-
-def test_valid_user_login_opens_inventory(
-    selenium_opened_login_page,
-    selenium_standard_user,
+@pytest.mark.selenium
+def test_valid_user_can_log_in_successfully(
+    selenium_opened_login_page: SeleniumLoginPage,
+    selenium_standard_user: dict[str, str],
 ) -> None:
     selenium_opened_login_page.login(
         selenium_standard_user["username"],
@@ -29,125 +27,290 @@ def test_valid_user_login_opens_inventory(
     )
 
     inventory_page = SeleniumInventoryPage(selenium_opened_login_page.driver)
-    inventory_page.wait_until_loaded()
 
-    assert selenium_opened_login_page.driver.current_url == inventory_page.build_url()
+    inventory_page.wait_until_url_is(inventory_page.build_url())
+
+    assert inventory_page.get_inventory_container().is_displayed()
+    assert inventory_page.get_product_list().is_displayed()
 
 
-def test_inventory_product_opens_expected_product_details(
-    selenium_logged_in_inventory_page,
-    selenium_product,
+@pytest.mark.selenium
+def test_product_details_can_be_opened_from_product_name_for_example_product(
+    selenium_logged_in_inventory_page: SeleniumInventoryPage,
+    selenium_product: dict,
 ) -> None:
     product_details_page = selenium_logged_in_inventory_page.open_product_details_by_name(
         selenium_product["product_name"]
     )
 
-    assert product_details_page.driver.current_url == product_details_page.build_url(
-        selenium_product["product_id"]
+    product_details_page.wait_until_url_is(
+        product_details_page.build_url(selenium_product["product_id"])
     )
-    assert product_details_page.get_product_name() == selenium_product["product_name"]
-    assert product_details_page.get_product_description() == selenium_product["product_description"]
-    assert product_details_page.get_product_price() == selenium_product["product_price"]
+
+    product_item = product_details_page.wait_until_loaded()
+
+    assert product_details_page.get_product_name_from_item(product_item).text == (
+        selenium_product["product_name"]
+    )
+    assert product_details_page.get_product_description_from_item(product_item).text == (
+        selenium_product["product_description"]
+    )
+    assert product_details_page.get_product_price_from_item(product_item).text == (
+        selenium_product["product_price"]
+    )
+
+    product_image = product_details_page.get_product_image_from_item(product_item)
+    assert product_image.is_displayed()
+    assert product_image.get_dom_attribute("src") == selenium_product["product_image"]
+
+    assert product_details_page.get_add_to_cart_button_from_item(product_item).is_displayed()
+    assert product_details_page.get_back_to_products_button().is_displayed()
 
 
-def test_product_added_from_details_is_visible_in_cart(
-    selenium_product_details_page,
+@pytest.mark.selenium
+def test_product_details_content_is_displayed_for_selected_product(
+    selenium_product_details_page: tuple[SeleniumProductDetailsPage, dict],
+) -> None:
+    product_details_page, product = selenium_product_details_page
+
+    product_details_page.wait_until_url_is(product_details_page.build_url(product["product_id"]))
+
+    product_item = product_details_page.wait_until_loaded()
+    assert product_item.is_displayed()
+
+    product_name = product_details_page.get_product_name_from_item(product_item)
+    assert product_name.is_displayed()
+    assert product_name.text == product["product_name"]
+
+    product_description = product_details_page.get_product_description_from_item(product_item)
+    assert product_description.is_displayed()
+    assert product_description.text == product["product_description"]
+
+    product_price = product_details_page.get_product_price_from_item(product_item)
+    assert product_price.is_displayed()
+    assert product_price.text == product["product_price"]
+
+    product_image = product_details_page.get_product_image_from_item(product_item)
+    assert product_image.is_displayed()
+    assert product_image.get_dom_attribute("src") == product["product_image"]
+
+    add_to_cart_button = product_details_page.get_add_to_cart_button_from_item(product_item)
+    assert add_to_cart_button.is_displayed()
+
+    assert product_details_page.get_back_to_products_button().is_displayed()
+
+
+@pytest.mark.selenium
+def test_product_can_be_added_to_cart_from_product_details_page(
+    selenium_product_details_page: tuple[SeleniumProductDetailsPage, dict],
 ) -> None:
     product_details_page, product = selenium_product_details_page
 
     product_details_page.add_product_to_cart()
+
+    product_details_page.wait_until_url_is(product_details_page.build_url(product["product_id"]))
+
+    assert product_details_page.get_shopping_cart_badge().text == "1"
+
     cart_page = product_details_page.open_cart()
 
-    assert cart_page.driver.current_url == cart_page.build_url()
-
-    cart_item = cart_page.get_product_item_by_name(product["product_name"])
-
-    assert cart_page.get_product_name(cart_item) == product["product_name"]
-    assert cart_page.get_product_description(cart_item) == product["product_description"]
-    assert cart_page.get_product_price(cart_item) == product["product_price"]
-    assert cart_page.get_product_quantity(cart_item) == "1"
+    assert cart_page.get_product_item_by_name(product["product_name"]).is_displayed()
 
 
-def test_cart_opens_checkout_information(
-    selenium_cart_page_with_product,
+@pytest.mark.selenium
+def test_cart_page_can_be_opened_from_product_details_page(
+    selenium_product_details_page: tuple[SeleniumProductDetailsPage, dict],
 ) -> None:
-    cart_page, _ = selenium_cart_page_with_product
+    product_details_page, _ = selenium_product_details_page
 
-    checkout_information_page = cart_page.checkout()
+    cart_page = product_details_page.open_cart()
 
-    assert checkout_information_page.driver.current_url == checkout_information_page.build_url()
+    cart_page.wait_until_url_is(cart_page.build_url())
+
+    assert cart_page.get_cart_contents_container().is_displayed()
 
 
-def test_valid_checkout_information_opens_overview(
-    selenium_checkout_information_page_with_product,
+@pytest.mark.selenium
+def test_added_product_is_displayed_with_correct_content_on_cart_page(
+    selenium_cart_page_with_one_product: tuple[SeleniumCartPage, dict],
 ) -> None:
-    checkout_information_page, product = selenium_checkout_information_page_with_product
+    cart_page, product = selenium_cart_page_with_one_product
 
-    checkout_information_page.fill_checkout_info(
-        VALID_CHECKOUT_CUSTOMER["first_name"],
-        VALID_CHECKOUT_CUSTOMER["last_name"],
-        VALID_CHECKOUT_CUSTOMER["postal_code"],
+    product_item = cart_page.get_product_item_by_name(product["product_name"])
+
+    assert product_item.is_displayed()
+
+    product_name = cart_page.get_product_name_from_item(product_item)
+    assert product_name.is_displayed()
+    assert product_name.text == product["product_name"]
+
+    product_description = cart_page.get_product_description_from_item(product_item)
+    assert product_description.is_displayed()
+    assert product_description.text == product["product_description"]
+
+    product_price = cart_page.get_product_price_from_item(product_item)
+    assert product_price.is_displayed()
+    assert product_price.text == product["product_price"]
+
+    product_quantity = cart_page.get_product_quantity_from_item(product_item)
+    assert product_quantity.is_displayed()
+    assert product_quantity.text == "1"
+
+    remove_button = cart_page.get_remove_button_from_item(product_item)
+    assert remove_button.is_displayed()
+
+
+@pytest.mark.selenium
+def test_checkout_button_opens_checkout_information_page_with_product_in_cart(
+    selenium_cart_page_with_one_product: tuple[SeleniumCartPage, dict],
+) -> None:
+    cart_page, _ = selenium_cart_page_with_one_product
+
+    checkout_step_one = cart_page.checkout()
+
+    checkout_step_one.wait_until_url_is(checkout_step_one.build_url())
+
+    assert checkout_step_one.get_checkout_info_block().is_displayed()
+
+    assert checkout_step_one.wait.until(
+        ec.invisibility_of_element_located(cart_page.CART_CONTENTS_CONTAINER)
     )
 
-    checkout_overview_page = checkout_information_page.continue_checkout()
 
-    assert checkout_overview_page.driver.current_url == checkout_overview_page.build_url()
-
-    overview_item = checkout_overview_page.get_product_item_by_name(product["product_name"])
-
-    assert checkout_overview_page.get_product_name(overview_item) == product["product_name"]
-
-
-def test_checkout_overview_displays_expected_order(
-    selenium_checkout_overview_page_with_product,
+@pytest.mark.selenium
+def test_checkout_information_form_continues_to_overview_when_valid_data_is_provided(
+    selenium_checkout_step_two_page_with_one_product: tuple[SeleniumCheckoutOverviewPage, dict],
 ) -> None:
-    checkout_overview_page, product = selenium_checkout_overview_page_with_product
+    checkout_step_two, product = selenium_checkout_step_two_page_with_one_product
 
-    overview_item = checkout_overview_page.get_product_item_by_name(product["product_name"])
+    checkout_step_two.wait_until_url_is(checkout_step_two.build_url())
 
-    assert checkout_overview_page.get_product_name(overview_item) == product["product_name"]
+    assert checkout_step_two.get_checkout_summary_container().is_displayed()
+
+    assert checkout_step_two.get_product_item_by_name(product["product_name"]).is_displayed()
+
+    assert checkout_step_two.get_finish_button().is_displayed()
+    assert checkout_step_two.get_cancel_button().is_displayed()
+
+
+@pytest.mark.selenium
+def test_checkout_overview_displays_selected_product(
+    selenium_checkout_step_two_page_with_one_product: tuple[SeleniumCheckoutOverviewPage, dict],
+) -> None:
+    checkout_page_two, product = selenium_checkout_step_two_page_with_one_product
+
+    assert checkout_page_two.get_checkout_summary_container().is_displayed()
+
+    product_item = checkout_page_two.get_product_item_by_name(product["product_name"])
+
+    assert checkout_page_two.get_product_name_from_item(product_item).is_displayed()
+    assert checkout_page_two.get_product_description_from_item(product_item).is_displayed()
+    assert checkout_page_two.get_product_price_from_item(product_item).is_displayed()
+
+    product_quantity = checkout_page_two.get_product_quantity_from_item(product_item)
+
+    assert product_quantity.is_displayed()
+    assert product_quantity.text == "1"
+
+
+@pytest.mark.selenium
+def test_checkout_overview_price_summary_is_correct_for_one_product(
+    selenium_checkout_step_two_page_with_one_product: tuple[SeleniumCheckoutOverviewPage, dict],
+) -> None:
+    checkout_step_two, product = selenium_checkout_step_two_page_with_one_product
+
+    assert checkout_step_two.get_payment_info_label().is_displayed()
+    assert checkout_step_two.get_payment_info_value().text == CHECKOUT_OVERVIEW_PAYMENT_INFO
+
+    assert checkout_step_two.get_shipping_info_label().is_displayed()
+    assert checkout_step_two.get_shipping_info_value().text == CHECKOUT_OVERVIEW_SHIPPING_INFO
+
+    assert checkout_step_two.get_total_info_label().is_displayed()
+
+    item_total_price = format(
+        float(product["product_price"].replace("$", "")),
+        ".2f",
+    )
+
+    tax_price = format(
+        float(item_total_price) * TAX_PERCENTAGE / 100,
+        ".2f",
+    )
+
+    final_total_price = format(
+        float(item_total_price) + float(tax_price),
+        ".2f",
+    )
+
     assert (
-        checkout_overview_page.get_product_description(overview_item)
-        == product["product_description"]
+        checkout_step_two.get_price_item_total_label().text == ITEM_TOTAL_PREFIX + item_total_price
     )
-    assert checkout_overview_page.get_product_price(overview_item) == product["product_price"]
-    assert checkout_overview_page.get_product_quantity(overview_item) == "1"
-
-    assert checkout_overview_page.get_payment_info() == CHECKOUT_OVERVIEW_PAYMENT_INFO
-    assert checkout_overview_page.get_shipping_info() == CHECKOUT_OVERVIEW_SHIPPING_INFO
-
-    item_total = float(product["product_price"].replace("$", ""))
-    expected_tax = item_total * TAX_PERCENTAGE / 100
-    expected_total = item_total + expected_tax
-
-    assert checkout_overview_page.get_item_total() == f"{ITEM_TOTAL_PREFIX}{item_total:.2f}"
-    assert checkout_overview_page.get_tax() == f"{TAX_PREFIX}{expected_tax:.2f}"
-    assert checkout_overview_page.get_total() == f"{TOTAL_PREFIX}{expected_total:.2f}"
+    assert checkout_step_two.get_price_tax_label().text == TAX_PREFIX + tax_price
+    assert checkout_step_two.get_total_price_label().text == TOTAL_PREFIX + final_total_price
 
 
-def test_finish_checkout_displays_order_confirmation(
-    selenium_checkout_overview_page_with_product,
+@pytest.mark.selenium
+def test_finish_button_completes_checkout_and_opens_order_confirmation_page(
+    selenium_checkout_step_two_page_with_one_product: tuple[SeleniumCheckoutOverviewPage, dict],
 ) -> None:
-    checkout_overview_page, _ = selenium_checkout_overview_page_with_product
+    checkout_step_two, _ = selenium_checkout_step_two_page_with_one_product
 
-    checkout_complete_page = checkout_overview_page.finish_checkout()
+    checkout_last_step = checkout_step_two.finish_checkout()
 
-    assert checkout_complete_page.driver.current_url == checkout_complete_page.build_url()
-    assert checkout_complete_page.get_complete_header() == CHECKOUT_COMPLETE_HEADER
-    assert checkout_complete_page.get_complete_message() == CHECKOUT_COMPLETE_MESSAGE
+    checkout_last_step.wait_until_url_is(checkout_last_step.build_url())
+
+    assert checkout_last_step.get_checkout_complete_container().is_displayed()
+    assert checkout_last_step.get_checkout_complete_header().is_displayed()
+    assert checkout_last_step.get_checkout_complete_text().is_displayed()
+    assert checkout_last_step.get_back_home_button().is_displayed()
 
 
-def test_back_home_returns_to_inventory(
-    selenium_checkout_complete_page_with_product,
+@pytest.mark.selenium
+def test_checkout_complete_page_elements_are_visible(
+    selenium_checkout_last_step_page_with_one_product: tuple[SeleniumCheckoutCompletePage, dict],
 ) -> None:
-    checkout_complete_page, product = selenium_checkout_complete_page_with_product
+    checkout_last_step_page, _ = selenium_checkout_last_step_page_with_one_product
 
-    inventory_page = checkout_complete_page.back_home()
+    assert checkout_last_step_page.get_checkout_complete_container().is_displayed()
+    assert checkout_last_step_page.get_checkout_complete_header().is_displayed()
+    assert checkout_last_step_page.get_checkout_complete_text().is_displayed()
+    assert checkout_last_step_page.get_back_home_button().is_displayed()
 
-    assert inventory_page.driver.current_url == inventory_page.build_url()
 
-    inventory_item = inventory_page.get_product_item_by_name(product["product_name"])
+@pytest.mark.selenium
+def test_back_home_returns_to_inventory_page_after_order_completion(
+    selenium_checkout_last_step_page_with_one_product: tuple[SeleniumCheckoutCompletePage, dict],
+) -> None:
+    checkout_last_step_page, product = selenium_checkout_last_step_page_with_one_product
 
-    assert inventory_page.get_product_name(inventory_item) == product["product_name"]
-    assert inventory_page.get_product_description(inventory_item) == product["product_description"]
-    assert inventory_page.get_product_price(inventory_item) == product["product_price"]
+    inventory_page = checkout_last_step_page.back_home()
+
+    inventory_page.wait_until_url_is(inventory_page.build_url())
+
+    assert inventory_page.wait.until(
+        ec.invisibility_of_element_located(checkout_last_step_page.CHECKOUT_COMPLETE_CONTAINER)
+    )
+
+    assert inventory_page.get_inventory_container().is_displayed()
+    assert inventory_page.get_product_list().is_displayed()
+
+    product_item = inventory_page.get_product_item_by_name(product["product_name"])
+
+    assert product_item.is_displayed()
+    assert inventory_page.get_product_name_from_item(product_item).text == (product["product_name"])
+    assert inventory_page.get_product_description_from_item(product_item).text == (
+        product["product_description"]
+    )
+    assert inventory_page.get_product_price_from_item(product_item).text == (
+        product["product_price"]
+    )
+
+    product_image = inventory_page.get_product_image_from_item(product_item)
+    assert product_image.is_displayed()
+    assert product_image.get_dom_attribute("src") == product["product_image"]
+
+    assert inventory_page.get_add_to_cart_button_from_item(product_item).is_displayed()
+
+    assert inventory_page.wait.until(
+        ec.invisibility_of_element_located(inventory_page.SHOPPING_CART_BADGE)
+    )

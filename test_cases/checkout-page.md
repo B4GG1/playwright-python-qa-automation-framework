@@ -20,28 +20,28 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 
 ## Test Case Overview And Automation Coverage
 
-| Test Case ID                                                                                                         | Scenario                                                                        | Checkout Area     | Type                         | Priority | Automation Status | Automated In                  |
-|----------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------|-------------------|------------------------------|----------|-------------------|-------------------------------|
-| [TC-CHECKOUT-001](#tc-checkout-001--checkout-information-form-displays-required-customer-fields)                     | Checkout information form displays required customer fields                     | Checkout Step One | Regression / UI              | Medium   | Automated         | `tests/test_checkout_page.py` |
-| [TC-CHECKOUT-002](#tc-checkout-002--checkout-information-form-is-visible)                                            | Checkout information form is visible                                            | Checkout Step One | Smoke / UI                   | High     | Automated         | `tests/test_checkout_page.py` |
-| [TC-CHECKOUT-003](#tc-checkout-003--checkout-information-form-requires-first-name)                                   | Checkout information form requires first name                                   | Checkout Step One | Regression / UI              | High     | Automated         | `tests/test_checkout_page.py` |
-| [TC-CHECKOUT-004](#tc-checkout-004--checkout-information-form-requires-last-name)                                    | Checkout information form requires last name                                    | Checkout Step One | Regression / UI              | High     | Automated         | `tests/test_checkout_page.py` |
-| [TC-CHECKOUT-005](#tc-checkout-005--checkout-information-form-requires-postal-code)                                  | Checkout information form requires postal code                                  | Checkout Step One | Regression / UI              | High     | Automated         | `tests/test_checkout_page.py` |
-| [TC-CHECKOUT-006](#tc-checkout-006--input-error-icons-are-displayed-after-failed-checkout-information-submission)    | Input error icons are displayed after failed checkout information submission    | Checkout Step One | Regression / UI              | Medium   | Automated         | `tests/test_checkout_page.py` |
-| [TC-CHECKOUT-007](#tc-checkout-007--checkout-information-error-message-can-be-closed-after-validation-failure)       | Checkout information error message can be closed after validation failure       | Checkout Step One | Regression / UI              | Medium   | Automated         | `tests/test_checkout_page.py` |
-| [TC-CHECKOUT-008](#tc-checkout-008--checkout-information-form-continues-to-overview-when-valid-data-is-provided)     | Checkout information form continues to overview when valid data is provided     | Checkout Step One | Smoke / Navigation / E2E     | High     | Automated         | `tests/test_checkout_page.py` |
-| [TC-CHECKOUT-009](#tc-checkout-009--checkout-information-cancel-returns-to-cart-and-preserves-cart-item)             | Checkout information cancel returns to cart and preserves cart item             | Checkout Step One | Regression / Navigation / UI | Medium   | Automated         | `tests/test_checkout_page.py` |
-| [TC-CHECKOUT-010](#tc-checkout-010--checkout-overview-displays-selected-product)                                     | Checkout overview displays selected product                                     | Checkout Step Two | Smoke / UI / E2E             | High     | Automated         | `tests/test_checkout_page.py` |
-| [TC-CHECKOUT-011](#tc-checkout-011--checkout-overview-displays-each-selected-product)                                | Checkout overview displays each selected product                                | Checkout Step Two | Regression / UI              | Medium   | Automated         | `tests/test_checkout_page.py` |
-| [TC-CHECKOUT-012](#tc-checkout-012--checkout-overview-price-summary-is-correct-for-one-product)                      | Checkout overview price summary is correct for one product                      | Checkout Step Two | Smoke / UI / E2E             | High     | Automated         | `tests/test_checkout_page.py` |
-| [TC-CHECKOUT-013](#tc-checkout-013--checkout-overview-price-summary-is-correct-for-multiple-products)                | Checkout overview price summary is correct for multiple products                | Checkout Step Two | Regression / UI              | High     | Automated         | `tests/test_checkout_page.py` |
-| [TC-CHECKOUT-014](#tc-checkout-014--checkout-overview-cancel-returns-to-inventory-page)                              | Checkout overview cancel returns to inventory page                              | Checkout Step Two | Regression / Navigation / UI | Medium   | Automated         | `tests/test_checkout_page.py` |
-| [TC-CHECKOUT-015](#tc-checkout-015--product-details-can-be-opened-from-checkout-overview-item-name)                  | Product details can be opened from checkout overview item name                  | Checkout Step Two | Smoke / Navigation / UI      | Medium   | Automated         | `tests/test_checkout_page.py` |
-| [TC-CHECKOUT-016](#tc-checkout-016--product-details-can-be-opened-from-checkout-overview-item-name-for-each-product) | Product details can be opened from checkout overview item name for each product | Checkout Step Two | Regression / Navigation / UI | Medium   | Automated         | `tests/test_checkout_page.py` |
-| [TC-CHECKOUT-017](#tc-checkout-017--finish-button-completes-checkout-and-opens-order-confirmation-page)              | Finish button completes checkout and opens order confirmation page              | Checkout Step Two | Smoke / Navigation / E2E     | High     | Automated         | `tests/test_checkout_page.py` |
-| [TC-CHECKOUT-018](#tc-checkout-018--checkout-complete-page-displays-order-confirmation-message)                      | Checkout complete page displays order confirmation message                      | Checkout Complete | Regression / UI              | Medium   | Automated         | `tests/test_checkout_page.py` |
-| [TC-CHECKOUT-019](#tc-checkout-019--checkout-complete-page-elements-are-visible)                                     | Checkout complete page elements are visible                                     | Checkout Complete | Smoke / UI / E2E             | High     | Automated         | `tests/test_checkout_page.py` |
-| [TC-CHECKOUT-020](#tc-checkout-020--back-home-returns-to-inventory-page-after-order-completion)                      | Back Home returns to inventory page after order completion                      | Checkout Complete | Smoke / Navigation / E2E     | High     | Automated         | `tests/test_checkout_page.py` |
+| Test Case ID                                                                                                         | Scenario                                                                        | Checkout Area     | Type                         | Priority | Automation Status | Automated In                                                         |
+|----------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------|-------------------|------------------------------|----------|-------------------|----------------------------------------------------------------------|
+| [TC-CHECKOUT-001](#tc-checkout-001--checkout-information-form-displays-required-customer-fields)                     | Checkout information form displays required customer fields                     | Checkout Step One | Regression / UI              | Medium   | Automated         | `tests/test_checkout_page.py`                                        |
+| [TC-CHECKOUT-002](#tc-checkout-002--checkout-information-form-is-visible)                                            | Checkout information form is visible                                            | Checkout Step One | Smoke / UI                   | High     | Automated         | `tests/test_checkout_page.py`                                        |
+| [TC-CHECKOUT-003](#tc-checkout-003--checkout-information-form-requires-first-name)                                   | Checkout information form requires first name                                   | Checkout Step One | Regression / UI              | High     | Automated         | `tests/test_checkout_page.py`                                        |
+| [TC-CHECKOUT-004](#tc-checkout-004--checkout-information-form-requires-last-name)                                    | Checkout information form requires last name                                    | Checkout Step One | Regression / UI              | High     | Automated         | `tests/test_checkout_page.py`                                        |
+| [TC-CHECKOUT-005](#tc-checkout-005--checkout-information-form-requires-postal-code)                                  | Checkout information form requires postal code                                  | Checkout Step One | Regression / UI              | High     | Automated         | `tests/test_checkout_page.py`                                        |
+| [TC-CHECKOUT-006](#tc-checkout-006--input-error-icons-are-displayed-after-failed-checkout-information-submission)    | Input error icons are displayed after failed checkout information submission    | Checkout Step One | Regression / UI              | Medium   | Automated         | `tests/test_checkout_page.py`                                        |
+| [TC-CHECKOUT-007](#tc-checkout-007--checkout-information-error-message-can-be-closed-after-validation-failure)       | Checkout information error message can be closed after validation failure       | Checkout Step One | Regression / UI              | Medium   | Automated         | `tests/test_checkout_page.py`                                        |
+| [TC-CHECKOUT-008](#tc-checkout-008--checkout-information-form-continues-to-overview-when-valid-data-is-provided)     | Checkout information form continues to overview when valid data is provided     | Checkout Step One | Smoke / Navigation / E2E     | High     | Automated         | `tests/test_checkout_page.py`, `selenium_tests/test_purchase_e2e.py` |
+| [TC-CHECKOUT-009](#tc-checkout-009--checkout-information-cancel-returns-to-cart-and-preserves-cart-item)             | Checkout information cancel returns to cart and preserves cart item             | Checkout Step One | Regression / Navigation / UI | Medium   | Automated         | `tests/test_checkout_page.py`                                        |
+| [TC-CHECKOUT-010](#tc-checkout-010--checkout-overview-displays-selected-product)                                     | Checkout overview displays selected product                                     | Checkout Step Two | Smoke / UI / E2E             | High     | Automated         | `tests/test_checkout_page.py`, `selenium_tests/test_purchase_e2e.py` |
+| [TC-CHECKOUT-011](#tc-checkout-011--checkout-overview-displays-each-selected-product)                                | Checkout overview displays each selected product                                | Checkout Step Two | Regression / UI              | Medium   | Automated         | `tests/test_checkout_page.py`                                        |
+| [TC-CHECKOUT-012](#tc-checkout-012--checkout-overview-price-summary-is-correct-for-one-product)                      | Checkout overview price summary is correct for one product                      | Checkout Step Two | Smoke / UI / E2E             | High     | Automated         | `tests/test_checkout_page.py`, `selenium_tests/test_purchase_e2e.py` |
+| [TC-CHECKOUT-013](#tc-checkout-013--checkout-overview-price-summary-is-correct-for-multiple-products)                | Checkout overview price summary is correct for multiple products                | Checkout Step Two | Regression / UI              | High     | Automated         | `tests/test_checkout_page.py`                                        |
+| [TC-CHECKOUT-014](#tc-checkout-014--checkout-overview-cancel-returns-to-inventory-page)                              | Checkout overview cancel returns to inventory page                              | Checkout Step Two | Regression / Navigation / UI | Medium   | Automated         | `tests/test_checkout_page.py`                                        |
+| [TC-CHECKOUT-015](#tc-checkout-015--product-details-can-be-opened-from-checkout-overview-item-name)                  | Product details can be opened from checkout overview item name                  | Checkout Step Two | Smoke / Navigation / UI      | Medium   | Automated         | `tests/test_checkout_page.py`                                        |
+| [TC-CHECKOUT-016](#tc-checkout-016--product-details-can-be-opened-from-checkout-overview-item-name-for-each-product) | Product details can be opened from checkout overview item name for each product | Checkout Step Two | Regression / Navigation / UI | Medium   | Automated         | `tests/test_checkout_page.py`                                        |
+| [TC-CHECKOUT-017](#tc-checkout-017--finish-button-completes-checkout-and-opens-order-confirmation-page)              | Finish button completes checkout and opens order confirmation page              | Checkout Step Two | Smoke / Navigation / E2E     | High     | Automated         | `tests/test_checkout_page.py`, `selenium_tests/test_purchase_e2e.py` |
+| [TC-CHECKOUT-018](#tc-checkout-018--checkout-complete-page-displays-order-confirmation-message)                      | Checkout complete page displays order confirmation message                      | Checkout Complete | Regression / UI              | Medium   | Automated         | `tests/test_checkout_page.py`                                        |
+| [TC-CHECKOUT-019](#tc-checkout-019--checkout-complete-page-elements-are-visible)                                     | Checkout complete page elements are visible                                     | Checkout Complete | Smoke / UI / E2E             | High     | Automated         | `tests/test_checkout_page.py`, `selenium_tests/test_purchase_e2e.py` |
+| [TC-CHECKOUT-020](#tc-checkout-020--back-home-returns-to-inventory-page-after-order-completion)                      | Back Home returns to inventory page after order completion                      | Checkout Complete | Smoke / Navigation / E2E     | High     | Automated         | `tests/test_checkout_page.py`, `selenium_tests/test_purchase_e2e.py` |
 
 ---
 
@@ -347,7 +347,7 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 **Priority:** High\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
-**Automated In:** `tests/test_checkout_page.py`
+**Automated In:** `tests/test_checkout_page.py`, `selenium_tests/test_purchase_e2e.py`
 
 **Preconditions:**
 
@@ -430,7 +430,7 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 **Priority:** High\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
-**Automated In:** `tests/test_checkout_page.py`
+**Automated In:** `tests/test_checkout_page.py`, `selenium_tests/test_purchase_e2e.py`
 
 **Preconditions:**
 
@@ -529,7 +529,7 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 **Priority:** High\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
-**Automated In:** `tests/test_checkout_page.py`
+**Automated In:** `tests/test_checkout_page.py`, `selenium_tests/test_purchase_e2e.py`
 
 **Preconditions:**
 
@@ -765,7 +765,7 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 **Priority:** High\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
-**Automated In:** `tests/test_checkout_page.py`
+**Automated In:** `tests/test_checkout_page.py`, `selenium_tests/test_purchase_e2e.py`
 
 **Preconditions:**
 
@@ -861,7 +861,7 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 **Priority:** High\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
-**Automated In:** `tests/test_checkout_page.py`
+**Automated In:** `tests/test_checkout_page.py`, `selenium_tests/test_purchase_e2e.py`
 
 **Preconditions:**
 
@@ -902,7 +902,7 @@ If this behavior needs to be explicitly tracked later, it should be handled as a
 **Priority:** High\
 **Automation Candidate:** Yes\
 **Automation Status:** Automated\
-**Automated In:** `tests/test_checkout_page.py`
+**Automated In:** `tests/test_checkout_page.py`, `selenium_tests/test_purchase_e2e.py`
 
 **Preconditions:**
 

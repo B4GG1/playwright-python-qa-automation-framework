@@ -24,8 +24,16 @@ from test_data.product_test_data import LIST_OF_PRODUCTS
 @pytest.fixture()
 def selenium_driver() -> Generator[WebDriver, None, None]:
     options = Options()
-    options.add_argument("--headless=new")
-    options.add_argument("--window-size=1280,720")
+    options.add_experimental_option(
+        "prefs",
+        {
+            "profile.password_manager_leak_detection": False,
+            "credentials_enable_service": False,
+            "profile.password_manager_enabled": False,
+        },
+    )
+    options.add_argument("--headless")
+    options.add_argument("--window-size=1920,1080")
 
     driver = webdriver.Chrome(options=options)
     driver.set_page_load_timeout(settings.timeout_ms / 1000)
@@ -42,6 +50,9 @@ def pytest_runtest_makereport(item: pytest.Item, call: pytest.CallInfo[object]):
     report = outcome.get_result()
 
     if not report.failed or report.when not in {"setup", "call"}:
+        return
+
+    if not isinstance(item, pytest.Function):
         return
 
     driver = item.funcargs.get("selenium_driver")
@@ -70,7 +81,7 @@ def pytest_runtest_makereport(item: pytest.Item, call: pytest.CallInfo[object]):
 
 
 @pytest.fixture()
-def selenium_standard_user() -> dict:
+def selenium_standard_user() -> dict[str, str]:
     return VALID_USER_CASES[0]
 
 
@@ -85,14 +96,13 @@ def selenium_opened_login_page(
 ) -> SeleniumLoginPage:
     login_page = SeleniumLoginPage(selenium_driver)
     login_page.open()
-
     return login_page
 
 
 @pytest.fixture()
 def selenium_logged_in_inventory_page(
     selenium_opened_login_page: SeleniumLoginPage,
-    selenium_standard_user: dict,
+    selenium_standard_user: dict[str, str],
 ) -> SeleniumInventoryPage:
     selenium_opened_login_page.login(
         selenium_standard_user["username"],
@@ -101,8 +111,58 @@ def selenium_logged_in_inventory_page(
 
     inventory_page = SeleniumInventoryPage(selenium_opened_login_page.driver)
     inventory_page.wait_until_loaded()
-
     return inventory_page
+
+
+@pytest.fixture()
+def selenium_inventory_page_with_one_product_in_cart(
+    selenium_logged_in_inventory_page: SeleniumInventoryPage,
+    selenium_product: dict,
+) -> tuple[SeleniumInventoryPage, dict]:
+    selenium_logged_in_inventory_page.add_product_to_cart(selenium_product["product_name"])
+    return selenium_logged_in_inventory_page, selenium_product
+
+
+@pytest.fixture()
+def selenium_cart_page_with_one_product(
+    selenium_inventory_page_with_one_product_in_cart: tuple[SeleniumInventoryPage, dict],
+) -> tuple[SeleniumCartPage, dict]:
+    inventory_page, product = selenium_inventory_page_with_one_product_in_cart
+    cart_page = inventory_page.open_cart()
+    return cart_page, product
+
+
+@pytest.fixture()
+def selenium_checkout_step_one_page_with_one_product(
+    selenium_cart_page_with_one_product: tuple[SeleniumCartPage, dict],
+) -> tuple[SeleniumCheckoutInformationPage, dict]:
+    cart_page, product = selenium_cart_page_with_one_product
+    checkout_page = cart_page.checkout()
+    return checkout_page, product
+
+
+@pytest.fixture()
+def selenium_checkout_step_two_page_with_one_product(
+    selenium_checkout_step_one_page_with_one_product: tuple[SeleniumCheckoutInformationPage, dict],
+) -> tuple[SeleniumCheckoutOverviewPage, dict]:
+    checkout_step_one, product = selenium_checkout_step_one_page_with_one_product
+    checkout_step_one.fill_checkout_info_form(
+        VALID_CHECKOUT_CUSTOMER["first_name"],
+        VALID_CHECKOUT_CUSTOMER["last_name"],
+        VALID_CHECKOUT_CUSTOMER["postal_code"],
+    )
+    checkout_step_two = checkout_step_one.continue_checkout()
+    checkout_step_two.wait_until_loaded()
+    return checkout_step_two, product
+
+
+@pytest.fixture()
+def selenium_checkout_last_step_page_with_one_product(
+    selenium_checkout_step_two_page_with_one_product: tuple[SeleniumCheckoutOverviewPage, dict],
+) -> tuple[SeleniumCheckoutCompletePage, dict]:
+    checkout_step_two, product = selenium_checkout_step_two_page_with_one_product
+    checkout_last_step = checkout_step_two.finish_checkout()
+    return checkout_last_step, product
 
 
 @pytest.fixture()
@@ -113,67 +173,4 @@ def selenium_product_details_page(
     product_details_page = selenium_logged_in_inventory_page.open_product_details_by_name(
         selenium_product["product_name"]
     )
-
     return product_details_page, selenium_product
-
-
-@pytest.fixture()
-def selenium_cart_page_with_product(
-    selenium_product_details_page: tuple[
-        SeleniumProductDetailsPage,
-        dict,
-    ],
-) -> tuple[SeleniumCartPage, dict]:
-    product_details_page, product = selenium_product_details_page
-
-    product_details_page.add_product_to_cart()
-    cart_page = product_details_page.open_cart()
-
-    return cart_page, product
-
-
-@pytest.fixture()
-def selenium_checkout_information_page_with_product(
-    selenium_cart_page_with_product: tuple[
-        SeleniumCartPage,
-        dict,
-    ],
-) -> tuple[SeleniumCheckoutInformationPage, dict]:
-    cart_page, product = selenium_cart_page_with_product
-    checkout_information_page = cart_page.checkout()
-
-    return checkout_information_page, product
-
-
-@pytest.fixture()
-def selenium_checkout_overview_page_with_product(
-    selenium_checkout_information_page_with_product: tuple[
-        SeleniumCheckoutInformationPage,
-        dict,
-    ],
-) -> tuple[SeleniumCheckoutOverviewPage, dict]:
-    checkout_information_page, product = selenium_checkout_information_page_with_product
-
-    checkout_information_page.fill_checkout_info(
-        VALID_CHECKOUT_CUSTOMER["first_name"],
-        VALID_CHECKOUT_CUSTOMER["last_name"],
-        VALID_CHECKOUT_CUSTOMER["postal_code"],
-    )
-
-    checkout_overview_page = checkout_information_page.continue_checkout()
-
-    return checkout_overview_page, product
-
-
-@pytest.fixture()
-def selenium_checkout_complete_page_with_product(
-    selenium_checkout_overview_page_with_product: tuple[
-        SeleniumCheckoutOverviewPage,
-        dict,
-    ],
-) -> tuple[SeleniumCheckoutCompletePage, dict]:
-    checkout_overview_page, product = selenium_checkout_overview_page_with_product
-
-    checkout_complete_page = checkout_overview_page.finish_checkout()
-
-    return checkout_complete_page, product
