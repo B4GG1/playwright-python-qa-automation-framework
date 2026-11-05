@@ -366,7 +366,7 @@ jobs:
       - name: Run Selenium E2E showcase with HTML report
         run: |
           mkdir -p reports
-          pytest selenium_tests -m "selenium and e2e" -v \
+          pytest selenium_tests -m "selenium" -v \
             --html=reports/selenium-e2e-report.html \
             --self-contained-html
 
