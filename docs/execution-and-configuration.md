@@ -49,15 +49,15 @@ Pytest markers can also be combined, for example `pytest -m "smoke and ui" -v`. 
 
 ## Run Selenium Tests
 
-The Selenium showcase uses headless Google Chrome, independent WebDriver sessions, and its own test collection. It does **not** use `QA_BROWSER` or pytest-xdist.
+The Selenium showcase consists of **13 independent end-to-end purchase-journey checkpoints** executed with headless Google Chrome. Each test uses its own WebDriver session. The suite has separate Page Objects and is executed sequentially without pytest-xdist.
+
+Selenium tests use the `selenium` Pytest marker and are collected explicitly from `selenium_tests/`:
 
 ```bash
-# Eight purchase-journey E2E checkpoints
-pytest selenium_tests -m "selenium and e2e" -v
-
-# All Selenium tests, including the WebDriver lifecycle check
 pytest selenium_tests -m selenium -v
 ```
+
+This is also the test selection used by the Selenium GitHub Actions job. The Selenium tests do not require the additional `e2e` marker and do not use the Playwright-specific `QA_BROWSER` setting.
 
 A local Chrome installation is required. Selenium Manager handles ChromeDriver resolution; the repository does not pin a separate driver executable.
 
@@ -130,7 +130,7 @@ docker run --rm --init --ipc=host \
   visual_tests -m visual --browser chromium --update-visual-baselines -v
 ```
 
-Review the updated PNGs and their Git diff before committing them. Ordinary execution never approves new baselines. Firefox, WebKit, headed mode, and parallel visual checkpoint execution are outside the approved visual comparison setup.
+Review the updated PNGs before committing them. Ordinary execution never approves new baselines. Firefox, WebKit, headed mode, and parallel visual checkpoint execution are outside the approved visual comparison setup.
 
 ## Runtime Configuration
 
@@ -142,7 +142,7 @@ Configuration is loaded from environment variables by `config/settings.py`. The 
 | `QA_BROWSER`           | `chromium`                  | `chromium`, `firefox`, `webkit` (Playwright only)                   |
 | `QA_HEADED`            | `false`                     | Headed (`true`) or headless (`false`) Playwright execution          |
 | `QA_TIMEOUT_MS`        | `30000`                     | Non-negative action/navigation timeout in milliseconds              |
-| `QA_EXPECT_TIMEOUT_MS` | `5000`                      | Non-negative assertion/expect timeout in milliseconds               |
+| `QA_EXPECT_TIMEOUT_MS` | `15000`                     | Non-negative assertion/expect timeout in milliseconds               |
 | `QA_SCREENSHOT_POLICY` | `only-on-failure`           | `only-on-failure`, `off` for project Playwright failure screenshots |
 | `QA_TRACE_POLICY`      | `off`                       | `off`, `retain-on-failure`, `on` for Playwright tracing             |
 | `QA_VIDEO_POLICY`      | `off`                       | `off`, `retain-on-failure`, `on` for Playwright video capture       |

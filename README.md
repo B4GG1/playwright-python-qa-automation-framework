@@ -2,7 +2,7 @@
 
 A **completed Python UI test automation portfolio project** built around [Sauce Demo](https://www.saucedemo.com/). It demonstrates maintainable test design, browser automation, reproducible execution, and CI-backed quality checks.
 
-**Playwright** is the primary automation framework, covering Login, Inventory, Product Details, Cart, and Checkout. Chromium runs the complete default test suite, while Firefox and WebKit provide representative Smoke coverage. A separate **Selenium WebDriver** suite demonstrates a Chrome-based end-to-end purchase journey. The framework also includes Docker execution, Chromium visual regression, pytest-html and Allure reporting, and automated code-quality checks.
+**Playwright** is the primary automation framework, covering Login, Inventory, Product Details, Cart, and Checkout. Chromium runs the complete default test suite, while Firefox and WebKit provide representative Smoke coverage. A separate **Selenium WebDriver** suite implements 13 independent Chrome-based end-to-end purchase-journey checkpoints. The framework also includes Docker execution, Chromium visual regression, pytest-html and Allure reporting, and automated code-quality checks.
 
 ## Repository at a glance
 
@@ -39,10 +39,10 @@ The default `pytest` command runs the Playwright functional tests **and framewor
 Other useful entry points:
 
 ```bash
-pytest -m smoke -v                             # Playwright Smoke
-playwright install --with-deps firefox         # One-time setup for Firefox Smoke
-QA_BROWSER=firefox pytest -m smoke -v          # Representative Firefox Smoke
-pytest selenium_tests -m "selenium and e2e" -v  # Selenium E2E (requires Google Chrome)
+pytest -m smoke -v                      # Playwright Smoke
+playwright install --with-deps firefox  # One-time setup for Firefox Smoke
+QA_BROWSER=firefox pytest -m smoke -v   # Representative Firefox Smoke
+pytest selenium_tests -m selenium -v    # 13 Selenium E2E tests (requires Google Chrome)
 ```
 
 WebKit, Docker, visual regression, runtime configuration, and reporting are covered in the execution guide.

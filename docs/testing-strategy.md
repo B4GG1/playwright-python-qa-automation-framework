@@ -32,19 +32,21 @@ Framework configuration and diagnostic unit tests, cross-browser reruns, visual 
 
 Pytest markers express **test intent and selection**, not implementation phases. Tests may carry more than one marker.
 
-| Marker       | Purpose                                                            |
-|--------------|--------------------------------------------------------------------|
-| `smoke`      | Fast, representative checks of critical application behavior.      |
-| `regression` | Broader checks, including additional inputs, products, and states. |
-| `ui`         | Element presentation, visible state, and direct UI behavior.       |
-| `security`   | Protected-route and authentication-access checks.                  |
-| `sorting`    | Product order by name or price.                                    |
-| `navigation` | Page transitions outside the login authentication transition.      |
-| `e2e`        | Independent checkpoints along the purchase journey.                |
-| `visual`     | Screenshot comparison checks and visual-comparison utility tests.  |
-| `selenium`   | Tests executed through Selenium WebDriver.                         |
+| Marker       | Purpose                                                                |
+|--------------|------------------------------------------------------------------------|
+| `smoke`      | Fast, representative checks of critical application behavior.          |
+| `regression` | Broader checks, including additional inputs, products, and states.     |
+| `ui`         | Element presentation, visible state, and direct UI behavior.           |
+| `security`   | Protected-route and authentication-access checks.                      |
+| `sorting`    | Product order by name or price.                                        |
+| `navigation` | Page transitions outside the login authentication transition.          |
+| `e2e`        | Independent checkpoints along the primary Playwright purchase journey. |
+| `visual`     | Screenshot comparison checks and visual-comparison utility tests.      |
+| `selenium`   | Tests executed through Selenium WebDriver.                             |
 
 Smoke and Regression are **selected subsets**, not replacements for the complete test collection. The unfiltered primary suite also includes tests without either marker, such as runtime configuration, diagnostics, and image-comparison utility tests. Marker combinations can overlap; they do not introduce additional copies of the same test implementation.
+
+The Selenium showcase is selected independently using the `selenium` marker. Its 13 E2E checkpoints do not require the additional `e2e` marker.
 
 ## Test Design and Independence
 
@@ -60,7 +62,7 @@ The purchase journey is represented through **independently executable checkpoin
 
 **Playwright on Chromium** is the primary functional regression baseline. The complete suite runs on Chromium, while **Firefox and WebKit** rerun a representative Smoke subset for browser-engine compatibility. This balances useful cross-browser feedback against the cost of duplicating the entire matrix.
 
-**Selenium on Chrome** provides a separate eight-checkpoint purchase-flow showcase. It validates a representative alternative automation approach, not a second full regression suite. The Selenium tests retain independent setup and are executed sequentially.
+**Selenium on Chrome** provides a separate **13-checkpoint purchase-flow showcase**. It validates a representative alternative automation approach, not a second full regression suite. The Selenium tests retain independent setup and are executed sequentially.
 
 **Visual regression** complements behavioral assertions rather than replacing them. Two approved checkpoints capture the default Inventory view and a Cart containing one product in a controlled, headless Chromium Docker environment. The comparison detects missing baselines, incompatible image dimensions, and pixel differences exceeding the configured tolerance. The approved test threshold allows up to **4.5% differing pixels**, so a passing visual check does not mean exact pixel equality.
 
@@ -70,14 +72,14 @@ Visual baselines are version-controlled and updated only through an explicit, re
 
 Validation is proportional to the change and preserves the distinction between test suites:
 
-| Change or risk                                       | Relevant validation                                                             |
-|------------------------------------------------------|---------------------------------------------------------------------------------|
-| Application behavior or Page Objects                 | Affected test module and marker suites; complete Chromium suite when warranted. |
-| Shared fixtures, data, or execution settings         | Relevant functional tests plus broader isolation or parallel-execution checks.  |
-| Cross-browser compatibility                          | Representative Firefox and WebKit Smoke suites.                                 |
-| Screenshot comparison or baseline handling           | Visual utility tests and controlled Docker/Chromium visual checkpoints.         |
-| Selenium Page Objects, fixtures, or driver lifecycle | Selenium lifecycle and E2E tests.                                               |
-| Framework integration or release-readiness           | Quality checks and the applicable GitHub Actions test jobs.                     |
+| Change or risk                                         | Relevant validation                                                             |
+|--------------------------------------------------------|---------------------------------------------------------------------------------|
+| Application behavior or Page Objects                   | Affected test module and marker suites; complete Chromium suite when warranted. |
+| Shared fixtures, data, or execution settings           | Relevant functional tests plus broader isolation or parallel-execution checks.  |
+| Cross-browser compatibility                            | Representative Firefox and WebKit Smoke suites.                                 |
+| Screenshot comparison or baseline handling             | Visual utility tests and controlled Docker/Chromium visual checkpoints.         |
+| Selenium Page Objects, fixtures, or WebDriver behavior | Selenium E2E suite covering all 13 independent checkpoints.                     |
+| Framework integration or release-readiness             | Quality checks and the applicable GitHub Actions test jobs.                     |
 
 The CI pipeline independently validates code quality, Chromium Smoke, Regression and the full suite, Firefox/WebKit Smoke, Docker-based visual regression, and Selenium E2E. Its detailed job configuration and reporting behavior are documented in [CI, Quality, and Reporting](ci-quality-and-reporting.md).
 

@@ -34,7 +34,9 @@ playwright-python-qa-automation-framework/
 ├── pages/                         # Playwright Page Objects
 ├── resources/                     # Supporting project resources
 ├── selenium_pages/                # Selenium-specific Page Objects
-├── selenium_tests/                # Selenium lifecycle and E2E tests
+├── selenium_tests/                # Selenium E2E tests and WebDriver fixtures
+│   ├── conftest.py                # Selenium browser lifecycle and fixtures
+│   └── test_purchase_e2e.py       # 13 independent E2E checkpoints
 ├── test_cases/                    # Manual test cases and automation traceability
 ├── test_data/                     # Shared application test data
 ├── tests/                         # Primary Playwright tests and utility tests
@@ -68,7 +70,7 @@ The Playwright Page Object layer encapsulates selectors, interactions, and page-
 
 ### Selenium
 
-`selenium_tests/` contains a WebDriver lifecycle check and eight independent E2E checkpoints covering the purchase journey. `selenium_pages/` provides a separate Selenium Page Object hierarchy with explicit waits and WebDriver interactions.
+`selenium_tests/` contains **13 independent E2E checkpoints** covering the purchase journey, implemented in `test_purchase_e2e.py`. `selenium_pages/` provides a separate Selenium Page Object hierarchy with explicit waits and WebDriver interactions.
 
 `selenium_tests/conftest.py` creates a fresh headless Chrome WebDriver for each test, prepares Selenium scenarios, and closes the driver after execution. Selenium shares applicable configuration values and test data with Playwright, but not Playwright browser fixtures or Page Objects.
 
@@ -86,8 +88,14 @@ The Playwright Page Object layer encapsulates selectors, interactions, and page-
 |-----------------------------------------|-------------------|---------------------|-------------------------------------------------------------------------|
 | Primary functional and supporting suite | `tests/`          | Chromium by default | Standard Pytest collection; markers select Smoke or Regression subsets. |
 | Representative cross-browser Smoke      | `tests/`          | Firefox or WebKit   | Same Smoke tests with an explicit browser override.                     |
-| Selenium E2E showcase                   | `selenium_tests/` | Headless Chrome     | Explicit directory and `selenium and e2e` marker selection.             |
+| Selenium E2E showcase                   | `selenium_tests/` | Headless Chrome     | Explicit directory and `selenium` marker selection.                     |
 | Visual checkpoints                      | `visual_tests/`   | Headless Chromium   | Explicit directory and `visual` marker selection.                       |
+
+The Selenium E2E suite is selected with:
+
+```bash
+pytest selenium_tests -m selenium -v
+```
 
 The Playwright suite supports sequential execution and Pytest-xdist parallel workers. The dedicated Selenium E2E and visual screenshot runs are executed sequentially. Browser-specific execution does not require duplicated functional test modules.
 

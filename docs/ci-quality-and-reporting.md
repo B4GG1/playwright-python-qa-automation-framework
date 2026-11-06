@@ -21,9 +21,13 @@ All jobs use GitHub-hosted Ubuntu 24.04 runners. Python-based jobs install Pytho
 | `cross-browser-smoke` — Firefox | Existing representative Smoke selection                               | Firefox, pytest-xdist                       |
 | `cross-browser-smoke` — WebKit  | Existing representative Smoke selection                               | WebKit, pytest-xdist                        |
 | `visual-regression`             | Two reviewed screenshot checkpoints                                   | Headless Chromium inside Docker, sequential |
-| `selenium-e2e`                  | Eight independent purchase-journey checkpoints                        | Headless Chrome, sequential                 |
+| `selenium-e2e`                  | 13 independent purchase-journey checkpoints                           | Headless Chrome, sequential                 |
 
-The complete default Pytest collection is rooted at `tests/`; it does not implicitly include `visual_tests/` or `selenium_tests/`. The Selenium lifecycle check exists but is not selected by the CI command restricted to `selenium and e2e`.
+The complete default Pytest collection is rooted at `tests/`; it does not implicitly include `visual_tests/` or `selenium_tests/`. The Selenium CI job explicitly selects the 13 independent E2E tests from `selenium_tests/` using the `selenium` marker:
+
+```bash
+pytest selenium_tests -m selenium -v
+```
 
 The Playwright functional jobs run natively on GitHub-hosted runners. Only the visual regression job builds and runs the project's Docker image. The Selenium job uses the runner's installed Chrome and Selenium Manager, rather than the Playwright Docker image.
 
@@ -100,7 +104,7 @@ The development workflow followed these steps:
 2. Validate the changes locally with relevant tests and code-quality checks.
 3. Commit using Conventional Commits and push the branch.
 4. Open a Pull Request targeting `develop`.
-5. Review the diff and GitHub Actions results, resolve problems, and merge validated changes (normally using squash merge).
+5. Review the changes and GitHub Actions results, resolve problems, and merge validated changes (normally using squash merge).
 6. Update the local integration branch and clean up obsolete work branches when appropriate.
 
 Promotion to `main` was treated as a separate reviewed portfolio decision, not an automatic consequence of merging into `develop`. This section documents the workflow applied to the completed project; it does not imply ongoing implementation or assert that GitHub branch-protection settings technically enforce every rule.
