@@ -13,7 +13,7 @@ The framework tests the externally hosted [Sauce Demo](https://www.saucedemo.com
 
 ## Local Setup
 
-Clone the `develop` branch:
+Clone the `main` branch:
 
 ```bash
 git clone --branch main https://github.com/B4GG1/playwright-python-qa-automation-framework.git
