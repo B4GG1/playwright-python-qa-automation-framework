@@ -15,8 +15,45 @@ permissions:
   contents: read
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
+  quality:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install project dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-lock.txt
+
+      - name: Run Ruff linting
+        run: ruff check .
+
+      - name: Run Black formatting validation
+        run: black --check .
+
+      - name: Run isort import validation
+        run: isort . --check-only
+
+  smoke:
+    needs: quality
+    runs-on: ubuntu-24.04
+
+    env:
+      QA_BASE_URL: "https://www.saucedemo.com"
+      QA_BROWSER: "chromium"
+      QA_HEADED: "false"
+      QA_TIMEOUT_MS: "30000"
+      QA_EXPECT_TIMEOUT_MS: "5000"
+      QA_SCREENSHOT_POLICY: "only-on-failure"
+      QA_TRACE_POLICY: "off"
+      QA_VIDEO_POLICY: "off"
 
     steps:
       - name: Checkout repository
@@ -35,19 +72,145 @@ jobs:
       - name: Install Playwright browsers
         run: playwright install --with-deps chromium
 
-      - name: Run Ruff linting
-        run: ruff check .
-
-      - name: Run Black formatting validation
-        run: black --check .
-
-      - name: Run isort import validation
-        run: isort . --check-only
-
-      - name: Run pytest test suite with HTML report
+      - name: Run Smoke test suite with HTML report
         run: |
           mkdir -p reports
-          pytest -v --html=reports/report.html --self-contained-html
+          pytest -m smoke -n auto -v --html=reports/smoke-report.html --self-contained-html
+
+      - name: Upload Smoke pytest HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-pytest-html-report
+          path: reports/smoke-report.html
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Upload Smoke test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-test-artifacts
+          path: reports/
+          if-no-files-found: warn
+          retention-days: 7
+
+  regression:
+    needs: quality
+    runs-on: ubuntu-24.04
+
+    env:
+      QA_BASE_URL: "https://www.saucedemo.com"
+      QA_BROWSER: "chromium"
+      QA_HEADED: "false"
+      QA_TIMEOUT_MS: "30000"
+      QA_EXPECT_TIMEOUT_MS: "5000"
+      QA_SCREENSHOT_POLICY: "only-on-failure"
+      QA_TRACE_POLICY: "off"
+      QA_VIDEO_POLICY: "off"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install project dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-lock.txt
+
+      - name: Install Playwright browsers
+        run: playwright install --with-deps chromium
+
+      - name: Run Regression test suite with HTML report
+        run: |
+          mkdir -p reports
+          pytest -m regression -n auto -v --html=reports/regression-report.html --self-contained-html
+
+      - name: Upload Regression pytest HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: regression-pytest-html-report
+          path: reports/regression-report.html
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Upload Regression test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: regression-test-artifacts
+          path: reports/
+          if-no-files-found: warn
+          retention-days: 7
+
+  full-suite:
+    needs: quality
+    runs-on: ubuntu-24.04
+
+    env:
+      QA_BASE_URL: "https://www.saucedemo.com"
+      QA_BROWSER: "chromium"
+      QA_HEADED: "false"
+      QA_TIMEOUT_MS: "30000"
+      QA_EXPECT_TIMEOUT_MS: "5000"
+      QA_SCREENSHOT_POLICY: "only-on-failure"
+      QA_TRACE_POLICY: "off"
+      QA_VIDEO_POLICY: "off"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install project dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-lock.txt
+
+      - name: Set up Java for Allure CLI
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Install Allure CLI
+        run: |
+          npm install -g allure-commandline
+          allure --version
+
+      - name: Install Playwright browsers
+        run: playwright install --with-deps chromium
+
+      - name: Run pytest test suite with HTML report and Allure results
+        run: |
+          mkdir -p reports
+          pytest -n auto -v \
+            --html=reports/report.html \
+            --self-contained-html \
+            --alluredir=reports/allure-results \
+            --clean-alluredir
+
+      - name: Generate Allure HTML report
+        if: always()
+        run: |
+          if [ -d reports/allure-results ] && \
+             [ -n "$(find reports/allure-results -type f -print -quit)" ]; then
+            allure generate reports/allure-results \
+              --clean \
+              -o reports/allure-report
+          else
+            echo "No Allure result data found. Skipping Allure report generation."
+          fi
 
       - name: Upload pytest HTML report
         if: always()
@@ -58,11 +221,160 @@ jobs:
           if-no-files-found: warn
           retention-days: 7
 
+      - name: Upload Allure HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: full-suite-allure-report
+          path: reports/allure-report/
+          if-no-files-found: warn
+          retention-days: 7
+
       - name: Upload reports directory
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-artifacts
           path: reports/
+          if-no-files-found: warn
+          retention-days: 7
+
+  cross-browser-smoke:
+    needs: quality
+    runs-on: ubuntu-24.04
+
+    strategy:
+      fail-fast: false
+      matrix:
+        browser:
+          - firefox
+          - webkit
+
+    env:
+      QA_BASE_URL: "https://www.saucedemo.com"
+      QA_BROWSER: ${{ matrix.browser }}
+      QA_HEADED: "false"
+      QA_TIMEOUT_MS: "30000"
+      QA_EXPECT_TIMEOUT_MS: "5000"
+      QA_SCREENSHOT_POLICY: "only-on-failure"
+      QA_TRACE_POLICY: "off"
+      QA_VIDEO_POLICY: "off"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install project dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-lock.txt
+
+      - name: Install Playwright browser
+        run: playwright install --with-deps ${{ matrix.browser }}
+
+      - name: Run cross-browser Smoke suite with HTML report
+        run: |
+          mkdir -p reports
+          pytest -m smoke -n auto -v \
+            --html=reports/${{ matrix.browser }}-smoke-report.html \
+            --self-contained-html
+
+      - name: Upload cross-browser pytest HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.browser }}-smoke-pytest-html-report
+          path: reports/${{ matrix.browser }}-smoke-report.html
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Upload cross-browser test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.browser }}-smoke-test-artifacts
+          path: reports/
+          if-no-files-found: warn
+          retention-days: 7
+
+  visual-regression:
+    name: Visual Regression (Chromium Docker)
+    needs: quality
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build project Docker image
+        run: docker build -t playwright-qa-framework:visual .
+
+      - name: Run controlled visual regression suite
+        run: |
+          mkdir -p reports/visual
+
+          docker run --rm --init --ipc=host \
+            -v "$PWD/visual_baselines:/app/visual_baselines:ro" \
+            -v "$PWD/reports/visual:/app/reports/visual" \
+            -e QA_BASE_URL=https://www.saucedemo.com \
+            -e QA_BROWSER=chromium \
+            -e QA_HEADED=false \
+            playwright-qa-framework:visual \
+            visual_tests -m visual --browser chromium -v
+
+      - name: Upload visual regression artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-regression-artifacts
+          path: reports/visual/
+          if-no-files-found: warn
+          retention-days: 7
+
+  selenium-e2e:
+    name: Selenium E2E (Chrome)
+    needs: quality
+    runs-on: ubuntu-24.04
+
+    env:
+      QA_BASE_URL: "https://www.saucedemo.com"
+      QA_TIMEOUT_MS: "30000"
+      QA_EXPECT_TIMEOUT_MS: "15000"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install project dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-lock.txt
+
+      - name: Verify Chrome installation
+        run: google-chrome --version
+
+      - name: Run Selenium E2E showcase with HTML report
+        run: |
+          mkdir -p reports
+          pytest selenium_tests -m "selenium" -v \
+            --html=reports/selenium-e2e-report.html \
+            --self-contained-html
+
+      - name: Upload Selenium pytest HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: selenium-e2e-pytest-html-report
+          path: reports/selenium-e2e-report.html
           if-no-files-found: warn
           retention-days: 7

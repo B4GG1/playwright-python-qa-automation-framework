@@ -9,3 +9,5 @@ ruff
 black
 isort
 pre-commit
+Pillow
+selenium

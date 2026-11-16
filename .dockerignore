@@ -1,0 +1,29 @@
+# Git metadata
+.git
+
+# Local Python environments
+.venv
+venv
+env
+
+# Python and test caches
+**/__pycache__
+**/*.py[cod]
+**/.pytest_cache
+**/.ruff_cache
+
+# IDE configuration
+.idea
+.vscode
+
+# Generated reports and test artifacts
+reports
+allure-results
+allure-report
+test-results
+playwright-report
+
+# Local environment files
+.env
+.env.*
+.envrc

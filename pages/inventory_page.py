@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 
 class InventoryPage(AppPage):
-    URL = "https://www.saucedemo.com/inventory.html"
+    ROUTE = "/inventory.html"
 
     SORT_NAME_ASC = "az"
     SORT_NAME_DESC = "za"
@@ -44,14 +44,22 @@ class InventoryPage(AppPage):
 
         product_item = self.get_product_item_by_name(product_name)
         self.get_product_name_from_item(product_item).click()
-        return ProductDetailsPage(self.page)
+
+        product_details_page = ProductDetailsPage(self.page)
+        product_details_page.get_back_to_products_button().wait_for(state="visible")
+
+        return product_details_page
 
     def open_product_details_by_image(self, product_name: str) -> ProductDetailsPage:
         from pages.product_details_page import ProductDetailsPage
 
         product_item = self.get_product_item_by_name(product_name)
         self.get_product_image_from_item(product_item).click()
-        return ProductDetailsPage(self.page)
+
+        product_details_page = ProductDetailsPage(self.page)
+        product_details_page.get_back_to_products_button().wait_for(state="visible")
+
+        return product_details_page
 
     def add_product_to_cart(self, product_name: str) -> None:
         product_item = self.get_product_item_by_name(product_name)

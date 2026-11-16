@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 
 class ProductDetailsPage(AppPage):
-    URL = "https://www.saucedemo.com/inventory-item.html?id="
+    ROUTE = "/inventory-item.html?id="
 
     def add_product_to_cart(self) -> None:
         self.get_add_to_cart_button_from_item(self.get_product_item_or_items()).click()
