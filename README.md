@@ -25,7 +25,7 @@ docs/               Detailed project documentation
 Requires **Python 3.12** and a Linux/WSL environment. From a terminal:
 
 ```bash
-git clone --branch develop https://github.com/B4GG1/playwright-python-qa-automation-framework.git
+git clone --branch main https://github.com/B4GG1/playwright-python-qa-automation-framework.git
 cd playwright-python-qa-automation-framework
 python3.12 -m venv .venv
 source .venv/bin/activate
