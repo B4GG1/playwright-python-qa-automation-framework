@@ -4,6 +4,12 @@ A **completed Python UI test automation portfolio project** built around [Sauce 
 
 **Playwright** is the primary automation framework, covering Login, Inventory, Product Details, Cart, and Checkout. Chromium runs the complete default test suite, while Firefox and WebKit provide representative Smoke coverage. A separate **Selenium WebDriver** suite implements 13 independent Chrome-based end-to-end purchase-journey checkpoints. The framework also includes Docker execution, Chromium visual regression, pytest-html and Allure reporting, and automated code-quality checks.
 
+## Project Management
+
+The project was planned and tracked using a [public Trello board](https://trello.com/b/N5PWUJ2R/qa-automation-project1).
+
+The board provides insight into the development process, including task organization, implementation scope, dependencies, Acceptance Criteria, Definition of Done, and completed project milestones.
+
 ## Repository at a glance
 
 ```text
